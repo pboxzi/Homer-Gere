@@ -105,3 +105,74 @@ export const SECTION_IMAGES = {
     contact: bwInterview,
   },
 };
+
+// Project-specific image mappings for detail pages
+export const PROJECT_IMAGES = {
+  'the-shards': {
+    hero: shardsPremiereCast,
+    character: shardsRobertMallory,
+    poster: shardsPremiereCast,
+    gallery: [
+      { src: shardsPremiereCast, alt: 'The Shards World Premiere at SVA Theatre — Full Cast' },
+      { src: shardsRobertMallory, alt: 'Homer Gere as Robert Mallory — Official Character Still' },
+      { src: shardsEpisodeScene, alt: 'Behind the scenes during principal photography' },
+      { src: shardsLaunchSkate, alt: 'The Shards launch party at Moonlight Rollerway' },
+      { src: shardsPremiereCarey, alt: 'Homer Gere with mother Carey Lowell at The Shards premiere' },
+      { src: disneyUpfrontCast, alt: 'The Shards cast at Disney+ Upfront Presentation' },
+    ],
+    cast: {
+      homerGere: shardsPremiereCast,
+      igbyRigney: agencyPremiereMoma,
+      kaiaGerber: cannesRedCarpet,
+      hayesWarner: shardsLaunchSkate,
+      grahamCampbell: shardsEpisodeScene,
+      wesBentley: veniceFilmFestival,
+      evanRachelWood: disneyUpfrontCast,
+    },
+  },
+  'euphoria': {
+    hero: euphoriaEpisodeScene,
+    character: euphoriaEpisodeScene,
+    poster: euphoriaEpisodeScene,
+    gallery: [
+      { src: euphoriaEpisodeScene, alt: 'Homer Gere and Alexa Demie in Euphoria Season 3' },
+      { src: agencyPremiereMoma, alt: 'Euphoria Season 3 premiere at TCL Chinese Theatre' },
+      { src: shardsPremiereCast, alt: 'Behind the scenes on the Euphoria set' },
+      { src: disneyUpfrontCast, alt: 'Homer Gere at HBO press event' },
+    ],
+    cast: {
+      homerGere: euphoriaEpisodeScene,
+      zendaya: disneyUpfrontCast,
+      sydneySweeney: cannesRedCarpet,
+      alexaDemie: agencyPremiereMoma,
+      hunterSchafer: veniceFilmFestival,
+      jacobElordi: shardsLaunchSkate,
+    },
+  },
+  'white-lies': {
+    hero: cannesRedCarpet,
+    character: cannesRedCarpet,
+    poster: cannesRedCarpet,
+    gallery: [
+      { src: cannesRedCarpet, alt: 'Homer Gere at Cannes Film Festival' },
+      { src: veniceFilmFestival, alt: 'Red carpet event' },
+    ],
+    cast: {
+      homerGere: cannesRedCarpet,
+      michaelDouglas: veniceFilmFestival,
+      willemDafoe: agencyPremiereMoma,
+      ellenBarkin: disneyUpfrontCast,
+    },
+  },
+  'american-pledge': {
+    hero: journalPortrait,
+    character: journalPortrait,
+    poster: journalPortrait,
+    gallery: [
+      { src: journalPortrait, alt: 'American Pledge — promotional still' },
+    ],
+    cast: {
+      homerGere: journalPortrait,
+    },
+  },
+};

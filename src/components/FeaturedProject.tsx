@@ -10,7 +10,7 @@ export const FeaturedProject: React.FC<FeaturedProjectProps> = ({ onDiscoverMore
   return (
     <section id="projects" className="py-20 sm:py-28">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-[2rem] overflow-hidden bg-[#111827] text-white min-h-[500px] lg:min-h-[560px]">
+        <div className="relative rounded-[2rem] overflow-hidden min-h-[500px] lg:min-h-[560px]">
           {/* Background Image */}
           <div className="absolute inset-0 z-0">
             <img
@@ -19,8 +19,8 @@ export const FeaturedProject: React.FC<FeaturedProjectProps> = ({ onDiscoverMore
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover object-top scale-105 hover:scale-100 transition-transform duration-[1.5s]"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#111827] via-[#111827]/60 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-[#111827]/30" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#F8F5EF] via-[#F8F5EF]/70 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#F8F5EF] via-transparent to-[#F8F5EF]/30" />
           </div>
 
           {/* Content */}
@@ -31,19 +31,19 @@ export const FeaturedProject: React.FC<FeaturedProjectProps> = ({ onDiscoverMore
                 Featured Project
               </div>
 
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-editorial text-white tracking-tight leading-[1.05]">
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-editorial text-[#1C1917] tracking-tight leading-[1.05]">
                 {FEATURED_PROJECT.title}
               </h2>
 
-              <p className="text-gray-300 text-base sm:text-lg leading-relaxed max-w-lg">
+              <p className="text-[#44403C] text-base sm:text-lg leading-relaxed max-w-lg">
                 {FEATURED_PROJECT.tagline}
               </p>
 
               <div className="flex flex-wrap items-center gap-4 pt-2">
-                <span className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-sm rounded-xl text-xs font-medium text-gray-200">
+                <span className="inline-block px-4 py-1.5 bg-[#F3F1ED] backdrop-blur-sm rounded-xl text-xs font-medium text-[#1C1917]">
                   {FEATURED_PROJECT.status}
                 </span>
-                <span className="text-sm text-[#A8A29E]">
+                <span className="text-sm text-[#57534E]">
                   Director: <strong className="text-[#C9A84C] font-medium">{FEATURED_PROJECT.director}</strong>
                 </span>
               </div>

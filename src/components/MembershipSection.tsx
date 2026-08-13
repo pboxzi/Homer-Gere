@@ -48,7 +48,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
                 key={tier.id}
                 className={`relative p-8 sm:p-9 transition-all duration-500 flex flex-col justify-between ${
                   isPopular
-                    ? 'bg-[#111827] text-white ring-1 ring-[#C9A84C]/30'
+                    ? 'bg-[#C9A84C]/8 text-[#1C1917] ring-1 ring-[#C9A84C]/30'
                     : 'text-[#1C1917]'
                 }`}
               >
@@ -93,7 +93,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
                     className={`w-full py-3.5 px-6 rounded-2xl text-xs font-medium transition-all duration-300 transform active:scale-95 focus:outline-none cursor-pointer ${
                       isPopular
                         ? 'bg-[#C9A84C] hover:bg-[#B8983A] text-white'
-                        : 'bg-[#111827] hover:bg-[#1F2937] text-white'
+                        : 'bg-[#1C1917] hover:bg-[#292524] text-white'
                     }`}
                   >
                     {tier.ctaText}

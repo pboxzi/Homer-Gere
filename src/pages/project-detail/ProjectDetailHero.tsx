@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { ArrowLeft, ExternalLink, Play } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Play, Calendar, Clock, Tv } from 'lucide-react';
 import { ProjectDetail } from '../../data/projectDetails';
 
 interface ProjectDetailHeroProps {
@@ -10,7 +10,7 @@ interface ProjectDetailHeroProps {
 
 export const ProjectDetailHero: React.FC<ProjectDetailHeroProps> = ({ project, onBack }) => {
   return (
-    <section className="relative h-[80vh] min-h-[640px] bg-[#111827] overflow-hidden">
+    <section className="relative h-[90vh] min-h-[700px] bg-[#111827] overflow-hidden">
       {/* Background Image */}
       <motion.div
         className="absolute inset-0 z-0"
@@ -22,10 +22,10 @@ export const ProjectDetailHero: React.FC<ProjectDetailHeroProps> = ({ project, o
           src={project.heroImage}
           alt={project.title}
           referrerPolicy="no-referrer"
-          className="w-full h-full object-cover object-top opacity-40"
+          className="w-full h-full object-cover object-top opacity-35"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#111827] via-[#111827]/70 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-[#111827]/30 to-[#111827]/50" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#111827] via-[#111827]/80 to-[#111827]/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-[#111827]/20 to-[#111827]/60" />
       </motion.div>
 
       {/* Content */}
@@ -38,32 +38,33 @@ export const ProjectDetailHero: React.FC<ProjectDetailHeroProps> = ({ project, o
         >
           <button
             onClick={onBack}
-            className="inline-flex items-center gap-2 text-white/70 hover:text-white text-sm font-medium transition-colors duration-300 cursor-pointer"
+            className="inline-flex items-center gap-2 text-white/70 hover:text-white text-sm font-medium transition-colors duration-300 cursor-pointer group"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
             <span>Back to Projects</span>
           </button>
         </motion.div>
 
         {/* Hero Content */}
         <div className="max-w-3xl">
+          {/* Type & Status Badges */}
           <motion.div
-            className="flex flex-wrap items-center gap-3 mb-4"
+            className="flex flex-wrap items-center gap-3 mb-5"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
           >
-            <span className="px-3 py-1 bg-[#C9A84C]/20 backdrop-blur-sm rounded-full text-[#C9A84C] text-[11px] font-medium tracking-widest uppercase">
+            <span className="px-3.5 py-1 bg-[#C9A84C]/20 backdrop-blur-sm rounded-full text-[#C9A84C] text-[11px] font-medium tracking-widest uppercase border border-[#C9A84C]/20">
               {project.type}
             </span>
-            <span className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white/80 text-[11px] font-medium tracking-widest uppercase">
+            <span className="px-3.5 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white/80 text-[11px] font-medium tracking-widest uppercase border border-white/10">
               {project.status}
             </span>
-            <span className="text-white/60 text-sm">{project.year}</span>
           </motion.div>
 
+          {/* Title */}
           <motion.h1
-            className="text-5xl sm:text-6xl lg:text-7xl font-editorial text-white tracking-tight leading-[1.02] mb-4"
+            className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-editorial text-white tracking-tight leading-[1.02] mb-5"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.4 }}
@@ -71,6 +72,7 @@ export const ProjectDetailHero: React.FC<ProjectDetailHeroProps> = ({ project, o
             {project.title}
           </motion.h1>
 
+          {/* Tagline */}
           {project.tagline && (
             <motion.p
               className="text-lg sm:text-xl text-[#C9A84C] font-editorial italic mb-6"
@@ -82,11 +84,49 @@ export const ProjectDetailHero: React.FC<ProjectDetailHeroProps> = ({ project, o
             </motion.p>
           )}
 
+          {/* Quick Info Row */}
+          <motion.div
+            className="flex flex-wrap items-center gap-5 text-sm text-white/60 mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.55 }}
+          >
+            {project.releaseDate && (
+              <span className="inline-flex items-center gap-1.5">
+                <Calendar className="w-4 h-4 text-[#C9A84C]" />
+                {project.releaseDate}
+              </span>
+            )}
+            {project.runtime && (
+              <span className="inline-flex items-center gap-1.5">
+                <Clock className="w-4 h-4 text-[#C9A84C]" />
+                {project.runtime}
+              </span>
+            )}
+            {project.genre && (
+              <span className="inline-flex items-center gap-1.5">
+                <Tv className="w-4 h-4 text-[#C9A84C]" />
+                {project.genre.split('/')[0].trim()}
+              </span>
+            )}
+          </motion.div>
+
+          {/* Description */}
+          <motion.p
+            className="text-base sm:text-lg text-white/70 leading-relaxed mb-10 max-w-2xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.6 }}
+          >
+            {project.synopsis.length > 200 ? project.synopsis.slice(0, 200) + '...' : project.synopsis}
+          </motion.p>
+
+          {/* CTAs */}
           <motion.div
             className="flex flex-wrap items-center gap-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.6 }}
+            transition={{ duration: 0.7, delay: 0.65 }}
           >
             {project.trailerUrl && (
               <a
@@ -95,7 +135,7 @@ export const ProjectDetailHero: React.FC<ProjectDetailHeroProps> = ({ project, o
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2.5 bg-[#C9A84C] hover:bg-[#B8983A] text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#C9A84C]/25 cursor-pointer"
               >
-                <Play className="w-4 h-4" />
+                <Play className="w-4 h-4" fill="white" />
                 <span>Watch Trailer</span>
               </a>
             )}
@@ -104,7 +144,7 @@ export const ProjectDetailHero: React.FC<ProjectDetailHeroProps> = ({ project, o
                 href={project.officialUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 cursor-pointer"
+                className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 cursor-pointer border border-white/10"
               >
                 <ExternalLink className="w-4 h-4" />
                 <span>Official Website</span>
