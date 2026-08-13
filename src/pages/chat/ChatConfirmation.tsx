@@ -91,7 +91,7 @@ export const ChatConfirmation: React.FC<ChatConfirmationProps> = ({
               )}
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em]">Method</span>
-                <span className="text-sm text-[#C9A84C] font-medium">{getMethodLabel()}</span>
+                <span className="text-sm text-[#A6852F] font-medium">{getMethodLabel()}</span>
               </div>
             </div>
           </div>
@@ -101,7 +101,7 @@ export const ChatConfirmation: React.FC<ChatConfirmationProps> = ({
             {(method === 'whatsapp' || method === 'email' || method === 'telegram') && (
               <button
                 onClick={handleOpenChannel}
-                className="inline-flex items-center justify-center gap-2.5 bg-[#C9A84C] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#C9A84C]/25 focus:outline-none cursor-pointer"
+                className="inline-flex items-center justify-center gap-2.5 bg-[#A6852F] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#A6852F]/25 focus:outline-none cursor-pointer"
               >
                 <ExternalLink className="w-4 h-4" />
                 Open {getMethodLabel()}

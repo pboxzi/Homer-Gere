@@ -19,7 +19,7 @@ export const GalleryStory: React.FC = () => {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Featured Story
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-white tracking-tight">
@@ -50,7 +50,7 @@ export const GalleryStory: React.FC = () => {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            <Quote className="w-10 h-10 text-[#C9A84C]/30" />
+            <Quote className="w-10 h-10 text-[#A6852F]/30" />
 
             <div className="space-y-5">
               {FEATURED_STORY.story.split('\n\n').map((paragraph, idx) => (

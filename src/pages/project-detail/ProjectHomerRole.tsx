@@ -20,7 +20,7 @@ export const ProjectHomerRole: React.FC<ProjectHomerRoleProps> = ({ project }) =
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Homer's Role
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">
@@ -53,7 +53,7 @@ export const ProjectHomerRole: React.FC<ProjectHomerRoleProps> = ({ project }) =
           >
             {/* Character */}
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C] shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] shrink-0">
                 <User className="w-5 h-5" />
               </div>
               <div>
@@ -64,7 +64,7 @@ export const ProjectHomerRole: React.FC<ProjectHomerRoleProps> = ({ project }) =
 
             {/* Description */}
             <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C] shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] shrink-0">
                 <Film className="w-5 h-5" />
               </div>
               <div>
@@ -76,7 +76,7 @@ export const ProjectHomerRole: React.FC<ProjectHomerRoleProps> = ({ project }) =
             {/* Expanded Description */}
             {project.homerRole.expandedDescription && (
               <div className="bg-[#FAF9F7] rounded-2xl p-6 border border-[#E8E5DF]">
-                <h3 className="text-sm font-medium text-[#C9A84C] uppercase tracking-wider mb-3">Character Deep Dive</h3>
+                <h3 className="text-sm font-medium text-[#A6852F] uppercase tracking-wider mb-3">Character Deep Dive</h3>
                 <div className="space-y-4">
                   {project.homerRole.expandedDescription.split('\n\n').map((paragraph, idx) => (
                     <p key={idx} className="text-sm text-[#44403C] leading-[1.8]">
@@ -90,7 +90,7 @@ export const ProjectHomerRole: React.FC<ProjectHomerRoleProps> = ({ project }) =
             {/* Episodes */}
             {project.homerRole.episodes && (
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C] shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] shrink-0">
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>
@@ -103,7 +103,7 @@ export const ProjectHomerRole: React.FC<ProjectHomerRoleProps> = ({ project }) =
             {/* Production Notes */}
             {project.homerRole.notes && (
               <div className="bg-[#FAF9F7] rounded-2xl p-6 border border-[#E8E5DF]">
-                <h3 className="text-sm font-medium text-[#C9A84C] uppercase tracking-wider mb-2">Production Notes</h3>
+                <h3 className="text-sm font-medium text-[#A6852F] uppercase tracking-wider mb-2">Production Notes</h3>
                 <p className="text-sm text-[#44403C] leading-relaxed">{project.homerRole.notes}</p>
               </div>
             )}
@@ -113,13 +113,13 @@ export const ProjectHomerRole: React.FC<ProjectHomerRoleProps> = ({ project }) =
               <div className="space-y-4">
                 {project.homerRole.quotes.map((quote, idx) => (
                   <div key={idx} className="relative bg-[#111827] rounded-2xl p-6 text-white">
-                    <Quote className="absolute top-4 right-4 w-8 h-8 text-[#C9A84C]/20" />
+                    <Quote className="absolute top-4 right-4 w-8 h-8 text-[#A6852F]/20" />
                     <p className="text-sm leading-relaxed italic relative z-10">
                       "{quote}"
                     </p>
                     <div className="flex items-center gap-2 mt-4">
-                      <div className="w-1 h-1 rounded-full bg-[#C9A84C]" />
-                      <span className="text-xs text-[#C9A84C] font-medium">Homer Gere</span>
+                      <div className="w-1 h-1 rounded-full bg-[#A6852F]" />
+                      <span className="text-xs text-[#A6852F] font-medium">Homer Gere</span>
                     </div>
                   </div>
                 ))}

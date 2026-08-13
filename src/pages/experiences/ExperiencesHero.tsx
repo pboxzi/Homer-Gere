@@ -36,7 +36,7 @@ export const ExperiencesHero: React.FC<ExperiencesHeroProps> = ({ onRequestExper
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+            <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
               Official Experiences
             </span>
           </motion.div>
@@ -68,14 +68,14 @@ export const ExperiencesHero: React.FC<ExperiencesHeroProps> = ({ onRequestExper
           >
             <button
               onClick={onRequestExperience}
-              className="inline-flex items-center justify-center gap-2.5 bg-[#C9A84C] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#C9A84C]/25 focus:outline-none cursor-pointer"
+              className="inline-flex items-center justify-center gap-2.5 bg-[#A6852F] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#A6852F]/25 focus:outline-none cursor-pointer"
             >
               <ArrowRight className="w-4 h-4" />
               <span>Request an Experience</span>
             </button>
 
             <div className="inline-flex items-center gap-2 text-sm text-[#57534E]">
-              <Shield className="w-4 h-4 text-[#C9A84C]" />
+              <Shield className="w-4 h-4 text-[#A6852F]" />
               <span>Verified by management</span>
             </div>
           </motion.div>
@@ -88,15 +88,15 @@ export const ExperiencesHero: React.FC<ExperiencesHeroProps> = ({ onRequestExper
             transition={{ duration: 0.7, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="flex items-center gap-2">
-              <Star className="w-4 h-4 text-[#C9A84C]" />
+              <Star className="w-4 h-4 text-[#A6852F]" />
               <span className="text-sm text-[#57534E]">8 Experience Types</span>
             </div>
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-[#C9A84C]" />
+              <Calendar className="w-4 h-4 text-[#A6852F]" />
               <span className="text-sm text-[#57534E]">5–10 Day Response</span>
             </div>
             <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-[#C9A84C]" />
+              <Users className="w-4 h-4 text-[#A6852F]" />
               <span className="text-sm text-[#57534E]">Global Availability</span>
             </div>
           </motion.div>
@@ -115,11 +115,11 @@ export const ExperiencesHero: React.FC<ExperiencesHeroProps> = ({ onRequestExper
           className="group flex flex-col items-center gap-2 focus:outline-none cursor-pointer"
           aria-label="Scroll to continue"
         >
-          <span className="text-[10px] font-medium text-[#57534E] group-hover:text-[#C9A84C] transition-colors uppercase tracking-[0.25em]">
+          <span className="text-[10px] font-medium text-[#57534E] group-hover:text-[#A6852F] transition-colors uppercase tracking-[0.25em]">
             Scroll
           </span>
-          <div className="relative w-[1px] h-8 bg-[#E8E5DF] group-hover:bg-[#C9A84C]/30 transition-colors overflow-hidden rounded-full">
-            <div className="absolute top-0 left-0 w-full h-1/2 bg-[#C9A84C] rounded-full animate-scroll-line" />
+          <div className="relative w-[1px] h-8 bg-[#E8E5DF] group-hover:bg-[#A6852F]/30 transition-colors overflow-hidden rounded-full">
+            <div className="absolute top-0 left-0 w-full h-1/2 bg-[#A6852F] rounded-full animate-scroll-line" />
           </div>
         </a>
       </motion.div>

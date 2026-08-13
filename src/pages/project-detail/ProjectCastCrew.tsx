@@ -22,7 +22,7 @@ export const ProjectCastCrew: React.FC<ProjectCastCrewProps> = ({ project }) => 
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Cast
           </span>
           <h2 className="text-3xl sm:text-4xl font-editorial text-[#1C1917] tracking-tight mt-4 mb-12">
@@ -48,7 +48,7 @@ export const ProjectCastCrew: React.FC<ProjectCastCrewProps> = ({ project }) => 
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
-                      <span className="text-[#C9A84C] text-4xl font-editorial font-bold">
+                      <span className="text-[#A6852F] text-4xl font-editorial font-bold">
                         {member.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                       </span>
                     </div>
@@ -64,7 +64,7 @@ export const ProjectCastCrew: React.FC<ProjectCastCrewProps> = ({ project }) => 
                     </a>
                   )}
                 </div>
-                <h4 className="text-sm font-medium text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300">
+                <h4 className="text-sm font-medium text-[#1C1917] group-hover:text-[#A6852F] transition-colors duration-300">
                   {member.name}
                 </h4>
                 <p className="text-xs text-[#71717A] mt-0.5 line-clamp-2">{member.role.split('—')[0].trim()}</p>
@@ -87,7 +87,7 @@ export const ProjectCastCrew: React.FC<ProjectCastCrewProps> = ({ project }) => 
                   className="w-full flex items-center justify-between p-5 text-left cursor-pointer hover:bg-[#E8E5DF]/50 transition-colors duration-200"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C] font-editorial text-lg shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] font-editorial text-lg shrink-0">
                       {member.name.charAt(0)}
                     </div>
                     <div>
@@ -126,7 +126,7 @@ export const ProjectCastCrew: React.FC<ProjectCastCrewProps> = ({ project }) => 
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+            <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
               Crew
             </span>
             <h2 className="text-3xl sm:text-4xl font-editorial text-[#1C1917] tracking-tight mt-4 mb-12">
@@ -142,12 +142,12 @@ export const ProjectCastCrew: React.FC<ProjectCastCrewProps> = ({ project }) => 
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.6, delay: 0.2 + idx * 0.08 }}
                 >
-                  <div className="w-12 h-12 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C] font-editorial text-lg shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] font-editorial text-lg shrink-0">
                     {member.name.charAt(0)}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <h4 className="text-sm font-medium text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300">
+                      <h4 className="text-sm font-medium text-[#1C1917] group-hover:text-[#A6852F] transition-colors duration-300">
                         {member.name}
                       </h4>
                       {member.profileUrl && (
@@ -155,7 +155,7 @@ export const ProjectCastCrew: React.FC<ProjectCastCrewProps> = ({ project }) => 
                           href={member.profileUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[#71717A] hover:text-[#C9A84C] transition-colors"
+                          className="text-[#71717A] hover:text-[#A6852F] transition-colors"
                         >
                           <ExternalLink className="w-3 h-3" />
                         </a>

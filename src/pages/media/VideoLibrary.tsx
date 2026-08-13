@@ -29,7 +29,7 @@ export const VideoLibrary: React.FC<VideoLibraryProps> = ({ onWatch }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-10">
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Browse
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight hover-underline">
@@ -45,7 +45,7 @@ export const VideoLibrary: React.FC<VideoLibraryProps> = ({ onWatch }) => {
               onClick={() => setActiveCategory(cat.id)}
               className={`px-4 py-2 rounded-full text-xs font-medium transition-all duration-300 focus:outline-none cursor-pointer ${
                 activeCategory === cat.id
-                  ? 'bg-[#C9A84C] text-white'
+                  ? 'bg-[#A6852F] text-white'
                   : 'bg-white text-[#57534E] hover:bg-[#E8E5DF] hover:text-[#1C1917]'
               }`}
             >
@@ -95,7 +95,7 @@ export const VideoLibrary: React.FC<VideoLibraryProps> = ({ onWatch }) => {
                 </div>
                 {/* Featured badge */}
                 {video.featured && (
-                  <div className="absolute top-3 left-3 bg-[#C9A84C] text-white text-[9px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                  <div className="absolute top-3 left-3 bg-[#A6852F] text-white text-[9px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">
                     Featured
                   </div>
                 )}
@@ -103,12 +103,12 @@ export const VideoLibrary: React.FC<VideoLibraryProps> = ({ onWatch }) => {
 
               {/* Info */}
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-[10px] text-[#C9A84C] font-medium tracking-wide uppercase">
+                <div className="flex items-center gap-2 text-[10px] text-[#A6852F] font-medium tracking-wide uppercase">
                   <span>{video.source}</span>
                   <span className="text-[#D6D3D1]">·</span>
                   <span>{video.category.replace('-', ' ')}</span>
                 </div>
-                <h3 className="text-sm font-medium text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300 line-clamp-2 leading-snug">
+                <h3 className="text-sm font-medium text-[#1C1917] group-hover:text-[#A6852F] transition-colors duration-300 line-clamp-2 leading-snug">
                   {video.title}
                 </h3>
                 <p className="text-xs text-[#57534E] line-clamp-2 leading-relaxed">

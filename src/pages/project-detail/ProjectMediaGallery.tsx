@@ -34,7 +34,7 @@ export const ProjectMediaGallery: React.FC<ProjectMediaGalleryProps> = ({ projec
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Media Gallery
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">

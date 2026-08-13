@@ -27,7 +27,7 @@ export const JourneyFilmography: React.FC<JourneyFilmographyProps> = ({ onItemCl
   const renderEntry = (entry: typeof FILMOGRAPHY[0], idx: number) => (
     <motion.article
       key={entry.id}
-      className="group flex flex-col sm:flex-row gap-6 sm:gap-8 p-6 sm:p-8 rounded-[1.5rem] bg-[#FAF9F7] hover:bg-white transition-all duration-500 hover:shadow-lg hover:shadow-[#C9A84C]/5 border border-transparent hover:border-[#E8E5DF]/60 cursor-pointer"
+      className="group flex flex-col sm:flex-row gap-6 sm:gap-8 p-6 sm:p-8 rounded-[1.5rem] bg-[#FAF9F7] hover:bg-white transition-all duration-500 hover:shadow-lg hover:shadow-[#A6852F]/5 border border-transparent hover:border-[#E8E5DF]/60 cursor-pointer"
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: 0.1 + idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
@@ -57,7 +57,7 @@ export const JourneyFilmography: React.FC<JourneyFilmographyProps> = ({ onItemCl
       <div className="flex flex-col justify-between flex-1">
         <div className="space-y-3">
           <div className="flex items-center gap-3 flex-wrap">
-            <h3 className="text-xl sm:text-2xl font-editorial text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300">
+            <h3 className="text-xl sm:text-2xl font-editorial text-[#1C1917] group-hover:text-[#A6852F] transition-colors duration-300">
               {entry.title}
             </h3>
             <span className={`text-[10px] font-medium px-2.5 py-0.5 rounded-full border ${getStatusColor(entry.status)}`}>
@@ -67,7 +67,7 @@ export const JourneyFilmography: React.FC<JourneyFilmographyProps> = ({ onItemCl
 
           <div className="flex items-center gap-4 text-sm text-[#44403C]">
             <span className="flex items-center gap-1.5">
-              <span className="text-[#C9A84C] font-medium">{entry.role}</span>
+              <span className="text-[#A6852F] font-medium">{entry.role}</span>
             </span>
             <span className="w-1 h-1 rounded-full bg-[#E8E5DF]" />
             <span className="flex items-center gap-1.5">
@@ -81,7 +81,7 @@ export const JourneyFilmography: React.FC<JourneyFilmographyProps> = ({ onItemCl
           </p>
         </div>
 
-        <div className="mt-4 flex items-center text-xs font-medium text-[#C9A84C] group-hover:translate-x-1 transition-transform duration-300">
+        <div className="mt-4 flex items-center text-xs font-medium text-[#A6852F] group-hover:translate-x-1 transition-transform duration-300">
           <span>View Details</span>
           <ArrowRight className="w-4 h-4 ml-1.5" />
         </div>
@@ -99,7 +99,7 @@ export const JourneyFilmography: React.FC<JourneyFilmographyProps> = ({ onItemCl
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             The Craft
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">
@@ -111,7 +111,7 @@ export const JourneyFilmography: React.FC<JourneyFilmographyProps> = ({ onItemCl
         {films.length > 0 && (
           <div className="mb-16">
             <div className="flex items-center gap-3 mb-8">
-              <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C]">
+              <div className="w-10 h-10 rounded-xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F]">
                 <Film className="w-5 h-5" />
               </div>
               <h3 className="text-xl font-editorial text-[#1C1917]">Film</h3>
@@ -125,7 +125,7 @@ export const JourneyFilmography: React.FC<JourneyFilmographyProps> = ({ onItemCl
         {/* Television Section */}
         <div>
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C]">
+            <div className="w-10 h-10 rounded-xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F]">
               <Tv className="w-5 h-5" />
             </div>
             <h3 className="text-xl font-editorial text-[#1C1917]">Television</h3>

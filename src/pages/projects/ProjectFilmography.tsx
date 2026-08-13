@@ -56,7 +56,7 @@ export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemCl
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="space-y-4">
-            <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+            <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
               Complete Filmography
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">
@@ -73,7 +73,7 @@ export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemCl
                 onClick={() => setActiveFilter(filter.id)}
                 className={`px-4 py-2 rounded-xl text-xs font-medium transition-all duration-300 focus:outline-none cursor-pointer ${
                   activeFilter === filter.id
-                    ? 'bg-[#C9A84C] text-white shadow-md shadow-[#C9A84C]/20'
+                    ? 'bg-[#A6852F] text-white shadow-md shadow-[#A6852F]/20'
                     : 'bg-[#F3F1ED] text-[#52525B] hover:bg-[#E8E5DF] hover:text-[#111827]'
                 }`}
               >
@@ -96,7 +96,7 @@ export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemCl
             {filteredItems.map((entry, idx) => (
               <motion.article
                 key={entry.id}
-                className="group flex flex-col sm:flex-row gap-6 sm:gap-8 p-6 sm:p-8 rounded-[1.5rem] bg-[#F3F1ED]/60 hover:bg-white transition-all duration-500 hover:shadow-lg hover:shadow-[#C9A84C]/5 border border-transparent hover:border-[#E8E5DF]/60 cursor-pointer"
+                className="group flex flex-col sm:flex-row gap-6 sm:gap-8 p-6 sm:p-8 rounded-[1.5rem] bg-[#F3F1ED]/60 hover:bg-white transition-all duration-500 hover:shadow-lg hover:shadow-[#A6852F]/5 border border-transparent hover:border-[#E8E5DF]/60 cursor-pointer"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
@@ -130,7 +130,7 @@ export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemCl
                 <div className="flex flex-col justify-between flex-1">
                   <div className="space-y-4">
                     <div className="flex items-center gap-3 flex-wrap">
-                      <h3 className="text-xl sm:text-2xl font-editorial text-[#111827] group-hover:text-[#C9A84C] transition-colors duration-300">
+                      <h3 className="text-xl sm:text-2xl font-editorial text-[#111827] group-hover:text-[#A6852F] transition-colors duration-300">
                         {entry.title}
                       </h3>
                       <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-2.5 py-0.5 rounded-full border ${getStatusColor(entry.status)}`}>
@@ -139,7 +139,7 @@ export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemCl
                     </div>
 
                     <div className="flex items-center gap-4 text-sm text-[#52525B]">
-                      <span className="inline-flex items-center gap-1.5 text-[#C9A84C] font-medium">
+                      <span className="inline-flex items-center gap-1.5 text-[#A6852F] font-medium">
                         {getTypeIcon(entry.type)}
                         {entry.type === 'film' ? 'Film' : 'Television'}
                       </span>
@@ -161,7 +161,7 @@ export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemCl
                     </p>
                   </div>
 
-                  <div className="mt-4 flex items-center text-xs font-medium text-[#C9A84C] group-hover:translate-x-1 transition-transform duration-300">
+                  <div className="mt-4 flex items-center text-xs font-medium text-[#A6852F] group-hover:translate-x-1 transition-transform duration-300">
                     <span>View Details</span>
                     <ArrowRight className="w-4 h-4 ml-1.5" />
                   </div>

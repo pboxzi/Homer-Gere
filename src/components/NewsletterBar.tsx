@@ -17,7 +17,7 @@ export const NewsletterBar: React.FC = () => {
     <section id="newsletter" className="py-20 sm:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto text-center space-y-6">
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Stay Updated
           </span>
 
@@ -30,7 +30,7 @@ export const NewsletterBar: React.FC = () => {
           </p>
 
           {submitted ? (
-            <div className="flex items-center justify-center gap-2 text-[#C9A84C] font-medium text-sm py-3">
+            <div className="flex items-center justify-center gap-2 text-[#A6852F] font-medium text-sm py-3">
               <Check className="w-4 h-4" />
               <span>You're subscribed. Welcome to the journey.</span>
             </div>
@@ -42,11 +42,11 @@ export const NewsletterBar: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
-                className="flex-1 bg-white px-5 py-3.5 rounded-2xl text-sm text-[#1C1917] placeholder-[#57534E] border border-[#E8E5DF] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/20 outline-none transition-all duration-300"
+                className="flex-1 bg-white px-5 py-3.5 rounded-2xl text-sm text-[#1C1917] placeholder-[#57534E] border border-[#E8E5DF] focus:border-[#A6852F] focus:ring-2 focus:ring-[#A6852F]/20 outline-none transition-all duration-300"
               />
               <button
                 type="submit"
-                className="inline-flex items-center justify-center gap-2 bg-[#C9A84C] hover:bg-[#B8983A] text-white font-medium text-sm px-6 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#C9A84C]/25 active:scale-95 focus:outline-none cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 bg-[#A6852F] hover:bg-[#B8983A] text-white font-medium text-sm px-6 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#A6852F]/25 active:scale-95 focus:outline-none cursor-pointer"
               >
                 Subscribe
                 <ArrowRight className="w-4 h-4" />

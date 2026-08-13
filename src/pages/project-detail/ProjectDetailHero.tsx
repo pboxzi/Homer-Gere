@@ -54,7 +54,7 @@ export const ProjectDetailHero: React.FC<ProjectDetailHeroProps> = ({ project, o
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
           >
-            <span className="px-3.5 py-1 bg-[#C9A84C]/20 backdrop-blur-sm rounded-full text-[#C9A84C] text-[11px] font-medium tracking-widest uppercase border border-[#C9A84C]/20">
+            <span className="px-3.5 py-1 bg-[#A6852F]/20 backdrop-blur-sm rounded-full text-[#A6852F] text-[11px] font-medium tracking-widest uppercase border border-[#A6852F]/20">
               {project.type}
             </span>
             <span className="px-3.5 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white/80 text-[11px] font-medium tracking-widest uppercase border border-white/10">
@@ -75,7 +75,7 @@ export const ProjectDetailHero: React.FC<ProjectDetailHeroProps> = ({ project, o
           {/* Tagline */}
           {project.tagline && (
             <motion.p
-              className="text-lg sm:text-xl text-[#C9A84C] font-editorial italic mb-6"
+              className="text-lg sm:text-xl text-[#A6852F] font-editorial italic mb-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.5 }}
@@ -93,19 +93,19 @@ export const ProjectDetailHero: React.FC<ProjectDetailHeroProps> = ({ project, o
           >
             {project.releaseDate && (
               <span className="inline-flex items-center gap-1.5">
-                <Calendar className="w-4 h-4 text-[#C9A84C]" />
+                <Calendar className="w-4 h-4 text-[#A6852F]" />
                 {project.releaseDate}
               </span>
             )}
             {project.runtime && (
               <span className="inline-flex items-center gap-1.5">
-                <Clock className="w-4 h-4 text-[#C9A84C]" />
+                <Clock className="w-4 h-4 text-[#A6852F]" />
                 {project.runtime}
               </span>
             )}
             {project.genre && (
               <span className="inline-flex items-center gap-1.5">
-                <Tv className="w-4 h-4 text-[#C9A84C]" />
+                <Tv className="w-4 h-4 text-[#A6852F]" />
                 {project.genre.split('/')[0].trim()}
               </span>
             )}
@@ -133,7 +133,7 @@ export const ProjectDetailHero: React.FC<ProjectDetailHeroProps> = ({ project, o
                 href={project.trailerUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 bg-[#C9A84C] hover:bg-[#B8983A] text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#C9A84C]/25 cursor-pointer"
+                className="inline-flex items-center gap-2.5 bg-[#A6852F] hover:bg-[#B8983A] text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#A6852F]/25 cursor-pointer"
               >
                 <Play className="w-4 h-4" fill="white" />
                 <span>Watch Trailer</span>

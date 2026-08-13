@@ -36,7 +36,7 @@ export const JourneyGlance: React.FC = () => {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="absolute -bottom-5 -right-5 w-28 h-28 rounded-[1rem] bg-[#C9A84C]/8 border border-[#C9A84C]/10 -z-10" />
+              <div className="absolute -bottom-5 -right-5 w-28 h-28 rounded-[1rem] bg-[#A6852F]/8 border border-[#A6852F]/10 -z-10" />
             </div>
           </motion.div>
 
@@ -48,7 +48,7 @@ export const JourneyGlance: React.FC = () => {
             transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="space-y-4">
-              <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+              <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
                 Life At A Glance
               </span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight leading-[1.08]">
@@ -65,7 +65,7 @@ export const JourneyGlance: React.FC = () => {
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.3 + idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C] shrink-0 group-hover:bg-[#C9A84C]/15 transition-colors duration-300">
+                  <div className="w-10 h-10 rounded-xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] shrink-0 group-hover:bg-[#A6852F]/15 transition-colors duration-300">
                     {fact.icon}
                   </div>
                   <div>

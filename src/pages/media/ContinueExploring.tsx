@@ -29,7 +29,7 @@ export const ContinueExploring: React.FC<ContinueExploringProps> = ({ onNavigate
           >
             <button
               onClick={() => onNavigate('journal')}
-              className="inline-flex items-center gap-2 bg-[#C9A84C] hover:bg-[#B8983A] text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 active:scale-95 focus:outline-none cursor-pointer"
+              className="inline-flex items-center gap-2 bg-[#A6852F] hover:bg-[#B8983A] text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 active:scale-95 focus:outline-none cursor-pointer"
             >
               <BookOpen className="w-4 h-4" />
               Journal
@@ -37,7 +37,7 @@ export const ContinueExploring: React.FC<ContinueExploringProps> = ({ onNavigate
             </button>
             <button
               onClick={() => onNavigate('experiences')}
-              className="inline-flex items-center gap-2 bg-transparent border border-[#E8E5DF] hover:border-[#C9A84C] text-[#1C1917] font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 active:scale-95 focus:outline-none cursor-pointer"
+              className="inline-flex items-center gap-2 bg-transparent border border-[#E8E5DF] hover:border-[#A6852F] text-[#1C1917] font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 active:scale-95 focus:outline-none cursor-pointer"
             >
               <Sparkles className="w-4 h-4" />
               Experiences
@@ -45,7 +45,7 @@ export const ContinueExploring: React.FC<ContinueExploringProps> = ({ onNavigate
             </button>
             <button
               onClick={() => onNavigate('chat')}
-              className="inline-flex items-center gap-2 bg-transparent border border-[#E8E5DF] hover:border-[#C9A84C] text-[#1C1917] font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 active:scale-95 focus:outline-none cursor-pointer"
+              className="inline-flex items-center gap-2 bg-transparent border border-[#E8E5DF] hover:border-[#A6852F] text-[#1C1917] font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 active:scale-95 focus:outline-none cursor-pointer"
             >
               <MessageCircle className="w-4 h-4" />
               Chat with Homer

@@ -138,7 +138,7 @@ export default function AdminDashboard() {
           >
             <button
               onClick={() => navigate('/chat')}
-              className="inline-flex items-center gap-2 text-sm font-medium text-[#57534E] hover:text-[#C9A84C] transition-colors duration-300 mb-6 cursor-pointer"
+              className="inline-flex items-center gap-2 text-sm font-medium text-[#57534E] hover:text-[#A6852F] transition-colors duration-300 mb-6 cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4" />
               Back to Chat
@@ -191,7 +191,7 @@ export default function AdminDashboard() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search conversations..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300"
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300"
               />
             </div>
 
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
                   onClick={() => setStatusFilter(s)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-300 cursor-pointer ${
                     statusFilter === s
-                      ? 'bg-[#C9A84C] text-white'
+                      ? 'bg-[#A6852F] text-white'
                       : 'bg-white text-[#57534E] hover:bg-[#F3F1ED] border border-[#E8E5DF]/60'
                   }`}
                 >
@@ -249,7 +249,7 @@ export default function AdminDashboard() {
                     onClick={() => setSelectedConversation(conv)}
                   >
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                      conv.chatType === 'fan' ? 'bg-[#C9A84C]/10 text-[#C9A84C]' : 'bg-[#1C1917]/10 text-[#1C1917]'
+                      conv.chatType === 'fan' ? 'bg-[#A6852F]/10 text-[#A6852F]' : 'bg-[#1C1917]/10 text-[#1C1917]'
                     }`}>
                       {conv.chatType === 'fan' ? <MessageCircle className="w-5 h-5" /> : <Building2 className="w-5 h-5" />}
                     </div>
@@ -330,7 +330,7 @@ export default function AdminDashboard() {
               <select
                 value={selectedConversation.status}
                 onChange={(e) => updateStatus(selectedConversation.id, e.target.value as ConversationStatus)}
-                className="px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] transition-all duration-300 appearance-none cursor-pointer"
+                className="px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] transition-all duration-300 appearance-none cursor-pointer"
               >
                 <option value="open">Open</option>
                 <option value="in_progress">In Progress</option>

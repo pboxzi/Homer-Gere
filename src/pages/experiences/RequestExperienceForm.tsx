@@ -143,7 +143,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                       currentStep > step.id
                         ? 'bg-[#16A34A] text-white'
                         : currentStep === step.id
-                        ? 'bg-[#C9A84C] text-white'
+                        ? 'bg-[#A6852F] text-white'
                         : 'bg-[#E8E5DF] text-[#57534E]'
                     }`}
                   >
@@ -184,12 +184,12 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                       onClick={() => updateField('experienceType', exp.type)}
                       className={`p-4 rounded-2xl border text-left transition-all duration-300 focus:outline-none cursor-pointer ${
                         formData.experienceType === exp.type
-                          ? 'border-[#C9A84C] bg-[#C9A84C]/5 shadow-sm'
-                          : 'border-[#E8E5DF]/60 bg-white hover:border-[#C9A84C]/30'
+                          ? 'border-[#A6852F] bg-[#A6852F]/5 shadow-sm'
+                          : 'border-[#E8E5DF]/60 bg-white hover:border-[#A6852F]/30'
                       }`}
                     >
                       <span className={`text-sm font-medium block ${
-                        formData.experienceType === exp.type ? 'text-[#C9A84C]' : 'text-[#1C1917]'
+                        formData.experienceType === exp.type ? 'text-[#A6852F]' : 'text-[#1C1917]'
                       }`}>
                         {exp.title}
                       </span>
@@ -221,7 +221,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                     type="text"
                     value={formData.fullName}
                     onChange={(e) => updateField('fullName', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300"
+                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -232,7 +232,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                     type="email"
                     value={formData.email}
                     onChange={(e) => updateField('email', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300"
+                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300"
                     placeholder="your@email.com"
                   />
                 </div>
@@ -243,7 +243,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => updateField('phone', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300"
+                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300"
                     placeholder="+1 (555) 000-0000"
                   />
                 </div>
@@ -253,7 +253,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                   <select
                     value={formData.country}
                     onChange={(e) => updateField('country', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300 appearance-none"
+                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300 appearance-none"
                   >
                     <option value="">Select your country</option>
                     {COUNTRIES.map((c) => (
@@ -283,7 +283,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                     type="text"
                     value={formData.organization}
                     onChange={(e) => updateField('organization', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300"
+                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300"
                     placeholder="Company or organization name"
                   />
                 </div>
@@ -294,7 +294,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                     type="date"
                     value={formData.eventDate}
                     onChange={(e) => updateField('eventDate', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300"
+                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300"
                   />
                 </div>
 
@@ -304,7 +304,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                     type="text"
                     value={formData.eventLocation}
                     onChange={(e) => updateField('eventLocation', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300"
+                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300"
                     placeholder="City, State / Country"
                   />
                 </div>
@@ -315,7 +315,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                     type="text"
                     value={formData.budget}
                     onChange={(e) => updateField('budget', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300"
+                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300"
                     placeholder="Estimated budget range"
                   />
                 </div>
@@ -341,7 +341,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                     value={formData.purpose}
                     onChange={(e) => updateField('purpose', e.target.value)}
                     rows={4}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300 resize-none"
+                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300 resize-none"
                     placeholder="Describe the purpose of your request..."
                   />
                 </div>
@@ -352,7 +352,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                     value={formData.additionalDetails}
                     onChange={(e) => updateField('additionalDetails', e.target.value)}
                     rows={3}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300 resize-none"
+                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300 resize-none"
                     placeholder="Any other information you'd like to share..."
                   />
                 </div>
@@ -432,7 +432,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
             <button
               onClick={() => setCurrentStep(currentStep + 1)}
               disabled={!isStepValid(currentStep)}
-              className="inline-flex items-center justify-center gap-2 bg-[#C9A84C] hover:bg-[#B8983A] disabled:bg-[#E8E5DF] disabled:text-[#57534E] text-white font-medium text-sm px-6 py-2.5 rounded-xl transition-all duration-300 focus:outline-none cursor-pointer disabled:cursor-not-allowed"
+              className="inline-flex items-center justify-center gap-2 bg-[#A6852F] hover:bg-[#B8983A] disabled:bg-[#E8E5DF] disabled:text-[#57534E] text-white font-medium text-sm px-6 py-2.5 rounded-xl transition-all duration-300 focus:outline-none cursor-pointer disabled:cursor-not-allowed"
             >
               Continue
               <ArrowRight className="w-4 h-4" />

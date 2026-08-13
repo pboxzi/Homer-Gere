@@ -11,9 +11,9 @@ export const ChatTypeSelector: React.FC<ChatTypeSelectorProps> = ({ onSelect }) 
   return (
     <section className="relative min-h-screen bg-[#FAF9F7] overflow-hidden">
       {/* Soft Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#C9A84C]/5 via-transparent to-[#FAF9F7]" />
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#C9A84C]/3 rounded-full blur-[120px]" />
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#C9A84C]/5 rounded-full blur-[100px]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#A6852F]/5 via-transparent to-[#FAF9F7]" />
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#A6852F]/3 rounded-full blur-[120px]" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#A6852F]/5 rounded-full blur-[100px]" />
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-24">
         {/* Homer Portrait */}
@@ -24,7 +24,7 @@ export const ChatTypeSelector: React.FC<ChatTypeSelectorProps> = ({ onSelect }) 
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="relative">
-            <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-xl shadow-[#C9A84C]/20 mx-auto">
+            <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-xl shadow-[#A6852F]/20 mx-auto">
               <img
                 src={IMAGES.homerGqLifestyleStudio}
                 alt="Homer Gere"
@@ -45,16 +45,16 @@ export const ChatTypeSelector: React.FC<ChatTypeSelectorProps> = ({ onSelect }) 
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="inline-flex items-center gap-2 bg-[#C9A84C]/10 px-4 py-1.5 rounded-full">
-            <Sparkles className="w-3.5 h-3.5 text-[#C9A84C]" />
-            <span className="text-[11px] font-medium tracking-[0.15em] text-[#C9A84C] uppercase">
+          <div className="inline-flex items-center gap-2 bg-[#A6852F]/10 px-4 py-1.5 rounded-full">
+            <Sparkles className="w-3.5 h-3.5 text-[#A6852F]" />
+            <span className="text-[11px] font-medium tracking-[0.15em] text-[#A6852F] uppercase">
               Chat with Homer
             </span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-editorial text-[#1C1917] tracking-tight leading-[1.05]">
             Hey, it's nice to
-            <span className="block text-[#C9A84C]">see you here.</span>
+            <span className="block text-[#A6852F]">see you here.</span>
           </h1>
 
           <p className="text-base sm:text-lg text-[#57534E] max-w-xl mx-auto leading-relaxed">
@@ -73,11 +73,11 @@ export const ChatTypeSelector: React.FC<ChatTypeSelectorProps> = ({ onSelect }) 
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="w-14 h-14 rounded-2xl bg-[#C9A84C]/10 flex items-center justify-center mb-6 group-hover:bg-[#C9A84C] group-hover:text-white text-[#C9A84C] transition-all duration-500">
+            <div className="w-14 h-14 rounded-2xl bg-[#A6852F]/10 flex items-center justify-center mb-6 group-hover:bg-[#A6852F] group-hover:text-white text-[#A6852F] transition-all duration-500">
               <Heart className="w-7 h-7" />
             </div>
 
-            <h2 className="text-2xl font-editorial text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300 mb-3">
+            <h2 className="text-2xl font-editorial text-[#1C1917] group-hover:text-[#A6852F] transition-colors duration-300 mb-3">
               Fan Chat
             </h2>
 
@@ -86,7 +86,7 @@ export const ChatTypeSelector: React.FC<ChatTypeSelectorProps> = ({ onSelect }) 
               to connect — no filters, no pressure. Just a genuine conversation.
             </p>
 
-            <div className="flex items-center gap-2 text-sm font-medium text-[#57534E] group-hover:text-[#C9A84C] transition-colors duration-300">
+            <div className="flex items-center gap-2 text-sm font-medium text-[#57534E] group-hover:text-[#A6852F] transition-colors duration-300">
               <span>Start chatting</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
             </div>

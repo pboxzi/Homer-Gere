@@ -33,7 +33,7 @@ export const ProjectOverview: React.FC<ProjectOverviewProps> = ({ project }) => 
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           >
-            <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+            <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
               Overview
             </span>
             <h2 className="text-3xl sm:text-4xl font-editorial text-[#1C1917] tracking-tight mt-4 mb-8">
@@ -74,7 +74,7 @@ export const ProjectOverview: React.FC<ProjectOverviewProps> = ({ project }) => 
             {project.expandedSynopsis && (
               <motion.button
                 onClick={() => setShowExpanded(!showExpanded)}
-                className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-[#C9A84C] hover:text-[#B8983A] transition-colors duration-300 cursor-pointer group"
+                className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-[#A6852F] hover:text-[#B8983A] transition-colors duration-300 cursor-pointer group"
                 whileHover={{ x: 2 }}
               >
                 {showExpanded ? (
@@ -103,7 +103,7 @@ export const ProjectOverview: React.FC<ProjectOverviewProps> = ({ project }) => 
               <h3 className="text-lg font-editorial text-[#1C1917]">Details</h3>
               {details.map((detail, idx) => (
                 <div key={idx} className="flex items-start gap-3">
-                  <div className="text-[#C9A84C] mt-0.5 shrink-0">{detail.icon}</div>
+                  <div className="text-[#A6852F] mt-0.5 shrink-0">{detail.icon}</div>
                   <div className="min-w-0">
                     <p className="text-[11px] font-medium tracking-wider text-[#71717A] uppercase">{detail.label}</p>
                     <p className="text-sm text-[#1C1917] mt-0.5 leading-relaxed">{detail.value}</p>

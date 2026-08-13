@@ -34,7 +34,7 @@ export const MediaHero: React.FC<MediaHeroProps> = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+            <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
               Official Media Hub
             </span>
           </motion.div>
@@ -67,17 +67,17 @@ export const MediaHero: React.FC<MediaHeroProps> = () => {
           >
             <div className="flex items-center gap-6 text-sm text-[#57534E]">
               <span className="inline-flex items-center gap-2">
-                <Film className="w-4 h-4 text-[#C9A84C]" />
+                <Film className="w-4 h-4 text-[#A6852F]" />
                 12+ Videos
               </span>
               <span className="w-1 h-1 rounded-full bg-[#E8E5DF]" />
               <span className="inline-flex items-center gap-2">
-                <Mic className="w-4 h-4 text-[#C9A84C]" />
+                <Mic className="w-4 h-4 text-[#A6852F]" />
                 6 Podcasts
               </span>
               <span className="w-1 h-1 rounded-full bg-[#E8E5DF]" />
               <span className="inline-flex items-center gap-2">
-                <Newspaper className="w-4 h-4 text-[#C9A84C]" />
+                <Newspaper className="w-4 h-4 text-[#A6852F]" />
                 12 Press Articles
               </span>
             </div>

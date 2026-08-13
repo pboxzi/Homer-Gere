@@ -23,8 +23,8 @@ export const JournalTrending: React.FC<JournalTrendingProps> = ({ articles, onAr
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
         >
-          <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/15 flex items-center justify-center">
-            <TrendingUp className="w-5 h-5 text-[#C9A84C]" />
+          <div className="w-10 h-10 rounded-xl bg-[#A6852F]/15 flex items-center justify-center">
+            <TrendingUp className="w-5 h-5 text-[#A6852F]" />
           </div>
           <div>
             <h2 className="text-2xl sm:text-3xl font-editorial text-white tracking-tight">
@@ -56,10 +56,10 @@ export const JournalTrending: React.FC<JournalTrendingProps> = ({ articles, onAr
 
               {/* Content */}
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] font-medium text-[#C9A84C] uppercase tracking-wider mb-1">
+                <p className="text-[10px] font-medium text-[#A6852F] uppercase tracking-wider mb-1">
                   {article.category}
                 </p>
-                <h4 className="text-sm font-medium text-white leading-snug mb-2 group-hover:text-[#C9A84C] transition-colors duration-300 line-clamp-2">
+                <h4 className="text-sm font-medium text-white leading-snug mb-2 group-hover:text-[#A6852F] transition-colors duration-300 line-clamp-2">
                   {article.title}
                 </h4>
                 <div className="flex items-center gap-3 text-[11px] text-[#71717A]">

@@ -176,7 +176,7 @@ export const ArticleDetailBody: React.FC<ArticleDetailBodyProps> = ({ article })
             >
               <button
                 onClick={scrollToTop}
-                className="inline-flex items-center gap-2 text-sm text-[#71717A] hover:text-[#C9A84C] transition-colors duration-300 cursor-pointer group"
+                className="inline-flex items-center gap-2 text-sm text-[#71717A] hover:text-[#A6852F] transition-colors duration-300 cursor-pointer group"
               >
                 <ArrowUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform duration-300" />
                 <span>Back to top</span>
@@ -194,7 +194,7 @@ export const ArticleDetailBody: React.FC<ArticleDetailBodyProps> = ({ article })
                 transition={{ duration: 0.6, delay: 0.3 }}
               >
                 <h3 className="text-sm font-medium text-[#111827] mb-4 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-[#C9A84C]" />
+                  <Clock className="w-4 h-4 text-[#A6852F]" />
                   In this article
                 </h3>
 
@@ -203,7 +203,7 @@ export const ArticleDetailBody: React.FC<ArticleDetailBodyProps> = ({ article })
                     <button
                       key={heading.id}
                       onClick={() => scrollToHeading(heading.id)}
-                      className="block w-full text-left px-3 py-2 text-sm text-[#52525B] hover:text-[#C9A84C] hover:bg-[#E8E5DF]/60 rounded-lg transition-all duration-200 cursor-pointer leading-snug"
+                      className="block w-full text-left px-3 py-2 text-sm text-[#52525B] hover:text-[#A6852F] hover:bg-[#E8E5DF]/60 rounded-lg transition-all duration-200 cursor-pointer leading-snug"
                     >
                       {heading.text}
                     </button>

@@ -20,7 +20,7 @@ export const MembershipCTA: React.FC<MembershipCTAProps> = ({ onBecomeMember, on
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Join Today
           </span>
 
@@ -36,7 +36,7 @@ export const MembershipCTA: React.FC<MembershipCTAProps> = ({ onBecomeMember, on
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
             <button
               onClick={onBecomeMember}
-              className="inline-flex items-center justify-center gap-2.5 bg-[#C9A84C] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-8 py-4 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#C9A84C]/25 focus:outline-none cursor-pointer"
+              className="inline-flex items-center justify-center gap-2.5 bg-[#A6852F] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-8 py-4 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#A6852F]/25 focus:outline-none cursor-pointer"
             >
               <ArrowRight className="w-4 h-4" />
               Become a Member

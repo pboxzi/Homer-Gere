@@ -12,7 +12,7 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           {/* Left Description */}
           <div className="lg:col-span-5 space-y-5">
-            <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+            <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
               Chat with Homer
             </span>
 
@@ -33,11 +33,11 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
               className="p-7 transition-all duration-500 cursor-pointer group flex flex-col justify-between"
             >
               <div>
-                <div className="w-12 h-12 rounded-2xl bg-[#C9A84C]/10 text-[#C9A84C] flex items-center justify-center mb-5 group-hover:bg-[#C9A84C] group-hover:text-white transition-all duration-500">
+                <div className="w-12 h-12 rounded-2xl bg-[#A6852F]/10 text-[#A6852F] flex items-center justify-center mb-5 group-hover:bg-[#A6852F] group-hover:text-white transition-all duration-500">
                   <User className="w-6 h-6" />
                 </div>
 
-                <h3 className="text-lg font-editorial text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300">
+                <h3 className="text-lg font-editorial text-[#1C1917] group-hover:text-[#A6852F] transition-colors duration-300">
                   Fan Chat
                 </h3>
 
@@ -46,7 +46,7 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
                 </p>
               </div>
 
-              <div className="mt-6 flex items-center text-xs font-medium text-[#C9A84C] group-hover:translate-x-1 transition-transform duration-300">
+              <div className="mt-6 flex items-center text-xs font-medium text-[#A6852F] group-hover:translate-x-1 transition-transform duration-300">
                 <span>Start Fan Chat</span>
                 <ArrowRight className="w-4 h-4 ml-1.5" />
               </div>
@@ -58,11 +58,11 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
               className="p-7 transition-all duration-500 cursor-pointer group flex flex-col justify-between"
             >
               <div>
-                <div className="w-12 h-12 rounded-2xl bg-[#C9A84C]/10 text-[#C9A84C] flex items-center justify-center mb-5 group-hover:bg-[#C9A84C] group-hover:text-white transition-all duration-500">
+                <div className="w-12 h-12 rounded-2xl bg-[#A6852F]/10 text-[#A6852F] flex items-center justify-center mb-5 group-hover:bg-[#A6852F] group-hover:text-white transition-all duration-500">
                   <Briefcase className="w-6 h-6" />
                 </div>
 
-                <h3 className="text-lg font-editorial text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300">
+                <h3 className="text-lg font-editorial text-[#1C1917] group-hover:text-[#A6852F] transition-colors duration-300">
                   Business Chat
                 </h3>
 
@@ -71,7 +71,7 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
                 </p>
               </div>
 
-              <div className="mt-6 flex items-center text-xs font-medium text-[#C9A84C] group-hover:translate-x-1 transition-transform duration-300">
+              <div className="mt-6 flex items-center text-xs font-medium text-[#A6852F] group-hover:translate-x-1 transition-transform duration-300">
                 <span>Start Business Chat</span>
                 <ArrowRight className="w-4 h-4 ml-1.5" />
               </div>

@@ -73,7 +73,7 @@ export const JourneyPress: React.FC = () => {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Recognition & Press
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">
@@ -89,7 +89,7 @@ export const JourneyPress: React.FC = () => {
               href={item.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative rounded-[1.25rem] bg-[#FAF9F7] border border-[#E8E5DF]/60 p-7 sm:p-8 transition-all duration-500 hover:shadow-xl hover:shadow-[#C9A84C]/5 hover:-translate-y-1 hover:border-[#C9A84C]/20 block"
+              className="group relative rounded-[1.25rem] bg-[#FAF9F7] border border-[#E8E5DF]/60 p-7 sm:p-8 transition-all duration-500 hover:shadow-xl hover:shadow-[#A6852F]/5 hover:-translate-y-1 hover:border-[#A6852F]/20 block"
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.1 + idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
@@ -97,8 +97,8 @@ export const JourneyPress: React.FC = () => {
               {/* Publication badge */}
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
-                  <Newspaper className="w-4 h-4 text-[#C9A84C]" />
-                  <span className="text-xs font-medium text-[#C9A84C] uppercase tracking-wider">
+                  <Newspaper className="w-4 h-4 text-[#A6852F]" />
+                  <span className="text-xs font-medium text-[#A6852F] uppercase tracking-wider">
                     {item.publication}
                   </span>
                 </div>
@@ -106,7 +106,7 @@ export const JourneyPress: React.FC = () => {
               </div>
 
               {/* Headline */}
-              <h3 className="text-base sm:text-lg font-editorial text-[#111827] leading-snug mb-3 group-hover:text-[#C9A84C] transition-colors duration-300">
+              <h3 className="text-base sm:text-lg font-editorial text-[#111827] leading-snug mb-3 group-hover:text-[#A6852F] transition-colors duration-300">
                 {item.headline}
               </h3>
 
@@ -116,7 +116,7 @@ export const JourneyPress: React.FC = () => {
               </p>
 
               {/* Source link */}
-              <div className="flex items-center gap-1.5 text-xs font-medium text-[#71717A] group-hover:text-[#C9A84C] transition-colors duration-300">
+              <div className="flex items-center gap-1.5 text-xs font-medium text-[#71717A] group-hover:text-[#A6852F] transition-colors duration-300">
                 <ExternalLink className="w-3 h-3" />
                 <span>{item.source}</span>
               </div>
@@ -132,16 +132,16 @@ export const JourneyPress: React.FC = () => {
           transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="max-w-3xl">
-            <Quote className="w-12 h-12 text-[#C9A84C]/30 mb-6" />
+            <Quote className="w-12 h-12 text-[#A6852F]/30 mb-6" />
             <blockquote className="text-xl sm:text-2xl lg:text-3xl font-editorial text-white/90 leading-[1.4] italic mb-8">
               "It's not necessarily related to like the craft, but more like how do you carry yourself,
               how do you make this work in a positive way. Having that kind of sounding board
               constantly is amazing."
             </blockquote>
             <div className="flex items-center gap-4">
-              <div className="w-12 h-[1.5px] bg-[#C9A84C]" />
+              <div className="w-12 h-[1.5px] bg-[#A6852F]" />
               <div>
-                <span className="text-sm font-editorial text-[#C9A84C] tracking-[0.1em] uppercase">
+                <span className="text-sm font-editorial text-[#A6852F] tracking-[0.1em] uppercase">
                   Homer Gere
                 </span>
                 <span className="text-xs text-white/40 ml-3">on his father's guidance, Euphoria premiere 2026</span>

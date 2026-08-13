@@ -53,7 +53,7 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Featured Experiences
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight">
@@ -70,7 +70,7 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
           {EXPERIENCES.map((exp, idx) => (
             <motion.div
               key={exp.id}
-              className="group relative rounded-[1.5rem] overflow-hidden bg-white border border-[#E8E5DF]/60 hover:border-[#C9A84C]/30 hover:shadow-xl hover:shadow-[#C9A84C]/5 transition-all duration-500 hover:-translate-y-1 cursor-pointer"
+              className="group relative rounded-[1.5rem] overflow-hidden bg-white border border-[#E8E5DF]/60 hover:border-[#A6852F]/30 hover:shadow-xl hover:shadow-[#A6852F]/5 transition-all duration-500 hover:-translate-y-1 cursor-pointer"
               initial={{ opacity: 0, y: 40 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.1 + idx * 0.07, ease: [0.22, 1, 0.36, 1] }}
@@ -96,11 +96,11 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
 
               {/* Content */}
               <div className="p-6">
-                <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center mb-4 group-hover:bg-[#C9A84C] group-hover:text-white text-[#C9A84C] transition-all duration-500">
+                <div className="w-10 h-10 rounded-xl bg-[#A6852F]/10 flex items-center justify-center mb-4 group-hover:bg-[#A6852F] group-hover:text-white text-[#A6852F] transition-all duration-500">
                   {getExperienceIcon(exp.iconName)}
                 </div>
 
-                <h3 className="text-base font-editorial text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300 mb-2">
+                <h3 className="text-base font-editorial text-[#1C1917] group-hover:text-[#A6852F] transition-colors duration-300 mb-2">
                   {exp.title}
                 </h3>
 
@@ -109,10 +109,10 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
                 </p>
 
                 <div className="flex items-center justify-between pt-4 border-t border-[#E8E5DF]/60">
-                  <span className="text-xs font-medium text-[#C9A84C]">
+                  <span className="text-xs font-medium text-[#A6852F]">
                     {exp.price}
                   </span>
-                  <span className="inline-flex items-center gap-1 text-xs font-medium text-[#57534E] group-hover:text-[#C9A84C] transition-colors duration-300">
+                  <span className="inline-flex items-center gap-1 text-xs font-medium text-[#57534E] group-hover:text-[#A6852F] transition-colors duration-300">
                     Learn More
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform duration-300" />
                   </span>

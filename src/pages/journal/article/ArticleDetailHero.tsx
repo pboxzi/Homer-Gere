@@ -83,7 +83,7 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({ article, o
         >
           {/* Category + Date */}
           <div className="flex flex-wrap items-center gap-3 mb-5">
-            <span className="px-3 py-1.5 bg-[#C9A84C] text-[#111827] text-[10px] font-semibold tracking-wider uppercase rounded-lg">
+            <span className="px-3 py-1.5 bg-[#A6852F] text-[#111827] text-[10px] font-semibold tracking-wider uppercase rounded-lg">
               {article.category}
             </span>
             <span className="text-white/50 text-sm">{article.date}</span>
@@ -102,8 +102,8 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({ article, o
           {/* Meta */}
           <div className="flex flex-wrap items-center gap-5 text-sm text-white/40">
             <span className="inline-flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-[#C9A84C]/20 flex items-center justify-center">
-                <User className="w-3.5 h-3.5 text-[#C9A84C]" />
+              <div className="w-7 h-7 rounded-full bg-[#A6852F]/20 flex items-center justify-center">
+                <User className="w-3.5 h-3.5 text-[#A6852F]" />
               </div>
               <span className="text-white/60">{article.author}</span>
             </span>

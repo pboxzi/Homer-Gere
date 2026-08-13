@@ -28,7 +28,7 @@ export const JourneyQuote: React.FC = () => {
                 />
               </div>
               {/* Decorative accent */}
-              <div className="absolute -bottom-6 -right-6 w-32 h-32 rounded-[1.25rem] bg-[#C9A84C]/8 border border-[#C9A84C]/10 -z-10" />
+              <div className="absolute -bottom-6 -right-6 w-32 h-32 rounded-[1.25rem] bg-[#A6852F]/8 border border-[#A6852F]/10 -z-10" />
             </div>
           </motion.div>
 
@@ -39,15 +39,15 @@ export const JourneyQuote: React.FC = () => {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
           >
-            <Quote className="w-14 h-14 text-[#C9A84C]/20" />
+            <Quote className="w-14 h-14 text-[#A6852F]/20" />
 
             <blockquote className="text-2xl sm:text-3xl lg:text-[2.5rem] font-editorial font-medium text-[#1C1917]/40 leading-[1.3] italic">
               "An official quote from Homer will be added here."
             </blockquote>
 
             <div className="flex items-center gap-4 pt-4">
-              <div className="w-16 h-[1.5px] bg-[#C9A84C]" />
-              <span className="font-editorial text-lg sm:text-xl text-[#C9A84C] font-medium tracking-[0.12em] uppercase">
+              <div className="w-16 h-[1.5px] bg-[#A6852F]" />
+              <span className="font-editorial text-lg sm:text-xl text-[#A6852F] font-medium tracking-[0.12em] uppercase">
                 Homer Gere
               </span>
             </div>

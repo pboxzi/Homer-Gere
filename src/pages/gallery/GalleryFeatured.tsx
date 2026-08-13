@@ -20,7 +20,7 @@ export const GalleryFeatured: React.FC<GalleryFeaturedProps> = ({ onViewCollecti
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Featured Collection
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">
@@ -51,10 +51,10 @@ export const GalleryFeatured: React.FC<GalleryFeaturedProps> = ({ onViewCollecti
             <div className="relative flex flex-col justify-center p-8 sm:p-12 lg:p-16">
               <div className="space-y-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/15 flex items-center justify-center">
-                    <Camera className="w-5 h-5 text-[#C9A84C]" />
+                  <div className="w-10 h-10 rounded-xl bg-[#A6852F]/15 flex items-center justify-center">
+                    <Camera className="w-5 h-5 text-[#A6852F]" />
                   </div>
-                  <span className="text-xs font-medium text-[#C9A84C] uppercase tracking-wider">
+                  <span className="text-xs font-medium text-[#A6852F] uppercase tracking-wider">
                     {FEATURED_COLLECTION.date}
                   </span>
                 </div>
@@ -73,7 +73,7 @@ export const GalleryFeatured: React.FC<GalleryFeaturedProps> = ({ onViewCollecti
                   <span>Official Collection</span>
                 </div>
 
-                <div className="flex items-center text-sm font-medium text-[#C9A84C] group-hover:translate-x-1 transition-transform duration-300 pt-2">
+                <div className="flex items-center text-sm font-medium text-[#A6852F] group-hover:translate-x-1 transition-transform duration-300 pt-2">
                   <span>View Collection</span>
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </div>

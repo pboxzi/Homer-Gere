@@ -36,7 +36,7 @@ export const JourneyNext: React.FC<JourneyNextProps> = ({ onExploreProjects, onO
           {/* Content */}
           <div className="relative z-10 p-8 sm:p-12 lg:p-16 max-w-2xl">
             <motion.span
-              className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase mb-5 block"
+              className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase mb-5 block"
               initial={{ opacity: 0, y: 15 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
@@ -71,7 +71,7 @@ export const JourneyNext: React.FC<JourneyNextProps> = ({ onExploreProjects, onO
             >
               <button
                 onClick={onExploreProjects}
-                className="inline-flex items-center justify-center gap-2.5 bg-[#C9A84C] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#C9A84C]/25 focus:outline-none cursor-pointer"
+                className="inline-flex items-center justify-center gap-2.5 bg-[#A6852F] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#A6852F]/25 focus:outline-none cursor-pointer"
               >
                 <ArrowRight className="w-4 h-4" />
                 <span>Explore Projects</span>
@@ -89,7 +89,7 @@ export const JourneyNext: React.FC<JourneyNextProps> = ({ onExploreProjects, onO
 
           {/* Decorative accent */}
           <div className="absolute bottom-8 right-8 hidden sm:flex items-center space-x-2 z-10">
-            <span className="w-8 h-1.5 bg-[#C9A84C] rounded-full" />
+            <span className="w-8 h-1.5 bg-[#A6852F] rounded-full" />
             <span className="w-2 h-1.5 bg-white/20 rounded-full" />
             <span className="w-2 h-1.5 bg-white/20 rounded-full" />
           </div>

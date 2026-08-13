@@ -21,7 +21,7 @@ export const ProjectUpcoming: React.FC = () => {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Upcoming
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">
@@ -56,7 +56,7 @@ export const ProjectUpcoming: React.FC = () => {
                 <div className="relative z-10 p-8 sm:p-10 h-full flex flex-col justify-between">
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C9A84C]/15 border border-[#C9A84C]/25 text-[#C9A84C] text-[10px] font-medium tracking-wider uppercase">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A6852F]/15 border border-[#A6852F]/25 text-[#A6852F] text-[10px] font-medium tracking-wider uppercase">
                         <Calendar className="w-3 h-3" />
                         {item.status === 'Announced' ? 'Announced' : item.status === 'Post-Production' ? 'Post-Production' : 'In Production'}
                       </span>
@@ -73,7 +73,7 @@ export const ProjectUpcoming: React.FC = () => {
                     </h3>
 
                     {item.role && item.role !== 'TBA' && (
-                      <p className="text-sm text-[#C9A84C] font-medium">
+                      <p className="text-sm text-[#A6852F] font-medium">
                         {item.role}
                       </p>
                     )}
@@ -83,7 +83,7 @@ export const ProjectUpcoming: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="flex items-center text-xs font-medium text-[#C9A84C] group-hover:translate-x-1 transition-transform duration-300 pt-4">
+                  <div className="flex items-center text-xs font-medium text-[#A6852F] group-hover:translate-x-1 transition-transform duration-300 pt-4">
                     <span>View Details</span>
                     <ArrowRight className="w-4 h-4 ml-1.5" />
                   </div>

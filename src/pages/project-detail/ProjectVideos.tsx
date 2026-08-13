@@ -22,7 +22,7 @@ export const ProjectVideos: React.FC<ProjectVideosProps> = ({ project }) => {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Videos
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">
@@ -52,7 +52,7 @@ export const ProjectVideos: React.FC<ProjectVideosProps> = ({ project }) => {
 
               {/* Play Button */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-20 h-20 rounded-full bg-[#C9A84C] flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-[#C9A84C]/30">
+                <div className="w-20 h-20 rounded-full bg-[#A6852F] flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-[#A6852F]/30">
                   <Play className="w-8 h-8 text-white ml-1" fill="white" />
                 </div>
               </div>
@@ -60,7 +60,7 @@ export const ProjectVideos: React.FC<ProjectVideosProps> = ({ project }) => {
               {/* Info */}
               <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#111827] via-[#111827]/60 to-transparent">
                 <div className="flex items-center gap-3 mb-2">
-                  <span className="text-[10px] font-medium text-[#C9A84C] uppercase tracking-wider bg-[#C9A84C]/15 px-2.5 py-0.5 rounded-full">
+                  <span className="text-[10px] font-medium text-[#A6852F] uppercase tracking-wider bg-[#A6852F]/15 px-2.5 py-0.5 rounded-full">
                     {video.type.replace('-', ' ')}
                   </span>
                   {video.duration && (
@@ -70,7 +70,7 @@ export const ProjectVideos: React.FC<ProjectVideosProps> = ({ project }) => {
                     </span>
                   )}
                 </div>
-                <h3 className="text-lg font-editorial text-white group-hover:text-[#C9A84C] transition-colors duration-300">
+                <h3 className="text-lg font-editorial text-white group-hover:text-[#A6852F] transition-colors duration-300">
                   {video.title}
                 </h3>
                 {video.description && (

@@ -21,7 +21,7 @@ export const MembershipPlans: React.FC<MembershipPlansProps> = ({ onSelectTier }
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Membership Plans
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight">
@@ -42,7 +42,7 @@ export const MembershipPlans: React.FC<MembershipPlansProps> = ({ onSelectTier }
                 key={tier.id}
                 className={`relative rounded-[1.5rem] overflow-hidden transition-all duration-500 flex flex-col ${
                   isPopular
-                    ? 'bg-[#C9A84C]/8 ring-1 ring-[#C9A84C]/30 shadow-xl shadow-[#C9A84C]/5'
+                    ? 'bg-[#A6852F]/8 ring-1 ring-[#A6852F]/30 shadow-xl shadow-[#A6852F]/5'
                     : 'bg-white border border-[#E8E5DF]/60'
                 }`}
                 initial={{ opacity: 0, y: 40 }}
@@ -51,7 +51,7 @@ export const MembershipPlans: React.FC<MembershipPlansProps> = ({ onSelectTier }
               >
                 {/* Badge */}
                 {isPopular && tier.badge && (
-                  <div className="bg-[#C9A84C] text-white text-[10px] font-medium tracking-widest uppercase text-center py-2">
+                  <div className="bg-[#A6852F] text-white text-[10px] font-medium tracking-widest uppercase text-center py-2">
                     {tier.badge}
                   </div>
                 )}
@@ -61,12 +61,12 @@ export const MembershipPlans: React.FC<MembershipPlansProps> = ({ onSelectTier }
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       {tier.id === 'platinum' ? (
-                        <Crown className="w-5 h-5 text-[#C9A84C]" />
+                        <Crown className="w-5 h-5 text-[#A6852F]" />
                       ) : (
-                        <Star className={`w-5 h-5 ${isPopular ? 'text-[#C9A84C] fill-[#C9A84C]' : 'text-[#D1D5DB]'}`} />
+                        <Star className={`w-5 h-5 ${isPopular ? 'text-[#A6852F] fill-[#A6852F]' : 'text-[#D1D5DB]'}`} />
                       )}
                       <span className={`text-[11px] font-medium tracking-[0.15em] uppercase ${
-                        isPopular ? 'text-[#C9A84C]' : 'text-[#57534E]'
+                        isPopular ? 'text-[#A6852F]' : 'text-[#57534E]'
                       }`}>
                         {tier.name}
                       </span>
@@ -111,7 +111,7 @@ export const MembershipPlans: React.FC<MembershipPlansProps> = ({ onSelectTier }
                     onClick={() => onSelectTier(tier.id)}
                     className={`w-full py-3.5 px-6 rounded-2xl text-xs font-medium transition-all duration-300 active:scale-[0.98] focus:outline-none cursor-pointer ${
                       isPopular
-                        ? 'bg-[#C9A84C] hover:bg-[#B8983A] text-white'
+                        ? 'bg-[#A6852F] hover:bg-[#B8983A] text-white'
                         : 'bg-[#1C1917] hover:bg-[#292524] text-white'
                     }`}
                   >

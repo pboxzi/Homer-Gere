@@ -39,8 +39,8 @@ export const JournalNewsletter: React.FC = () => {
             {/* Content */}
             <div className="p-8 sm:p-12 lg:p-16 flex flex-col justify-center">
               <div className="space-y-6">
-                <div className="w-12 h-12 rounded-2xl bg-[#C9A84C]/15 flex items-center justify-center">
-                  <Mail className="w-6 h-6 text-[#C9A84C]" />
+                <div className="w-12 h-12 rounded-2xl bg-[#A6852F]/15 flex items-center justify-center">
+                  <Mail className="w-6 h-6 text-[#A6852F]" />
                 </div>
 
                 <div className="space-y-3">
@@ -82,7 +82,7 @@ export const JournalNewsletter: React.FC = () => {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Your name"
-                        className="w-full px-4 py-3 bg-white border border-[#E8E5DF] rounded-xl text-sm text-[#111827] placeholder:text-[#A8A29E] focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/30 focus:border-[#C9A84C] transition-all duration-300"
+                        className="w-full px-4 py-3 bg-white border border-[#E8E5DF] rounded-xl text-sm text-[#111827] placeholder:text-[#A8A29E] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F] transition-all duration-300"
                       />
                     </div>
 
@@ -96,7 +96,7 @@ export const JournalNewsletter: React.FC = () => {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="your@email.com"
-                        className="w-full px-4 py-3 bg-white border border-[#E8E5DF] rounded-xl text-sm text-[#111827] placeholder:text-[#A8A29E] focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/30 focus:border-[#C9A84C] transition-all duration-300"
+                        className="w-full px-4 py-3 bg-white border border-[#E8E5DF] rounded-xl text-sm text-[#111827] placeholder:text-[#A8A29E] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F] transition-all duration-300"
                       />
                     </div>
 
@@ -108,7 +108,7 @@ export const JournalNewsletter: React.FC = () => {
                           onChange={(e) => setConsent(e.target.checked)}
                           className="sr-only peer"
                         />
-                        <div className="w-5 h-5 rounded-md border-2 border-[#D6D3D1] peer-checked:border-[#C9A84C] peer-checked:bg-[#C9A84C] transition-all duration-300 flex items-center justify-center">
+                        <div className="w-5 h-5 rounded-md border-2 border-[#D6D3D1] peer-checked:border-[#A6852F] peer-checked:bg-[#A6852F] transition-all duration-300 flex items-center justify-center">
                           {consent && <Check className="w-3 h-3 text-white" />}
                         </div>
                       </div>

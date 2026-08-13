@@ -35,7 +35,7 @@ export const ProjectFeatured: React.FC<ProjectFeaturedProps> = ({ onViewProject 
           {/* Content */}
           <div className="relative z-10 p-8 sm:p-12 lg:p-16 h-full flex flex-col justify-between max-w-2xl">
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C9A84C]/15 border border-[#C9A84C]/25 text-[#C9A84C] text-[11px] font-medium tracking-widest uppercase">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#A6852F]/15 border border-[#A6852F]/25 text-[#A6852F] text-[11px] font-medium tracking-widest uppercase">
                 <Film className="w-3.5 h-3.5" />
                 Featured Project
               </div>
@@ -60,7 +60,7 @@ export const ProjectFeatured: React.FC<ProjectFeaturedProps> = ({ onViewProject 
                   Robert Mallory (Lead)
                 </span>
                 <span className="text-sm text-gray-400">
-                  Creator: <strong className="text-[#C9A84C] font-medium">Ryan Murphy</strong>
+                  Creator: <strong className="text-[#A6852F] font-medium">Ryan Murphy</strong>
                 </span>
               </div>
             </div>
@@ -68,7 +68,7 @@ export const ProjectFeatured: React.FC<ProjectFeaturedProps> = ({ onViewProject 
             <div className="pt-4">
               <button
                 onClick={() => onViewProject('the-shards')}
-                className="inline-flex items-center gap-2.5 bg-[#C9A84C] hover:bg-[#B8983A] text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 transform active:scale-95 hover:shadow-lg hover:shadow-[#C9A84C]/25 group focus:outline-none cursor-pointer"
+                className="inline-flex items-center gap-2.5 bg-[#A6852F] hover:bg-[#B8983A] text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 transform active:scale-95 hover:shadow-lg hover:shadow-[#A6852F]/25 group focus:outline-none cursor-pointer"
               >
                 View Project
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />

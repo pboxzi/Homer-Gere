@@ -11,7 +11,7 @@ interface ArticleCardProps {
 const ArticleCard: React.FC<ArticleCardProps> = ({ article, onArticleClick }) => {
   return (
     <motion.article
-      className="group rounded-[1.5rem] overflow-hidden bg-[#FAF9F7] hover:shadow-2xl hover:shadow-[#C9A84C]/8 transition-all duration-500 hover:-translate-y-1 cursor-pointer"
+      className="group rounded-[1.5rem] overflow-hidden bg-[#FAF9F7] hover:shadow-2xl hover:shadow-[#A6852F]/8 transition-all duration-500 hover:-translate-y-1 cursor-pointer"
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
@@ -35,7 +35,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onArticleClick }) =>
 
       {/* Content */}
       <div className="p-6 sm:p-7">
-        <h3 className="text-lg sm:text-xl font-editorial text-[#111827] group-hover:text-[#C9A84C] transition-colors duration-300 mb-2 leading-snug">
+        <h3 className="text-lg sm:text-xl font-editorial text-[#111827] group-hover:text-[#A6852F] transition-colors duration-300 mb-2 leading-snug">
           {article.title}
         </h3>
 
@@ -52,7 +52,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onArticleClick }) =>
           </span>
         </div>
 
-        <div className="flex items-center text-xs font-medium text-[#C9A84C] group-hover:translate-x-1 transition-transform duration-300">
+        <div className="flex items-center text-xs font-medium text-[#A6852F] group-hover:translate-x-1 transition-transform duration-300">
           <span>Continue Reading</span>
           <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
         </div>

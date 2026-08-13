@@ -19,8 +19,8 @@ export const JourneyIntro: React.FC = () => {
                 />
               </div>
               {/* Decorative accents */}
-              <div className="absolute -bottom-4 -right-4 w-24 h-24 rounded-[1rem] bg-[#C9A84C]/10 border border-[#C9A84C]/15 -z-10" />
-              <div className="absolute -top-4 -left-4 w-16 h-16 rounded-full bg-[#C9A84C]/5 -z-10" />
+              <div className="absolute -bottom-4 -right-4 w-24 h-24 rounded-[1rem] bg-[#A6852F]/10 border border-[#A6852F]/15 -z-10" />
+              <div className="absolute -top-4 -left-4 w-16 h-16 rounded-full bg-[#A6852F]/5 -z-10" />
             </div>
           </Reveal>
 
@@ -28,7 +28,7 @@ export const JourneyIntro: React.FC = () => {
           <Reveal direction="right" delay={0.15}>
             <div className="space-y-8">
               <div className="space-y-4">
-                <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+                <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
                   Biography
                 </span>
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight leading-[1.08]">

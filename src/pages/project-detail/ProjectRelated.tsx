@@ -27,7 +27,7 @@ export const ProjectRelated: React.FC<ProjectRelatedProps> = ({ project, onNavig
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Related Projects
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">
@@ -59,16 +59,16 @@ export const ProjectRelated: React.FC<ProjectRelatedProps> = ({ project, onNavig
               {/* Content */}
               <div className="absolute bottom-0 left-0 right-0 p-8">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="px-2.5 py-0.5 bg-[#C9A84C]/20 rounded-full text-[#C9A84C] text-[10px] font-medium uppercase tracking-wider">
+                  <span className="px-2.5 py-0.5 bg-[#A6852F]/20 rounded-full text-[#A6852F] text-[10px] font-medium uppercase tracking-wider">
                     {related.type}
                   </span>
                   <span className="text-white/50 text-xs">{related.year}</span>
                 </div>
-                <h3 className="text-2xl font-editorial text-white group-hover:text-[#C9A84C] transition-colors duration-300 mb-2">
+                <h3 className="text-2xl font-editorial text-white group-hover:text-[#A6852F] transition-colors duration-300 mb-2">
                   {related.title}
                 </h3>
                 <p className="text-sm text-white/60 line-clamp-2 mb-4">{related.homerRole.character}</p>
-                <div className="flex items-center text-xs font-medium text-[#C9A84C] group-hover:translate-x-1 transition-transform duration-300">
+                <div className="flex items-center text-xs font-medium text-[#A6852F] group-hover:translate-x-1 transition-transform duration-300">
                   <span>View Details</span>
                   <ArrowRight className="w-4 h-4 ml-1.5" />
                 </div>

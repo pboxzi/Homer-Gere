@@ -127,8 +127,8 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
   return (
     <section className="relative min-h-screen bg-[#FAF9F7] overflow-hidden">
       {/* Soft Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#C9A84C]/3 via-transparent to-[#FAF9F7]" />
-      <div className="absolute top-20 left-10 w-[300px] h-[300px] bg-[#C9A84C]/5 rounded-full blur-[100px]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#A6852F]/3 via-transparent to-[#FAF9F7]" />
+      <div className="absolute top-20 left-10 w-[300px] h-[300px] bg-[#A6852F]/5 rounded-full blur-[100px]" />
 
       <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16">
         <motion.div
@@ -138,7 +138,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
         >
           <button
             onClick={onBack}
-            className="inline-flex items-center gap-2 text-sm font-medium text-[#57534E] hover:text-[#C9A84C] transition-colors duration-300 mb-8 cursor-pointer"
+            className="inline-flex items-center gap-2 text-sm font-medium text-[#57534E] hover:text-[#A6852F] transition-colors duration-300 mb-8 cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
             Back
@@ -211,7 +211,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
                 )}
 
                 {msg.sender === 'user' && (
-                  <div className="max-w-[75%] rounded-2xl rounded-br-sm px-4 py-3 text-sm leading-relaxed bg-[#C9A84C] text-white">
+                  <div className="max-w-[75%] rounded-2xl rounded-br-sm px-4 py-3 text-sm leading-relaxed bg-[#A6852F] text-white">
                     {msg.media && (
                       <div className="mb-2">
                         {msg.media.type === 'image' ? (
@@ -232,9 +232,9 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
             {loading && (
               <motion.div className="flex items-center gap-2 text-xs text-[#57534E] bg-[#F3F1ED] rounded-2xl px-4 py-3 w-fit" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                 <div className="flex gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#A6852F] animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#A6852F] animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#A6852F] animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
                 <span>Homer is typing...</span>
               </motion.div>
@@ -266,26 +266,26 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
 
           {/* Quick Suggestions */}
           <div className="flex items-center gap-2 overflow-x-auto mb-4 px-1">
-            <button onClick={() => setInput("I just wanted to say you're incredible in The Shards.")} className="whitespace-nowrap px-4 py-1.5 bg-[#C9A84C]/10 text-[#C9A84C] rounded-full text-xs hover:bg-[#C9A84C]/20 transition-colors cursor-pointer">
+            <button onClick={() => setInput("I just wanted to say you're incredible in The Shards.")} className="whitespace-nowrap px-4 py-1.5 bg-[#A6852F]/10 text-[#A6852F] rounded-full text-xs hover:bg-[#A6852F]/20 transition-colors cursor-pointer">
               You're incredible
             </button>
-            <button onClick={() => setInput("What's been the highlight of your career so far?")} className="whitespace-nowrap px-4 py-1.5 bg-[#C9A84C]/10 text-[#C9A84C] rounded-full text-xs hover:bg-[#C9A84C]/20 transition-colors cursor-pointer">
+            <button onClick={() => setInput("What's been the highlight of your career so far?")} className="whitespace-nowrap px-4 py-1.5 bg-[#A6852F]/10 text-[#A6852F] rounded-full text-xs hover:bg-[#A6852F]/20 transition-colors cursor-pointer">
               Career highlight?
             </button>
-            <button onClick={() => setInput("Would love to grab a coffee sometime.")} className="whitespace-nowrap px-4 py-1.5 bg-[#C9A84C]/10 text-[#C9A84C] rounded-full text-xs hover:bg-[#C9A84C]/20 transition-colors cursor-pointer">
+            <button onClick={() => setInput("Would love to grab a coffee sometime.")} className="whitespace-nowrap px-4 py-1.5 bg-[#A6852F]/10 text-[#A6852F] rounded-full text-xs hover:bg-[#A6852F]/20 transition-colors cursor-pointer">
               Coffee sometime?
             </button>
           </div>
 
           {/* Input */}
           <form onSubmit={handleSend} className="flex items-center gap-2">
-            <button type="button" onClick={() => fileInputRef.current?.click()} className="w-10 h-10 rounded-full bg-[#F3F1ED] hover:bg-[#E8E5DF] text-[#57534E] hover:text-[#C9A84C] flex items-center justify-center shrink-0 transition-all cursor-pointer">
+            <button type="button" onClick={() => fileInputRef.current?.click()} className="w-10 h-10 rounded-full bg-[#F3F1ED] hover:bg-[#E8E5DF] text-[#57534E] hover:text-[#A6852F] flex items-center justify-center shrink-0 transition-all cursor-pointer">
               <Image className="w-4 h-4" />
             </button>
             <input ref={fileInputRef} type="file" accept="image/*,video/*" onChange={handleFileSelect} className="hidden" />
 
-            <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Say something nice..." className="flex-1 px-4 py-2.5 bg-[#F3F1ED] rounded-full text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/30 focus:bg-white transition-all" />
-            <button type="submit" disabled={(!input.trim() && !mediaPreview) || loading} className="w-10 h-10 rounded-full bg-[#C9A84C] hover:bg-[#B8983A] disabled:opacity-40 text-white flex items-center justify-center shrink-0 transition-all cursor-pointer">
+            <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Say something nice..." className="flex-1 px-4 py-2.5 bg-[#F3F1ED] rounded-full text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:bg-white transition-all" />
+            <button type="submit" disabled={(!input.trim() && !mediaPreview) || loading} className="w-10 h-10 rounded-full bg-[#A6852F] hover:bg-[#B8983A] disabled:opacity-40 text-white flex items-center justify-center shrink-0 transition-all cursor-pointer">
               <Send className="w-4 h-4" />
             </button>
           </form>

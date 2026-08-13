@@ -21,7 +21,7 @@ export const MembershipComparison: React.FC = () => {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Compare Plans
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight">
@@ -42,9 +42,9 @@ export const MembershipComparison: React.FC = () => {
               <span className="text-xs font-medium text-[#57534E] uppercase tracking-[0.05em]">Benefits</span>
             </div>
             {MEMBERSHIP_TIERS.map((tier) => (
-              <div key={tier.id} className={`p-5 sm:p-6 text-center ${tier.isPopular ? 'bg-[#C9A84C]/5' : ''}`}>
+              <div key={tier.id} className={`p-5 sm:p-6 text-center ${tier.isPopular ? 'bg-[#A6852F]/5' : ''}`}>
                 <span className={`text-[11px] font-medium tracking-[0.1em] uppercase ${
-                  tier.isPopular ? 'text-[#C9A84C]' : 'text-[#57534E]'
+                  tier.isPopular ? 'text-[#A6852F]' : 'text-[#57534E]'
                 }`}>
                   {tier.name}
                 </span>
@@ -72,7 +72,7 @@ export const MembershipComparison: React.FC = () => {
                 const isIncluded = benefit?.included ?? false;
 
                 return (
-                  <div key={tier.id} className={`p-5 sm:p-6 flex items-center justify-center ${tier.isPopular ? 'bg-[#C9A84C]/5' : ''}`}>
+                  <div key={tier.id} className={`p-5 sm:p-6 flex items-center justify-center ${tier.isPopular ? 'bg-[#A6852F]/5' : ''}`}>
                     {benefit ? (
                       isIncluded ? (
                         <Check className="w-5 h-5 text-[#16A34A]" />

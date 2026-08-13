@@ -13,7 +13,7 @@ export const AudioPodcast: React.FC<AudioPodcastProps> = ({ onListen }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-12">
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Audio
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-white mt-3 tracking-tight">
@@ -54,10 +54,10 @@ export const AudioPodcast: React.FC<AudioPodcastProps> = ({ onListen }) => {
 
               {/* Info */}
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-[10px] text-[#C9A84C] font-medium tracking-wide uppercase">
+                <div className="flex items-center gap-2 text-[10px] text-[#A6852F] font-medium tracking-wide uppercase">
                   <span>{podcast.showName}</span>
                 </div>
-                <h3 className="text-sm font-medium text-white group-hover:text-[#C9A84C] transition-colors duration-300 line-clamp-2 leading-snug">
+                <h3 className="text-sm font-medium text-white group-hover:text-[#A6852F] transition-colors duration-300 line-clamp-2 leading-snug">
                   {podcast.episodeTitle}
                 </h3>
                 <p className="text-xs text-[#71717A] line-clamp-2 leading-relaxed">
@@ -68,7 +68,7 @@ export const AudioPodcast: React.FC<AudioPodcastProps> = ({ onListen }) => {
                     <Calendar className="w-3 h-3" />
                     {podcast.date}
                   </div>
-                  <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#C9A84C] group-hover:translate-x-0.5 transition-transform duration-300">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#A6852F] group-hover:translate-x-0.5 transition-transform duration-300">
                     Listen
                     <ArrowRight className="w-3 h-3" />
                   </span>

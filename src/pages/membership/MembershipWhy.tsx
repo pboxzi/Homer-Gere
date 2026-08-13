@@ -20,7 +20,7 @@ export const MembershipWhy: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center space-y-6 mb-16">
           <motion.span
-            className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase"
+            className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
@@ -58,7 +58,7 @@ export const MembershipWhy: React.FC = () => {
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.3 + idx * 0.06, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="w-10 h-10 rounded-lg bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C] shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] shrink-0">
                 {benefit.icon}
               </div>
               <span className="text-sm font-medium text-[#1C1917]">{benefit.label}</span>

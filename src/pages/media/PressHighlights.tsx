@@ -13,7 +13,7 @@ export const PressHighlights: React.FC<PressHighlightsProps> = ({ onReadArticle 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-12">
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Press
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight hover-underline">
@@ -49,7 +49,7 @@ export const PressHighlights: React.FC<PressHighlightsProps> = ({ onReadArticle 
               )}
               <div className="p-8 sm:p-10 lg:p-12 flex flex-col justify-center">
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-[10px] text-[#C9A84C] font-medium tracking-wide uppercase">
+                  <div className="flex items-center gap-2 text-[10px] text-[#A6852F] font-medium tracking-wide uppercase">
                     <Newspaper className="w-3.5 h-3.5" />
                     <span>{MEDIA_PRESS[0].publisher}</span>
                     <span className="text-[#D6D3D1]">·</span>
@@ -58,13 +58,13 @@ export const PressHighlights: React.FC<PressHighlightsProps> = ({ onReadArticle 
                       {MEDIA_PRESS[0].date}
                     </span>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-editorial text-[#111827] group-hover:text-[#C9A84C] transition-colors duration-300 leading-snug">
+                  <h3 className="text-xl sm:text-2xl font-editorial text-[#111827] group-hover:text-[#A6852F] transition-colors duration-300 leading-snug">
                     {MEDIA_PRESS[0].headline}
                   </h3>
                   <p className="text-sm text-[#57534E] leading-relaxed">
                     {MEDIA_PRESS[0].summary}
                   </p>
-                  <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#C9A84C] group-hover:translate-x-0.5 transition-transform duration-300">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#A6852F] group-hover:translate-x-0.5 transition-transform duration-300">
                     Read Article
                     <ArrowRight className="w-3 h-3" />
                   </span>
@@ -100,7 +100,7 @@ export const PressHighlights: React.FC<PressHighlightsProps> = ({ onReadArticle 
 
               {/* Content */}
               <div className="flex-1 min-w-0 space-y-2">
-                <div className="flex items-center gap-2 text-[10px] text-[#C9A84C] font-medium tracking-wide uppercase">
+                <div className="flex items-center gap-2 text-[10px] text-[#A6852F] font-medium tracking-wide uppercase">
                   <span>{press.publisher}</span>
                   <span className="text-[#D6D3D1]">·</span>
                   <span className="flex items-center gap-1 text-[#71717A]">
@@ -108,13 +108,13 @@ export const PressHighlights: React.FC<PressHighlightsProps> = ({ onReadArticle 
                     {press.date}
                   </span>
                 </div>
-                <h3 className="text-sm font-medium text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300 leading-snug line-clamp-2">
+                <h3 className="text-sm font-medium text-[#1C1917] group-hover:text-[#A6852F] transition-colors duration-300 leading-snug line-clamp-2">
                   {press.headline}
                 </h3>
                 <p className="text-xs text-[#57534E] line-clamp-2 leading-relaxed">
                   {press.summary}
                 </p>
-                <span className="inline-flex items-center gap-1 text-xs font-medium text-[#C9A84C] group-hover:translate-x-0.5 transition-transform duration-300">
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-[#A6852F] group-hover:translate-x-0.5 transition-transform duration-300">
                   Read Article
                   <ArrowRight className="w-3 h-3" />
                 </span>

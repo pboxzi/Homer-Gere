@@ -75,14 +75,14 @@ export const ExperienceDetailModal: React.FC<ExperienceDetailModalProps> = ({
               <div className="px-8 sm:px-10 pb-10 -mt-16 relative z-10">
                 {/* Icon & Title */}
                 <div className="flex items-start gap-4 mb-6">
-                  <div className="w-14 h-14 rounded-2xl bg-[#C9A84C] flex items-center justify-center text-white shrink-0 shadow-lg shadow-[#C9A84C]/25">
+                  <div className="w-14 h-14 rounded-2xl bg-[#A6852F] flex items-center justify-center text-white shrink-0 shadow-lg shadow-[#A6852F]/25">
                     {getExperienceIcon(experience.iconName)}
                   </div>
                   <div>
                     <h2 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight">
                       {experience.title}
                     </h2>
-                    <span className="text-sm font-medium text-[#C9A84C] mt-1 block">
+                    <span className="text-sm font-medium text-[#A6852F] mt-1 block">
                       {experience.price}
                     </span>
                   </div>
@@ -97,13 +97,13 @@ export const ExperienceDetailModal: React.FC<ExperienceDetailModalProps> = ({
                 <div className="flex flex-wrap gap-4 mb-8">
                   {experience.duration && (
                     <div className="inline-flex items-center gap-2 text-sm text-[#57534E] bg-[#F3F1ED] px-4 py-2 rounded-xl">
-                      <Clock className="w-4 h-4 text-[#C9A84C]" />
+                      <Clock className="w-4 h-4 text-[#A6852F]" />
                       {experience.duration}
                     </div>
                   )}
                   {experience.location && (
                     <div className="inline-flex items-center gap-2 text-sm text-[#57534E] bg-[#F3F1ED] px-4 py-2 rounded-xl">
-                      <MapPin className="w-4 h-4 text-[#C9A84C]" />
+                      <MapPin className="w-4 h-4 text-[#A6852F]" />
                       {experience.location}
                     </div>
                   )}
@@ -165,7 +165,7 @@ export const ExperienceDetailModal: React.FC<ExperienceDetailModalProps> = ({
                     onClose();
                     onRequestExperience(experience);
                   }}
-                  className="w-full inline-flex items-center justify-center gap-2.5 bg-[#C9A84C] hover:bg-[#B8983A] active:scale-[0.98] text-white font-medium text-sm px-7 py-4 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#C9A84C]/25 focus:outline-none cursor-pointer"
+                  className="w-full inline-flex items-center justify-center gap-2.5 bg-[#A6852F] hover:bg-[#B8983A] active:scale-[0.98] text-white font-medium text-sm px-7 py-4 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#A6852F]/25 focus:outline-none cursor-pointer"
                 >
                   Request This Experience
                   <ArrowRight className="w-4 h-4" />

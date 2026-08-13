@@ -38,7 +38,7 @@ export const JourneyHero: React.FC<JourneyHeroProps> = ({ onExploreProjects, onV
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+            <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
               The Journey
             </span>
           </motion.div>
@@ -70,7 +70,7 @@ export const JourneyHero: React.FC<JourneyHeroProps> = ({ onExploreProjects, onV
           >
             <button
               onClick={onExploreProjects}
-              className="inline-flex items-center justify-center gap-2.5 bg-[#C9A84C] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#C9A84C]/25 focus:outline-none cursor-pointer"
+              className="inline-flex items-center justify-center gap-2.5 bg-[#A6852F] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#A6852F]/25 focus:outline-none cursor-pointer"
             >
               <ArrowRight className="w-4 h-4" />
               <span>Explore Projects</span>
@@ -80,7 +80,7 @@ export const JourneyHero: React.FC<JourneyHeroProps> = ({ onExploreProjects, onV
               onClick={onViewJournal}
               className="inline-flex items-center justify-center gap-2 bg-transparent hover:bg-[#F3F1ED] active:scale-95 text-[#1C1917] font-medium text-sm px-6 py-3.5 rounded-2xl transition-all duration-300 focus:outline-none cursor-pointer"
             >
-              <BookOpen className="w-4 h-4 text-[#C9A84C]" />
+              <BookOpen className="w-4 h-4 text-[#A6852F]" />
               <span>Latest Journal</span>
             </button>
           </motion.div>
@@ -99,11 +99,11 @@ export const JourneyHero: React.FC<JourneyHeroProps> = ({ onExploreProjects, onV
           className="group flex flex-col items-center gap-2 focus:outline-none cursor-pointer"
           aria-label="Scroll to continue"
         >
-          <span className="text-[10px] font-medium text-[#57534E] group-hover:text-[#C9A84C] transition-colors uppercase tracking-[0.25em]">
+          <span className="text-[10px] font-medium text-[#57534E] group-hover:text-[#A6852F] transition-colors uppercase tracking-[0.25em]">
             Scroll
           </span>
-          <div className="relative w-[1px] h-8 bg-[#E8E5DF] group-hover:bg-[#C9A84C]/30 transition-colors overflow-hidden rounded-full">
-            <div className="absolute top-0 left-0 w-full h-1/2 bg-[#C9A84C] rounded-full animate-scroll-line" />
+          <div className="relative w-[1px] h-8 bg-[#E8E5DF] group-hover:bg-[#A6852F]/30 transition-colors overflow-hidden rounded-full">
+            <div className="absolute top-0 left-0 w-full h-1/2 bg-[#A6852F] rounded-full animate-scroll-line" />
           </div>
         </a>
       </motion.div>

@@ -19,13 +19,13 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
         <div className="relative overflow-hidden mb-24 bg-[#F3F1ED]/40 rounded-[2rem]">
           <div className="relative z-10 max-w-4xl mx-auto text-center py-20 sm:py-24 px-8 sm:px-12">
             {/* Large decorative quote mark */}
-            <div className="font-editorial text-[8rem] sm:text-[10rem] leading-none text-[#C9A84C]/15 absolute top-8 left-1/2 -translate-x-1/2 select-none pointer-events-none">
+            <div className="font-editorial text-[8rem] sm:text-[10rem] leading-none text-[#A6852F]/15 absolute top-8 left-1/2 -translate-x-1/2 select-none pointer-events-none">
               &ldquo;
             </div>
 
             {/* Quote icon */}
-            <div className="w-14 h-14 rounded-full bg-[#C9A84C]/10 flex items-center justify-center mx-auto mb-10">
-              <Quote className="w-6 h-6 text-[#C9A84C]" />
+            <div className="w-14 h-14 rounded-full bg-[#A6852F]/10 flex items-center justify-center mx-auto mb-10">
+              <Quote className="w-6 h-6 text-[#A6852F]" />
             </div>
 
             {/* Quote text */}
@@ -35,14 +35,14 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
 
             {/* Gold divider */}
             <div className="flex items-center justify-center gap-5 mt-12 mb-8">
-              <div className="w-20 h-[1px] bg-gradient-to-r from-transparent to-[#C9A84C]/50" />
-              <div className="w-2 h-2 rotate-45 border border-[#C9A84C]/60" />
-              <div className="w-20 h-[1px] bg-gradient-to-l from-transparent to-[#C9A84C]/50" />
+              <div className="w-20 h-[1px] bg-gradient-to-r from-transparent to-[#A6852F]/50" />
+              <div className="w-2 h-2 rotate-45 border border-[#A6852F]/60" />
+              <div className="w-20 h-[1px] bg-gradient-to-l from-transparent to-[#A6852F]/50" />
             </div>
 
             {/* Attribution */}
             <div className="space-y-1">
-              <div className="font-editorial italic text-lg sm:text-xl text-[#C9A84C] tracking-[0.2em] uppercase">
+              <div className="font-editorial italic text-lg sm:text-xl text-[#A6852F] tracking-[0.2em] uppercase">
                 Homer Gere
               </div>
               <div className="text-[11px] text-[#78716C] tracking-[0.15em] uppercase">
@@ -55,7 +55,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between mb-10">
           <div>
-            <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+            <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
               Photo Gallery
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight hover-underline">
@@ -65,7 +65,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
 
           <button
             onClick={() => onNavigate('gallery')}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-[#1C1917] hover:text-[#C9A84C] transition-colors duration-300 group focus:outline-none cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-[#1C1917] hover:text-[#A6852F] transition-colors duration-300 group focus:outline-none cursor-pointer"
           >
             View Full Gallery
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -89,7 +89,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
 
               {/* Hover Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/80 via-[#111827]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-6 flex flex-col justify-end text-white">
-                <span className="text-[10px] font-medium tracking-widest text-[#C9A84C] uppercase">
+                <span className="text-[10px] font-medium tracking-widest text-[#A6852F] uppercase">
                   {item.category}
                 </span>
                 <h4 className="text-base font-editorial text-white mt-1">

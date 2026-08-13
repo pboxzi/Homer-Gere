@@ -26,7 +26,7 @@ export const ArticleDetailRelated: React.FC<ArticleDetailRelatedProps> = ({
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Related Reading
           </span>
           <h2 className="text-2xl sm:text-3xl font-editorial text-[#111827] tracking-tight">
@@ -39,7 +39,7 @@ export const ArticleDetailRelated: React.FC<ArticleDetailRelatedProps> = ({
             <motion.button
               key={article.id}
               onClick={() => onNavigate(article.slug)}
-              className="group text-left rounded-[1.25rem] overflow-hidden bg-[#FAF9F7] hover:shadow-xl hover:shadow-[#C9A84C]/8 transition-all duration-500 hover:-translate-y-1 cursor-pointer"
+              className="group text-left rounded-[1.25rem] overflow-hidden bg-[#FAF9F7] hover:shadow-xl hover:shadow-[#A6852F]/8 transition-all duration-500 hover:-translate-y-1 cursor-pointer"
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: idx * 0.1 }}
@@ -58,7 +58,7 @@ export const ArticleDetailRelated: React.FC<ArticleDetailRelatedProps> = ({
               </div>
 
               <div className="p-5">
-                <h3 className="text-base sm:text-lg font-editorial text-[#111827] group-hover:text-[#C9A84C] transition-colors duration-300 mb-2 leading-snug line-clamp-2">
+                <h3 className="text-base sm:text-lg font-editorial text-[#111827] group-hover:text-[#A6852F] transition-colors duration-300 mb-2 leading-snug line-clamp-2">
                   {article.title}
                 </h3>
                 <div className="flex items-center gap-3 text-xs text-[#71717A]">

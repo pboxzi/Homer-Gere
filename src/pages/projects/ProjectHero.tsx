@@ -36,7 +36,7 @@ export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+            <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
               Film & Television
             </span>
           </motion.div>
@@ -68,7 +68,7 @@ export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
           >
             <button
               onClick={onExploreFilms}
-              className="inline-flex items-center justify-center gap-2.5 bg-[#C9A84C] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#C9A84C]/25 focus:outline-none cursor-pointer"
+              className="inline-flex items-center justify-center gap-2.5 bg-[#A6852F] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#A6852F]/25 focus:outline-none cursor-pointer"
             >
               <Film className="w-4 h-4" />
               <span>View Filmography</span>
@@ -89,11 +89,11 @@ export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
           className="group flex flex-col items-center gap-2 focus:outline-none cursor-pointer"
           aria-label="Scroll to continue"
         >
-          <span className="text-[10px] font-medium text-[#57534E] group-hover:text-[#C9A84C] transition-colors uppercase tracking-[0.25em]">
+          <span className="text-[10px] font-medium text-[#57534E] group-hover:text-[#A6852F] transition-colors uppercase tracking-[0.25em]">
             Scroll
           </span>
-          <div className="relative w-[1px] h-8 bg-[#E8E5DF] group-hover:bg-[#C9A84C]/30 transition-colors overflow-hidden rounded-full">
-            <div className="absolute top-0 left-0 w-full h-1/2 bg-[#C9A84C] rounded-full animate-scroll-line" />
+          <div className="relative w-[1px] h-8 bg-[#E8E5DF] group-hover:bg-[#A6852F]/30 transition-colors overflow-hidden rounded-full">
+            <div className="absolute top-0 left-0 w-full h-1/2 bg-[#A6852F] rounded-full animate-scroll-line" />
           </div>
         </a>
       </motion.div>

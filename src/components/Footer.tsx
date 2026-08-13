@@ -32,7 +32,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
               <span className="font-editorial text-2xl tracking-[0.08em] text-[#1C1917] uppercase">
                 Homer Gere
               </span>
-              <span className="text-[10px] tracking-[0.2em] text-[#C9A84C] font-medium uppercase mt-1.5">
+              <span className="text-[10px] tracking-[0.2em] text-[#A6852F] font-medium uppercase mt-1.5">
                 Official Website
               </span>
             </div>
@@ -45,7 +45,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#C9A84C] hover:text-white flex items-center justify-center transition-all duration-300"
+                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#A6852F] hover:text-white flex items-center justify-center transition-all duration-300"
                 aria-label="Instagram"
               >
                 <Instagram className="w-4 h-4" />
@@ -54,7 +54,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
                 href="https://tiktok.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#C9A84C] hover:text-white flex items-center justify-center transition-all duration-300 font-medium text-xs"
+                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#A6852F] hover:text-white flex items-center justify-center transition-all duration-300 font-medium text-xs"
                 aria-label="TikTok"
               >
                 &#9834;
@@ -63,7 +63,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
                 href="https://x.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#C9A84C] hover:text-white flex items-center justify-center transition-all duration-300"
+                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#A6852F] hover:text-white flex items-center justify-center transition-all duration-300"
                 aria-label="X (Twitter)"
               >
                 <Twitter className="w-4 h-4" />
@@ -72,7 +72,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
                 href="https://youtube.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#C9A84C] hover:text-white flex items-center justify-center transition-all duration-300"
+                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#A6852F] hover:text-white flex items-center justify-center transition-all duration-300"
                 aria-label="YouTube"
               >
                 <Youtube className="w-4 h-4" />
@@ -91,7 +91,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
                   <li key={idx}>
                     <button
                       onClick={() => handleLinkClick(link.href)}
-                      className="text-xs sm:text-sm text-[#57534E] hover:text-[#C9A84C] transition-colors duration-300 focus:outline-none cursor-pointer"
+                      className="text-xs sm:text-sm text-[#57534E] hover:text-[#A6852F] transition-colors duration-300 focus:outline-none cursor-pointer"
                     >
                       {link.label}
                     </button>
@@ -108,7 +108,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
 
           <button
             onClick={scrollToTop}
-            className="inline-flex items-center gap-2 text-xs font-medium text-[#57534E] hover:text-[#C9A84C] p-2 rounded-xl hover:bg-[#FAF9F7] transition-all duration-300 focus:outline-none cursor-pointer"
+            className="inline-flex items-center gap-2 text-xs font-medium text-[#57534E] hover:text-[#A6852F] p-2 rounded-xl hover:bg-[#FAF9F7] transition-all duration-300 focus:outline-none cursor-pointer"
           >
             <span>Back to top</span>
             <div className="w-7 h-7 rounded-xl bg-[#FAF9F7] flex items-center justify-center">

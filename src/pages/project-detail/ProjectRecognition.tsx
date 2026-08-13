@@ -24,7 +24,7 @@ export const ProjectRecognition: React.FC<ProjectRecognitionProps> = ({ project 
 
   const getResultColor = (result: string) => {
     switch (result) {
-      case 'Winner': return 'bg-[#C9A84C]/15 text-[#C9A84C] border-[#C9A84C]/25';
+      case 'Winner': return 'bg-[#A6852F]/15 text-[#A6852F] border-[#A6852F]/25';
       case 'Nominated': return 'bg-blue-50 text-blue-600 border-blue-200';
       case 'Featured': return 'bg-purple-50 text-purple-600 border-purple-200';
       default: return 'bg-emerald-50 text-emerald-600 border-emerald-200';
@@ -40,7 +40,7 @@ export const ProjectRecognition: React.FC<ProjectRecognitionProps> = ({ project 
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Recognition
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">
@@ -55,7 +55,7 @@ export const ProjectRecognition: React.FC<ProjectRecognitionProps> = ({ project 
           {project.recognition.map((item, idx) => (
             <motion.div
               key={item.id}
-              className="bg-[#FAF9F7] rounded-[1.5rem] p-8 border border-[#E8E5DF] hover:border-[#C9A84C]/30 hover:shadow-lg hover:shadow-[#C9A84C]/5 transition-all duration-500 group"
+              className="bg-[#FAF9F7] rounded-[1.5rem] p-8 border border-[#E8E5DF] hover:border-[#A6852F]/30 hover:shadow-lg hover:shadow-[#A6852F]/5 transition-all duration-500 group"
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.1 + idx * 0.08 }}
@@ -70,7 +70,7 @@ export const ProjectRecognition: React.FC<ProjectRecognitionProps> = ({ project 
                       {item.result}
                     </span>
                   </div>
-                  <h3 className="text-base font-editorial text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300">
+                  <h3 className="text-base font-editorial text-[#1C1917] group-hover:text-[#A6852F] transition-colors duration-300">
                     {item.award}
                   </h3>
                   <p className="text-sm text-[#44403C] mt-1.5 leading-relaxed">{item.category}</p>
@@ -86,7 +86,7 @@ export const ProjectRecognition: React.FC<ProjectRecognitionProps> = ({ project 
                         href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-xs text-[#C9A84C] hover:text-[#B8983A] transition-colors"
+                        className="inline-flex items-center gap-1 text-xs text-[#A6852F] hover:text-[#B8983A] transition-colors"
                       >
                         <span>Read</span>
                         <ExternalLink className="w-3 h-3" />

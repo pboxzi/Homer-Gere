@@ -25,7 +25,7 @@ export const ExperiencesExplore: React.FC<ExperiencesExploreProps> = ({
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Continue Exploring
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">
@@ -38,7 +38,7 @@ export const ExperiencesExplore: React.FC<ExperiencesExploreProps> = ({
           {/* Membership */}
           <motion.button
             onClick={onExploreMembership}
-            className="group relative rounded-[1.5rem] overflow-hidden text-left bg-[#F3F1ED] hover:shadow-2xl hover:shadow-[#C9A84C]/8 transition-all duration-500 hover:-translate-y-1 focus:outline-none cursor-pointer"
+            className="group relative rounded-[1.5rem] overflow-hidden text-left bg-[#F3F1ED] hover:shadow-2xl hover:shadow-[#A6852F]/8 transition-all duration-500 hover:-translate-y-1 focus:outline-none cursor-pointer"
             initial={{ opacity: 0, y: 40 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
@@ -56,13 +56,13 @@ export const ExperiencesExplore: React.FC<ExperiencesExploreProps> = ({
               </div>
             </div>
             <div className="p-6 sm:p-7">
-              <h3 className="text-lg sm:text-xl font-editorial text-[#111827] group-hover:text-[#C9A84C] transition-colors duration-300 mb-2">
+              <h3 className="text-lg sm:text-xl font-editorial text-[#111827] group-hover:text-[#A6852F] transition-colors duration-300 mb-2">
                 Membership
               </h3>
               <p className="text-sm text-[#52525B] leading-relaxed mb-5">
                 Join the inner circle for priority access, exclusive content, and VIP benefits.
               </p>
-              <div className="flex items-center text-xs font-medium text-[#C9A84C] group-hover:translate-x-1 transition-transform duration-300">
+              <div className="flex items-center text-xs font-medium text-[#A6852F] group-hover:translate-x-1 transition-transform duration-300">
                 <span>Explore Membership</span>
                 <ArrowRight className="w-4 h-4 ml-1.5" />
               </div>
@@ -72,7 +72,7 @@ export const ExperiencesExplore: React.FC<ExperiencesExploreProps> = ({
           {/* Chat with Homer */}
           <motion.button
             onClick={onOpenChat}
-            className="group relative rounded-[1.5rem] overflow-hidden text-left bg-[#F3F1ED] hover:shadow-2xl hover:shadow-[#C9A84C]/8 transition-all duration-500 hover:-translate-y-1 focus:outline-none cursor-pointer"
+            className="group relative rounded-[1.5rem] overflow-hidden text-left bg-[#F3F1ED] hover:shadow-2xl hover:shadow-[#A6852F]/8 transition-all duration-500 hover:-translate-y-1 focus:outline-none cursor-pointer"
             initial={{ opacity: 0, y: 40 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
@@ -90,13 +90,13 @@ export const ExperiencesExplore: React.FC<ExperiencesExploreProps> = ({
               </div>
             </div>
             <div className="p-6 sm:p-7">
-              <h3 className="text-lg sm:text-xl font-editorial text-[#111827] group-hover:text-[#C9A84C] transition-colors duration-300 mb-2">
+              <h3 className="text-lg sm:text-xl font-editorial text-[#111827] group-hover:text-[#A6852F] transition-colors duration-300 mb-2">
                 Chat with Homer
               </h3>
               <p className="text-sm text-[#52525B] leading-relaxed mb-5">
                 Connect directly for fan messages or business inquiries.
               </p>
-              <div className="flex items-center text-xs font-medium text-[#C9A84C] group-hover:translate-x-1 transition-transform duration-300">
+              <div className="flex items-center text-xs font-medium text-[#A6852F] group-hover:translate-x-1 transition-transform duration-300">
                 <span>Start a Conversation</span>
                 <ArrowRight className="w-4 h-4 ml-1.5" />
               </div>

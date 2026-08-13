@@ -38,7 +38,7 @@ export const BusinessChat: React.FC<BusinessChatProps> = ({ onBack, onComplete }
 
   const enabledMethods = [
     settings.whatsappEnabled && { id: 'whatsapp', label: 'WhatsApp', icon: Phone, color: '#25D366', description: 'Send via WhatsApp to management' },
-    settings.emailEnabled && { id: 'email', label: 'Email', icon: Mail, color: '#C9A84C', description: 'Send via email to management' },
+    settings.emailEnabled && { id: 'email', label: 'Email', icon: Mail, color: '#A6852F', description: 'Send via email to management' },
     settings.telegramEnabled && { id: 'telegram', label: 'Telegram', icon: Telegram, color: '#0088CC', description: 'Send via Telegram to management' },
     settings.websiteFormEnabled && { id: 'website', label: 'Website Form', icon: MessageCircle, color: '#1C1917', description: 'Submit through the website' },
   ].filter(Boolean) as Array<{ id: string; label: string; icon: React.FC<{ className?: string; style?: React.CSSProperties }>; color: string; description: string }>;
@@ -50,7 +50,7 @@ export const BusinessChat: React.FC<BusinessChatProps> = ({ onBack, onComplete }
 
         <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <button onClick={() => setStep('form')} className="inline-flex items-center gap-2 text-sm font-medium text-[#57534E] hover:text-[#C9A84C] transition-colors duration-300 mb-8 cursor-pointer">
+            <button onClick={() => setStep('form')} className="inline-flex items-center gap-2 text-sm font-medium text-[#57534E] hover:text-[#A6852F] transition-colors duration-300 mb-8 cursor-pointer">
               <ArrowLeft className="w-4 h-4" />
               Back to Form
             </button>
@@ -97,7 +97,7 @@ export const BusinessChat: React.FC<BusinessChatProps> = ({ onBack, onComplete }
 
       <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <button onClick={onBack} className="inline-flex items-center gap-2 text-sm font-medium text-[#57534E] hover:text-[#C9A84C] transition-colors duration-300 mb-8 cursor-pointer">
+          <button onClick={onBack} className="inline-flex items-center gap-2 text-sm font-medium text-[#57534E] hover:text-[#A6852F] transition-colors duration-300 mb-8 cursor-pointer">
             <ArrowLeft className="w-4 h-4" />
             Back
           </button>
@@ -112,22 +112,22 @@ export const BusinessChat: React.FC<BusinessChatProps> = ({ onBack, onComplete }
           <div className="space-y-5">
             <div>
               <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Full Name *</label>
-              <input type="text" value={formData.fullName} onChange={(e) => updateField('fullName', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/30 transition-all duration-300" placeholder="Enter your full name" />
+              <input type="text" value={formData.fullName} onChange={(e) => updateField('fullName', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300" placeholder="Enter your full name" />
             </div>
 
             <div>
               <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Email *</label>
-              <input type="email" value={formData.email} onChange={(e) => updateField('email', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/30 transition-all duration-300" placeholder="your@company.com" />
+              <input type="email" value={formData.email} onChange={(e) => updateField('email', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300" placeholder="your@company.com" />
             </div>
 
             <div>
               <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Company / Organization</label>
-              <input type="text" value={formData.company} onChange={(e) => updateField('company', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/30 transition-all duration-300" placeholder="Company or organization name" />
+              <input type="text" value={formData.company} onChange={(e) => updateField('company', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300" placeholder="Company or organization name" />
             </div>
 
             <div>
               <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Enquiry Type *</label>
-              <select value={formData.enquiryType} onChange={(e) => updateField('enquiryType', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/30 transition-all duration-300 appearance-none">
+              <select value={formData.enquiryType} onChange={(e) => updateField('enquiryType', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300 appearance-none">
                 <option value="">Select enquiry type</option>
                 {ENQUIRY_TYPES.map((type) => (
                   <option key={type} value={type}>{type}</option>
@@ -137,7 +137,7 @@ export const BusinessChat: React.FC<BusinessChatProps> = ({ onBack, onComplete }
 
             <div>
               <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Message *</label>
-              <textarea value={formData.message} onChange={(e) => updateField('message', e.target.value)} rows={5} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/30 transition-all duration-300 resize-none" placeholder="Describe your enquiry..." />
+              <textarea value={formData.message} onChange={(e) => updateField('message', e.target.value)} rows={5} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300 resize-none" placeholder="Describe your enquiry..." />
             </div>
           </div>
 
