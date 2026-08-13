@@ -63,50 +63,43 @@ export const ChatTypeSelector: React.FC<ChatTypeSelectorProps> = ({ onSelect }) 
           </p>
         </motion.div>
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {/* Options */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
           {/* Fan Chat */}
           <motion.button
             onClick={() => onSelect('fan')}
-            className="group relative rounded-[2rem] overflow-hidden bg-white border border-[#E8E5DF]/60 hover:border-[#C9A84C]/40 p-8 sm:p-10 text-left transition-all duration-500 hover:shadow-2xl hover:shadow-[#C9A84C]/10 hover:-translate-y-1 cursor-pointer"
+            className="group text-left transition-all duration-500 cursor-pointer"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#C9A84C]/5 rounded-full blur-[60px] group-hover:bg-[#C9A84C]/10 transition-colors duration-700" />
+            <div className="w-14 h-14 rounded-2xl bg-[#C9A84C]/10 flex items-center justify-center mb-6 group-hover:bg-[#C9A84C] group-hover:text-white text-[#C9A84C] transition-all duration-500">
+              <Heart className="w-7 h-7" />
+            </div>
 
-            <div className="relative">
-              <div className="w-14 h-14 rounded-2xl bg-[#C9A84C]/10 flex items-center justify-center mb-6 group-hover:bg-[#C9A84C] group-hover:text-white text-[#C9A84C] transition-all duration-500">
-                <Heart className="w-7 h-7" />
-              </div>
+            <h2 className="text-2xl font-editorial text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300 mb-3">
+              Fan Chat
+            </h2>
 
-              <h2 className="text-2xl font-editorial text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300 mb-3">
-                Fan Chat
-              </h2>
+            <p className="text-sm text-[#57534E] leading-relaxed mb-6">
+              Send a note, share a thought, or just say hi. This is your space
+              to connect — no filters, no pressure. Just a genuine conversation.
+            </p>
 
-              <p className="text-sm text-[#57534E] leading-relaxed mb-6">
-                Send a note, share a thought, or just say hi. This is your space
-                to connect — no filters, no pressure. Just a genuine conversation.
-              </p>
-
-              <div className="flex items-center gap-2 text-sm font-medium text-[#57534E] group-hover:text-[#C9A84C] transition-colors duration-300">
-                <span>Start chatting</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
-              </div>
+            <div className="flex items-center gap-2 text-sm font-medium text-[#57534E] group-hover:text-[#C9A84C] transition-colors duration-300">
+              <span>Start chatting</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
             </div>
           </motion.button>
 
           {/* Business Chat */}
           <motion.button
             onClick={() => onSelect('business')}
-            className="group relative rounded-[2rem] overflow-hidden bg-white border border-[#E8E5DF]/60 hover:border-[#1C1917]/20 p-8 sm:p-10 text-left transition-all duration-500 hover:shadow-2xl hover:shadow-[#1C1917]/5 hover:-translate-y-1 cursor-pointer"
+            className="group text-left transition-all duration-500 cursor-pointer"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#1C1917]/3 rounded-full blur-[60px] group-hover:bg-[#1C1917]/5 transition-colors duration-700" />
-
-            <div className="relative">
               <div className="w-14 h-14 rounded-2xl bg-[#1C1917]/10 flex items-center justify-center mb-6 group-hover:bg-[#1C1917] group-hover:text-white text-[#1C1917] transition-all duration-500">
                 <span className="text-lg font-editorial">B</span>
               </div>
@@ -124,7 +117,6 @@ export const ChatTypeSelector: React.FC<ChatTypeSelectorProps> = ({ onSelect }) 
                 <span>Send an enquiry</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
               </div>
-            </div>
           </motion.button>
         </div>
 
