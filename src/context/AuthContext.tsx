@@ -1,11 +1,14 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { supabase } from '../lib/supabase';
+import { profilesRepository, adminsRepository, registrationRepository } from '../lib/repositories';
+import type { Profile, Admin } from '../types/database';
 
 interface User {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
-  role: 'admin' | 'member';
+  role: 'admin' | 'member' | 'super_admin';
   membershipTier: string | null;
   avatar?: string;
   emailVerified: boolean;
@@ -14,11 +17,16 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
+  profile: Profile | null;
+  admin: Admin | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error?: string }>;
   signUp: (data: SignUpData) => Promise<{ error?: string }>;
-  signOut: () => void;
+  signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ error?: string }>;
+  refreshProfile: () => Promise<void>;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   isAuthenticated: boolean;
 }
 
@@ -29,128 +37,188 @@ interface SignUpData {
   lastName: string;
 }
 
-const STORAGE_KEY = 'homer_auth';
-
-const ADMIN_USER: User = {
-  id: 'admin-1',
-  email: 'admin@homergere.com',
-  firstName: 'Super',
-  lastName: 'Admin',
-  role: 'admin',
-  membershipTier: 'Platinum',
-  emailVerified: true,
-  createdAt: '2024-01-01',
-};
-
-function loadUserFromStorage(): User | null {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      if (parsed && typeof parsed === 'object' && parsed.id && parsed.email) {
-        return parsed as User;
-      }
-    }
-  } catch {
-    localStorage.removeItem(STORAGE_KEY);
-  }
-  return null;
-}
-
-function saveUserToStorage(user: User | null): void {
-  if (user) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-  } else {
-    localStorage.removeItem(STORAGE_KEY);
-  }
-}
-
-function generateId(): string {
-  return `user-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-}
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [admin, setAdmin] = useState<Admin | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const stored = loadUserFromStorage();
-    setUser(stored);
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    saveUserToStorage(user);
-  }, [user]);
-
-  const signIn = useCallback(async (email: string, _password: string): Promise<{ error?: string }> => {
-    setLoading(true);
+  const buildUser = useCallback(async (authUser: { id: string; email?: string; created_at: string; user_metadata?: Record<string, unknown> }) => {
     try {
-      await new Promise((r) => setTimeout(r, 300));
+      const userProfile = await profilesRepository.getById(authUser.id);
+      if (!userProfile) return null;
 
-      let authenticatedUser: User;
-
-      if (email === ADMIN_USER.email) {
-        authenticatedUser = { ...ADMIN_USER };
-      } else {
-        authenticatedUser = {
-          id: generateId(),
-          email,
-          firstName: email.split('@')[0],
-          lastName: '',
-          role: 'member',
-          membershipTier: null,
-          emailVerified: false,
-          createdAt: new Date().toISOString().slice(0, 10),
-        };
+      let adminRecord: Admin | null = null;
+      try {
+        adminRecord = await adminsRepository.getByUserId(authUser.id);
+      } catch {
+        // Not an admin — that's fine
       }
 
-      setUser(authenticatedUser);
-      return {};
-    } finally {
-      setLoading(false);
+      const role: User['role'] = adminRecord
+        ? (adminRecord.admin_role === 'super_admin' ? 'super_admin' : 'admin')
+        : (userProfile.role as User['role']);
+
+      const u: User = {
+        id: authUser.id,
+        email: userProfile.email,
+        firstName: userProfile.first_name,
+        lastName: userProfile.last_name,
+        role,
+        membershipTier: userProfile.membership_tier,
+        avatar: userProfile.avatar_url || undefined,
+        emailVerified: userProfile.email_verified,
+        createdAt: userProfile.created_at,
+      };
+
+      setProfile(userProfile);
+      setAdmin(adminRecord);
+      return u;
+    } catch {
+      return null;
     }
   }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (!mounted) return;
+      if (session?.user) {
+        const u = await buildUser(session.user);
+        if (mounted) {
+          setUser(u);
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!mounted) return;
+      if (session?.user) {
+        const u = await buildUser(session.user);
+        if (mounted) setUser(u);
+      } else {
+        setUser(null);
+        setProfile(null);
+        setAdmin(null);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [buildUser]);
+
+  const signIn = useCallback(async (email: string, password: string): Promise<{ error?: string }> => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        setLoading(false);
+        return { error: error.message };
+      }
+
+      if (data.user) {
+        const u = await buildUser(data.user);
+        setUser(u);
+        setLoading(false);
+        if (!u) return { error: 'Account not found or pending approval. Please register and wait for admin approval.' };
+        return {};
+      }
+      setLoading(false);
+      return { error: 'Sign in failed. Please try again.' };
+    } catch {
+      setLoading(false);
+      return { error: 'An unexpected error occurred.' };
+    }
+  }, [buildUser]);
 
   const signUp = useCallback(async (data: SignUpData): Promise<{ error?: string }> => {
     setLoading(true);
     try {
-      await new Promise((r) => setTimeout(r, 300));
+      // Step 1: Create registration application (not auth user yet)
+      const existing = await registrationRepository.getByEmail(data.email).catch(() => null);
+      if (existing && existing.status === 'pending') {
+        setLoading(false);
+        return { error: 'A pending application already exists for this email. Please wait for admin review.' };
+      }
+      if (existing && existing.status === 'approved') {
+        setLoading(false);
+        return { error: 'An account already exists for this email. Please sign in instead.' };
+      }
 
-      const newUser: User = {
-        id: generateId(),
+      // Step 2: Create the registration application
+      await registrationRepository.create({
+        user_id: null,
+        first_name: data.firstName,
+        last_name: data.lastName,
         email: data.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        role: 'member',
-        membershipTier: null,
-        emailVerified: false,
-        createdAt: new Date().toISOString().slice(0, 10),
-      };
+        phone: null,
+        country: null,
+        date_of_birth: null,
+        membership_tier: null,
+        status: 'pending',
+        reviewed_by: null,
+        reviewed_at: null,
+        rejection_reason: null,
+        notes: null,
+      });
 
-      setUser(newUser);
-      return {};
-    } finally {
       setLoading(false);
+      return {};
+    } catch (err) {
+      setLoading(false);
+      return { error: err instanceof Error ? err.message : 'Registration failed. Please try again.' };
     }
   }, []);
 
-  const signOut = useCallback(() => {
+  const signOut = useCallback(async () => {
+    await supabase.auth.signOut();
     setUser(null);
+    setProfile(null);
+    setAdmin(null);
   }, []);
 
-  const isAdmin = user?.role === 'admin';
+  const resetPassword = useCallback(async (email: string): Promise<{ error?: string }> => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/login`,
+      });
+      if (error) return { error: error.message };
+      return {};
+    } catch {
+      return { error: 'Failed to send reset email.' };
+    }
+  }, []);
+
+  const refreshProfile = useCallback(async () => {
+    if (!user) return;
+    const u = await buildUser({ id: user.id, email: user.email, created_at: user.createdAt });
+    if (u) setUser(u);
+  }, [user, buildUser]);
+
+  const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
+  const isSuperAdmin = user?.role === 'super_admin';
   const isAuthenticated = user !== null;
 
   const value: AuthContextType = {
     user,
+    profile,
+    admin,
     loading,
     signIn,
     signUp,
     signOut,
+    resetPassword,
+    refreshProfile,
     isAdmin,
+    isSuperAdmin,
     isAuthenticated,
   };
 

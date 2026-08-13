@@ -82,6 +82,7 @@ interface DashboardContextType {
   bookmarks: BookmarkedArticle[];
   favorites: FavoritePhoto[];
   helpTickets: HelpTicket[];
+  loading: boolean;
 
   updateProfile: (updates: Partial<MemberProfile>) => void;
   updateMembership: (updates: Partial<MemberMembership>) => void;
@@ -107,53 +108,24 @@ interface DashboardContextType {
   addHelpTicket: (ticket: Omit<HelpTicket, 'id' | 'date' | 'status' | 'replies'>) => void;
   replyHelpTicket: (ticketId: string, text: string) => void;
   closeHelpTicket: (ticketId: string) => void;
-  changePassword: (currentPw: string, newPw: string) => { success: boolean; error?: string };
+  changePassword: (currentPw: string, newPw: string) => Promise<{ success: boolean; error?: string }>;
   enable2FA: () => void;
   disable2FA: () => void;
   twoFactorEnabled: boolean;
+  refreshData: () => Promise<void>;
 }
 
 // ============================================================
-// localStorage helpers
+// Helpers
 // ============================================================
-
-const STORAGE_KEY = 'homer_dashboard';
-
-function loadState<T>(key: string, fallback: T): T {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return fallback;
-    const parsed = JSON.parse(raw);
-    return key in parsed ? parsed[key] : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function saveState(key: string, value: unknown) {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : {};
-    parsed[key] = value;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
-  } catch { /* ignore */ }
-}
 
 function generateId() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  return crypto.randomUUID?.() ?? Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 }
 
 function todayStr() {
   return new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
-
-// ============================================================
-// Initial data (empty by default — populated by Supabase)
-// ============================================================
-
-const INITIAL_MESSAGES: MessageThread[] = [];
-
-const INITIAL_HELP_TICKETS: HelpTicket[] = [];
 
 // ============================================================
 // Context
@@ -170,7 +142,7 @@ export const useDashboard = () => {
 export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
 
-  const getDefaultProfile = (): MemberProfile => {
+  const [profile, setProfile] = useState<MemberProfile>(() => {
     if (user) {
       return {
         ...DEFAULT_MEMBER_PROFILE,
@@ -180,33 +152,18 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       };
     }
     return DEFAULT_MEMBER_PROFILE;
-  };
-
-  const [profile, setProfile] = useState<MemberProfile>(() => loadState('profile', getDefaultProfile()));
-  const [membership, setMembership] = useState<MemberMembership>(() => loadState('membership', DEFAULT_MEMBERSHIP));
-  const [requests, setRequests] = useState<DashboardRequest[]>(() => loadState('requests', []));
-  const [notifications, setNotifications] = useState<DashboardNotification[]>(() => loadState('notifications', []));
-  const [conversations, setConversations] = useState<DashboardConversation[]>(() => loadState('conversations', []));
-  const [sessions, setSessions] = useState<SecuritySession[]>(() => loadState('sessions', []));
-  const [messages, setMessages] = useState<MessageThread[]>(() => loadState('messages', INITIAL_MESSAGES));
-  const [bookmarks, setBookmarks] = useState<BookmarkedArticle[]>(() => loadState('bookmarks', []));
-  const [favorites, setFavorites] = useState<FavoritePhoto[]>(() => loadState('favorites', []));
-  const [helpTickets, setHelpTickets] = useState<HelpTicket[]>(() => loadState('helpTickets', INITIAL_HELP_TICKETS));
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(() => loadState('twoFactorEnabled', false));
-  const [storedPassword] = useState(() => loadState('storedPassword', 'Password123!'));
-
-  // Persist to localStorage on every change
-  useEffect(() => { saveState('profile', profile); }, [profile]);
-  useEffect(() => { saveState('membership', membership); }, [membership]);
-  useEffect(() => { saveState('requests', requests); }, [requests]);
-  useEffect(() => { saveState('notifications', notifications); }, [notifications]);
-  useEffect(() => { saveState('conversations', conversations); }, [conversations]);
-  useEffect(() => { saveState('sessions', sessions); }, [sessions]);
-  useEffect(() => { saveState('messages', messages); }, [messages]);
-  useEffect(() => { saveState('bookmarks', bookmarks); }, [bookmarks]);
-  useEffect(() => { saveState('favorites', favorites); }, [favorites]);
-  useEffect(() => { saveState('helpTickets', helpTickets); }, [helpTickets]);
-  useEffect(() => { saveState('twoFactorEnabled', twoFactorEnabled); }, [twoFactorEnabled]);
+  });
+  const [membership, setMembership] = useState<MemberMembership>(DEFAULT_MEMBERSHIP);
+  const [requests, setRequests] = useState<DashboardRequest[]>([]);
+  const [notifications, setNotifications] = useState<DashboardNotification[]>([]);
+  const [conversations, setConversations] = useState<DashboardConversation[]>([]);
+  const [sessions, setSessions] = useState<SecuritySession[]>([]);
+  const [messages, setMessages] = useState<MessageThread[]>([]);
+  const [bookmarks, setBookmarks] = useState<BookmarkedArticle[]>([]);
+  const [favorites, setFavorites] = useState<FavoritePhoto[]>([]);
+  const [helpTickets, setHelpTickets] = useState<HelpTicket[]>([]);
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -355,31 +312,38 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setHelpTickets((prev) => prev.map((t) => t.id === ticketId ? { ...t, status: 'closed' } : t));
   }, []);
 
-  // Security
-  const changePassword = useCallback((currentPw: string, newPw: string) => {
+  // Security — uses Supabase Auth
+  const changePassword = useCallback(async (currentPw: string, newPw: string) => {
     if (!currentPw || !newPw) return { success: false, error: 'Please fill in all fields.' };
-    if (currentPw !== storedPassword) return { success: false, error: 'Current password is incorrect.' };
     if (newPw.length < 8) return { success: false, error: 'New password must be at least 8 characters.' };
-    if (!/[A-Z]/.test(newPw)) return { success: false, error: 'New password must contain an uppercase letter.' };
-    if (!/[0-9]/.test(newPw)) return { success: false, error: 'New password must contain a number.' };
-    if (!/[!@#$%^&*]/.test(newPw)) return { success: false, error: 'New password must contain a special character.' };
-    return { success: true };
-  }, [storedPassword]);
+    try {
+      const { supabase } = await import('../lib/supabase');
+      const { error } = await supabase.auth.updateUser({ password: newPw });
+      if (error) return { success: false, error: error.message };
+      return { success: true };
+    } catch {
+      return { success: false, error: 'Failed to update password.' };
+    }
+  }, []);
 
   const enable2FA = useCallback(() => { setTwoFactorEnabled(true); }, []);
   const disable2FA = useCallback(() => { setTwoFactorEnabled(false); }, []);
 
+  const refreshData = useCallback(async () => {
+    // Will be wired to Supabase repositories
+  }, []);
+
   return (
     <DashboardContext.Provider value={{
       profile, membership, requests, notifications, conversations, sessions,
-      messages, bookmarks, favorites, helpTickets,
+      messages, bookmarks, favorites, helpTickets, loading,
       updateProfile, updateMembership, addRequest, updateRequestStatus, withdrawRequest,
       markNotificationRead, markAllNotificationsRead, deleteNotification,
       addConversation, closeConversation, deleteConversation, revokeSession, revokeAllSessions,
       addMessageThread, addMessage, deleteMessageThread, markThreadRead,
       toggleBookmark, isBookmarked, toggleFavorite, isFavorited,
       addHelpTicket, replyHelpTicket, closeHelpTicket,
-      changePassword, enable2FA, disable2FA, twoFactorEnabled,
+      changePassword, enable2FA, disable2FA, twoFactorEnabled, refreshData,
     }}>
       {children}
     </DashboardContext.Provider>

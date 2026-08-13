@@ -20,12 +20,12 @@ export const DashboardSecurity: React.FC = () => {
     return Monitor;
   };
 
-  const handlePasswordChange = () => {
+  const handlePasswordChange = async () => {
     setPwError('');
     if (!currentPw || !newPw) { setPwError('Please fill in all fields.'); return; }
     if (newPw.length < 8) { setPwError('Password must be at least 8 characters.'); return; }
     if (newPw !== confirmPw) { setPwError('Passwords do not match.'); return; }
-    const result = changePassword(currentPw, newPw);
+    const result = await changePassword(currentPw, newPw);
     if (result.success) {
       setPwSaved(true);
       setCurrentPw('');

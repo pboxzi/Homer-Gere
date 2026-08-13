@@ -27,6 +27,15 @@ import {
   MEDIA_PODCASTS,
   MEDIA_PRESS,
 } from '../data/content';
+import {
+  journeyRepository,
+  journalRepository,
+  filmographyRepository,
+  experiencesRepository,
+  membershipPlansRepository,
+  galleryRepository,
+  mediaRepository,
+} from '../lib/repositories';
 
 // ============================================================
 // Context type
@@ -48,6 +57,7 @@ interface SiteContentType {
   mediaVideos: typeof MEDIA_VIDEOS;
   mediaPodcasts: typeof MEDIA_PODCASTS;
   mediaPress: typeof MEDIA_PRESS;
+  loading: boolean;
 
   updateMetrics: (metrics: typeof METRICS) => void;
   updateFeaturedProject: (project: typeof FEATURED_PROJECT) => void;
@@ -64,32 +74,96 @@ interface SiteContentType {
   updateMediaVideos: (videos: typeof MEDIA_VIDEOS) => void;
   updateMediaPodcasts: (podcasts: typeof MEDIA_PODCASTS) => void;
   updateMediaPress: (press: typeof MEDIA_PRESS) => void;
+  refreshData: () => Promise<void>;
 }
 
 // ============================================================
-// localStorage helpers
+// Mapping helpers: DB types -> Frontend types
 // ============================================================
 
-const STORAGE_KEY = 'homer_site_content';
-
-function loadState<T>(key: string, fallback: T): T {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return fallback;
-    const parsed = JSON.parse(raw);
-    return key in parsed ? parsed[key] : fallback;
-  } catch {
-    return fallback;
-  }
+function mapJourneyToMilestone(entry: { id: string; year: number; title: string; description: string; details: string; highlight?: string; icon_name?: string }): TimelineMilestone {
+  return {
+    id: entry.id,
+    year: String(entry.year),
+    title: entry.title,
+    description: entry.description,
+    details: entry.details,
+    highlight: entry.highlight || undefined,
+    iconName: entry.icon_name || 'Star',
+  };
 }
 
-function saveState(key: string, value: unknown) {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : {};
-    parsed[key] = value;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
-  } catch { /* ignore */ }
+function mapJournalToFrontend(article: { id: string; title: string; excerpt: string; content: string; category: string; cover_image?: string; slug: string; published_date?: string; reading_time?: string }): JournalArticle {
+  return {
+    id: article.id,
+    title: article.title,
+    excerpt: article.excerpt,
+    content: article.content,
+    category: article.category,
+    image: article.cover_image || '',
+    date: article.published_date || '',
+    readTime: article.reading_time || '5 min read',
+  };
+}
+
+function mapFilmographyToFrontend(entry: { id: string; title: string; role: string; year: number; status: string; description: string; type: string; image_url?: string }): FilmographyEntry {
+  return {
+    id: entry.id,
+    title: entry.title,
+    role: entry.role,
+    year: String(entry.year),
+    status: (entry.status as FilmographyEntry['status']) || 'Released',
+    description: entry.description,
+    type: (entry.type as 'film' | 'television') || 'film',
+    image: entry.image_url || undefined,
+  };
+}
+
+function mapExperienceToFrontend(exp: { id: string; title: string; description: string; type: string; price?: string; image_url?: string; availability?: string; duration?: string; location?: string; whats_included?: string[]; eligibility?: string[]; important_notes?: string[]; details?: string }): Experience {
+  return {
+    id: exp.id,
+    title: exp.title,
+    description: exp.description,
+    details: exp.details || exp.description,
+    price: exp.price || 'Price on request',
+    iconName: 'Sparkles',
+    type: (exp.type as Experience['type']) || 'meet-and-greet',
+    image: exp.image_url || undefined,
+    availability: (exp.availability as Experience['availability']) || 'available',
+    whatsIncluded: exp.whats_included || [],
+    eligibility: exp.eligibility || [],
+    duration: exp.duration || undefined,
+    location: exp.location || undefined,
+    importantNotes: exp.important_notes || [],
+  };
+}
+
+function mapPlanToFrontend(plan: { id: string; name: string; description?: string; price: number; currency: string; period: string; badge?: string; is_popular: boolean; features: string[]; cta_text: string; availability: string; requires_approval: boolean }): MembershipTier {
+  return {
+    id: plan.id,
+    name: plan.name,
+    description: plan.description || '',
+    price: plan.price,
+    currency: plan.currency,
+    period: plan.period,
+    duration: plan.period,
+    badge: plan.badge || undefined,
+    isPopular: plan.is_popular,
+    features: plan.features.map((f) => ({ label: f, included: true })),
+    ctaText: plan.cta_text,
+    availability: (plan.availability as MembershipTier['availability']) || 'available',
+    requiresApproval: plan.requires_approval,
+  };
+}
+
+function mapGalleryToFrontend(photo: { id: string; title: string; caption?: string; category: string; image_url: string }): GalleryItem {
+  return {
+    id: photo.id,
+    title: photo.title,
+    caption: photo.caption || '',
+    category: photo.category,
+    image: photo.image_url,
+  };
 }
 
 // ============================================================
@@ -105,55 +179,80 @@ export const useSiteContent = (): SiteContentType => {
 };
 
 export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [metrics, setMetrics] = useState<typeof METRICS>(() => loadState('metrics', METRICS));
-  const [featuredProject, setFeaturedProject] = useState<typeof FEATURED_PROJECT>(() => loadState('featuredProject', FEATURED_PROJECT));
-  const [timelineMilestones, setTimelineMilestones] = useState<TimelineMilestone[]>(() => loadState('timelineMilestones', TIMELINE_MILESTONES));
-  const [journalArticles, setJournalArticles] = useState<JournalArticle[]>(() => loadState('journalArticles', JOURNAL_ARTICLES));
-  const [experiences, setExperiences] = useState<Experience[]>(() => loadState('experiences', EXPERIENCES));
-  const [membershipTiers, setMembershipTiers] = useState<MembershipTier[]>(() => loadState('membershipTiers', MEMBERSHIP_TIERS));
-  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(() => loadState('galleryItems', GALLERY_ITEMS));
-  const [footerLinks, setFooterLinks] = useState<typeof FOOTER_LINKS>(() => loadState('footerLinks', FOOTER_LINKS));
-  const [filmography, setFilmography] = useState<FilmographyEntry[]>(() => loadState('filmography', FILMOGRAPHY));
-  const [membershipSteps, setMembershipSteps] = useState<MembershipStep[]>(() => loadState('membershipSteps', MEMBERSHIP_STEPS));
-  const [experiencesFAQ, setExperiencesFAQ] = useState<FAQItem[]>(() => loadState('experiencesFAQ', EXPERIENCES_FAQ));
-  const [membershipFAQ, setMembershipFAQ] = useState<MembershipFAQItem[]>(() => loadState('membershipFAQ', MEMBERSHIP_FAQ));
-  const [mediaVideos, setMediaVideos] = useState<typeof MEDIA_VIDEOS>(() => loadState('mediaVideos', MEDIA_VIDEOS));
-  const [mediaPodcasts, setMediaPodcasts] = useState<typeof MEDIA_PODCASTS>(() => loadState('mediaPodcasts', MEDIA_PODCASTS));
-  const [mediaPress, setMediaPress] = useState<typeof MEDIA_PRESS>(() => loadState('mediaPress', MEDIA_PRESS));
+  const [metrics] = useState<typeof METRICS>(METRICS);
+  const [featuredProject] = useState<typeof FEATURED_PROJECT>(FEATURED_PROJECT);
+  const [timelineMilestones, setTimelineMilestones] = useState<TimelineMilestone[]>(TIMELINE_MILESTONES);
+  const [journalArticles, setJournalArticles] = useState<JournalArticle[]>(JOURNAL_ARTICLES);
+  const [experiences, setExperiences] = useState<Experience[]>(EXPERIENCES);
+  const [membershipTiers, setMembershipTiers] = useState<MembershipTier[]>(MEMBERSHIP_TIERS);
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(GALLERY_ITEMS);
+  const [footerLinks] = useState<typeof FOOTER_LINKS>(FOOTER_LINKS);
+  const [filmography, setFilmography] = useState<FilmographyEntry[]>(FILMOGRAPHY);
+  const [membershipSteps] = useState<MembershipStep[]>(MEMBERSHIP_STEPS);
+  const [experiencesFAQ] = useState<FAQItem[]>(EXPERIENCES_FAQ);
+  const [membershipFAQ] = useState<MembershipFAQItem[]>(MEMBERSHIP_FAQ);
+  const [mediaVideos] = useState<typeof MEDIA_VIDEOS>(MEDIA_VIDEOS);
+  const [mediaPodcasts] = useState<typeof MEDIA_PODCASTS>(MEDIA_PODCASTS);
+  const [mediaPress] = useState<typeof MEDIA_PRESS>(MEDIA_PRESS);
+  const [loading, setLoading] = useState(true);
 
-  // Persist to localStorage
-  useEffect(() => { saveState('metrics', metrics); }, [metrics]);
-  useEffect(() => { saveState('featuredProject', featuredProject); }, [featuredProject]);
-  useEffect(() => { saveState('timelineMilestones', timelineMilestones); }, [timelineMilestones]);
-  useEffect(() => { saveState('journalArticles', journalArticles); }, [journalArticles]);
-  useEffect(() => { saveState('experiences', experiences); }, [experiences]);
-  useEffect(() => { saveState('membershipTiers', membershipTiers); }, [membershipTiers]);
-  useEffect(() => { saveState('galleryItems', galleryItems); }, [galleryItems]);
-  useEffect(() => { saveState('footerLinks', footerLinks); }, [footerLinks]);
-  useEffect(() => { saveState('filmography', filmography); }, [filmography]);
-  useEffect(() => { saveState('membershipSteps', membershipSteps); }, [membershipSteps]);
-  useEffect(() => { saveState('experiencesFAQ', experiencesFAQ); }, [experiencesFAQ]);
-  useEffect(() => { saveState('membershipFAQ', membershipFAQ); }, [membershipFAQ]);
-  useEffect(() => { saveState('mediaVideos', mediaVideos); }, [mediaVideos]);
-  useEffect(() => { saveState('mediaPodcasts', mediaPodcasts); }, [mediaPodcasts]);
-  useEffect(() => { saveState('mediaPress', mediaPress); }, [mediaPress]);
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [journeyData, journalData, filmData, expData, planData, galleryData] = await Promise.allSettled([
+        journeyRepository.getAll(),
+        journalRepository.getPublished(),
+        filmographyRepository.getAll(),
+        experiencesRepository.getAll(),
+        membershipPlansRepository.getActive(),
+        galleryRepository.getAllPhotos(),
+      ]);
+
+      if (journeyData.status === 'fulfilled' && journeyData.value.length > 0) {
+        setTimelineMilestones(journeyData.value.map(mapJourneyToMilestone));
+      }
+      if (journalData.status === 'fulfilled' && journalData.value.length > 0) {
+        setJournalArticles(journalData.value.map(mapJournalToFrontend));
+      }
+      if (filmData.status === 'fulfilled' && filmData.value.length > 0) {
+        setFilmography(filmData.value.map(mapFilmographyToFrontend));
+      }
+      if (expData.status === 'fulfilled' && expData.value.length > 0) {
+        setExperiences(expData.value.map(mapExperienceToFrontend));
+      }
+      if (planData.status === 'fulfilled' && planData.value.length > 0) {
+        setMembershipTiers(planData.value.map(mapPlanToFrontend));
+      }
+      if (galleryData.status === 'fulfilled' && galleryData.value.length > 0) {
+        setGalleryItems(galleryData.value.map(mapGalleryToFrontend));
+      }
+    } catch {
+      // Silent fail — use static defaults
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   // Update functions
-  const updateMetrics = useCallback((value: typeof METRICS) => setMetrics(value), []);
-  const updateFeaturedProject = useCallback((value: typeof FEATURED_PROJECT) => setFeaturedProject(value), []);
+  const updateMetrics = useCallback(() => {}, []);
+  const updateFeaturedProject = useCallback(() => {}, []);
   const updateTimelineMilestones = useCallback((value: TimelineMilestone[]) => setTimelineMilestones(value), []);
   const updateJournalArticles = useCallback((value: JournalArticle[]) => setJournalArticles(value), []);
   const updateExperiences = useCallback((value: Experience[]) => setExperiences(value), []);
   const updateMembershipTiers = useCallback((value: MembershipTier[]) => setMembershipTiers(value), []);
   const updateGalleryItems = useCallback((value: GalleryItem[]) => setGalleryItems(value), []);
-  const updateFooterLinks = useCallback((value: typeof FOOTER_LINKS) => setFooterLinks(value), []);
+  const updateFooterLinks = useCallback(() => {}, []);
   const updateFilmography = useCallback((value: FilmographyEntry[]) => setFilmography(value), []);
-  const updateMembershipSteps = useCallback((value: MembershipStep[]) => setMembershipSteps(value), []);
-  const updateExperiencesFAQ = useCallback((value: FAQItem[]) => setExperiencesFAQ(value), []);
-  const updateMembershipFAQ = useCallback((value: MembershipFAQItem[]) => setMembershipFAQ(value), []);
-  const updateMediaVideos = useCallback((value: typeof MEDIA_VIDEOS) => setMediaVideos(value), []);
-  const updateMediaPodcasts = useCallback((value: typeof MEDIA_PODCASTS) => setMediaPodcasts(value), []);
-  const updateMediaPress = useCallback((value: typeof MEDIA_PRESS) => setMediaPress(value), []);
+  const updateMembershipSteps = useCallback(() => {}, []);
+  const updateExperiencesFAQ = useCallback(() => {}, []);
+  const updateMembershipFAQ = useCallback(() => {}, []);
+  const updateMediaVideos = useCallback(() => {}, []);
+  const updateMediaPodcasts = useCallback(() => {}, []);
+  const updateMediaPress = useCallback(() => {}, []);
 
   const value: SiteContentType = useMemo(() => ({
     metrics,
@@ -171,6 +270,7 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     mediaVideos,
     mediaPodcasts,
     mediaPress,
+    loading,
     updateMetrics,
     updateFeaturedProject,
     updateTimelineMilestones,
@@ -186,37 +286,15 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     updateMediaVideos,
     updateMediaPodcasts,
     updateMediaPress,
+    refreshData: loadData,
   }), [
-    metrics,
-    featuredProject,
-    timelineMilestones,
-    journalArticles,
-    experiences,
-    membershipTiers,
-    galleryItems,
-    footerLinks,
-    filmography,
-    membershipSteps,
-    experiencesFAQ,
-    membershipFAQ,
-    mediaVideos,
-    mediaPodcasts,
-    mediaPress,
-    updateMetrics,
-    updateFeaturedProject,
-    updateTimelineMilestones,
-    updateJournalArticles,
-    updateExperiences,
-    updateMembershipTiers,
-    updateGalleryItems,
-    updateFooterLinks,
-    updateFilmography,
-    updateMembershipSteps,
-    updateExperiencesFAQ,
-    updateMembershipFAQ,
-    updateMediaVideos,
-    updateMediaPodcasts,
-    updateMediaPress,
+    metrics, featuredProject, timelineMilestones, journalArticles, experiences,
+    membershipTiers, galleryItems, footerLinks, filmography, membershipSteps,
+    experiencesFAQ, membershipFAQ, mediaVideos, mediaPodcasts, mediaPress, loading,
+    updateMetrics, updateFeaturedProject, updateTimelineMilestones, updateJournalArticles,
+    updateExperiences, updateMembershipTiers, updateGalleryItems, updateFooterLinks,
+    updateFilmography, updateMembershipSteps, updateExperiencesFAQ, updateMembershipFAQ,
+    updateMediaVideos, updateMediaPodcasts, updateMediaPress, loadData,
   ]);
 
   return (
