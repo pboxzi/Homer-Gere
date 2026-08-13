@@ -105,7 +105,7 @@ export const JourneyBehindTheScenes: React.FC = () => {
               The moments in between.
             </h2>
           </div>
-          <p className="text-sm text-[#71717A] max-w-sm leading-relaxed">
+          <p className="text-sm text-[#57534E] max-w-sm leading-relaxed">
             From premiere nights to quiet moments on set — a look at the world behind the camera.
           </p>
         </motion.div>

@@ -21,7 +21,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
             <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
               Latest from the Journal
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#3F3F46] mt-3 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight">
               Reflections & Writings
             </h2>
           </div>
@@ -58,15 +58,15 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
                 </div>
 
                 {/* Body */}
-                <h3 className="text-base font-editorial text-[#3F3F46] group-hover:text-[#C9A84C] transition-colors duration-300 line-clamp-2 leading-snug">
+                <h3 className="text-base font-editorial text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300 line-clamp-2 leading-snug">
                   {article.title}
                 </h3>
-                <p className="mt-2 text-xs text-[#52525B] line-clamp-2 leading-relaxed">
+                <p className="mt-2 text-xs text-[#44403C] line-clamp-2 leading-relaxed">
                   {article.excerpt}
                 </p>
               </div>
 
-              <div className="mt-5 pt-4 border-t border-[#E8E5DF] flex items-center justify-between text-xs text-[#71717A]">
+              <div className="mt-5 pt-4 border-t border-[#E8E5DF] flex items-center justify-between text-xs text-[#57534E]">
                 <span className="flex items-center gap-1.5">
                   <Calendar className="w-3.5 h-3.5" />
                   {article.date}

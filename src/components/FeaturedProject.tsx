@@ -43,7 +43,7 @@ export const FeaturedProject: React.FC<FeaturedProjectProps> = ({ onDiscoverMore
                 <span className="inline-block px-4 py-1.5 bg-white/10 backdrop-blur-sm rounded-xl text-xs font-medium text-gray-200">
                   {FEATURED_PROJECT.status}
                 </span>
-                <span className="text-sm text-gray-400">
+                <span className="text-sm text-[#A8A29E]">
                   Director: <strong className="text-[#C9A84C] font-medium">{FEATURED_PROJECT.director}</strong>
                 </span>
               </div>

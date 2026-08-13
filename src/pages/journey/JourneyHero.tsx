@@ -44,7 +44,7 @@ export const JourneyHero: React.FC<JourneyHeroProps> = ({ onExploreProjects, onV
           </motion.div>
 
           <motion.h1
-            className="text-5xl sm:text-6xl lg:text-7xl font-editorial text-[#3F3F46] tracking-tight leading-[1.02]"
+            className="text-5xl sm:text-6xl lg:text-7xl font-editorial text-[#1C1917] tracking-tight leading-[1.02]"
             initial={{ opacity: 0, y: 35 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
@@ -53,7 +53,7 @@ export const JourneyHero: React.FC<JourneyHeroProps> = ({ onExploreProjects, onV
           </motion.h1>
 
           <motion.p
-            className="text-base sm:text-lg text-[#3F3F46] leading-relaxed max-w-lg"
+            className="text-base sm:text-lg text-[#1C1917] leading-relaxed max-w-lg"
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
@@ -78,7 +78,7 @@ export const JourneyHero: React.FC<JourneyHeroProps> = ({ onExploreProjects, onV
 
             <button
               onClick={onViewJournal}
-              className="inline-flex items-center justify-center gap-2 bg-transparent hover:bg-[#F3F1ED] active:scale-95 text-[#3F3F46] font-medium text-sm px-6 py-3.5 rounded-2xl transition-all duration-300 focus:outline-none cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 bg-transparent hover:bg-[#F3F1ED] active:scale-95 text-[#1C1917] font-medium text-sm px-6 py-3.5 rounded-2xl transition-all duration-300 focus:outline-none cursor-pointer"
             >
               <BookOpen className="w-4 h-4 text-[#C9A84C]" />
               <span>Latest Journal</span>
@@ -99,7 +99,7 @@ export const JourneyHero: React.FC<JourneyHeroProps> = ({ onExploreProjects, onV
           className="group flex flex-col items-center gap-2 focus:outline-none cursor-pointer"
           aria-label="Scroll to continue"
         >
-          <span className="text-[10px] font-medium text-[#71717A] group-hover:text-[#C9A84C] transition-colors uppercase tracking-[0.25em]">
+          <span className="text-[10px] font-medium text-[#57534E] group-hover:text-[#C9A84C] transition-colors uppercase tracking-[0.25em]">
             Scroll
           </span>
           <div className="relative w-[1px] h-8 bg-[#E8E5DF] group-hover:bg-[#C9A84C]/30 transition-colors overflow-hidden rounded-full">

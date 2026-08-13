@@ -52,7 +52,7 @@ export const JourneyValues: React.FC = () => {
           <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
             Driven By Purpose
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#3F3F46] tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight">
             The principles behind the craft.
           </h2>
         </motion.div>
@@ -77,11 +77,11 @@ export const JourneyValues: React.FC = () => {
                   <Icon className="w-7 h-7" />
                 </div>
 
-                <h3 className="text-lg font-editorial text-[#3F3F46] group-hover:text-[#C9A84C] transition-colors duration-300 mb-3">
+                <h3 className="text-lg font-editorial text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300 mb-3">
                   {value.title}
                 </h3>
 
-                <p className="text-sm text-[#52525B] leading-relaxed group-hover:text-[#3F3F46] transition-colors duration-300">
+                <p className="text-sm text-[#44403C] leading-relaxed group-hover:text-[#1C1917] transition-colors duration-300">
                   {value.description}
                 </p>
               </motion.div>

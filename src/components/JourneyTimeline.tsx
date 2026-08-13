@@ -38,14 +38,14 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({
             <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
               The Journey
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#3F3F46] mt-3 tracking-tight leading-[1.1]">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#44403C] mt-3 tracking-tight leading-[1.1]">
               Every step shapes the story.
             </h2>
           </div>
 
           <button
             onClick={onViewFullTimeline}
-            className="inline-flex items-center gap-2 text-sm font-medium text-[#3F3F46] hover:text-[#C9A84C] transition-colors duration-300 self-start md:self-auto focus:outline-none cursor-pointer"
+            className="inline-flex items-center gap-2 text-sm font-medium text-[#44403C] hover:text-[#C9A84C] transition-colors duration-300 self-start md:self-auto focus:outline-none cursor-pointer"
           >
             View Full Timeline
             <ArrowRight className="w-4 h-4" />
@@ -77,7 +77,7 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({
                     className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 ${
                       isToday || isSelected
                         ? 'bg-[#C9A84C] text-white shadow-lg shadow-[#C9A84C]/20'
-                        : 'bg-[#F3F1ED] text-[#52525B] group-hover:bg-[#C9A84C]/15 group-hover:text-[#C9A84C]'
+                        : 'bg-[#F3F1ED] text-[#44403C] group-hover:bg-[#C9A84C]/15 group-hover:text-[#C9A84C]'
                     }`}
                   >
                     {getMilestoneIcon(item.iconName)}
@@ -85,12 +85,12 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({
 
                   <span
                     className={`mt-3 text-xs sm:text-sm font-medium transition-colors duration-300 leading-tight ${
-                      isSelected ? 'text-[#C9A84C]' : 'text-[#3F3F46] group-hover:text-[#3F3F46]'
+                      isSelected ? 'text-[#C9A84C]' : 'text-[#44403C] group-hover:text-[#44403C]'
                     }`}
                   >
                     {item.title}
                   </span>
-                  <span className="text-[11px] text-[#71717A] font-medium mt-0.5">
+                  <span className="text-[11px] text-[#57534E] font-medium mt-0.5">
                     {item.year}
                   </span>
                 </button>
@@ -106,7 +106,7 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({
               <span className="text-[11px] font-medium text-[#C9A84C] bg-[#C9A84C]/10 px-3 py-1 rounded-full uppercase tracking-wider">
                 {activeMilestone.year}
               </span>
-              <h3 className="text-lg sm:text-xl font-editorial text-[#3F3F46]">
+              <h3 className="text-lg sm:text-xl font-editorial text-[#44403C]">
                 {activeMilestone.title}
               </h3>
               {activeMilestone.highlight && (
@@ -116,7 +116,7 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({
                 </span>
               )}
             </div>
-            <p className="text-sm sm:text-base text-[#3F3F46] max-w-2xl leading-relaxed">
+            <p className="text-sm sm:text-base text-[#44403C] max-w-2xl leading-relaxed">
               {activeMilestone.details}
             </p>
           </div>

@@ -55,7 +55,7 @@ export const JourneyHighlights: React.FC = () => {
           <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
             Career Highlights
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#3F3F46] tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight">
             Moments that defined the path.
           </h2>
         </motion.div>
@@ -83,7 +83,7 @@ export const JourneyHighlights: React.FC = () => {
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.2s] ease-out"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute top-5 left-5 bg-[#FAF9F7]/95 backdrop-blur-md px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 text-[10px] font-medium tracking-wider text-[#3F3F46] uppercase shadow-sm">
+                <div className="absolute top-5 left-5 bg-[#FAF9F7]/95 backdrop-blur-md px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 text-[10px] font-medium tracking-wider text-[#1C1917] uppercase shadow-sm">
                   <Calendar className="w-3 h-3 text-[#C9A84C]" />
                   {item.date}
                 </div>
@@ -91,11 +91,11 @@ export const JourneyHighlights: React.FC = () => {
 
               {/* Content */}
               <div className="p-7 sm:p-9">
-                <h3 className="text-xl sm:text-2xl font-editorial text-[#3F3F46] group-hover:text-[#C9A84C] transition-colors duration-300 mb-3">
+                <h3 className="text-xl sm:text-2xl font-editorial text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300 mb-3">
                   {item.title}
                 </h3>
 
-                <p className="text-sm sm:text-base text-[#52525B] leading-relaxed mb-7 group-hover:text-[#3F3F46] transition-colors duration-300">
+                <p className="text-sm sm:text-base text-[#44403C] leading-relaxed mb-7 group-hover:text-[#1C1917] transition-colors duration-300">
                   {item.description}
                 </p>
 

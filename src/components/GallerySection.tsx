@@ -29,7 +29,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
             </div>
 
             {/* Quote text */}
-            <blockquote className="relative text-3xl sm:text-4xl md:text-5xl font-editorial italic text-[#3F3F46] leading-[1.4] tracking-wide max-w-3xl mx-auto">
+            <blockquote className="relative text-3xl sm:text-4xl md:text-5xl font-editorial italic text-[#1C1917] leading-[1.4] tracking-wide max-w-3xl mx-auto">
               Every role teaches me something new about the world and about myself.
             </blockquote>
 
@@ -58,14 +58,14 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
             <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
               Photo Gallery
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#3F3F46] mt-3 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight">
               Moments & Portraits
             </h2>
           </div>
 
           <button
             onClick={onViewFullGallery}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-[#3F3F46] hover:text-[#C9A84C] transition-colors duration-300 group focus:outline-none cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-[#1C1917] hover:text-[#C9A84C] transition-colors duration-300 group focus:outline-none cursor-pointer"
           >
             View Full Gallery
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />

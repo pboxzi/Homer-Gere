@@ -118,14 +118,14 @@ export const ChatModal: React.FC<ChatModalProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-editorial text-gray-700 text-base sm:text-lg">
+                <h3 className="font-editorial text-[#1C1917] text-base sm:text-lg">
                   Homer Gere
                 </h3>
                 <span className="text-[10px] bg-blue-50 text-blue-600 font-medium px-2 py-0.5 rounded-full uppercase">
                   Verified AI
                 </span>
               </div>
-              <p className="text-xs text-gray-500 font-medium">
+              <p className="text-xs text-[#44403C] font-medium">
                 {mode === 'business' ? 'Business & Media Inquiries' : 'Fan & Community Assistant'}
               </p>
             </div>
@@ -133,20 +133,20 @@ export const ChatModal: React.FC<ChatModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-700 rounded-full hover:bg-gray-100 focus:outline-none cursor-pointer"
+            className="p-2 text-[#A8A29E] hover:text-[#1C1917] rounded-full hover:bg-[#EDE9E0] focus:outline-none cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Mode Selector Tabs */}
-        <div className="px-4 py-2 bg-gray-50 flex items-center gap-2">
+        <div className="px-4 py-2 bg-[#F5F2EB] flex items-center gap-2">
           <button
             onClick={() => setMode('fan')}
             className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1.5 focus:outline-none cursor-pointer ${
               mode === 'fan'
                 ? 'bg-white text-blue-600'
-                : 'text-gray-500 hover:text-gray-700'
+                : 'text-[#44403C] hover:text-[#1C1917]'
             }`}
           >
             <User className="w-3.5 h-3.5" />
@@ -158,7 +158,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({
             className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1.5 focus:outline-none cursor-pointer ${
               mode === 'business'
                 ? 'bg-white text-blue-600'
-                : 'text-gray-500 hover:text-gray-700'
+                : 'text-[#44403C] hover:text-[#1C1917]'
             }`}
           >
             <Briefcase className="w-3.5 h-3.5" />
@@ -167,7 +167,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({
         </div>
 
         {/* Message History */}
-        <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4 bg-gray-50/30">
+        <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4 bg-[#F5F2EB]/30">
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -179,19 +179,19 @@ export const ChatModal: React.FC<ChatModalProps> = ({
                 className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                   msg.sender === 'user'
                     ? 'bg-blue-600 text-white rounded-br-none'
-                    : 'bg-white text-gray-800 rounded-bl-none'
+                    : 'bg-white text-[#1C1917] rounded-bl-none'
                 }`}
               >
                 {msg.text}
               </div>
-              <span className="text-[10px] text-gray-400 mt-1 px-1">
+              <span className="text-[10px] text-[#A8A29E] mt-1 px-1">
                 {msg.timestamp}
               </span>
             </div>
           ))}
 
           {loading && (
-            <div className="flex items-center gap-2 text-xs text-gray-500 bg-white rounded-2xl px-4 py-3 w-fit">
+            <div className="flex items-center gap-2 text-xs text-[#44403C] bg-white rounded-2xl px-4 py-3 w-fit">
               <Loader2 className="w-4 h-4 text-blue-600 animate-spin" />
               <span>Homer is typing...</span>
             </div>
@@ -246,7 +246,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({
                 ? 'Type business or collaboration inquiry...'
                 : 'Ask Homer a question or share a note...'
             }
-            className="flex-1 px-4 py-2.5 bg-gray-50 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all"
+            className="flex-1 px-4 py-2.5 bg-[#F5F2EB] rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all"
           />
           <button
             type="submit"

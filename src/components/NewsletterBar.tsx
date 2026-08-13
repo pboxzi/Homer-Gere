@@ -21,11 +21,11 @@ export const NewsletterBar: React.FC = () => {
             Stay Updated
           </span>
 
-          <h2 className="text-2xl sm:text-3xl font-editorial text-[#3F3F46] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight">
             Never miss a story.
           </h2>
 
-          <p className="text-sm text-[#52525B] leading-relaxed">
+          <p className="text-sm text-[#44403C] leading-relaxed">
             Subscribe for exclusive updates, behind-the-scenes content, and early access to new projects.
           </p>
 
@@ -42,7 +42,7 @@ export const NewsletterBar: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
-                className="flex-1 bg-white px-5 py-3.5 rounded-2xl text-sm text-[#3F3F46] placeholder-[#71717A] border border-[#E8E5DF] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/20 outline-none transition-all duration-300"
+                className="flex-1 bg-white px-5 py-3.5 rounded-2xl text-sm text-[#1C1917] placeholder-[#57534E] border border-[#E8E5DF] focus:border-[#C9A84C] focus:ring-2 focus:ring-[#C9A84C]/20 outline-none transition-all duration-300"
               />
               <button
                 type="submit"

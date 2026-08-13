@@ -29,14 +29,14 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
           {/* Logo & Info */}
           <div className="lg:col-span-2 space-y-5">
             <div className="flex flex-col">
-              <span className="font-editorial text-2xl tracking-[0.08em] text-[#3F3F46] uppercase">
+              <span className="font-editorial text-2xl tracking-[0.08em] text-[#1C1917] uppercase">
                 Homer Gere
               </span>
               <span className="text-[10px] tracking-[0.2em] text-[#C9A84C] font-medium uppercase mt-1.5">
                 Official Website
               </span>
             </div>
-            <p className="text-xs sm:text-sm text-[#52525B] max-w-sm leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#57534E] max-w-sm leading-relaxed">
               Official website for actor, storyteller, and creator Homer Gere. Exploring character study, dramatic film work, and global creative connections.
             </p>
             {/* Social Icons */}
@@ -45,7 +45,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#52525B] hover:bg-[#C9A84C] hover:text-white flex items-center justify-center transition-all duration-300"
+                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#C9A84C] hover:text-white flex items-center justify-center transition-all duration-300"
                 aria-label="Instagram"
               >
                 <Instagram className="w-4 h-4" />
@@ -54,7 +54,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
                 href="https://tiktok.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#52525B] hover:bg-[#C9A84C] hover:text-white flex items-center justify-center transition-all duration-300 font-medium text-xs"
+                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#C9A84C] hover:text-white flex items-center justify-center transition-all duration-300 font-medium text-xs"
                 aria-label="TikTok"
               >
                 &#9834;
@@ -63,7 +63,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
                 href="https://x.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#52525B] hover:bg-[#C9A84C] hover:text-white flex items-center justify-center transition-all duration-300"
+                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#C9A84C] hover:text-white flex items-center justify-center transition-all duration-300"
                 aria-label="X (Twitter)"
               >
                 <Twitter className="w-4 h-4" />
@@ -72,7 +72,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
                 href="https://youtube.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#52525B] hover:bg-[#C9A84C] hover:text-white flex items-center justify-center transition-all duration-300"
+                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#C9A84C] hover:text-white flex items-center justify-center transition-all duration-300"
                 aria-label="YouTube"
               >
                 <Youtube className="w-4 h-4" />
@@ -83,7 +83,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
           {/* Links Columns */}
           {Object.entries(FOOTER_LINKS).map(([category, links]) => (
             <div key={category} className="space-y-4">
-              <h4 className="text-[11px] font-medium tracking-[0.15em] text-[#3F3F46] uppercase">
+              <h4 className="text-[11px] font-medium tracking-[0.15em] text-[#1C1917] uppercase">
                 {category}
               </h4>
               <ul className="space-y-2.5">
@@ -91,7 +91,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
                   <li key={idx}>
                     <button
                       onClick={() => handleLinkClick(link.href)}
-                      className="text-xs sm:text-sm text-[#52525B] hover:text-[#C9A84C] transition-colors duration-300 focus:outline-none cursor-pointer"
+                      className="text-xs sm:text-sm text-[#57534E] hover:text-[#C9A84C] transition-colors duration-300 focus:outline-none cursor-pointer"
                     >
                       {link.label}
                     </button>
@@ -103,12 +103,12 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
         </div>
 
         {/* Bottom */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#71717A] gap-4">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#57534E] gap-4">
           <p>&copy; 2026 Homer Gere. All Rights Reserved.</p>
 
           <button
             onClick={scrollToTop}
-            className="inline-flex items-center gap-2 text-xs font-medium text-[#52525B] hover:text-[#C9A84C] p-2 rounded-xl hover:bg-[#FAF9F7] transition-all duration-300 focus:outline-none cursor-pointer"
+            className="inline-flex items-center gap-2 text-xs font-medium text-[#57534E] hover:text-[#C9A84C] p-2 rounded-xl hover:bg-[#FAF9F7] transition-all duration-300 focus:outline-none cursor-pointer"
           >
             <span>Back to top</span>
             <div className="w-7 h-7 rounded-xl bg-[#FAF9F7] flex items-center justify-center">

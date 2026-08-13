@@ -41,7 +41,7 @@ export const JourneyQuote: React.FC = () => {
           >
             <Quote className="w-14 h-14 text-[#C9A84C]/20" />
 
-            <blockquote className="text-2xl sm:text-3xl lg:text-[2.5rem] font-editorial font-medium text-[#3F3F46]/40 leading-[1.3] italic">
+            <blockquote className="text-2xl sm:text-3xl lg:text-[2.5rem] font-editorial font-medium text-[#1C1917]/40 leading-[1.3] italic">
               "An official quote from Homer will be added here."
             </blockquote>
 
@@ -52,7 +52,7 @@ export const JourneyQuote: React.FC = () => {
               </span>
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-[#71717A]">
+            <div className="flex items-center gap-2 text-xs text-[#57534E]">
               <Pen className="w-3.5 h-3.5" />
               <span>Official quote pending — to be updated when available.</span>
             </div>

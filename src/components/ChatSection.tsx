@@ -17,11 +17,11 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
                 Chat with Homer
               </span>
 
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#3F3F46] tracking-tight leading-[1.1]">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight leading-[1.1]">
                 Let's start a conversation.
               </h2>
 
-              <p className="text-[#52525B] text-sm sm:text-base leading-relaxed">
+              <p className="text-[#44403C] text-sm sm:text-base leading-relaxed">
                 Choose how you'd like to connect with Homer. We'll guide you to the right place.
               </p>
             </div>
@@ -38,11 +38,11 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
                     <User className="w-6 h-6" />
                   </div>
 
-                  <h3 className="text-lg font-editorial text-[#3F3F46] group-hover:text-[#C9A84C] transition-colors duration-300">
+                  <h3 className="text-lg font-editorial text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300">
                     Fan Chat
                   </h3>
 
-                  <p className="mt-2 text-xs sm:text-sm text-[#52525B] leading-relaxed">
+                  <p className="mt-2 text-xs sm:text-sm text-[#44403C] leading-relaxed">
                     Send a message, ask a question, or share your support directly.
                   </p>
                 </div>
@@ -63,11 +63,11 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
                     <Briefcase className="w-6 h-6" />
                   </div>
 
-                  <h3 className="text-lg font-editorial text-[#3F3F46] group-hover:text-[#C9A84C] transition-colors duration-300">
+                  <h3 className="text-lg font-editorial text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300">
                     Business Chat
                   </h3>
 
-                  <p className="mt-2 text-xs sm:text-sm text-[#52525B] leading-relaxed">
+                  <p className="mt-2 text-xs sm:text-sm text-[#44403C] leading-relaxed">
                     Media, collaborations, opportunities, and professional inquiries.
                   </p>
                 </div>

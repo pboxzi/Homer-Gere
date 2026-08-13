@@ -42,7 +42,7 @@ function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F7] text-[#44403C] font-body antialiased">
+    <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
       <Navbar
         activeSection={activeSection}
         onNavigate={handleNavigate}

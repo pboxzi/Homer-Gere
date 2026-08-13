@@ -21,7 +21,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
             <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
               Membership
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#3F3F46] mt-3 tracking-tight leading-[1.1]">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight leading-[1.1]">
               Join the journey. <br className="hidden sm:inline" />
               Be part of more.
             </h2>
@@ -49,7 +49,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
                 className={`relative rounded-[1.5rem] p-8 sm:p-9 transition-all duration-500 flex flex-col justify-between ${
                   isPopular
                     ? 'bg-[#111827] text-white shadow-2xl shadow-[#111827]/20 ring-1 ring-[#C9A84C]/30'
-                    : 'bg-[#FAF9F7] hover:bg-white text-[#3F3F46] hover:shadow-xl hover:shadow-[#C9A84C]/5 border border-[#E8E5DF]/60'
+                    : 'bg-[#FAF9F7] hover:bg-white text-[#1C1917] hover:shadow-xl hover:shadow-[#C9A84C]/5 border border-[#E8E5DF]/60'
                 }`}
               >
                 {isPopular && (
@@ -60,7 +60,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
 
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <span className={`text-[11px] font-medium tracking-[0.15em] uppercase ${isPopular ? 'text-[#C9A84C]' : 'text-[#71717A]'}`}>
+                    <span className={`text-[11px] font-medium tracking-[0.15em] uppercase ${isPopular ? 'text-[#C9A84C]' : 'text-[#57534E]'}`}>
                       {tier.name}
                     </span>
                     {tier.id === 'platinum' ? (
@@ -74,14 +74,14 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
                     <span className="text-4xl sm:text-5xl font-editorial">
                       ${tier.price}
                     </span>
-                    <span className={`text-xs font-medium ${isPopular ? 'text-gray-400' : 'text-[#71717A]'}`}>{tier.period}</span>
+                    <span className={`text-xs font-medium ${isPopular ? 'text-[#57534E]' : 'text-[#57534E]'}`}>{tier.period}</span>
                   </div>
 
                   <ul className="space-y-4 mb-8">
                     {tier.features.map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-3 text-xs sm:text-sm">
                         <Check className={`w-4 h-4 shrink-0 mt-0.5 ${isPopular ? 'text-[#C9A84C]' : 'text-[#C9A84C]'}`} />
-                        <span className={isPopular ? 'text-gray-300' : 'text-[#3F3F46]'}>{feature}</span>
+                        <span className={isPopular ? 'text-[#D6D3D1]' : 'text-[#1C1917]'}>{feature}</span>
                       </li>
                     ))}
                   </ul>

@@ -64,10 +64,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={() => handleNavClick('home')}
           className="group flex flex-col text-left focus:outline-none cursor-pointer py-1"
         >
-          <span className="font-editorial text-2xl sm:text-3xl tracking-[0.08em] text-[#3F3F46] group-hover:text-[#C8A96A] transition-colors duration-500 uppercase leading-none">
+          <span className="font-editorial text-2xl sm:text-3xl tracking-[0.08em] text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-500 uppercase leading-none">
             Homer Gere
           </span>
-          <span className="text-[9px] sm:text-[10px] font-medium tracking-[0.3em] text-[#C8A96A] uppercase mt-1.5">
+          <span className="text-[9px] sm:text-[10px] font-medium tracking-[0.3em] text-[#C9A84C] uppercase mt-1.5">
             Official Website
           </span>
         </button>
@@ -82,13 +82,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => handleNavClick(item.id)}
                 className={`relative py-2 text-[13px] font-medium tracking-wide transition-colors duration-300 focus:outline-none ${
                   isActive
-                    ? 'text-[#C8A96A] font-semibold'
-                    : 'text-[#6B7280] hover:text-[#3F3F46]'
+                    ? 'text-[#C9A84C] font-semibold'
+                    : 'text-[#57534E] hover:text-[#1C1917]'
                 }`}
               >
                 {item.label}
                 {isActive && (
-                  <span className="absolute -bottom-1 left-0 right-0 h-[1.5px] bg-[#C8A96A] rounded-full" />
+                  <span className="absolute -bottom-1 left-0 right-0 h-[1.5px] bg-[#C9A84C] rounded-full" />
                 )}
               </button>
             );
@@ -99,7 +99,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="hidden lg:flex items-center space-x-4">
           <button
             onClick={onOpenSignIn}
-            className="inline-flex items-center gap-2 bg-[#C8A96A] hover:bg-[#B89A5A] text-white text-[13px] font-medium px-5 py-2.5 rounded-2xl transition-all duration-300 transform hover:shadow-lg hover:shadow-[#C8A96A]/20 active:scale-95 focus:outline-none cursor-pointer"
+            className="inline-flex items-center gap-2 bg-[#C9A84C] hover:bg-[#B89A5A] text-white text-[13px] font-medium px-5 py-2.5 rounded-2xl transition-all duration-300 transform hover:shadow-lg hover:shadow-[#C9A84C]/20 active:scale-95 focus:outline-none cursor-pointer"
           >
             <User className="w-4 h-4" />
             Sign In
@@ -110,14 +110,14 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="lg:hidden flex items-center gap-3">
           <button
             onClick={onOpenSignIn}
-            className="inline-flex items-center gap-1.5 bg-[#C8A96A] text-white text-xs font-medium px-3.5 py-2 rounded-2xl focus:outline-none cursor-pointer"
+            className="inline-flex items-center gap-1.5 bg-[#C9A84C] text-white text-xs font-medium px-3.5 py-2 rounded-2xl focus:outline-none cursor-pointer"
           >
             <User className="w-3.5 h-3.5" />
             Sign In
           </button>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-[#6B7280] hover:text-[#3F3F46] rounded-xl hover:bg-[#F3EFE7] transition-colors focus:outline-none"
+            className="p-2 text-[#57534E] hover:text-[#1C1917] rounded-xl hover:bg-[#F3EFE7] transition-colors focus:outline-none"
             aria-label="Toggle Navigation Menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -137,8 +137,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onClick={() => handleNavClick(item.id)}
                   className={`text-left px-4 py-3 rounded-xl text-base font-medium transition-colors ${
                     isActive
-                      ? 'bg-[#C8A96A]/10 text-[#C8A96A] font-semibold'
-                      : 'text-[#6B7280] hover:bg-[#F3EFE7] hover:text-[#3F3F46]'
+                      ? 'bg-[#C9A84C]/10 text-[#C9A84C] font-semibold'
+                      : 'text-[#57534E] hover:bg-[#F3EFE7] hover:text-[#1C1917]'
                   }`}
                 >
                   {item.label}

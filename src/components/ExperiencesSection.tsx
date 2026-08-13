@@ -33,7 +33,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
             <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
               Experiences
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#3F3F46] mt-3 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight">
               Connect & Collaborate
             </h2>
           </div>
@@ -60,11 +60,11 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
                   {getExperienceIcon(exp.iconName)}
                 </div>
 
-                <h3 className="text-sm font-editorial text-[#3F3F46] group-hover:text-[#C9A84C] transition-colors duration-300">
+                <h3 className="text-sm font-editorial text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300">
                   {exp.title}
                 </h3>
 
-                <p className="mt-1.5 text-[11px] text-[#52525B] leading-relaxed line-clamp-3">
+                <p className="mt-1.5 text-[11px] text-[#44403C] leading-relaxed line-clamp-3">
                   {exp.description}
                 </p>
               </div>

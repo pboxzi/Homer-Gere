@@ -31,27 +31,27 @@ export const JourneyIntro: React.FC = () => {
                 <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
                   Biography
                 </span>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#3F3F46] tracking-tight leading-[1.08]">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight leading-[1.08]">
                   Homer James Jigme Gere
                 </h2>
               </div>
 
               <div className="space-y-6">
-                <p className="text-[#3F3F46] text-base sm:text-lg leading-[1.8]">
+                <p className="text-[#1C1917] text-base sm:text-lg leading-[1.8]">
                   Born February 6, 2000 in New York City, Homer Gere is an American actor and
                   the son of actor Richard Gere and actress and former Bond girl Carey Lowell.
                   His middle name "Jigme" is Tibetan for "fearless" or "courageous," reflecting
                   his father's Buddhist faith.
                 </p>
 
-                <p className="text-[#3F3F46] text-base sm:text-lg leading-[1.8]">
+                <p className="text-[#1C1917] text-base sm:text-lg leading-[1.8]">
                   Homer grew up in New York and attended the private Hackley School in
                   Westchester, graduating in 2018. He then enrolled at Brown University in
                   Providence, Rhode Island, where he studied Cognitive Neuroscience and Visual
                   Arts — a combination that would later inform his approach to performance.
                 </p>
 
-                <p className="text-[#3F3F46] text-base sm:text-lg leading-[1.8]">
+                <p className="text-[#1C1917] text-base sm:text-lg leading-[1.8]">
                   After appearing in several independent short films, Homer made his television
                   debut in 2026 as Dylan Reid in HBO's Euphoria Season 3. He was then cast as
                   Robert Mallory in Ryan Murphy's adaptation of the Bret Easton Ellis novel

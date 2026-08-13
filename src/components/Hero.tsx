@@ -58,7 +58,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
           {/* Left Side — Editorial Content */}
           <div className="relative z-10 p-6 sm:p-10 md:p-14 lg:p-16 w-full lg:w-[48%] flex flex-col items-start justify-between h-full space-y-6 lg:space-y-0">
             <div className="flex flex-col items-start gap-4 sm:gap-5 max-w-xl">
-              <p className="text-sm sm:text-base text-[#3F3F46] font-normal leading-relaxed max-w-lg">
+              <p className="text-sm sm:text-base text-[#1C1917] font-normal leading-relaxed max-w-lg">
                 American actor known for Euphoria Season 3, The Shards, and upcoming projects with
                 Oliver Stone. Son of Richard Gere and Carey Lowell. Discover his work, exclusive
                 experiences, and official updates.
@@ -75,7 +75,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
 
                 <button
                   onClick={() => onViewProject?.(FEATURED_PROJECT.id)}
-                  className="inline-flex items-center justify-center gap-2 bg-transparent hover:bg-[#F3F1ED] active:scale-95 text-[#3F3F46] font-medium text-sm px-6 py-3.5 rounded-2xl transition-all duration-300 focus:outline-none cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 bg-transparent hover:bg-[#F3F1ED] active:scale-95 text-[#1C1917] font-medium text-sm px-6 py-3.5 rounded-2xl transition-all duration-300 focus:outline-none cursor-pointer"
                 >
                   <Play className="w-3.5 h-3.5 text-[#C9A84C] fill-[#C9A84C]" />
                   <span>Latest Project</span>
@@ -97,10 +97,10 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
                       </div>
                       <Sparkles className="w-2.5 h-2.5 text-[#C9A84C]/40" />
                     </div>
-                    <div className="text-lg sm:text-xl font-editorial text-[#3F3F46] tracking-tight">
+                    <div className="text-lg sm:text-xl font-editorial text-[#1C1917] tracking-tight">
                       {metric.value}
                     </div>
-                    <div className="text-[11px] text-[#52525B] font-medium tracking-wide mt-0.5 uppercase">
+                    <div className="text-[11px] text-[#44403C] font-medium tracking-wide mt-0.5 uppercase">
                       {metric.label}
                     </div>
                   </div>
@@ -116,7 +116,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
               className="group flex flex-col items-center gap-2 focus:outline-none cursor-pointer"
               aria-label="Scroll to explore content"
             >
-              <span className="text-[10px] font-medium text-[#71717A] group-hover:text-[#C9A84C] transition-colors uppercase tracking-[0.25em]">
+              <span className="text-[10px] font-medium text-[#A8A29E] group-hover:text-[#C9A84C] transition-colors uppercase tracking-[0.25em]">
                 Scroll to Explore
               </span>
               <div className="relative w-[1px] h-8 bg-[#E8E5DF] group-hover:bg-[#C9A84C]/30 transition-colors overflow-hidden rounded-full">

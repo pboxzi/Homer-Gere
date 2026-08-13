@@ -25,7 +25,7 @@ export const JourneyFAQ: React.FC = () => {
           <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
             Frequently Asked Questions
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#3F3F46] tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight">
             Common questions.
           </h2>
         </motion.div>
@@ -48,11 +48,11 @@ export const JourneyFAQ: React.FC = () => {
                   className="w-full flex items-center justify-between p-6 sm:p-7 text-left focus:outline-none cursor-pointer group"
                   aria-expanded={isOpen}
                 >
-                  <span className="text-base sm:text-lg font-editorial text-[#3F3F46] group-hover:text-[#C9A84C] transition-colors duration-300 pr-4">
+                  <span className="text-base sm:text-lg font-editorial text-[#1C1917] group-hover:text-[#C9A84C] transition-colors duration-300 pr-4">
                     {item.question}
                   </span>
                   <motion.div
-                    className="shrink-0 w-8 h-8 rounded-xl bg-[#E8E5DF]/60 flex items-center justify-center text-[#52525B] group-hover:bg-[#C9A84C]/10 group-hover:text-[#C9A84C] transition-colors duration-300"
+                    className="shrink-0 w-8 h-8 rounded-xl bg-[#E8E5DF]/60 flex items-center justify-center text-[#44403C] group-hover:bg-[#C9A84C]/10 group-hover:text-[#C9A84C] transition-colors duration-300"
                     animate={{ rotate: isOpen ? 180 : 0 }}
                     transition={{ duration: 0.3 }}
                   >
@@ -70,7 +70,7 @@ export const JourneyFAQ: React.FC = () => {
                     >
                       <div className="px-6 sm:px-7 pb-6 sm:pb-7">
                         <div className="w-12 h-[1px] bg-[#C9A84C]/30 mb-4" />
-                        <p className="text-sm sm:text-base text-[#52525B] leading-relaxed">
+                        <p className="text-sm sm:text-base text-[#44403C] leading-relaxed">
                           {item.answer}
                         </p>
                       </div>
