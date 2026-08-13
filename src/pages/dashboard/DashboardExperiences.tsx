@@ -19,11 +19,19 @@ const CATEGORY_COLORS: Record<string, string> = {
   'In-Person': '#F59E0B',
 };
 
-export const DashboardExperiences: React.FC = () => {
+export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onRequestFormOpened?: () => void }> = ({ openRequestForm, onRequestFormOpened }) => {
   const { requests, addRequest, membership } = useDashboard();
   const [selectedExp, setSelectedExp] = useState<typeof EXPERIENCES[0] | null>(null);
   const [requestNote, setRequestNote] = useState('');
   const [submitted, setSubmitted] = useState(false);
+
+  // Open request form when triggered from DashboardHome
+  React.useEffect(() => {
+    if (openRequestForm) {
+      setSelectedExp(EXPERIENCES[0]);
+      onRequestFormOpened?.();
+    }
+  }, [openRequestForm, onRequestFormOpened]);
 
   const experienceRequests = requests.filter((r) => r.type === 'experience');
 
