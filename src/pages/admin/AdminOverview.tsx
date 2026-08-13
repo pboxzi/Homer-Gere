@@ -34,22 +34,27 @@ export const AdminOverview: React.FC = () => {
         {cards.map((card, i) => (
           <motion.div
             key={card.label}
-            className="rounded-2xl border border-[#E8E5DF]/60 bg-white p-4"
+            className="rounded-2xl p-4 border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+            style={{
+              backgroundColor: `${card.color}08`,
+              borderColor: `${card.color}20`,
+              boxShadow: `0 4px 20px ${card.color}08`,
+            }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.05 * i }}
           >
             <div className="flex items-center justify-between mb-3">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${card.color}12`, color: card.color }}>
-                <card.icon className="w-4 h-4" />
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${card.color}18`, color: card.color }}>
+                <card.icon className="w-4.5 h-4.5" />
               </div>
-              <div className={`flex items-center gap-0.5 text-[10px] font-medium ${card.up ? 'text-[#16A34A]' : 'text-[#DC2626]'}`}>
+              <div className={`flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-full ${card.up ? 'bg-[#16A34A]/10 text-[#16A34A]' : 'bg-[#DC2626]/10 text-[#DC2626]'}`}>
                 {card.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
                 {card.change}
               </div>
             </div>
-            <p className="text-xl font-editorial text-[#1C1917]">{card.value}</p>
-            <p className="text-[10px] text-[#57534E] mt-0.5">{card.label}</p>
+            <p className="text-2xl font-editorial" style={{ color: card.color }}>{card.value}</p>
+            <p className="text-[10px] text-[#57534E] mt-1 font-medium">{card.label}</p>
           </motion.div>
         ))}
       </div>
@@ -63,9 +68,9 @@ export const AdminOverview: React.FC = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <h3 className="text-sm font-medium text-[#1C1917] mb-4">Recent Activity</h3>
-          <div className="space-y-3">
+          <div className="space-y-2">
             {MOCK_ADMIN_NOTIFICATIONS.map((n) => (
-              <div key={n.id} className={`flex items-start gap-3 p-3 rounded-xl ${!n.read ? 'bg-[#A6852F]/5' : ''}`}>
+              <div key={n.id} className={`flex items-start gap-3 p-3 rounded-xl transition-colors ${!n.read ? 'bg-[#A6852F]/8 border border-[#A6852F]/15' : 'hover:bg-[#F3F1ED]/40'}`}>
                 <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!n.read ? 'bg-[#A6852F]' : 'bg-transparent'}`} />
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium text-[#1C1917]">{n.title}</p>
@@ -86,19 +91,30 @@ export const AdminOverview: React.FC = () => {
           <h3 className="text-sm font-medium text-[#1C1917] mb-4">Quick Actions</h3>
           <div className="grid grid-cols-2 gap-3">
             {[
-              { label: 'Manage Members', icon: Users },
-              { label: 'Review Applications', icon: Clock },
-              { label: 'Content Manager', icon: FileText },
-              { label: 'View Analytics', icon: TrendingUp },
+              { label: 'Manage Members', icon: Users, color: '#A6852F' },
+              { label: 'Review Applications', icon: Clock, color: '#F59E0B' },
+              { label: 'Content Manager', icon: FileText, color: '#3B82F6' },
+              { label: 'View Analytics', icon: TrendingUp, color: '#16A34A' },
             ].map((action) => (
               <button
                 key={action.label}
-                className="flex items-center gap-3 p-3 rounded-xl border border-[#E8E5DF]/60 hover:border-[#A6852F]/30 hover:bg-[#A6852F]/5 transition-all cursor-pointer group"
+                className="flex items-center gap-3 p-3.5 rounded-xl border border-[#E8E5DF]/60 hover:border-transparent transition-all duration-300 cursor-pointer group"
+                style={{
+                  backgroundColor: `${action.color}06`,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = `${action.color}12`;
+                  e.currentTarget.style.borderColor = `${action.color}25`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = `${action.color}06`;
+                  e.currentTarget.style.borderColor = 'transparent';
+                }}
               >
-                <div className="w-8 h-8 rounded-lg bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] group-hover:bg-[#A6852F] group-hover:text-white transition-all duration-500">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:scale-110" style={{ backgroundColor: `${action.color}18`, color: action.color }}>
                   <action.icon className="w-4 h-4" />
                 </div>
-                <span className="text-xs font-medium text-[#57534E] group-hover:text-[#A6852F] transition-colors">{action.label}</span>
+                <span className="text-xs font-medium text-[#57534E] group-hover:text-[#1C1917] transition-colors">{action.label}</span>
               </button>
             ))}
           </div>
