@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { DashboardLayout } from './dashboard/DashboardLayout';
 import { DashboardHome } from './dashboard/DashboardHome';
 import { DashboardProfile } from './dashboard/DashboardProfile';
@@ -17,10 +19,16 @@ import { ChatModal } from '../components/ChatModal';
 import { DashboardSection } from '../data/dashboardData';
 
 export default function DashboardPage() {
+  const { user, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<DashboardSection>('home');
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMode, setChatMode] = useState<'fan' | 'business'>('fan');
   const [openRequestForm, setOpenRequestForm] = useState(false);
+
+  useEffect(() => {
+    if (!isAuthenticated) navigate('/login');
+  }, [isAuthenticated, navigate]);
 
   const handleOpenChat = (mode: 'fan' | 'business' = 'fan') => {
     setChatMode(mode);

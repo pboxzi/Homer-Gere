@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate as useRouterNavigate } from 'react-router-dom';
 import { User } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 interface NavbarProps {
   activeSection: string;
@@ -20,6 +21,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [scrollProgress, setScrollProgress] = useState(0);
   const location = useLocation();
   const routerNavigate = useRouterNavigate();
+  const { isAuthenticated, user, signOut } = useAuth();
   const isJourneyPage = location.pathname === '/journey';
   const isProjectsPage = location.pathname === '/projects';
   const isGalleryPage = location.pathname === '/gallery';
@@ -125,23 +127,40 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Action Buttons */}
         <div className="hidden lg:flex items-center gap-3">
-          <button
-            onClick={() => routerNavigate('/login')}
-            className="inline-flex items-center gap-2 bg-[#1C1917] hover:bg-[#292524] text-white text-[11px] font-medium px-4 py-1.5 rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-[#1C1917]/10 active:scale-95 focus:outline-none cursor-pointer"
-          >
-            <User className="w-3 h-3" />
-            Sign In
-          </button>
+          {isAuthenticated ? (
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-[#57534E]">Hi, {user?.firstName}</span>
+              <a href={user?.role === 'admin' ? '/admin' : '/dashboard'} className="text-xs font-medium text-[#A6852F] hover:text-[#8B6F1F]">
+                {user?.role === 'admin' ? 'Admin' : 'Dashboard'}
+              </a>
+              <button onClick={signOut} className="text-xs text-[#57534E] hover:text-[#DC2626]">
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <a href="/login" className="text-xs font-medium text-[#A6852F] hover:text-[#8B6F1F]">
+              Sign In
+            </a>
+          )}
         </div>
 
         {/* Mobile */}
         <div className="lg:hidden flex items-center gap-2">
-          <button
-            onClick={() => routerNavigate('/login')}
-            className="inline-flex items-center gap-1.5 bg-[#1C1917] text-white text-[10px] font-medium px-3 py-1.5 rounded-full focus:outline-none cursor-pointer"
-          >
-            <User className="w-3 h-3" />
-          </button>
+          {isAuthenticated ? (
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] text-[#57534E]">Hi, {user?.firstName}</span>
+              <button onClick={signOut} className="text-[10px] text-[#57534E] hover:text-[#DC2626]">
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => routerNavigate('/login')}
+              className="inline-flex items-center gap-1.5 bg-[#1C1917] text-white text-[10px] font-medium px-3 py-1.5 rounded-full focus:outline-none cursor-pointer"
+            >
+              <User className="w-3 h-3" />
+            </button>
+          )}
           {/* Morphing hamburger */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Send, ArrowLeft, Phone, Image, X, Play, Smile } from 'lucide-react';
+import { Send, ArrowLeft, Phone, Image, X, Play, Smile, Lock } from 'lucide-react';
 import { ChatMessage, ChatMedia } from '../../types';
 import { CHAT_SETTINGS } from '../../data/chatSettings';
 import { IMAGES } from '../../data/images';
+import { useAuth } from '../../context/AuthContext';
 
 interface FanChatProps {
   onBack: () => void;
@@ -248,32 +249,32 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
             </div>
           )}
 
-          <form onSubmit={handleSend} className="flex items-center gap-2 px-3 py-3">
-            <button type="button" onClick={() => fileInputRef.current?.click()} className="w-8 h-8 rounded-full flex items-center justify-center text-[#57534E] hover:text-[#A6852F] hover:bg-[#F3F1ED] transition-colors cursor-pointer shrink-0">
-              <Image className="w-4 h-4" />
+          <form onSubmit={handleSend} className="flex items-end gap-2.5 px-4 py-3">
+            <button type="button" onClick={() => fileInputRef.current?.click()} className="w-9 h-9 rounded-full flex items-center justify-center text-[#57534E] hover:text-[#A6852F] hover:bg-[#F3F1ED] transition-colors cursor-pointer shrink-0 mb-0.5">
+              <Image className="w-[18px] h-[18px]" />
             </button>
             <input ref={fileInputRef} type="file" accept="image/*,video/*" onChange={handleFileSelect} className="hidden" />
 
-            <div className="flex-1 flex items-center bg-[#F3F1ED] rounded-full px-3.5 py-2">
+            <div className="flex-1 flex items-end bg-[#F3F1ED] rounded-[22px] px-4 py-2.5 min-h-[42px]">
               <input
                 ref={inputRef}
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Say something to me..."
-                className="flex-1 bg-transparent text-[13px] text-[#1C1917] placeholder:text-[#57534E]/40 focus:outline-none min-w-0"
+                placeholder="Type a message..."
+                className="flex-1 bg-transparent text-[14px] text-[#1C1917] placeholder:text-[#A8A29E] focus:outline-none min-w-0 leading-[1.4]"
               />
-              <button type="button" className="w-6 h-6 rounded-full flex items-center justify-center text-[#57534E]/40 hover:text-[#57534E] transition-colors cursor-pointer shrink-0 ml-1">
-                <Smile className="w-4 h-4" />
+              <button type="button" className="w-7 h-7 rounded-full flex items-center justify-center text-[#A8A29E] hover:text-[#57534E] transition-colors cursor-pointer shrink-0 ml-2 mb-px">
+                <Smile className="w-[18px] h-[18px]" />
               </button>
             </div>
 
             <button
               type="submit"
               disabled={(!input.trim() && !mediaPreview) || loading}
-              className="w-8 h-8 rounded-full bg-[#A6852F] hover:bg-[#B8983A] disabled:opacity-30 text-white flex items-center justify-center shrink-0 transition-all cursor-pointer"
+              className="w-9 h-9 rounded-full bg-[#A6852F] hover:bg-[#8B6F1F] disabled:bg-[#D4CFC7] text-white flex items-center justify-center shrink-0 transition-all duration-200 cursor-pointer mb-0.5 shadow-sm disabled:shadow-none"
             >
-              <Send className="w-3.5 h-3.5" />
+              <Send className="w-[15px] h-[15px] -translate-x-px" />
             </button>
           </form>
         </div>
