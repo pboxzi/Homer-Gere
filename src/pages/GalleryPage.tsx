@@ -11,6 +11,7 @@ import { GalleryLatest } from './gallery/GalleryLatest';
 import { GalleryExplore } from './gallery/GalleryExplore';
 import { Footer } from '../components/Footer';
 import { SectionFadeIn } from '../components/SectionFadeIn';
+import { SEO } from '../components/SEO';
 import { GalleryCategory, getPhotosByCategory, GALLERY_PHOTOS } from '../data/gallery';
 
 export const GalleryPage: React.FC = () => {
@@ -40,6 +41,7 @@ export const GalleryPage: React.FC = () => {
 
   return (
     <main className="min-h-screen bg-[#FAF9F7]">
+      <SEO title="Gallery" />
       <Navbar
         activeSection={activeSection}
         onNavigate={handleNavigate}

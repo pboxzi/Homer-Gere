@@ -12,6 +12,7 @@ import { MembershipComparison } from './membership/MembershipComparison';
 import { MembershipHowItWorks } from './membership/MembershipHowItWorks';
 import { MembershipFAQ } from './membership/MembershipFAQ';
 import { MembershipCTA } from './membership/MembershipCTA';
+import { SEO } from '../components/SEO';
 import { ModalType } from '../types';
 
 export default function MembershipPage() {
@@ -41,6 +42,7 @@ export default function MembershipPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
+      <SEO title="Membership" />
       <Navbar activeSection={activeSection} onNavigate={handleNavigate} onOpenChat={handleOpenChat} onOpenSignIn={() => setActiveModal({ type: 'signin' })} />
       <main>
         <MembershipHero onBecomeMember={handleBecomeMember} onComparePlans={handleComparePlans} />

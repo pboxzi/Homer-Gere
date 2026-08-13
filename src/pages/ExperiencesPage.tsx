@@ -12,6 +12,7 @@ import { ExperienceDetailModal } from './experiences/ExperienceDetailModal';
 import { RequestExperienceForm } from './experiences/RequestExperienceForm';
 import { ExperiencesFAQ } from './experiences/ExperiencesFAQ';
 import { ExperiencesExplore } from './experiences/ExperiencesExplore';
+import { SEO } from '../components/SEO';
 import { ModalType, Experience } from '../types';
 
 export default function ExperiencesPage() {
@@ -46,6 +47,7 @@ export default function ExperiencesPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
+      <SEO title="Experiences" />
       <Navbar activeSection={activeSection} onNavigate={handleNavigate} onOpenChat={handleOpenChat} onOpenSignIn={() => setActiveModal({ type: 'signin' })} />
       <main>
         <ExperiencesHero onRequestExperience={handleRequestFromHero} />

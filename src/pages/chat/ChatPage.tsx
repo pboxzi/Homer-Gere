@@ -4,6 +4,7 @@ import { Navbar } from '../../components/Navbar';
 import { ChatModal } from '../../components/ChatModal';
 import { DetailModal } from '../../components/DetailModal';
 import { FanChat } from './FanChat';
+import { SEO } from '../../components/SEO';
 import { ModalType } from '../../types';
 
 export default function ChatPage() {
@@ -32,7 +33,8 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
+    <div className="h-dvh h-screen flex flex-col bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
+      <SEO title="Chat with Homer" />
       <Navbar
         activeSection={activeSection}
         onNavigate={handleNavigate}
@@ -40,7 +42,9 @@ export default function ChatPage() {
         onOpenSignIn={() => setActiveModal({ type: 'signin' })}
       />
 
-      <FanChat onBack={() => navigate('/')} />
+      <div className="flex-1 min-h-0 pt-16 lg:pt-20">
+        <FanChat onBack={() => navigate('/')} />
+      </div>
 
       <ChatModal
         isOpen={chatOpen}

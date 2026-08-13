@@ -9,6 +9,7 @@ import { ProjectFeatured } from './projects/ProjectFeatured';
 import { ProjectFilmography } from './projects/ProjectFilmography';
 import { ProjectUpcoming } from './projects/ProjectUpcoming';
 import { ProjectExploreMore } from './projects/ProjectExploreMore';
+import { SEO } from '../components/SEO';
 import { ModalType } from '../types';
 
 export default function ProjectsPage() {
@@ -42,6 +43,7 @@ export default function ProjectsPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
+      <SEO title="Projects" />
       <Navbar
         activeSection={activeSection}
         onNavigate={handleNavigate}

@@ -4,6 +4,7 @@ import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { ChatModal } from '../components/ChatModal';
 import { DetailModal } from '../components/DetailModal';
+import { SEO } from '../components/SEO';
 import { ModalType } from '../types';
 import { MediaHero } from './media/MediaHero';
 import { FeaturedMedia } from './media/FeaturedMedia';
@@ -36,6 +37,7 @@ export default function MediaPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
+      <SEO title="Media" />
       <Navbar activeSection={activeSection} onNavigate={handleNavigate} onOpenChat={handleOpenChat} onOpenSignIn={() => setActiveModal({ type: 'signin' })} />
       <main>
         <MediaHero />

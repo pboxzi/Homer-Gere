@@ -15,6 +15,7 @@ import { JourneyPress } from './journey/JourneyPress';
 import { JourneyFAQ } from './journey/JourneyFAQ';
 import { JourneyNext } from './journey/JourneyNext';
 import { JourneyContinueExploring } from './journey/JourneyContinueExploring';
+import { SEO } from '../components/SEO';
 import { ModalType } from '../types';
 
 export default function JourneyPage() {
@@ -65,6 +66,7 @@ export default function JourneyPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
+      <SEO title="Journey" />
       <Navbar activeSection={activeSection} onNavigate={handleNavigate} onOpenChat={handleOpenChat} onOpenSignIn={() => setActiveModal({ type: 'signin' })} />
 
       <main>

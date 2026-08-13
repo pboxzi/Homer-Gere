@@ -120,37 +120,36 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
   };
 
   return (
-    <div className="w-full bg-[#FAF9F7]">
-      <div className="max-w-lg mx-auto flex flex-col bg-white h-[calc(100vh-64px)] lg:h-[calc(100vh-112px)] lg:my-4 lg:rounded-2xl lg:overflow-hidden lg:shadow-[0_0_40px_rgba(0,0,0,0.04)]">
-        {/* Header */}
-        <header className="sticky top-0 z-10 bg-white border-b border-[#E8E5DF]/60">
-          <div className="px-4 py-3 flex items-center gap-3">
-            <button onClick={onBack} className="w-9 h-9 rounded-full flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div className="relative shrink-0">
-              <div className="w-11 h-11 rounded-full overflow-hidden ring-2 ring-[#A6852F]/30 ring-offset-2 ring-offset-white">
-                <img src={IMAGES.homerGqLifestyleStudio} alt="Homer Gere" referrerPolicy="no-referrer" className="w-full h-full object-cover object-top" />
-              </div>
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#16A34A] rounded-full border-2 border-white" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-[13px] font-semibold text-[#1C1917] truncate">Homer Gere</h1>
-              <p className="text-[11px] text-[#16A34A] flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] inline-block animate-pulse" />
-                Online now
-              </p>
-            </div>
-            {settings.whatsappEnabled && (
-              <button onClick={handleOpenWhatsApp} className="w-9 h-9 rounded-full flex items-center justify-center text-[#25D366] hover:bg-[#25D366]/10 transition-colors cursor-pointer">
-                <Phone className="w-4.5 h-4.5" />
-              </button>
-            )}
-          </div>
-        </header>
+    <div className="w-full bg-[#FAF9F7] h-full">
+      <div className="max-w-2xl mx-auto flex flex-col bg-white h-full lg:my-4 lg:rounded-2xl lg:shadow-[0_0_40px_rgba(0,0,0,0.04)] lg:h-[calc(100%-2rem)]">
 
-        {/* Messages */}
-        <main className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-[#FAF9F7]/50 px-4 py-4">
+        {/* Header - always visible at top */}
+        <div className="shrink-0 bg-white border-b border-[#E8E5DF]/60 px-4 py-3 flex items-center gap-3 relative z-10">
+          <button onClick={onBack} className="w-9 h-9 rounded-full flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div className="relative shrink-0">
+            <div className="w-11 h-11 rounded-full overflow-hidden ring-2 ring-[#A6852F]/30 ring-offset-2 ring-offset-white">
+              <img src={IMAGES.homerGqLifestyleStudio} alt="Homer Gere" referrerPolicy="no-referrer" className="w-full h-full object-cover object-top" />
+            </div>
+            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#16A34A] rounded-full border-2 border-white" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-[13px] font-semibold text-[#1C1917] truncate">Homer Gere</h1>
+            <p className="text-[11px] text-[#16A34A] flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] inline-block animate-pulse" />
+              Online now
+            </p>
+          </div>
+          {settings.whatsappEnabled && (
+            <button onClick={handleOpenWhatsApp} className="w-9 h-9 rounded-full flex items-center justify-center text-[#25D366] hover:bg-[#25D366]/10 transition-colors cursor-pointer">
+              <Phone className="w-4.5 h-4.5" />
+            </button>
+          )}
+        </div>
+
+        {/* Messages - scrollable middle */}
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-[#FAF9F7]/50 px-3 sm:px-4 py-3">
           <div className="flex justify-center mb-4">
             <span className="text-[10px] text-[#57534E]/50 bg-white px-3 py-1 rounded-full shadow-sm">Today</span>
           </div>
@@ -165,7 +164,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
                       <img src={IMAGES.homerGqLifestyleStudio} alt="Homer" referrerPolicy="no-referrer" className="w-full h-full object-cover object-center" />
                     </div>
                   )}
-                  <div className={`max-w-[82%] ${isUser ? 'order-1' : ''}`}>
+                  <div className={`max-w-[88%] ${isUser ? 'order-1' : ''}`}>
                     {msg.media && (
                       <div className={`mb-1 ${isUser ? 'rounded-2xl rounded-br-sm' : 'rounded-2xl rounded-bl-sm'} overflow-hidden`}>
                         {msg.media.type === 'image' ? (
@@ -176,7 +175,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
                       </div>
                     )}
                     {msg.text && (
-                      <div className={`px-3.5 py-2 text-[13px] leading-[1.45] ${
+                      <div className={`px-3.5 py-2 text-[13px] leading-[1.45] whitespace-pre-wrap break-words ${
                         isUser
                           ? 'bg-[#A6852F] text-white rounded-2xl rounded-br-sm'
                           : 'bg-white text-[#1C1917] rounded-2xl rounded-bl-sm shadow-[0_1px_2px_rgba(0,0,0,0.04)]'
@@ -193,7 +192,6 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
             })}
           </div>
 
-          {/* Typing indicator */}
           {loading && (
             <div className="flex items-end gap-2 mt-0.5">
               <div className="w-6 h-6 rounded-full overflow-hidden shrink-0">
@@ -210,11 +208,10 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
           )}
 
           <div ref={messagesEndRef} />
-        </main>
+        </div>
 
-        {/* Bottom */}
-        <footer className="shrink-0 bg-white border-t border-[#E8E5DF]/60">
-          {/* Suggestions */}
+        {/* Footer - always visible at bottom */}
+        <div className="shrink-0 bg-white border-t border-[#E8E5DF]/60 relative z-10">
           {messages.length <= 1 && (
             <div className="px-4 pt-3 pb-1">
               <div className="flex gap-2 overflow-x-auto">
@@ -231,7 +228,6 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
             </div>
           )}
 
-          {/* Media Preview */}
           {mediaPreview && (
             <div className="px-4 pt-2">
               <div className="relative inline-block">
@@ -252,7 +248,6 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
             </div>
           )}
 
-          {/* Input */}
           <form onSubmit={handleSend} className="flex items-center gap-2 px-3 py-3">
             <button type="button" onClick={() => fileInputRef.current?.click()} className="w-8 h-8 rounded-full flex items-center justify-center text-[#57534E] hover:text-[#A6852F] hover:bg-[#F3F1ED] transition-colors cursor-pointer shrink-0">
               <Image className="w-4 h-4" />
@@ -281,7 +276,8 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
               <Send className="w-3.5 h-3.5" />
             </button>
           </form>
-        </footer>
+        </div>
+
       </div>
     </div>
   );

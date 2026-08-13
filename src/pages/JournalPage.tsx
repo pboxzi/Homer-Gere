@@ -11,6 +11,7 @@ import { JournalTrending } from './journal/JournalTrending';
 import { JournalNewsletter } from './journal/JournalNewsletter';
 import { JournalExplore } from './journal/JournalExplore';
 import { Footer } from '../components/Footer';
+import { SEO } from '../components/SEO';
 import { ModalType } from '../types';
 import {
   JournalCategory,
@@ -55,6 +56,7 @@ export const JournalPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
+      <SEO title="Journal" />
       <Navbar
         activeSection={activeSection}
         onNavigate={handleNavigate}

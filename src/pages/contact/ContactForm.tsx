@@ -20,6 +20,7 @@ export const ContactForm: React.FC<ContactFormProps> = ({
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<ContactFormData>({
     fullName: '',
     email: '',
@@ -40,14 +41,20 @@ export const ContactForm: React.FC<ContactFormProps> = ({
     if (!formData.subject) newErrors.subject = 'Subject is required';
     if (!formData.department) newErrors.department = 'Department is required';
     if (!formData.message.trim()) newErrors.message = 'Message is required';
+    else if (formData.message.trim().length < 10) newErrors.message = 'Message must be at least 10 characters';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
     if (validate()) {
-      setSubmitted(true);
+      setLoading(true);
+      setTimeout(() => {
+        setSubmitted(true);
+        setLoading(false);
+      }, 1500);
     }
   };
 
@@ -266,10 +273,18 @@ export const ContactForm: React.FC<ContactFormProps> = ({
           {/* Submit */}
           <button
             type="submit"
-            className="inline-flex items-center justify-center gap-2.5 bg-[#1C1917] hover:bg-[#292524] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#1C1917]/10 focus:outline-none cursor-pointer"
+            disabled={loading}
+            className="inline-flex items-center justify-center gap-2.5 bg-[#1C1917] hover:bg-[#292524] disabled:bg-[#57534E]/40 disabled:cursor-not-allowed active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#1C1917]/10 focus:outline-none cursor-pointer"
           >
-            <Send className="w-4 h-4" />
-            Send Message
+            {loading ? (
+              <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+            ) : (
+              <Send className="w-4 h-4" />
+            )}
+            {loading ? 'Sending...' : 'Send Message'}
           </button>
         </motion.form>
       </div>
