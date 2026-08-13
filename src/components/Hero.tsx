@@ -58,39 +58,6 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
             {/* Seamless Soft Fade Blend from Photograph into Left White/Off-White Space */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#FAFAFA] via-[#FAFAFA]/30 to-transparent hidden lg:block pointer-events-none" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#FAFAFA] via-[#FAFAFA]/60 to-transparent lg:hidden pointer-events-none" />
-
-            {/* Floating Premium UI Element 1: "Latest Project" Preview */}
-            <div className="absolute top-6 right-6 hidden md:flex items-center gap-3 bg-white/90 backdrop-blur-md p-3 pr-4 rounded-2xl hover:scale-105 transition-transform duration-300 cursor-pointer"
-                 onClick={() => onViewProject?.(FEATURED_PROJECT.id)}>
-              <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#2563EB] shrink-0">
-                <Play className="w-4 h-4 fill-[#2563EB]" />
-              </div>
-              <div className="min-w-0 text-left">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-bold tracking-wider text-blue-600 uppercase">LATEST PROJECT</span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                </div>
-                <div className="text-xs font-semibold text-gray-900 truncate">The Shards</div>
-                <div className="text-[10px] text-gray-500 font-medium">In Post-Production • 2026</div>
-              </div>
-            </div>
-
-            {/* Floating Premium UI Element 2: Upcoming Premiere */}
-            <div className="absolute bottom-8 right-8 hidden lg:flex items-center gap-3 bg-white/95 backdrop-blur-md p-3 px-4 rounded-2xl transition-all duration-300">
-              <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 shrink-0">
-                <Calendar className="w-4 h-4 text-gold" />
-              </div>
-              <div className="text-left">
-                <div className="text-[10px] font-bold text-gold uppercase tracking-wider font-outfit">UPCOMING PREMIERE</div>
-                <div className="text-xs font-bold text-gray-900">TIFF Gala Premiere • Sept 18</div>
-              </div>
-            </div>
-
-            {/* Floating Premium UI Element 3: Recent Journal */}
-            <div className="absolute bottom-28 right-12 hidden xl:flex items-center gap-3 bg-white/90 backdrop-blur-md p-2.5 px-3.5 rounded-xl">
-              <BookOpen className="w-3.5 h-3.5 text-blue-600" />
-              <span className="text-[11px] font-medium text-gray-700">"On Crafting Authenticity" • 4 min read</span>
-            </div>
           </div>
 
           {/* LEFT SIDE (about 45% width) - Integrated Editorial Content */}
@@ -98,17 +65,6 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
             
             <div className="flex flex-col items-start gap-3 sm:gap-4 max-w-xl">
               
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-gold-accent" />
-                <span className="text-xs font-bold tracking-[0.2em] text-gold uppercase font-outfit">
-                  Official Portfolio
-                </span>
-              </div>
-
-              <h1 className="font-outfit text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900 leading-tight">
-                Homer Gere
-              </h1>
-
               {/* Supporting Copy */}
               <p className="text-xs sm:text-sm md:text-base text-gray-600 font-normal leading-relaxed max-w-lg">
                 A rising actor with a passion for storytelling, memorable performances, and meaningful connections. Discover his latest projects, exclusive experiences, and official updates.
