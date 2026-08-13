@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Send, ArrowLeft, Loader2, Phone, Shield, Image, X, Play, Sparkles } from 'lucide-react';
+import { Send, ArrowLeft, Phone, Shield, Image, X, Play } from 'lucide-react';
 import { ChatMessage, ChatMedia } from '../../types';
 import { CHAT_SETTINGS } from '../../data/chatSettings';
 import { IMAGES } from '../../data/images';
@@ -153,7 +153,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
                     src={IMAGES.homerPurePhotorealisticPortrait}
                     alt="Homer Gere"
                     referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover object-top"
+                    className="w-full h-full object-cover object-center"
                   />
                 </div>
                 <span className="absolute bottom-0 right-0 w-3 h-3 bg-[#16A34A] rounded-full border-2 border-[#FAF9F7]" />
@@ -175,204 +175,124 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
             )}
           </div>
 
-          {/* Chat Container */}
-          <div className="bg-white rounded-3xl border border-[#E8E5DF]/60 overflow-hidden shadow-lg shadow-[#C9A84C]/5">
-            {/* Messages */}
-            <div className="h-[420px] overflow-y-auto p-5 space-y-4">
-              {messages.map((msg) => (
-                <motion.div
-                  key={msg.id}
-                  className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {/* Homer's avatar for his messages */}
-                  {msg.sender === 'homer' && (
-                    <div className="flex items-end gap-2 mb-1">
-                      <div className="w-7 h-7 rounded-full overflow-hidden shrink-0">
-                        <img
-                          src={IMAGES.homerPurePhotorealisticPortrait}
-                          alt="Homer"
-                          referrerPolicy="no-referrer"
-                          className="w-full h-full object-cover object-top"
-                        />
-                      </div>
-                      <div
-                        className="max-w-[75%] rounded-2xl rounded-bl-sm px-4 py-3 text-sm leading-relaxed bg-[#F3F1ED] text-[#1C1917]"
-                      >
-                        {msg.media && (
-                          <div className="mb-2">
-                            {msg.media.type === 'image' ? (
-                              <img
-                                src={msg.media.url}
-                                alt={msg.media.name || 'Shared image'}
-                                className="rounded-xl max-w-full max-h-48 object-cover"
-                                referrerPolicy="no-referrer"
-                              />
-                            ) : (
-                              <video
-                                src={msg.media.url}
-                                className="rounded-xl max-w-full max-h-48"
-                                controls
-                                preload="metadata"
-                              />
-                            )}
-                          </div>
-                        )}
-                        {msg.text && <p>{msg.text}</p>}
-                      </div>
+          {/* Messages */}
+          <div className="h-[420px] overflow-y-auto p-5 space-y-4 rounded-3xl bg-white/50 backdrop-blur-sm mb-4">
+            {messages.map((msg) => (
+              <motion.div
+                key={msg.id}
+                className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                {msg.sender === 'homer' && (
+                  <div className="flex items-end gap-2 mb-1">
+                    <div className="w-7 h-7 rounded-full overflow-hidden shrink-0">
+                      <img
+                        src={IMAGES.homerPurePhotorealisticPortrait}
+                        alt="Homer"
+                        referrerPolicy="no-referrer"
+                        className="w-full h-full object-cover object-center"
+                      />
                     </div>
-                  )}
-
-                  {/* User messages */}
-                  {msg.sender === 'user' && (
-                    <div
-                      className="max-w-[75%] rounded-2xl rounded-br-sm px-4 py-3 text-sm leading-relaxed bg-[#C9A84C] text-white"
-                    >
+                    <div className="max-w-[75%] rounded-2xl rounded-bl-sm px-4 py-3 text-sm leading-relaxed bg-[#F3F1ED] text-[#1C1917]">
                       {msg.media && (
                         <div className="mb-2">
                           {msg.media.type === 'image' ? (
-                            <img
-                              src={msg.media.url}
-                              alt={msg.media.name || 'Shared image'}
-                              className="rounded-xl max-w-full max-h-48 object-cover"
-                              referrerPolicy="no-referrer"
-                            />
+                            <img src={msg.media.url} alt={msg.media.name || 'Shared image'} className="rounded-xl max-w-full max-h-48 object-cover" referrerPolicy="no-referrer" />
                           ) : (
-                            <video
-                              src={msg.media.url}
-                              className="rounded-xl max-w-full max-h-48"
-                              controls
-                              preload="metadata"
-                            />
+                            <video src={msg.media.url} className="rounded-xl max-w-full max-h-48" controls preload="metadata" />
                           )}
                         </div>
                       )}
                       {msg.text && <p>{msg.text}</p>}
                     </div>
-                  )}
-
-                  <span className="text-[10px] text-[#57534E]/60 mt-1 px-1">
-                    {msg.timestamp}
-                  </span>
-                </motion.div>
-              ))}
-
-              {loading && (
-                <motion.div
-                  className="flex items-center gap-2 text-xs text-[#57534E] bg-[#F3F1ED] rounded-2xl px-4 py-3 w-fit"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                >
-                  <div className="flex gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] animate-bounce" style={{ animationDelay: '300ms' }} />
                   </div>
-                  <span>Homer is typing...</span>
-                </motion.div>
-              )}
+                )}
 
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Media Preview */}
-            {mediaPreview && (
-              <div className="px-5 py-3 border-t border-[#E8E5DF]/60 bg-[#F3F1ED]/30">
-                <div className="relative inline-block">
-                  {mediaPreview.type === 'image' ? (
-                    <img
-                      src={mediaPreview.url}
-                      alt="Preview"
-                      className="h-20 rounded-xl object-cover"
-                    />
-                  ) : (
-                    <div className="relative h-20 w-32 rounded-xl overflow-hidden bg-black/10">
-                      <video
-                        src={mediaPreview.url}
-                        className="h-full w-full object-cover"
-                        preload="metadata"
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <Play className="w-6 h-6 text-white/80" />
+                {msg.sender === 'user' && (
+                  <div className="max-w-[75%] rounded-2xl rounded-br-sm px-4 py-3 text-sm leading-relaxed bg-[#C9A84C] text-white">
+                    {msg.media && (
+                      <div className="mb-2">
+                        {msg.media.type === 'image' ? (
+                          <img src={msg.media.url} alt={msg.media.name || 'Shared image'} className="rounded-xl max-w-full max-h-48 object-cover" referrerPolicy="no-referrer" />
+                        ) : (
+                          <video src={msg.media.url} className="rounded-xl max-w-full max-h-48" controls preload="metadata" />
+                        )}
                       </div>
-                    </div>
-                  )}
-                  <button
-                    onClick={removeMediaPreview}
-                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#1C1917] text-white flex items-center justify-center cursor-pointer"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
+                    )}
+                    {msg.text && <p>{msg.text}</p>}
+                  </div>
+                )}
+
+                <span className="text-[10px] text-[#57534E]/60 mt-1 px-1">{msg.timestamp}</span>
+              </motion.div>
+            ))}
+
+            {loading && (
+              <motion.div className="flex items-center gap-2 text-xs text-[#57534E] bg-[#F3F1ED] rounded-2xl px-4 py-3 w-fit" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                <div className="flex gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C9A84C] animate-bounce" style={{ animationDelay: '300ms' }} />
                 </div>
-              </div>
+                <span>Homer is typing...</span>
+              </motion.div>
             )}
 
-            {/* Quick Suggestions */}
-            <div className="px-5 py-3 border-t border-[#E8E5DF]/60 flex items-center gap-2 overflow-x-auto">
-              <button
-                onClick={() => setInput("I just wanted to say you're incredible in The Shards.")}
-                className="whitespace-nowrap px-4 py-1.5 bg-[#C9A84C]/10 text-[#C9A84C] rounded-full text-xs hover:bg-[#C9A84C]/20 transition-colors cursor-pointer"
-              >
-                You're incredible
-              </button>
-              <button
-                onClick={() => setInput("What's been the highlight of your career so far?")}
-                className="whitespace-nowrap px-4 py-1.5 bg-[#C9A84C]/10 text-[#C9A84C] rounded-full text-xs hover:bg-[#C9A84C]/20 transition-colors cursor-pointer"
-              >
-                Career highlight?
-              </button>
-              <button
-                onClick={() => setInput("Would love to grab a coffee sometime.")}
-                className="whitespace-nowrap px-4 py-1.5 bg-[#C9A84C]/10 text-[#C9A84C] rounded-full text-xs hover:bg-[#C9A84C]/20 transition-colors cursor-pointer"
-              >
-                Coffee sometime?
-              </button>
-            </div>
-
-            {/* Input */}
-            <form onSubmit={handleSend} className="p-4 flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="w-10 h-10 rounded-full bg-[#F3F1ED] hover:bg-[#E8E5DF] text-[#57534E] hover:text-[#C9A84C] flex items-center justify-center shrink-0 transition-all cursor-pointer"
-              >
-                <Image className="w-4 h-4" />
-              </button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*,video/*"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
-
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Say something nice..."
-                className="flex-1 px-4 py-2.5 bg-[#F3F1ED] rounded-full text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/30 focus:bg-white transition-all"
-              />
-              <button
-                type="submit"
-                disabled={(!input.trim() && !mediaPreview) || loading}
-                className="w-10 h-10 rounded-full bg-[#C9A84C] hover:bg-[#B8983A] disabled:opacity-40 text-white flex items-center justify-center shrink-0 transition-all cursor-pointer"
-              >
-                <Send className="w-4 h-4" />
-              </button>
-            </form>
+            <div ref={messagesEndRef} />
           </div>
+
+          {/* Media Preview */}
+          {mediaPreview && (
+            <div className="mb-3 px-2">
+              <div className="relative inline-block">
+                {mediaPreview.type === 'image' ? (
+                  <img src={mediaPreview.url} alt="Preview" className="h-20 rounded-xl object-cover" />
+                ) : (
+                  <div className="relative h-20 w-32 rounded-xl overflow-hidden bg-black/10">
+                    <video src={mediaPreview.url} className="h-full w-full object-cover" preload="metadata" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Play className="w-6 h-6 text-white/80" />
+                    </div>
+                  </div>
+                )}
+                <button onClick={removeMediaPreview} className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#1C1917] text-white flex items-center justify-center cursor-pointer">
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Quick Suggestions */}
+          <div className="flex items-center gap-2 overflow-x-auto mb-4 px-1">
+            <button onClick={() => setInput("I just wanted to say you're incredible in The Shards.")} className="whitespace-nowrap px-4 py-1.5 bg-[#C9A84C]/10 text-[#C9A84C] rounded-full text-xs hover:bg-[#C9A84C]/20 transition-colors cursor-pointer">
+              You're incredible
+            </button>
+            <button onClick={() => setInput("What's been the highlight of your career so far?")} className="whitespace-nowrap px-4 py-1.5 bg-[#C9A84C]/10 text-[#C9A84C] rounded-full text-xs hover:bg-[#C9A84C]/20 transition-colors cursor-pointer">
+              Career highlight?
+            </button>
+            <button onClick={() => setInput("Would love to grab a coffee sometime.")} className="whitespace-nowrap px-4 py-1.5 bg-[#C9A84C]/10 text-[#C9A84C] rounded-full text-xs hover:bg-[#C9A84C]/20 transition-colors cursor-pointer">
+              Coffee sometime?
+            </button>
+          </div>
+
+          {/* Input */}
+          <form onSubmit={handleSend} className="flex items-center gap-2">
+            <button type="button" onClick={() => fileInputRef.current?.click()} className="w-10 h-10 rounded-full bg-[#F3F1ED] hover:bg-[#E8E5DF] text-[#57534E] hover:text-[#C9A84C] flex items-center justify-center shrink-0 transition-all cursor-pointer">
+              <Image className="w-4 h-4" />
+            </button>
+            <input ref={fileInputRef} type="file" accept="image/*,video/*" onChange={handleFileSelect} className="hidden" />
+
+            <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Say something nice..." className="flex-1 px-4 py-2.5 bg-[#F3F1ED] rounded-full text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/30 focus:bg-white transition-all" />
+            <button type="submit" disabled={(!input.trim() && !mediaPreview) || loading} className="w-10 h-10 rounded-full bg-[#C9A84C] hover:bg-[#B8983A] disabled:opacity-40 text-white flex items-center justify-center shrink-0 transition-all cursor-pointer">
+              <Send className="w-4 h-4" />
+            </button>
+          </form>
 
           {/* WhatsApp Premium Banner */}
           {settings.whatsappEnabled && (
-            <motion.div
-              className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-[#25D366]/5 to-[#25D366]/10 border border-[#25D366]/20"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-            >
+            <motion.div className="mt-6 p-5 rounded-2xl bg-gradient-to-r from-[#25D366]/5 to-[#25D366]/10 border border-[#25D366]/20" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.5 }}>
               <div className="flex items-center gap-4">
                 <div className="w-11 h-11 rounded-xl bg-[#25D366]/10 flex items-center justify-center shrink-0">
                   <Shield className="w-5 h-5 text-[#25D366]" />

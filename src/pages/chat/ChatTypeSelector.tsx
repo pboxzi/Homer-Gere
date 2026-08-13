@@ -24,12 +24,12 @@ export const ChatTypeSelector: React.FC<ChatTypeSelectorProps> = ({ onSelect }) 
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="relative">
-            <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-xl shadow-[#C9A84C]/20">
+            <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-xl shadow-[#C9A84C]/20 mx-auto">
               <img
                 src={IMAGES.homerPurePhotorealisticPortrait}
                 alt="Homer Gere"
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-cover object-top"
+                className="w-full h-full object-cover object-center"
               />
             </div>
             <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-[#16A34A] flex items-center justify-center border-3 border-[#FAF9F7]">
