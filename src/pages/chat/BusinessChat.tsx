@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, ArrowLeft, Building2, Phone, Mail, Send as Telegram, MessageCircle, CheckCircle } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Phone, Mail, Send as Telegram, MessageCircle, CheckCircle } from 'lucide-react';
 import { CHAT_SETTINGS, ENQUIRY_TYPES } from '../../data/chatSettings';
 
 interface BusinessChatProps {
@@ -45,39 +45,31 @@ export const BusinessChat: React.FC<BusinessChatProps> = ({ onBack, onComplete }
 
   if (step === 'methods') {
     return (
-      <section className="py-24 sm:py-32 bg-[#FAF9F7]">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <button
-              onClick={() => setStep('form')}
-              className="inline-flex items-center gap-2 text-sm font-medium text-[#57534E] hover:text-[#C9A84C] transition-colors duration-300 mb-8 cursor-pointer"
-            >
+      <section className="relative min-h-screen bg-[#FAF9F7] overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1C1917]/3 via-transparent to-[#FAF9F7]" />
+
+        <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <button onClick={() => setStep('form')} className="inline-flex items-center gap-2 text-sm font-medium text-[#57534E] hover:text-[#C9A84C] transition-colors duration-300 mb-8 cursor-pointer">
               <ArrowLeft className="w-4 h-4" />
               Back to Form
             </button>
 
             <h2 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight mb-3">
-              Choose communication method
+              Choose how to send
             </h2>
             <p className="text-sm text-[#57534E] mb-8">
-              Select how you'd like to send your enquiry to Homer's management team.
+              Select your preferred communication method.
             </p>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {enabledMethods.map((method) => (
                 <button
                   key={method.id}
                   onClick={() => handleMethodSelect(method.id)}
-                  className="w-full flex items-center gap-4 p-5 rounded-2xl border border-[#E8E5DF]/60 bg-white hover:border-[#C9A84C]/30 hover:shadow-lg hover:shadow-[#C9A84C]/5 transition-all duration-300 text-left cursor-pointer group"
+                  className="w-full flex items-center gap-4 p-4 rounded-2xl hover:bg-white/60 transition-all duration-300 text-left cursor-pointer group"
                 >
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center text-white transition-all duration-500 shrink-0"
-                    style={{ backgroundColor: `${method.color}15` }}
-                  >
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${method.color}12` }}>
                     <method.icon className="w-5 h-5" style={{ color: method.color }} />
                   </div>
                   <div className="flex-1">
@@ -101,19 +93,11 @@ export const BusinessChat: React.FC<BusinessChatProps> = ({ onBack, onComplete }
 
   return (
     <section className="relative min-h-screen bg-[#FAF9F7] overflow-hidden">
-      {/* Soft Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#1C1917]/3 via-transparent to-[#FAF9F7]" />
 
       <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <button
-            onClick={onBack}
-            className="inline-flex items-center gap-2 text-sm font-medium text-[#57534E] hover:text-[#C9A84C] transition-colors duration-300 mb-8 cursor-pointer"
-          >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <button onClick={onBack} className="inline-flex items-center gap-2 text-sm font-medium text-[#57534E] hover:text-[#C9A84C] transition-colors duration-300 mb-8 cursor-pointer">
             <ArrowLeft className="w-4 h-4" />
             Back
           </button>
@@ -128,44 +112,22 @@ export const BusinessChat: React.FC<BusinessChatProps> = ({ onBack, onComplete }
           <div className="space-y-5">
             <div>
               <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Full Name *</label>
-              <input
-                type="text"
-                value={formData.fullName}
-                onChange={(e) => updateField('fullName', e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300"
-                placeholder="Enter your full name"
-              />
+              <input type="text" value={formData.fullName} onChange={(e) => updateField('fullName', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/30 transition-all duration-300" placeholder="Enter your full name" />
             </div>
 
             <div>
               <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Email *</label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => updateField('email', e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300"
-                placeholder="your@company.com"
-              />
+              <input type="email" value={formData.email} onChange={(e) => updateField('email', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/30 transition-all duration-300" placeholder="your@company.com" />
             </div>
 
             <div>
               <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Company / Organization</label>
-              <input
-                type="text"
-                value={formData.company}
-                onChange={(e) => updateField('company', e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300"
-                placeholder="Company or organization name"
-              />
+              <input type="text" value={formData.company} onChange={(e) => updateField('company', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/30 transition-all duration-300" placeholder="Company or organization name" />
             </div>
 
             <div>
               <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Enquiry Type *</label>
-              <select
-                value={formData.enquiryType}
-                onChange={(e) => updateField('enquiryType', e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300 appearance-none"
-              >
+              <select value={formData.enquiryType} onChange={(e) => updateField('enquiryType', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/30 transition-all duration-300 appearance-none">
                 <option value="">Select enquiry type</option>
                 {ENQUIRY_TYPES.map((type) => (
                   <option key={type} value={type}>{type}</option>
@@ -175,21 +137,11 @@ export const BusinessChat: React.FC<BusinessChatProps> = ({ onBack, onComplete }
 
             <div>
               <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Message *</label>
-              <textarea
-                value={formData.message}
-                onChange={(e) => updateField('message', e.target.value)}
-                rows={5}
-                className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300 resize-none"
-                placeholder="Describe your enquiry..."
-              />
+              <textarea value={formData.message} onChange={(e) => updateField('message', e.target.value)} rows={5} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/30 transition-all duration-300 resize-none" placeholder="Describe your enquiry..." />
             </div>
           </div>
 
-          <button
-            onClick={handleFormSubmit}
-            disabled={!isFormValid}
-            className="mt-6 inline-flex items-center justify-center gap-2.5 bg-[#1C1917] hover:bg-[#292524] disabled:bg-[#E8E5DF] disabled:text-[#57534E] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#1C1917]/10 focus:outline-none cursor-pointer disabled:cursor-not-allowed"
-          >
+          <button onClick={handleFormSubmit} disabled={!isFormValid} className="mt-6 inline-flex items-center justify-center gap-2.5 bg-[#1C1917] hover:bg-[#292524] disabled:bg-[#E8E5DF] disabled:text-[#57534E] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#1C1917]/10 focus:outline-none cursor-pointer disabled:cursor-not-allowed">
             Continue
             <ArrowRight className="w-4 h-4" />
           </button>
