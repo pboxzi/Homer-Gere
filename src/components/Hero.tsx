@@ -35,7 +35,6 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
           <div className="relative z-10 p-6 sm:p-10 md:p-14 lg:p-16 lg:pb-12 w-full lg:w-[48%] flex flex-col items-start justify-between h-full space-y-6 lg:space-y-0">
             <div className="flex flex-col items-start gap-5 sm:gap-6 max-w-xl">
               <div className="space-y-3">
-                <p className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">Official Website</p>
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-editorial text-[#1C1917] tracking-tight leading-[1.05]">
                   Homer Gere
                 </h1>
