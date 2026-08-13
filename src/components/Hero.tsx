@@ -40,7 +40,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
         {/* Hero Container */}
         <div
           id="hero-container"
-          className="relative rounded-[2rem] overflow-hidden min-h-[600px] lg:aspect-[16/9] w-full flex flex-col justify-between group transition-all duration-300"
+          className="relative rounded-[2rem] overflow-hidden bg-[#F3F1ED] min-h-[600px] lg:aspect-[16/9] w-full flex flex-col justify-between group transition-all duration-300"
         >
           {/* Right Side — Cinematic Lifestyle Editorial */}
           <div className="relative lg:absolute top-0 right-0 w-full lg:w-[55%] h-[340px] sm:h-[420px] lg:h-full shrink-0">

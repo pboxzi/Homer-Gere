@@ -21,7 +21,7 @@ export const NewsletterBar: React.FC = () => {
             Stay Updated
           </span>
 
-          <h2 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight hover-underline">
             Never miss a story.
           </h2>
 

@@ -39,7 +39,7 @@ export default function ProjectsPage() {
   };
 
   const handleProjectClick = (projectId: string) => {
-    setActiveModal({ type: 'project', projectId });
+    navigate(`/projects/${projectId}`);
   };
 
   return (

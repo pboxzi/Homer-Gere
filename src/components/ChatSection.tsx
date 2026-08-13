@@ -16,7 +16,7 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
               Chat with Homer
             </span>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight leading-[1.1]">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight leading-[1.1] hover-underline">
               Let's start a conversation.
             </h2>
 

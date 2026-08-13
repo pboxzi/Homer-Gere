@@ -13,10 +13,13 @@ import { GallerySection } from './components/GallerySection';
 import { Footer } from './components/Footer';
 import { ChatModal } from './components/ChatModal';
 import { DetailModal } from './components/DetailModal';
+import { SectionDivider } from './components/SectionDivider';
+import { SectionFadeIn } from './components/SectionFadeIn';
 import { ModalType, JournalArticle, TimelineMilestone, Experience, MembershipTier, GalleryItem } from './types';
 import { JOURNAL_ARTICLES, TIMELINE_MILESTONES, EXPERIENCES, MEMBERSHIP_TIERS, GALLERY_ITEMS } from './data/content';
 import JourneyPage from './pages/JourneyPage';
 import ProjectsPage from './pages/ProjectsPage';
+import ProjectDetailPage from './pages/project-detail/ProjectDetailPage';
 
 function HomePage() {
   const [activeSection, setActiveSection] = useState<string>('home');
@@ -62,56 +65,88 @@ function HomePage() {
           onOpenChat={handleOpenChat}
         />
 
-        <FeaturedProject
-          onDiscoverMore={(projectId) => setActiveModal({ type: 'project', projectId })}
-        />
+        <SectionDivider />
 
-        <JourneyTimeline
-          onSelectMilestone={(milestone: TimelineMilestone) =>
-            setActiveModal({ type: 'milestone', milestone })
-          }
-          onViewFullTimeline={() => navigate('/journey')}
-        />
+        <SectionFadeIn>
+          <FeaturedProject
+            onDiscoverMore={(projectId) => setActiveModal({ type: 'project', projectId })}
+          />
+        </SectionFadeIn>
 
-        <JournalSection
-          onSelectArticle={(article: JournalArticle) =>
-            setActiveModal({ type: 'article', article })
-          }
-          onViewAllArticles={() =>
-            setActiveModal({ type: 'article', article: JOURNAL_ARTICLES[0] })
-          }
-        />
+        <SectionDivider />
 
-        <ExperiencesSection
-          onSelectExperience={(experience: Experience) =>
-            setActiveModal({ type: 'experience', experience })
-          }
-          onViewAllExperiences={() =>
-            setActiveModal({ type: 'experience', experience: EXPERIENCES[0] })
-          }
-        />
+        <SectionFadeIn>
+          <JourneyTimeline
+            onSelectMilestone={(milestone: TimelineMilestone) =>
+              setActiveModal({ type: 'milestone', milestone })
+            }
+            onViewFullTimeline={() => navigate('/journey')}
+          />
+        </SectionFadeIn>
 
-        <MembershipSection
-          onSelectTier={(tier: MembershipTier) =>
-            setActiveModal({ type: 'membership', tier })
-          }
-          onExploreMembership={() =>
-            setActiveModal({ type: 'membership', tier: MEMBERSHIP_TIERS[1] })
-          }
-        />
+        <SectionDivider />
 
-        <ChatSection onStartChat={(mode) => handleOpenChat(mode)} />
+        <SectionFadeIn>
+          <JournalSection
+            onSelectArticle={(article: JournalArticle) =>
+              setActiveModal({ type: 'article', article })
+            }
+            onViewAllArticles={() =>
+              setActiveModal({ type: 'article', article: JOURNAL_ARTICLES[0] })
+            }
+          />
+        </SectionFadeIn>
 
-        <GallerySection
-          onSelectImage={(item: GalleryItem) =>
-            setActiveModal({ type: 'gallery', item })
-          }
-          onViewFullGallery={() =>
-            setActiveModal({ type: 'gallery', item: GALLERY_ITEMS[0] })
-          }
-        />
+        <SectionDivider />
 
-        <NewsletterBar />
+        <SectionFadeIn>
+          <ExperiencesSection
+            onSelectExperience={(experience: Experience) =>
+              setActiveModal({ type: 'experience', experience })
+            }
+            onViewAllExperiences={() =>
+              setActiveModal({ type: 'experience', experience: EXPERIENCES[0] })
+            }
+          />
+        </SectionFadeIn>
+
+        <SectionDivider />
+
+        <SectionFadeIn>
+          <MembershipSection
+            onSelectTier={(tier: MembershipTier) =>
+              setActiveModal({ type: 'membership', tier })
+            }
+            onExploreMembership={() =>
+              setActiveModal({ type: 'membership', tier: MEMBERSHIP_TIERS[1] })
+            }
+          />
+        </SectionFadeIn>
+
+        <SectionDivider />
+
+        <SectionFadeIn>
+          <ChatSection onStartChat={(mode) => handleOpenChat(mode)} />
+        </SectionFadeIn>
+
+        <SectionDivider />
+
+        <SectionFadeIn>
+          <GallerySection
+            onSelectImage={(item: GalleryItem) =>
+              setActiveModal({ type: 'gallery', item })
+            }
+            onViewFullGallery={() =>
+              setActiveModal({ type: 'gallery', item: GALLERY_ITEMS[0] })
+            }
+          />
+        </SectionFadeIn>
+
+        <SectionDivider />
+
+        <SectionFadeIn>
+          <NewsletterBar />
+        </SectionFadeIn>
       </main>
 
       <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />
@@ -138,6 +173,7 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/journey" element={<JourneyPage />} />
         <Route path="/projects" element={<ProjectsPage />} />
+        <Route path="/projects/:slug" element={<ProjectDetailPage />} />
       </Routes>
     </BrowserRouter>
   );

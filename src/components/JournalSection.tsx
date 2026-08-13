@@ -21,7 +21,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
             <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
               Latest from the Journal
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight hover-underline">
               Reflections & Writings
             </h2>
           </div>

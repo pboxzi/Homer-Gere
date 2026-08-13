@@ -30,7 +30,7 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({
   const activeMilestone = TIMELINE_MILESTONES.find((m) => m.id === activeId) || TIMELINE_MILESTONES[5];
 
   return (
-    <section id="journey" className="py-24 sm:py-32">
+    <section id="journey" className="py-28 sm:py-36">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
@@ -38,7 +38,7 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({
             <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
               The Journey
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#44403C] mt-3 tracking-tight leading-[1.1]">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#44403C] mt-3 tracking-tight leading-[1.1] hover-underline">
               Every step shapes the story.
             </h2>
           </div>
@@ -70,7 +70,7 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({
                     onSelectMilestone(item);
                   }}
                   className={`flex flex-col items-center text-center group p-3 transition-all duration-300 focus:outline-none cursor-pointer ${
-                    isSelected ? 'bg-[#C9A84C]/8' : ''
+                    isSelected ? 'bg-[#C9A84C]/8' : 'hover:bg-[#F3F1ED]/60'
                   }`}
                 >
                   <div

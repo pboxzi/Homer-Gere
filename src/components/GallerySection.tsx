@@ -13,10 +13,10 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
   onViewFullGallery,
 }) => {
   return (
-    <section id="gallery" className="py-24 sm:py-32">
+    <section id="gallery" className="py-28 sm:py-36">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Quote Block */}
-        <div className="relative overflow-hidden mb-24">
+        <div className="relative overflow-hidden mb-24 bg-[#F3F1ED]/40 rounded-[2rem]">
           <div className="relative z-10 max-w-4xl mx-auto text-center py-20 sm:py-24 px-8 sm:px-12">
             {/* Large decorative quote mark */}
             <div className="font-editorial text-[8rem] sm:text-[10rem] leading-none text-[#C9A84C]/15 absolute top-8 left-1/2 -translate-x-1/2 select-none pointer-events-none">
@@ -58,7 +58,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
             <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
               Photo Gallery
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight hover-underline">
               Moments & Portraits
             </h2>
           </div>

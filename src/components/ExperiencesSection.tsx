@@ -25,7 +25,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
   };
 
   return (
-    <section id="experiences" className="py-24 sm:py-32">
+    <section id="experiences" className="py-28 sm:py-36">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-14">
@@ -33,7 +33,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
             <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
               Experiences
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight hover-underline">
               Connect & Collaborate
             </h2>
           </div>

@@ -21,7 +21,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
             <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
               Membership
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight leading-[1.1]">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight leading-[1.1] hover-underline">
               Join the journey. <br className="hidden sm:inline" />
               Be part of more.
             </h2>

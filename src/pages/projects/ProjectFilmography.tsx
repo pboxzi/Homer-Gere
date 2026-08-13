@@ -14,9 +14,10 @@ const FILTERS: { id: FilterType; label: string }[] = [
 
 interface ProjectFilmographyProps {
   onItemClick: (projectId: string) => void;
+  onNavigateToProject?: (slug: string) => void;
 }
 
-export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemClick }) => {
+export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemClick, onNavigateToProject }) => {
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
@@ -99,13 +100,13 @@ export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemCl
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                onClick={() => onItemClick(entry.id)}
+                onClick={() => onNavigateToProject?.(entry.id) || onItemClick(entry.id)}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    onItemClick(entry.id);
+                    onNavigateToProject?.(entry.id) || onItemClick(entry.id);
                   }
                 }}
               >
