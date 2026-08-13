@@ -126,7 +126,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Action Buttons */}
         <div className="hidden lg:flex items-center gap-3">
           <button
-            onClick={onOpenSignIn}
+            onClick={() => routerNavigate('/login')}
             className="inline-flex items-center gap-2 bg-[#1C1917] hover:bg-[#292524] text-white text-[11px] font-medium px-4 py-1.5 rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-[#1C1917]/10 active:scale-95 focus:outline-none cursor-pointer"
           >
             <User className="w-3 h-3" />
@@ -137,7 +137,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Mobile */}
         <div className="lg:hidden flex items-center gap-2">
           <button
-            onClick={onOpenSignIn}
+            onClick={() => routerNavigate('/login')}
             className="inline-flex items-center gap-1.5 bg-[#1C1917] text-white text-[10px] font-medium px-3 py-1.5 rounded-full focus:outline-none cursor-pointer"
           >
             <User className="w-3 h-3" />

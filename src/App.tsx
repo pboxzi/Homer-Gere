@@ -28,6 +28,7 @@ import ExperiencesPage from './pages/ExperiencesPage';
 import MembershipPage from './pages/MembershipPage';
 import ChatPage from './pages/chat/ChatPage';
 import ContactPage from './pages/ContactPage';
+import LoginPage from './pages/LoginPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
 function HomePage() {
@@ -106,6 +107,7 @@ export default function App() {
           <Route path="/membership" element={<MembershipPage />} />
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </BrowserRouter>
