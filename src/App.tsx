@@ -15,6 +15,7 @@ import { ChatModal } from './components/ChatModal';
 import { DetailModal } from './components/DetailModal';
 import { SectionDivider } from './components/SectionDivider';
 import { SectionFadeIn } from './components/SectionFadeIn';
+import { ScrollToTop } from './components/ScrollToTop';
 import { ModalType, JournalArticle, TimelineMilestone, Experience, MembershipTier, GalleryItem } from './types';
 import { JOURNAL_ARTICLES, TIMELINE_MILESTONES, EXPERIENCES, MEMBERSHIP_TIERS, GALLERY_ITEMS } from './data/content';
 import JourneyPage from './pages/JourneyPage';
@@ -180,6 +181,7 @@ function HomePage() {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/journey" element={<JourneyPage />} />

@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { motion, useInView } from 'motion/react';
 import { Mail, Check, Loader2 } from 'lucide-react';
+import { SECTION_IMAGES } from '../../data/images';
 
 export const JournalNewsletter: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -142,7 +143,7 @@ export const JournalNewsletter: React.FC = () => {
             {/* Decorative Image */}
             <div className="hidden lg:block relative h-full min-h-[400px]">
               <img
-                src={require('../../data/images').SECTION_IMAGES.exploreMore.journal}
+                src={SECTION_IMAGES.exploreMore.journal}
                 alt="Homer Gere — Editorial"
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover object-top"
