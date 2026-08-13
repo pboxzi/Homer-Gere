@@ -150,7 +150,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
               <div className="relative">
                 <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md">
                   <img
-                    src={IMAGES.homerPurePhotorealisticPortrait}
+                    src={IMAGES.homerGqLifestyleStudio}
                     alt="Homer Gere"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover object-center"
@@ -189,7 +189,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
                   <div className="flex items-end gap-2 mb-1">
                     <div className="w-7 h-7 rounded-full overflow-hidden shrink-0">
                       <img
-                        src={IMAGES.homerPurePhotorealisticPortrait}
+                        src={IMAGES.homerGqLifestyleStudio}
                         alt="Homer"
                         referrerPolicy="no-referrer"
                         className="w-full h-full object-cover object-center"
