@@ -60,7 +60,7 @@ export const JourneyTimeline: React.FC = () => {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
+          <span className="text-xs font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             The Journey So Far
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight">
@@ -77,20 +77,20 @@ export const JourneyTimeline: React.FC = () => {
         >
           {/* Scroll Controls */}
           <div className="flex items-center justify-between mb-6">
-            <span className="text-[11px] font-medium text-[#57534E] uppercase tracking-wider">
+            <span className="text-xs font-medium text-[#57534E] uppercase tracking-wider">
               Scroll to explore
             </span>
             <div className="flex gap-2">
               <button
                 onClick={() => scrollTimeline('left')}
-                className="w-9 h-9 rounded-xl border border-[#E8E5DF] flex items-center justify-center text-[#44403C] hover:bg-[#A6852F]/10 hover:text-[#A6852F] hover:border-[#A6852F]/30 transition-all duration-300 focus:outline-none cursor-pointer"
+                className="w-11 h-11 rounded-xl border border-[#E8E5DF] flex items-center justify-center text-[#44403C] hover:bg-[#A6852F]/10 hover:text-[#A6852F] hover:border-[#A6852F]/30 transition-all duration-300 focus:outline-none cursor-pointer"
                 aria-label="Scroll left"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={() => scrollTimeline('right')}
-                className="w-9 h-9 rounded-xl border border-[#E8E5DF] flex items-center justify-center text-[#44403C] hover:bg-[#A6852F]/10 hover:text-[#A6852F] hover:border-[#A6852F]/30 transition-all duration-300 focus:outline-none cursor-pointer"
+                className="w-11 h-11 rounded-xl border border-[#E8E5DF] flex items-center justify-center text-[#44403C] hover:bg-[#A6852F]/10 hover:text-[#A6852F] hover:border-[#A6852F]/30 transition-all duration-300 focus:outline-none cursor-pointer"
                 aria-label="Scroll right"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -147,7 +147,7 @@ export const JourneyTimeline: React.FC = () => {
                       >
                         {item.title}
                       </span>
-                      <span className="text-[11px] text-[#57534E] font-medium mt-0.5">
+                      <span className="text-xs text-[#57534E] font-medium mt-0.5">
                         {item.year}
                       </span>
                     </motion.button>
@@ -171,14 +171,14 @@ export const JourneyTimeline: React.FC = () => {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 flex-wrap">
-                      <span className="text-[11px] font-medium text-[#A6852F] bg-[#A6852F]/10 px-3 py-1 rounded-full uppercase tracking-wider">
+                      <span className="text-xs font-medium text-[#A6852F] bg-[#A6852F]/10 px-3 py-1 rounded-full uppercase tracking-wider">
                         {activeMilestone.year}
                       </span>
                       <h3 className="text-xl sm:text-2xl font-editorial text-[#1C1917]">
                         {activeMilestone.title}
                       </h3>
                       {activeMilestone.highlight && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#A6852F] bg-[#A6852F]/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-[#A6852F]/20">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#A6852F] bg-[#A6852F]/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-[#A6852F]/20">
                           <Sparkles className="w-3 h-3" />
                           {activeMilestone.highlight}
                         </span>

@@ -100,7 +100,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <span className={`font-editorial tracking-[0.06em] text-[#1C1917] group-hover:text-[#A6852F] transition-all duration-500 uppercase leading-none ${scrolled ? 'text-base' : 'text-lg sm:text-xl'}`}>
             Homer Gere
           </span>
-          <span className={`font-medium tracking-[0.35em] text-[#A6852F]/70 uppercase transition-all duration-500 ${scrolled ? 'text-[7px] mt-0.5' : 'text-[8px] sm:text-[9px] mt-1'}`}>
+            <span className={`font-medium tracking-[0.35em] text-[#A6852F]/70 uppercase transition-all duration-500 ${scrolled ? 'text-[9px] mt-0.5' : 'text-[10px] sm:text-[11px] mt-1'}`}>
             Official Website
           </span>
         </button>
@@ -113,7 +113,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`relative px-3.5 py-1.5 text-[11px] font-medium tracking-[0.03em] transition-all duration-300 focus:outline-none rounded-full ${
+                className={`relative px-3.5 py-1.5 text-xs font-medium tracking-[0.03em] transition-all duration-300 focus:outline-none rounded-full ${
                   isActive
                     ? 'text-[#A6852F] bg-[#A6852F]/10'
                     : 'text-[#57534E] hover:text-[#1C1917] hover:bg-[#A6852F]/5'
@@ -148,15 +148,15 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="lg:hidden flex items-center gap-2">
           {isAuthenticated ? (
             <div className="flex items-center gap-2">
-              <span className="text-[10px] text-[#57534E]">Hi, {user?.firstName}</span>
-              <button onClick={signOut} className="text-[10px] text-[#57534E] hover:text-[#DC2626]">
+              <span className="text-xs text-[#57534E]">Hi, {user?.firstName}</span>
+              <button onClick={signOut} className="text-xs text-[#57534E] hover:text-[#DC2626]">
                 Sign Out
               </button>
             </div>
           ) : (
             <button
               onClick={() => routerNavigate('/login')}
-              className="inline-flex items-center gap-1.5 bg-[#1C1917] text-white text-[10px] font-medium px-3 py-1.5 rounded-full focus:outline-none cursor-pointer"
+              className="inline-flex items-center gap-1.5 bg-[#1C1917] text-white text-xs font-medium px-3 py-1.5 rounded-full focus:outline-none cursor-pointer min-h-[44px]"
             >
               <User className="w-3 h-3" />
             </button>
@@ -164,7 +164,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Morphing hamburger */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="relative w-8 h-8 flex items-center justify-center focus:outline-none"
+            className="relative w-11 h-11 flex items-center justify-center focus:outline-none"
             aria-label="Toggle Navigation Menu"
           >
             <div className="w-5 h-4 flex flex-col justify-between">

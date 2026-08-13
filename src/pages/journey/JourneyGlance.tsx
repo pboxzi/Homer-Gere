@@ -48,7 +48,7 @@ export const JourneyGlance: React.FC = () => {
             transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="space-y-4">
-              <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
+              <span className="text-xs font-medium tracking-[0.2em] text-[#A6852F] uppercase">
                 Life At A Glance
               </span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight leading-[1.08]">
@@ -69,7 +69,7 @@ export const JourneyGlance: React.FC = () => {
                     {fact.icon}
                   </div>
                   <div>
-                    <span className="text-[11px] font-medium text-[#71717A] uppercase tracking-wider">
+                    <span className="text-xs font-medium text-[#71717A] uppercase tracking-wider">
                       {fact.label}
                     </span>
                     <p className="text-base sm:text-lg font-editorial text-[#111827] mt-0.5">

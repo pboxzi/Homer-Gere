@@ -25,7 +25,7 @@ export const ExperiencesExplore: React.FC<ExperiencesExploreProps> = ({
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
+          <span className="text-xs font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Continue Exploring
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">
@@ -51,7 +51,7 @@ export const ExperiencesExplore: React.FC<ExperiencesExploreProps> = ({
                 className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/50 via-[#111827]/10 to-transparent" />
-              <div className="absolute bottom-5 left-5 w-10 h-10 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center text-white">
+              <div className="absolute bottom-5 left-5 w-11 h-11 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center text-white">
                 <Crown className="w-5 h-5" />
               </div>
             </div>
@@ -85,7 +85,7 @@ export const ExperiencesExplore: React.FC<ExperiencesExploreProps> = ({
                 className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/50 via-[#111827]/10 to-transparent" />
-              <div className="absolute bottom-5 left-5 w-10 h-10 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center text-white">
+              <div className="absolute bottom-5 left-5 w-11 h-11 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center text-white">
                 <MessageSquare className="w-5 h-5" />
               </div>
             </div>

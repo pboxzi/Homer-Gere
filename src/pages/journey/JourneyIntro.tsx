@@ -28,7 +28,7 @@ export const JourneyIntro: React.FC = () => {
           <Reveal direction="right" delay={0.15}>
             <div className="space-y-8">
               <div className="space-y-4">
-                <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
+                <span className="text-xs font-medium tracking-[0.2em] text-[#A6852F] uppercase">
                   Biography
                 </span>
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight leading-[1.08]">

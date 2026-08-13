@@ -29,7 +29,7 @@ export const VideoLibrary: React.FC<VideoLibraryProps> = ({ onWatch }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-10">
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
+          <span className="text-xs font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Browse
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight hover-underline">
@@ -43,7 +43,7 @@ export const VideoLibrary: React.FC<VideoLibraryProps> = ({ onWatch }) => {
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`px-4 py-2 rounded-full text-xs font-medium transition-all duration-300 focus:outline-none cursor-pointer ${
+              className={`px-4 py-2.5 rounded-full text-xs font-medium transition-all duration-300 focus:outline-none cursor-pointer ${
                 activeCategory === cat.id
                   ? 'bg-[#A6852F] text-white'
                   : 'bg-white text-[#57534E] hover:bg-[#E8E5DF] hover:text-[#1C1917]'
@@ -90,7 +90,7 @@ export const VideoLibrary: React.FC<VideoLibraryProps> = ({ onWatch }) => {
                   </div>
                 </div>
                 {/* Duration badge */}
-                <div className="absolute bottom-3 right-3 bg-[#1C1917]/80 backdrop-blur-sm text-white text-[10px] font-medium px-2 py-1 rounded-lg">
+                <div className="absolute bottom-3 right-3 bg-[#1C1917]/80 backdrop-blur-sm text-white text-[11px] font-medium px-2 py-1 rounded-lg">
                   {video.duration}
                 </div>
                 {/* Featured badge */}
@@ -103,7 +103,7 @@ export const VideoLibrary: React.FC<VideoLibraryProps> = ({ onWatch }) => {
 
               {/* Info */}
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-[10px] text-[#A6852F] font-medium tracking-wide uppercase">
+                <div className="flex items-center gap-2 text-[11px] text-[#A6852F] font-medium tracking-wide uppercase">
                   <span>{video.source}</span>
                   <span className="text-[#D6D3D1]">·</span>
                   <span>{video.category.replace('-', ' ')}</span>
@@ -114,7 +114,7 @@ export const VideoLibrary: React.FC<VideoLibraryProps> = ({ onWatch }) => {
                 <p className="text-xs text-[#57534E] line-clamp-2 leading-relaxed">
                   {video.description}
                 </p>
-                <div className="flex items-center gap-2 text-[10px] text-[#71717A] font-medium">
+                <div className="flex items-center gap-2 text-[11px] text-[#71717A] font-medium">
                   <Calendar className="w-3 h-3" />
                   {video.date}
                 </div>

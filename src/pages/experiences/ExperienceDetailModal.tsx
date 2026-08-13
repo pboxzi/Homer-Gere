@@ -52,7 +52,7 @@ export const ExperienceDetailModal: React.FC<ExperienceDetailModalProps> = ({
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute top-5 right-5 z-10 w-10 h-10 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-[#57534E] hover:text-[#1C1917] hover:bg-white transition-all duration-300 focus:outline-none cursor-pointer"
+              className="absolute top-5 right-5 z-10 w-11 h-11 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-[#57534E] hover:text-[#1C1917] hover:bg-white transition-all duration-300 focus:outline-none cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>

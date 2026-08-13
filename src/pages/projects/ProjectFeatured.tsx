@@ -35,7 +35,7 @@ export const ProjectFeatured: React.FC<ProjectFeaturedProps> = ({ onViewProject 
           {/* Content */}
           <div className="relative z-10 p-8 sm:p-12 lg:p-16 h-full flex flex-col justify-between max-w-2xl">
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#A6852F]/15 border border-[#A6852F]/25 text-[#A6852F] text-[11px] font-medium tracking-widest uppercase">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#A6852F]/15 border border-[#A6852F]/25 text-[#A6852F] text-xs font-medium tracking-widest uppercase">
                 <Film className="w-3.5 h-3.5" />
                 Featured Project
               </div>

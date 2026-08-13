@@ -87,12 +87,12 @@ export const GalleryGrid: React.FC<GalleryGridProps> = ({ photos }) => {
               <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/70 via-[#111827]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
               {/* Category Badge */}
-              <div className="absolute top-3 left-3 px-2.5 py-1 bg-[#111827]/60 backdrop-blur-sm rounded-lg text-white/90 text-[10px] font-medium tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute top-3 left-3 px-2.5 py-1 bg-[#111827]/60 backdrop-blur-sm rounded-lg text-white/90 text-xs font-medium tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 {photo.category}
               </div>
 
               {/* Expand Icon */}
-              <div className="absolute top-3 right-3 w-8 h-8 rounded-lg bg-white/15 backdrop-blur-md flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300">
+              <div className="absolute top-3 right-3 w-11 h-11 rounded-lg bg-white/15 backdrop-blur-md flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all duration-300">
                 <Maximize2 className="w-3.5 h-3.5" />
               </div>
 
@@ -131,7 +131,7 @@ export const GalleryGrid: React.FC<GalleryGridProps> = ({ photos }) => {
             {/* Close */}
             <button
               onClick={closeLightbox}
-              className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors cursor-pointer z-10"
+              className="absolute top-6 right-6 w-11 h-11 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors cursor-pointer z-10"
             >
               <X className="w-5 h-5" />
             </button>
@@ -179,7 +179,7 @@ export const GalleryGrid: React.FC<GalleryGridProps> = ({ photos }) => {
                   )}
                 </div>
                 {photos[lightboxIndex].photographer && (
-                  <p className="text-[11px] text-white/30 mt-1.5">
+                  <p className="text-xs text-white/30 mt-1.5">
                     Photo: {photos[lightboxIndex].photographer}
                   </p>
                 )}

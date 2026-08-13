@@ -217,7 +217,6 @@ export interface ChatSettings {
     whatsappEnabled: boolean;
     whatsappNumber: string;
     requiredTierForWhatsApp: string;
-    autoReply: string;
   };
   businessChat: {
     whatsappEnabled: boolean;

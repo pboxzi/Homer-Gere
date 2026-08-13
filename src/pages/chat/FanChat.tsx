@@ -103,7 +103,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
       setMessages((prev) => [...prev, {
         id: (Date.now() + 1).toString(),
         sender: 'homer',
-        text: "I'm a little tied up right now, but I didn't want you to think I forgot about you. I'll be back soon.",
+        text: "Sorry, I missed that. Can you say it again?",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       }]);
     } finally {
@@ -128,7 +128,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
 
         {/* Header - always visible at top */}
         <div className="shrink-0 bg-white border-b border-[#E8E5DF]/60 px-4 py-3 flex items-center gap-3 relative z-10">
-          <button onClick={onBack} className="w-9 h-9 rounded-full flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
+          <button onClick={onBack} className="w-11 h-11 rounded-full flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="relative shrink-0">
@@ -139,28 +139,28 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
           </div>
           <div className="flex-1 min-w-0">
             <h1 className="text-[13px] font-semibold text-[#1C1917] truncate">Homer Gere</h1>
-            <p className="text-[11px] text-[#16A34A] flex items-center gap-1">
+            <p className="text-[11px] text-[#57534E] flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] inline-block animate-pulse" />
-              Online now
+              may reply instantly
             </p>
           </div>
           {settings.whatsappEnabled && hasMembership && (
-            <button onClick={handleOpenWhatsApp} className="w-9 h-9 rounded-full flex items-center justify-center text-[#25D366] hover:bg-[#25D366]/10 transition-colors cursor-pointer">
+            <button onClick={handleOpenWhatsApp} className="w-11 h-11 rounded-full flex items-center justify-center text-[#25D366] hover:bg-[#25D366]/10 transition-colors cursor-pointer">
               <Phone className="w-4.5 h-4.5" />
             </button>
           )}
           {settings.whatsappEnabled && !hasMembership && (
             <div className="flex items-center gap-1.5 bg-[#A6852F]/8 px-2.5 py-1.5 rounded-full cursor-default" title="Upgrade to Gold or Platinum membership to chat on WhatsApp">
               <Phone className="w-3 h-3 text-[#A6852F]" />
-              <span className="text-[10px] font-medium text-[#A6852F] whitespace-nowrap">Join Gold for WhatsApp</span>
+              <span className="text-xs font-medium text-[#A6852F] whitespace-nowrap">Join Gold for WhatsApp</span>
             </div>
           )}
         </div>
 
         {/* Messages - scrollable middle */}
-        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-[#FAF9F7]/50 px-3 sm:px-4 py-3">
+        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain bg-[#FAF9F7]/50 px-3 sm:px-4 py-3">
           <div className="flex justify-center mb-4">
-            <span className="text-[10px] text-[#57534E]/50 bg-white px-3 py-1 rounded-full shadow-sm">Today</span>
+            <span className="text-xs text-[#57534E]/50 bg-white px-3 py-1 rounded-full shadow-sm">Today</span>
           </div>
 
           <div className="space-y-0.5">
@@ -192,7 +192,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
                         {msg.text}
                       </div>
                     )}
-                    <p className={`text-[10px] text-[#57534E]/40 mt-0.5 px-0.5 ${isUser ? 'text-right' : ''}`}>
+                    <p className={`text-xs text-[#57534E]/40 mt-0.5 px-0.5 ${isUser ? 'text-right' : ''}`}>
                       {msg.timestamp}
                     </p>
                   </div>
@@ -224,13 +224,13 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
           {messages.length <= 1 && (
             <div className="px-4 pt-3 pb-1">
               <div className="flex gap-2 overflow-x-auto">
-                <button onClick={() => sendSuggestion("I've been thinking about you...")} className="whitespace-nowrap px-3 py-1.5 bg-[#F3F1ED] text-[#57534E] rounded-full text-[11px] hover:bg-[#E8E5DF] transition-colors cursor-pointer">
+                  <button onClick={() => sendSuggestion("I've been thinking about you...")} className="whitespace-nowrap px-3 py-2.5 bg-[#F3F1ED] text-[#57534E] rounded-full text-xs hover:bg-[#E8E5DF] transition-colors cursor-pointer">
                   I've been thinking...
                 </button>
-                <button onClick={() => sendSuggestion("You looked incredible in that last post.")} className="whitespace-nowrap px-3 py-1.5 bg-[#F3F1ED] text-[#57534E] rounded-full text-[11px] hover:bg-[#E8E5DF] transition-colors cursor-pointer">
+                <button onClick={() => sendSuggestion("You looked incredible in that last post.")} className="whitespace-nowrap px-3 py-2.5 bg-[#F3F1ED] text-[#57534E] rounded-full text-xs hover:bg-[#E8E5DF] transition-colors cursor-pointer">
                   You looked incredible
                 </button>
-                <button onClick={() => sendSuggestion("Tell me something personal about yourself.")} className="whitespace-nowrap px-3 py-1.5 bg-[#F3F1ED] text-[#57534E] rounded-full text-[11px] hover:bg-[#E8E5DF] transition-colors cursor-pointer">
+                <button onClick={() => sendSuggestion("Tell me something personal about yourself.")} className="whitespace-nowrap px-3 py-2.5 bg-[#F3F1ED] text-[#57534E] rounded-full text-xs hover:bg-[#E8E5DF] transition-colors cursor-pointer">
                   Tell me something personal
                 </button>
               </div>
@@ -250,7 +250,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
                     </div>
                   </div>
                 )}
-                <button onClick={removeMediaPreview} className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#1C1917] text-white flex items-center justify-center cursor-pointer">
+                <button onClick={removeMediaPreview} className="absolute -top-1.5 -right-1.5 w-8 h-8 rounded-full bg-[#1C1917] text-white flex items-center justify-center cursor-pointer">
                   <X className="w-2.5 h-2.5" />
                 </button>
               </div>
@@ -258,7 +258,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
           )}
 
           <form onSubmit={handleSend} className="flex items-end gap-2.5 px-4 py-3">
-            <button type="button" onClick={() => fileInputRef.current?.click()} className="w-9 h-9 rounded-full flex items-center justify-center text-[#57534E] hover:text-[#A6852F] hover:bg-[#F3F1ED] transition-colors cursor-pointer shrink-0 mb-0.5">
+            <button type="button" onClick={() => fileInputRef.current?.click()} className="w-11 h-11 rounded-full flex items-center justify-center text-[#57534E] hover:text-[#A6852F] hover:bg-[#F3F1ED] transition-colors cursor-pointer shrink-0 mb-0.5">
               <Image className="w-[18px] h-[18px]" />
             </button>
             <input ref={fileInputRef} type="file" accept="image/*,video/*" onChange={handleFileSelect} className="hidden" />
@@ -272,7 +272,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
                 placeholder="Type a message..."
                 className="flex-1 bg-transparent text-[14px] text-[#1C1917] placeholder:text-[#A8A29E] focus:outline-none min-w-0 leading-[1.4]"
               />
-              <button type="button" className="w-7 h-7 rounded-full flex items-center justify-center text-[#A8A29E] hover:text-[#57534E] transition-colors cursor-pointer shrink-0 ml-2 mb-px">
+              <button type="button" className="w-11 h-11 rounded-full flex items-center justify-center text-[#A8A29E] hover:text-[#57534E] transition-colors cursor-pointer shrink-0 ml-2 mb-px">
                 <Smile className="w-[18px] h-[18px]" />
               </button>
             </div>
@@ -280,7 +280,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
             <button
               type="submit"
               disabled={(!input.trim() && !mediaPreview) || loading}
-              className="w-9 h-9 rounded-full bg-[#A6852F] hover:bg-[#8B6F1F] disabled:bg-[#D4CFC7] text-white flex items-center justify-center shrink-0 transition-all duration-200 cursor-pointer mb-0.5 shadow-sm disabled:shadow-none"
+              className="w-11 h-11 rounded-full bg-[#A6852F] hover:bg-[#8B6F1F] disabled:bg-[#D4CFC7] text-white flex items-center justify-center shrink-0 transition-all duration-200 cursor-pointer mb-0.5 shadow-sm disabled:shadow-none"
             >
               <Send className="w-[15px] h-[15px] -translate-x-px" />
             </button>

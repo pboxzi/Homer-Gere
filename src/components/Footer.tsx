@@ -33,7 +33,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
               <span className="font-editorial text-2xl tracking-[0.08em] text-[#1C1917] uppercase">
                 Homer Gere
               </span>
-              <span className="text-[10px] tracking-[0.2em] text-[#A6852F] font-medium uppercase mt-1.5">
+              <span className="text-xs tracking-[0.2em] text-[#A6852F] font-medium uppercase mt-1.5">
                 Official Website
               </span>
             </div>
@@ -46,7 +46,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#A6852F] hover:text-white flex items-center justify-center transition-all duration-300"
+                className="w-11 h-11 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#A6852F] hover:text-white flex items-center justify-center transition-all duration-300"
                 aria-label="Instagram"
               >
                 <Instagram className="w-4 h-4" />
@@ -55,7 +55,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
                 href="https://tiktok.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#A6852F] hover:text-white flex items-center justify-center transition-all duration-300 font-medium text-xs"
+                className="w-11 h-11 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#A6852F] hover:text-white flex items-center justify-center transition-all duration-300 font-medium text-xs"
                 aria-label="TikTok"
               >
                 &#9834;
@@ -64,7 +64,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
                 href="https://x.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#A6852F] hover:text-white flex items-center justify-center transition-all duration-300"
+                className="w-11 h-11 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#A6852F] hover:text-white flex items-center justify-center transition-all duration-300"
                 aria-label="X (Twitter)"
               >
                 <Twitter className="w-4 h-4" />
@@ -73,7 +73,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
                 href="https://youtube.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-10 h-10 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#A6852F] hover:text-white flex items-center justify-center transition-all duration-300"
+                className="w-11 h-11 rounded-2xl bg-[#FAF9F7] text-[#57534E] hover:bg-[#A6852F] hover:text-white flex items-center justify-center transition-all duration-300"
                 aria-label="YouTube"
               >
                 <Youtube className="w-4 h-4" />
@@ -84,7 +84,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
           {/* Links Columns */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category} className="space-y-4">
-              <h4 className="text-[11px] font-medium tracking-[0.15em] text-[#1C1917] uppercase">
+              <h4 className="text-xs font-medium tracking-[0.15em] text-[#1C1917] uppercase">
                 {category}
               </h4>
               <ul className="space-y-2.5">

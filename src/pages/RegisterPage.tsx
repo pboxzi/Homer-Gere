@@ -199,7 +199,7 @@ export default function RegisterPage() {
           <span className="font-editorial tracking-[0.06em] text-[#1C1917] group-hover:text-[#A6852F] transition-all duration-500 uppercase leading-none text-lg sm:text-xl">
             Homer Gere
           </span>
-          <span className="font-medium tracking-[0.35em] text-[#A6852F]/70 uppercase text-[8px] sm:text-[9px] mt-1">
+          <span className="font-medium tracking-[0.35em] text-[#A6852F]/70 uppercase text-[11px] sm:text-xs mt-1">
             Official Website
           </span>
         </button>
@@ -221,7 +221,7 @@ export default function RegisterPage() {
           </p>
         </motion.div>
 
-        <form onSubmit={handleSubmit} className="space-y-10">
+        <form onSubmit={handleSubmit} className="space-y-8 sm:space-y-10">
           {/* Section 1: Personal Information */}
           <motion.section
             initial={{ opacity: 0, y: 20 }}
@@ -235,35 +235,35 @@ export default function RegisterPage() {
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">First Name *</label>
+                  <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">First Name *</label>
                   <input type="text" value={formData.firstName} onChange={(e) => update('firstName', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300" placeholder="First name" />
                   {errors.firstName && <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>}
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Last Name *</label>
+                  <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Last Name *</label>
                   <input type="text" value={formData.lastName} onChange={(e) => update('lastName', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300" placeholder="Last name" />
                   {errors.lastName && <p className="text-xs text-red-500 mt-1">{errors.lastName}</p>}
                 </div>
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Username {REGISTER_CONFIG.usernameRequired ? '*' : '(optional)'}</label>
+                <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Username {REGISTER_CONFIG.usernameRequired ? '*' : '(optional)'}</label>
                 <input type="text" value={formData.username} onChange={(e) => update('username', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300" placeholder="Choose a username" />
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Email Address *</label>
+                <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Email Address *</label>
                 <input type="email" value={formData.email} onChange={(e) => update('email', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300" placeholder="you@example.com" autoComplete="email" />
                 {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Mobile {REGISTER_CONFIG.phoneRequired ? '*' : '(optional)'}</label>
+                  <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Mobile {REGISTER_CONFIG.phoneRequired ? '*' : '(optional)'}</label>
                   <input type="tel" value={formData.phone} onChange={(e) => update('phone', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300" placeholder="+1 (555) 000-0000" />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Country *</label>
+                  <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Country *</label>
                   <select value={formData.country} onChange={(e) => update('country', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300 appearance-none">
                     <option value="">Select country</option>
                     {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
@@ -273,7 +273,7 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Date of Birth *</label>
+                <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Date of Birth *</label>
                 <input type="date" value={formData.dateOfBirth} onChange={(e) => update('dateOfBirth', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300" />
                 {errors.dateOfBirth && <p className="text-xs text-red-500 mt-1">{errors.dateOfBirth}</p>}
               </div>
@@ -292,10 +292,10 @@ export default function RegisterPage() {
             </h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Password *</label>
+                <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Password *</label>
                 <div className="relative">
                   <input type={showPassword ? 'text' : 'password'} value={formData.password} onChange={(e) => update('password', e.target.value)} className="w-full px-4 py-3 pr-11 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300" placeholder="Create a password" autoComplete="new-password" />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#57534E] hover:text-[#1C1917] transition-colors duration-200 cursor-pointer" tabIndex={-1}>
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#57534E] hover:text-[#1C1917] transition-colors duration-200 cursor-pointer p-2.5" tabIndex={-1}>
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
@@ -305,7 +305,7 @@ export default function RegisterPage() {
                       <div className="flex-1 h-1.5 rounded-full bg-[#E8E5DF]/60 overflow-hidden">
                         <div className="h-full rounded-full transition-all duration-300" style={{ width: `${(passwordStrength.score / 5) * 100}%`, backgroundColor: passwordStrength.color }} />
                       </div>
-                      <span className="text-[10px] font-medium" style={{ color: passwordStrength.color }}>{passwordStrength.label}</span>
+                      <span className="text-xs font-medium" style={{ color: passwordStrength.color }}>{passwordStrength.label}</span>
                     </div>
                   </div>
                 )}
@@ -313,15 +313,15 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Confirm Password *</label>
+                <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Confirm Password *</label>
                 <div className="relative">
                   <input type={showConfirm ? 'text' : 'password'} value={formData.confirmPassword} onChange={(e) => update('confirmPassword', e.target.value)} className="w-full px-4 py-3 pr-11 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300" placeholder="Confirm your password" autoComplete="new-password" />
-                  <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#57534E] hover:text-[#1C1917] transition-colors duration-200 cursor-pointer" tabIndex={-1}>
+                  <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#57534E] hover:text-[#1C1917] transition-colors duration-200 cursor-pointer p-2.5" tabIndex={-1}>
                     {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
                 {formData.confirmPassword && formData.password === formData.confirmPassword && (
-                  <p className="text-[10px] text-[#16A34A] mt-1 flex items-center gap-1"><CheckCircle className="w-3 h-3" /> Passwords match</p>
+                    <p className="text-xs text-[#16A34A] mt-1 flex items-center gap-1"><CheckCircle className="w-3 h-3" /> Passwords match</p>
                 )}
                 {errors.confirmPassword && <p className="text-xs text-red-500 mt-1">{errors.confirmPassword}</p>}
               </div>
@@ -359,7 +359,7 @@ export default function RegisterPage() {
                     </div>
                     <div className="text-left">
                       <p className="text-sm font-medium text-[#1C1917]">Upload a photo</p>
-                      <p className="text-[11px] text-[#57534E]">JPG, PNG or WebP. Max 5MB.</p>
+                      <p className="text-xs text-[#57534E]">JPG, PNG or WebP. Max 5MB.</p>
                     </div>
                   </button>
                 )}
@@ -380,7 +380,7 @@ export default function RegisterPage() {
             <div className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2 flex items-center gap-1.5">
+                  <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2 flex items-center gap-1.5">
                     <Globe className="w-3 h-3" /> Preferred Language
                   </label>
                   <select value={formData.language} onChange={(e) => update('language', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300 appearance-none">
@@ -388,7 +388,7 @@ export default function RegisterPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2 flex items-center gap-1.5">
+                  <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2 flex items-center gap-1.5">
                     <Clock className="w-3 h-3" /> Time Zone
                   </label>
                   <select value={formData.timezone} onChange={(e) => update('timezone', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300 appearance-none">
@@ -434,19 +434,19 @@ export default function RegisterPage() {
               Terms & Agreements
             </h2>
             <div className="space-y-3">
-              <label className="flex items-start gap-3 cursor-pointer">
+              <label className="flex items-start gap-3 cursor-pointer py-2">
                 <input type="checkbox" checked={formData.agreeTerms} onChange={(e) => update('agreeTerms', e.target.checked)} className="w-4 h-4 rounded border-[#E8E5DF] text-[#A6852F] focus:ring-[#A6852F]/30 accent-[#A6852F] mt-0.5" />
                 <span className="text-sm text-[#57534E] leading-relaxed">I agree to the <button type="button" className="text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Terms of Service</button> *</span>
               </label>
               {errors.agreeTerms && <p className="text-xs text-red-500 ml-7">{errors.agreeTerms}</p>}
 
-              <label className="flex items-start gap-3 cursor-pointer">
+              <label className="flex items-start gap-3 cursor-pointer py-2">
                 <input type="checkbox" checked={formData.agreePrivacy} onChange={(e) => update('agreePrivacy', e.target.checked)} className="w-4 h-4 rounded border-[#E8E5DF] text-[#A6852F] focus:ring-[#A6852F]/30 accent-[#A6852F] mt-0.5" />
                 <span className="text-sm text-[#57534E] leading-relaxed">I agree to the <button type="button" className="text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Privacy Policy</button> *</span>
               </label>
               {errors.agreePrivacy && <p className="text-xs text-red-500 ml-7">{errors.agreePrivacy}</p>}
 
-              <label className="flex items-start gap-3 cursor-pointer">
+              <label className="flex items-start gap-3 cursor-pointer py-2">
                 <input type="checkbox" checked={formData.agreeCommunity} onChange={(e) => update('agreeCommunity', e.target.checked)} className="w-4 h-4 rounded border-[#E8E5DF] text-[#A6852F] focus:ring-[#A6852F]/30 accent-[#A6852F] mt-0.5" />
                 <span className="text-sm text-[#57534E] leading-relaxed">I agree to the <button type="button" className="text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Community Guidelines</button> *</span>
               </label>
@@ -492,7 +492,7 @@ export default function RegisterPage() {
         >
           <button
             onClick={() => navigate('/')}
-            className="text-[11px] text-[#57534E]/70 hover:text-[#A6852F] transition-colors duration-300 cursor-pointer"
+            className="text-xs text-[#57534E]/70 hover:text-[#A6852F] transition-colors duration-300 cursor-pointer"
           >
             ← Back to Homer Gere
           </button>

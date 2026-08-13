@@ -7,7 +7,7 @@ interface GalleryHeroProps {}
 
 export const GalleryHero: React.FC<GalleryHeroProps> = () => {
   return (
-    <section className="relative h-[85vh] min-h-[600px] bg-[#FAF9F7] overflow-hidden pt-20">
+    <section className="relative h-[85vh] min-h-[450px] sm:min-h-[550px] bg-[#FAF9F7] overflow-hidden pt-20">
       {/* Background Image */}
       <motion.div
         className="absolute inset-0 z-0"
@@ -34,7 +34,7 @@ export const GalleryHero: React.FC<GalleryHeroProps> = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
+            <span className="text-xs font-medium tracking-[0.2em] text-[#A6852F] uppercase">
               Official Visual Archive
             </span>
           </motion.div>

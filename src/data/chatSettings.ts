@@ -6,7 +6,6 @@ export const CHAT_SETTINGS: ChatSettings = {
     whatsappEnabled: true,
     whatsappNumber: '1234567890',
     requiredTierForWhatsApp: 'gold',
-    autoReply: 'Thank you for your message. Homer\'s team will review and respond shortly.',
   },
   businessChat: {
     whatsappEnabled: true,

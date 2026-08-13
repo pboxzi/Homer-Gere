@@ -60,7 +60,7 @@ export const JourneyFilmography: React.FC<JourneyFilmographyProps> = ({ onItemCl
             <h3 className="text-xl sm:text-2xl font-editorial text-[#1C1917] group-hover:text-[#A6852F] transition-colors duration-300">
               {entry.title}
             </h3>
-            <span className={`text-[10px] font-medium px-2.5 py-0.5 rounded-full border ${getStatusColor(entry.status)}`}>
+            <span className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full border ${getStatusColor(entry.status)}`}>
               {entry.status}
             </span>
           </div>
@@ -99,7 +99,7 @@ export const JourneyFilmography: React.FC<JourneyFilmographyProps> = ({ onItemCl
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
+          <span className="text-xs font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             The Craft
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">

@@ -102,7 +102,7 @@ export const JourneyBehindTheScenes: React.FC<JourneyBehindTheScenesProps> = ({ 
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="space-y-4">
-            <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
+            <span className="text-xs font-medium tracking-[0.2em] text-[#A6852F] uppercase">
               Behind the Scenes
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">
@@ -150,7 +150,7 @@ export const JourneyBehindTheScenes: React.FC<JourneyBehindTheScenesProps> = ({ 
 
               {/* Category tag */}
               <div className="absolute top-4 left-4 bg-white/15 backdrop-blur-md px-3 py-1 rounded-lg">
-                <span className="text-[10px] font-medium text-white/90 uppercase tracking-wider">
+                <span className="text-[11px] font-medium text-white/90 uppercase tracking-wider">
                   {item.category}
                 </span>
               </div>
@@ -167,7 +167,7 @@ export const JourneyBehindTheScenes: React.FC<JourneyBehindTheScenesProps> = ({ 
                     <h4 className="text-sm sm:text-base font-editorial text-white leading-tight">
                       {item.title}
                     </h4>
-                    <p className="text-[11px] text-white/60 mt-1 line-clamp-1">
+                    <p className="text-xs text-white/60 mt-1 line-clamp-1">
                       {item.caption}
                     </p>
                   </div>

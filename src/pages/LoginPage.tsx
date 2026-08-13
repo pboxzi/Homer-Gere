@@ -60,7 +60,7 @@ export default function LoginPage() {
           <span className="font-editorial tracking-[0.06em] text-[#1C1917] group-hover:text-[#A6852F] transition-all duration-500 uppercase leading-none text-lg sm:text-xl">
             Homer Gere
           </span>
-          <span className="font-medium tracking-[0.35em] text-[#A6852F]/70 uppercase text-[8px] sm:text-[9px] mt-1">
+          <span className="font-medium tracking-[0.35em] text-[#A6852F]/70 uppercase text-[10px] sm:text-[11px] mt-1">
             Official Website
           </span>
         </button>
@@ -97,7 +97,7 @@ export default function LoginPage() {
           >
             {/* Email */}
             <div>
-              <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">
+              <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">
                 Email Address
               </label>
               <input
@@ -112,7 +112,7 @@ export default function LoginPage() {
 
             {/* Password */}
             <div>
-              <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">
+              <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">
                 Password
               </label>
               <div className="relative">
@@ -127,7 +127,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#57534E] hover:text-[#1C1917] transition-colors duration-200 cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#57534E] hover:text-[#1C1917] transition-colors duration-200 cursor-pointer p-2.5"
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -146,12 +146,14 @@ export default function LoginPage() {
                 />
                 <span className="text-xs text-[#57534E]">Remember me</span>
               </label>
-              <button
-                type="button"
-                className="text-xs text-[#A6852F] hover:text-[#8B6F1F] font-medium transition-colors duration-200 cursor-pointer"
-              >
-                Forgot password?
-              </button>
+              <span className="py-2">
+                <button
+                  type="button"
+                  className="text-xs text-[#A6852F] hover:text-[#8B6F1F] font-medium transition-colors duration-200 cursor-pointer"
+                >
+                  Forgot password?
+                </button>
+              </span>
             </div>
 
             {/* Error */}
@@ -245,7 +247,7 @@ export default function LoginPage() {
             transition={{ duration: 0.6, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
           >
             <Shield className="w-4 h-4 text-[#A6852F] mt-0.5 shrink-0" />
-            <p className="text-[11px] text-[#57534E] leading-relaxed">
+            <p className="text-xs text-[#57534E] leading-relaxed">
               {LOGIN_SECURITY_NOTICE}
             </p>
           </motion.div>
@@ -259,7 +261,7 @@ export default function LoginPage() {
           >
             <button
               onClick={() => navigate('/')}
-              className="text-[11px] text-[#57534E]/70 hover:text-[#A6852F] transition-colors duration-300 cursor-pointer"
+              className="text-xs text-[#57534E]/70 hover:text-[#A6852F] transition-colors duration-300 cursor-pointer"
             >
               ← Back to Homer Gere
             </button>

@@ -56,7 +56,7 @@ export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemCl
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="space-y-4">
-            <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
+            <span className="text-xs font-medium tracking-[0.2em] text-[#A6852F] uppercase">
               Complete Filmography
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">
@@ -71,7 +71,7 @@ export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemCl
               <button
                 key={filter.id}
                 onClick={() => setActiveFilter(filter.id)}
-                className={`px-4 py-2 rounded-xl text-xs font-medium transition-all duration-300 focus:outline-none cursor-pointer ${
+                className={`px-4 py-2.5 rounded-xl text-xs font-medium transition-all duration-300 focus:outline-none cursor-pointer ${
                   activeFilter === filter.id
                     ? 'bg-[#A6852F] text-white shadow-md shadow-[#A6852F]/20'
                     : 'bg-[#F3F1ED] text-[#52525B] hover:bg-[#E8E5DF] hover:text-[#111827]'
@@ -133,7 +133,7 @@ export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemCl
                       <h3 className="text-xl sm:text-2xl font-editorial text-[#111827] group-hover:text-[#A6852F] transition-colors duration-300">
                         {entry.title}
                       </h3>
-                      <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-2.5 py-0.5 rounded-full border ${getStatusColor(entry.status)}`}>
+                      <span className={`inline-flex items-center gap-1 text-[11px] font-medium px-2.5 py-0.5 rounded-full border ${getStatusColor(entry.status)}`}>
                         {entry.status}
                       </span>
                     </div>

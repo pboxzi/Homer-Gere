@@ -34,7 +34,7 @@ export const ProjectMediaGallery: React.FC<ProjectMediaGalleryProps> = ({ projec
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
+          <span className="text-xs font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Media Gallery
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">
@@ -68,7 +68,7 @@ export const ProjectMediaGallery: React.FC<ProjectMediaGalleryProps> = ({ projec
               <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/70 via-[#111827]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
               {/* Type Badge */}
-              <div className="absolute top-4 left-4 px-3 py-1 bg-[#111827]/60 backdrop-blur-sm rounded-full text-white/90 text-[10px] font-medium tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute top-4 left-4 px-3 py-1 bg-[#111827]/60 backdrop-blur-sm rounded-full text-white/90 text-[11px] font-medium tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 {item.type.replace('-', ' ')}
               </div>
 
@@ -101,7 +101,7 @@ export const ProjectMediaGallery: React.FC<ProjectMediaGalleryProps> = ({ projec
             {/* Close */}
             <button
               onClick={closeLightbox}
-              className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors cursor-pointer z-10"
+              className="absolute top-6 right-6 w-11 h-11 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors cursor-pointer z-10"
             >
               <X className="w-5 h-5" />
             </button>

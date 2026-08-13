@@ -21,7 +21,7 @@ export const ProjectUpcoming: React.FC = () => {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
+          <span className="text-xs font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Upcoming
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">
@@ -56,7 +56,7 @@ export const ProjectUpcoming: React.FC = () => {
                 <div className="relative z-10 p-8 sm:p-10 h-full flex flex-col justify-between">
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A6852F]/15 border border-[#A6852F]/25 text-[#A6852F] text-[10px] font-medium tracking-wider uppercase">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A6852F]/15 border border-[#A6852F]/25 text-[#A6852F] text-[11px] font-medium tracking-wider uppercase">
                         <Calendar className="w-3 h-3" />
                         {item.status === 'Announced' ? 'Announced' : item.status === 'Post-Production' ? 'Post-Production' : 'In Production'}
                       </span>

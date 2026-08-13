@@ -10,7 +10,7 @@ interface ProjectDetailHeroProps {
 
 export const ProjectDetailHero: React.FC<ProjectDetailHeroProps> = ({ project, onBack }) => {
   return (
-    <section className="relative h-[90vh] min-h-[700px] bg-[#111827] overflow-hidden">
+    <section className="relative h-[90vh] min-h-[500px] sm:min-h-[600px] lg:min-h-[700px] bg-[#111827] overflow-hidden">
       {/* Background Image */}
       <motion.div
         className="absolute inset-0 z-0"
@@ -54,10 +54,10 @@ export const ProjectDetailHero: React.FC<ProjectDetailHeroProps> = ({ project, o
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
           >
-            <span className="px-3.5 py-1 bg-[#A6852F]/20 backdrop-blur-sm rounded-full text-[#A6852F] text-[11px] font-medium tracking-widest uppercase border border-[#A6852F]/20">
+            <span className="px-3.5 py-1 bg-[#A6852F]/20 backdrop-blur-sm rounded-full text-[#A6852F] text-xs font-medium tracking-widest uppercase border border-[#A6852F]/20">
               {project.type}
             </span>
-            <span className="px-3.5 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white/80 text-[11px] font-medium tracking-widest uppercase border border-white/10">
+            <span className="px-3.5 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white/80 text-xs font-medium tracking-widest uppercase border border-white/10">
               {project.status}
             </span>
           </motion.div>

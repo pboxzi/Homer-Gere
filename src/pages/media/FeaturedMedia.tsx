@@ -14,7 +14,7 @@ export const FeaturedMedia: React.FC<FeaturedMediaProps> = ({ onWatch }) => {
     <section className="py-24 sm:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-10">
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
+          <span className="text-xs font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Featured
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight hover-underline">
@@ -45,7 +45,7 @@ export const FeaturedMedia: React.FC<FeaturedMediaProps> = ({ onWatch }) => {
           <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-12">
             <div className="max-w-2xl space-y-4">
               <div className="flex items-center gap-3 flex-wrap">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A6852F] text-white text-[10px] font-medium tracking-widest uppercase">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A6852F] text-white text-[11px] font-medium tracking-widest uppercase">
                   <Play className="w-3 h-3 fill-current" />
                   {featured.category.replace('-', ' ')}
                 </span>

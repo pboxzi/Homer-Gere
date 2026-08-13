@@ -33,11 +33,11 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
   const getAvailabilityBadge = (status?: string) => {
     switch (status) {
       case 'available':
-        return <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#16A34A] bg-[#16A34A]/10 px-2.5 py-1 rounded-full"><span className="w-1.5 h-1.5 rounded-full bg-[#16A34A]" />Available</span>;
+        return <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#16A34A] bg-[#16A34A]/10 px-2.5 py-1 rounded-full"><span className="w-1.5 h-1.5 rounded-full bg-[#16A34A]" />Available</span>;
       case 'limited':
-        return <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#F59E0B] bg-[#F59E0B]/10 px-2.5 py-1 rounded-full"><span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />Limited</span>;
+        return <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#F59E0B] bg-[#F59E0B]/10 px-2.5 py-1 rounded-full"><span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />Limited</span>;
       case 'unavailable':
-        return <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#DC2626] bg-[#DC2626]/10 px-2.5 py-1 rounded-full"><span className="w-1.5 h-1.5 rounded-full bg-[#DC2626]" />Unavailable</span>;
+        return <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#DC2626] bg-[#DC2626]/10 px-2.5 py-1 rounded-full"><span className="w-1.5 h-1.5 rounded-full bg-[#DC2626]" />Unavailable</span>;
       default:
         return null;
     }
@@ -53,7 +53,7 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
+          <span className="text-xs font-medium tracking-[0.2em] text-[#A6852F] uppercase">
             Featured Experiences
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight">
@@ -96,7 +96,7 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
 
               {/* Content */}
               <div className="p-6">
-                <div className="w-10 h-10 rounded-xl bg-[#A6852F]/10 flex items-center justify-center mb-4 group-hover:bg-[#A6852F] group-hover:text-white text-[#A6852F] transition-all duration-500">
+                <div className="w-11 h-11 rounded-xl bg-[#A6852F]/10 flex items-center justify-center mb-4 group-hover:bg-[#A6852F] group-hover:text-white text-[#A6852F] transition-all duration-500">
                   {getExperienceIcon(exp.iconName)}
                 </div>
 

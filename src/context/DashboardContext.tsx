@@ -276,14 +276,6 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       messages: [newMsg],
     };
     setMessages((prev) => [thread, ...prev]);
-    // Simulate Homer reply after 2s
-    setTimeout(() => {
-      const replyMsg: Message = { id: generateId(), sender: 'homer', text: 'Thanks for reaching out! I\'ll review this and get back to you shortly.', date: now, read: false };
-      setMessages((prev) => prev.map((t) => {
-        if (t.id !== threadId) return t;
-        return { ...t, messages: [...t.messages, replyMsg], lastMessage: replyMsg.text, lastDate: now, lastSender: 'homer' as const, read: false };
-      }));
-    }, 2000);
     return threadId;
   }, []);
 
@@ -294,14 +286,6 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (t.id !== threadId) return t;
       return { ...t, messages: [...t.messages, newMsg], lastMessage: text, lastDate: now, lastSender: 'member' as const };
     }));
-    // Simulate Homer reply after 2s
-    setTimeout(() => {
-      const replyMsg: Message = { id: generateId(), sender: 'homer', text: 'Thanks for your message! I\'ll get back to you soon.', date: now, read: false };
-      setMessages((prev) => prev.map((t) => {
-        if (t.id !== threadId) return t;
-        return { ...t, messages: [...t.messages, replyMsg], lastMessage: replyMsg.text, lastDate: now, lastSender: 'homer' as const, read: false };
-      }));
-    }, 2000);
   }, []);
 
   const deleteMessageThread = useCallback((threadId: string) => {
@@ -349,11 +333,6 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const replyHelpTicket = useCallback((ticketId: string, text: string) => {
     const reply: HelpReply = { id: generateId(), sender: 'member', text, date: todayStr() };
     setHelpTickets((prev) => prev.map((t) => t.id === ticketId ? { ...t, replies: [...t.replies, reply] } : t));
-    // Simulate support reply after 3s
-    setTimeout(() => {
-      const supportReply: HelpReply = { id: generateId(), sender: 'support', text: 'Thank you for reaching out. Our team will review your message and respond shortly.', date: todayStr() };
-      setHelpTickets((prev) => prev.map((t) => t.id === ticketId ? { ...t, replies: [...t.replies, supportReply] } : t));
-    }, 3000);
   }, []);
 
   const closeHelpTicket = useCallback((ticketId: string) => {

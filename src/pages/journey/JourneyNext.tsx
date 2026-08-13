@@ -36,7 +36,7 @@ export const JourneyNext: React.FC<JourneyNextProps> = ({ onExploreProjects, onO
           {/* Content */}
           <div className="relative z-10 p-8 sm:p-12 lg:p-16 max-w-2xl">
             <motion.span
-              className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase mb-5 block"
+              className="text-xs font-medium tracking-[0.2em] text-[#A6852F] uppercase mb-5 block"
               initial={{ opacity: 0, y: 15 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}

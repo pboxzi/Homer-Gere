@@ -24,9 +24,9 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
   return (
     <section id="home" className="pt-24 pb-0 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div id="hero-container" className="relative rounded-[2rem] overflow-hidden bg-[#F3F1ED] min-h-[680px] lg:min-h-[720px] w-full flex flex-col justify-between group transition-all duration-300">
+        <div id="hero-container" className="relative rounded-[2rem] overflow-hidden bg-[#F3F1ED] min-h-[500px] sm:min-h-[600px] lg:min-h-[720px] w-full flex flex-col justify-between group transition-all duration-300">
           {/* Right Side — Cinematic Lifestyle Editorial */}
-          <div className="relative lg:absolute top-0 right-0 w-full lg:w-[55%] h-[380px] sm:h-[460px] lg:h-full shrink-0">
+          <div className="relative lg:absolute top-0 right-0 w-full lg:w-[55%] h-[280px] sm:h-[380px] lg:h-full shrink-0">
             <img src={IMAGES.homerGqLifestyleStudio} alt="Homer Gere - Editorial Portrait" referrerPolicy="no-referrer" className="w-full h-full object-cover object-top lg:object-center transition-transform duration-1000 ease-out group-hover:scale-[1.01]" />
             <div className="absolute inset-0 bg-gradient-to-r from-[#FAF9F7] via-[#FAF9F7]/20 to-transparent hidden lg:block pointer-events-none" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F7] via-[#FAF9F7]/20 to-transparent lg:hidden pointer-events-none" />
@@ -58,7 +58,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
                       <Sparkles className="w-2.5 h-2.5 text-[#A6852F]/40" />
                     </div>
                     <div className="text-lg sm:text-xl font-editorial text-[#1C1917] tracking-tight">{metric.value}</div>
-                    <div className="text-[11px] text-[#57534E] font-medium tracking-wide mt-0.5 uppercase">{metric.label}</div>
+                    <div className="text-xs text-[#57534E] font-medium tracking-wide mt-0.5 uppercase">{metric.label}</div>
                   </div>
                 ))}
               </div>
@@ -67,7 +67,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
           {/* Scroll Indicator */}
           <div className="relative z-10 pt-1 pb-4 w-full flex flex-col items-center justify-center">
             <a href="#projects" className="group flex flex-col items-center gap-2 focus:outline-none cursor-pointer" aria-label="Scroll to explore content">
-              <span className="text-[10px] font-medium text-[#A8A29E] group-hover:text-[#A6852F] transition-colors uppercase tracking-[0.25em]">Scroll to Explore</span>
+              <span className="text-[11px] font-medium text-[#A8A29E] group-hover:text-[#A6852F] transition-colors uppercase tracking-[0.25em]">Scroll to Explore</span>
               <div className="relative w-[1px] h-8 bg-[#E8E5DF] group-hover:bg-[#A6852F]/30 transition-colors overflow-hidden rounded-full">
                 <div className="absolute top-0 left-0 w-full h-1/2 bg-[#A6852F] rounded-full animate-scroll-line" />
               </div>

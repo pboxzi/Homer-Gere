@@ -10,7 +10,7 @@ interface MembershipHeroProps {
 
 export const MembershipHero: React.FC<MembershipHeroProps> = ({ onBecomeMember, onComparePlans }) => {
   return (
-    <section className="relative h-[75vh] min-h-[600px] bg-[#FAF9F7] overflow-hidden pt-20">
+    <section className="relative h-[75vh] min-h-[450px] sm:min-h-[550px] bg-[#FAF9F7] overflow-hidden pt-20">
       {/* Background Image */}
       <motion.div
         className="absolute inset-0 z-0"
@@ -37,7 +37,7 @@ export const MembershipHero: React.FC<MembershipHeroProps> = ({ onBecomeMember, 
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
+            <span className="text-xs font-medium tracking-[0.2em] text-[#A6852F] uppercase">
               Official Membership
             </span>
           </motion.div>
@@ -98,7 +98,7 @@ export const MembershipHero: React.FC<MembershipHeroProps> = ({ onBecomeMember, 
           className="group flex flex-col items-center gap-2 focus:outline-none cursor-pointer"
           aria-label="Scroll to continue"
         >
-          <span className="text-[10px] font-medium text-[#57534E] group-hover:text-[#A6852F] transition-colors uppercase tracking-[0.25em]">
+          <span className="text-[11px] font-medium text-[#57534E] group-hover:text-[#A6852F] transition-colors uppercase tracking-[0.25em]">
             Scroll
           </span>
           <div className="relative w-[1px] h-8 bg-[#E8E5DF] group-hover:bg-[#A6852F]/30 transition-colors overflow-hidden rounded-full">

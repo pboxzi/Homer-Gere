@@ -139,7 +139,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
               <React.Fragment key={step.id}>
                 <div className="flex items-center gap-2">
                   <div
-                    className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-medium transition-all duration-300 ${
+                    className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium transition-all duration-300 ${
                       currentStep > step.id
                         ? 'bg-[#16A34A] text-white'
                         : currentStep === step.id
@@ -149,7 +149,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                   >
                     {currentStep > step.id ? <Check className="w-3.5 h-3.5" /> : step.id}
                   </div>
-                  <span className={`hidden sm:block text-[11px] font-medium transition-colors duration-300 ${
+                  <span className={`hidden sm:block text-xs font-medium transition-colors duration-300 ${
                     currentStep === step.id ? 'text-[#1C1917]' : 'text-[#57534E]'
                   }`}>
                     {step.title}
@@ -193,7 +193,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                       }`}>
                         {exp.title}
                       </span>
-                      <span className="text-[11px] text-[#57534E] mt-1 block line-clamp-1">
+                      <span className="text-xs text-[#57534E] mt-1 block line-clamp-1">
                         {exp.description}
                       </span>
                     </button>
@@ -216,7 +216,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                 <p className="text-sm text-[#57534E] mb-6">Provide your contact information.</p>
 
                 <div>
-                  <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Full Name *</label>
+                  <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Full Name *</label>
                   <input
                     type="text"
                     value={formData.fullName}
@@ -227,7 +227,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Email *</label>
+                  <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Email *</label>
                   <input
                     type="email"
                     value={formData.email}
@@ -238,7 +238,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Phone Number *</label>
+                  <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Phone Number *</label>
                   <input
                     type="tel"
                     value={formData.phone}
@@ -249,7 +249,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Country *</label>
+                  <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Country *</label>
                   <select
                     value={formData.country}
                     onChange={(e) => updateField('country', e.target.value)}
@@ -278,7 +278,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                 <p className="text-sm text-[#57534E] mb-6">Tell us about your event or occasion.</p>
 
                 <div>
-                  <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Organization (optional)</label>
+                  <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Organization (optional)</label>
                   <input
                     type="text"
                     value={formData.organization}
@@ -289,7 +289,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Event Date *</label>
+                  <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Event Date *</label>
                   <input
                     type="date"
                     value={formData.eventDate}
@@ -299,7 +299,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Event Location *</label>
+                  <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Event Location *</label>
                   <input
                     type="text"
                     value={formData.eventLocation}
@@ -310,7 +310,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Budget (optional)</label>
+                  <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Budget (optional)</label>
                   <input
                     type="text"
                     value={formData.budget}
@@ -336,7 +336,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                 <p className="text-sm text-[#57534E] mb-6">Help us understand your request better.</p>
 
                 <div>
-                  <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Purpose *</label>
+                  <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Purpose *</label>
                   <textarea
                     value={formData.purpose}
                     onChange={(e) => updateField('purpose', e.target.value)}
@@ -347,7 +347,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Additional Details (optional)</label>
+                  <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Additional Details (optional)</label>
                   <textarea
                     value={formData.additionalDetails}
                     onChange={(e) => updateField('additionalDetails', e.target.value)}
@@ -374,13 +374,13 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                 <div className="space-y-4">
                   {/* Experience Type */}
                   <div className="p-4 rounded-2xl bg-white border border-[#E8E5DF]/60">
-                    <span className="text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">Experience</span>
+                    <span className="text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em]">Experience</span>
                     <p className="text-sm font-medium text-[#1C1917] mt-1">{getSelectedExperience()?.title || 'Not selected'}</p>
                   </div>
 
                   {/* Contact Details */}
                   <div className="p-4 rounded-2xl bg-white border border-[#E8E5DF]/60">
-                    <span className="text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">Contact</span>
+                    <span className="text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em]">Contact</span>
                     <div className="mt-2 space-y-1">
                       <p className="text-sm text-[#1C1917]">{formData.fullName}</p>
                       <p className="text-sm text-[#57534E]">{formData.email}</p>
@@ -390,7 +390,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
 
                   {/* Event Info */}
                   <div className="p-4 rounded-2xl bg-white border border-[#E8E5DF]/60">
-                    <span className="text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">Event</span>
+                    <span className="text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em]">Event</span>
                     <div className="mt-2 space-y-1">
                       {formData.organization && <p className="text-sm text-[#1C1917]">{formData.organization}</p>}
                       <p className="text-sm text-[#57534E]">{formData.eventDate} • {formData.eventLocation}</p>
@@ -400,7 +400,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
 
                   {/* Purpose */}
                   <div className="p-4 rounded-2xl bg-white border border-[#E8E5DF]/60">
-                    <span className="text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">Purpose</span>
+                    <span className="text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em]">Purpose</span>
                     <p className="text-sm text-[#1C1917] mt-1 leading-relaxed">{formData.purpose}</p>
                     {formData.additionalDetails && (
                       <p className="text-sm text-[#57534E] mt-2 leading-relaxed">{formData.additionalDetails}</p>
@@ -408,7 +408,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                   </div>
                 </div>
 
-                <p className="text-[11px] text-[#57534E] mt-6 leading-relaxed">
+                <p className="text-xs text-[#57534E] mt-6 leading-relaxed">
                   By submitting this request, you agree that all information provided is accurate.
                   Homer's management team will review your request and respond within 5–10 business days.
                   Submission does not guarantee acceptance.
@@ -432,7 +432,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
             <button
               onClick={() => setCurrentStep(currentStep + 1)}
               disabled={!isStepValid(currentStep)}
-              className="inline-flex items-center justify-center gap-2 bg-[#A6852F] hover:bg-[#B8983A] disabled:bg-[#E8E5DF] disabled:text-[#57534E] text-white font-medium text-sm px-6 py-2.5 rounded-xl transition-all duration-300 focus:outline-none cursor-pointer disabled:cursor-not-allowed"
+              className="inline-flex items-center justify-center gap-2 bg-[#A6852F] hover:bg-[#B8983A] disabled:bg-[#E8E5DF] disabled:text-[#57534E] text-white font-medium text-sm px-6 py-3 rounded-xl transition-all duration-300 focus:outline-none cursor-pointer disabled:cursor-not-allowed"
             >
               Continue
               <ArrowRight className="w-4 h-4" />
@@ -440,7 +440,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
           ) : (
             <button
               onClick={handleSubmit}
-              className="inline-flex items-center justify-center gap-2 bg-[#1C1917] hover:bg-[#292524] text-white font-medium text-sm px-6 py-2.5 rounded-xl transition-all duration-300 focus:outline-none cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 bg-[#1C1917] hover:bg-[#292524] text-white font-medium text-sm px-6 py-3 rounded-xl transition-all duration-300 focus:outline-none cursor-pointer"
             >
               <Send className="w-4 h-4" />
               Submit Request
