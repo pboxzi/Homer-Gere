@@ -1,6 +1,6 @@
 import React from 'react';
 import { Play, Clapperboard, Star, Users, Globe, Sparkles, MessageSquare, ArrowRight } from 'lucide-react';
-import { METRICS, FEATURED_PROJECT } from '../data/content';
+import { useSiteContent } from '../context/SiteContentContext';
 import { IMAGES } from '../data/images';
 
 interface HeroProps {
@@ -10,6 +10,7 @@ interface HeroProps {
 }
 
 export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onOpenChat }) => {
+  const { metrics, featuredProject } = useSiteContent();
   const getMetricIcon = (iconName: string) => {
     switch (iconName) {
       case 'clapperboard': return <Clapperboard className="w-4 h-4 text-[#A6852F]" />;
@@ -47,7 +48,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
                 <button onClick={() => onOpenChat?.('fan')} className="inline-flex items-center justify-center gap-2.5 bg-[#A6852F] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#A6852F]/25 focus:outline-none cursor-pointer">
                   <MessageSquare className="w-4 h-4" /><span>Chat with Homer Gere</span>
                 </button>
-                <button onClick={() => onViewProject?.(FEATURED_PROJECT.id)} className="inline-flex items-center justify-center gap-2 bg-transparent hover:bg-[#F3F1ED] active:scale-95 text-[#1C1917] font-medium text-sm px-6 py-3.5 rounded-2xl transition-all duration-300 focus:outline-none cursor-pointer group/btn">
+                <button onClick={() => onViewProject?.(featuredProject.id)} className="inline-flex items-center justify-center gap-2 bg-transparent hover:bg-[#F3F1ED] active:scale-95 text-[#1C1917] font-medium text-sm px-6 py-3.5 rounded-2xl transition-all duration-300 focus:outline-none cursor-pointer group/btn">
                   <Play className="w-3.5 h-3.5 text-[#A6852F] fill-[#A6852F]" /><span>Latest Project</span>
                   <ArrowRight className="w-3.5 h-3.5 text-[#57534E] group-hover/btn:text-[#A6852F] group-hover/btn:translate-x-0.5 transition-all duration-300" />
                 </button>
@@ -56,7 +57,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
             {/* Statistics */}
             <div className="w-full pt-6 mt-4 sm:mt-6">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {METRICS.map((metric, idx) => (
+                {metrics.map((metric, idx) => (
                   <div key={idx} className="flex flex-col items-start p-4 transition-all duration-300 rounded-2xl hover:bg-[#F3F1ED]/60">
                     <div className="flex items-center justify-between w-full mb-2">
                       <div className="w-8 h-8 rounded-xl bg-[#A6852F]/10 flex items-center justify-center shrink-0">{getMetricIcon(metric.icon)}</div>

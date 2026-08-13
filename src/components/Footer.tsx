@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowUp, Instagram, Twitter, Youtube } from 'lucide-react';
-import { FOOTER_LINKS } from '../data/content';
+import { useSiteContent } from '../context/SiteContentContext';
 
 interface FooterProps {
   onNavigate: (sectionId: string) => void;
@@ -8,6 +8,7 @@ interface FooterProps {
 }
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
+  const { footerLinks } = useSiteContent();
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -81,7 +82,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
           </div>
 
           {/* Links Columns */}
-          {Object.entries(FOOTER_LINKS).map(([category, links]) => (
+          {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category} className="space-y-4">
               <h4 className="text-[11px] font-medium tracking-[0.15em] text-[#1C1917] uppercase">
                 {category}

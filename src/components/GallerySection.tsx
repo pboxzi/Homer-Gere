@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight, Quote, Maximize2 } from 'lucide-react';
-import { GALLERY_ITEMS } from '../data/content';
+import { useSiteContent } from '../context/SiteContentContext';
 import { GalleryItem } from '../types';
 
 interface GallerySectionProps {
@@ -12,6 +12,8 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
   onSelectImage,
   onNavigate,
 }) => {
+  const { galleryItems } = useSiteContent();
+
   return (
     <section id="gallery" className="py-28 sm:py-36">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -74,7 +76,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
 
         {/* Photo Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5">
-          {GALLERY_ITEMS.map((item) => (
+          {galleryItems.map((item) => (
             <div
               key={item.id}
               onClick={() => onSelectImage(item)}

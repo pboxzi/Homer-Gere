@@ -1,12 +1,14 @@
 import React from 'react';
 import { Check, Star, Crown, ArrowRight } from 'lucide-react';
-import { MEMBERSHIP_TIERS } from '../data/content';
+import { useSiteContent } from '../context/SiteContentContext';
 
 interface MembershipSectionProps {
   onNavigate: (sectionId: string) => void;
 }
 
 export const MembershipSection: React.FC<MembershipSectionProps> = ({ onNavigate }) => {
+  const { membershipTiers } = useSiteContent();
+
   return (
     <section id="membership" className="py-28 sm:py-36">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,7 +27,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onNavigate
           </button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
-          {MEMBERSHIP_TIERS.map((tier) => {
+          {membershipTiers.map((tier) => {
             const isPopular = tier.isPopular;
             return (
               <div key={tier.id} onClick={() => onNavigate('membership')} className={`relative p-8 sm:p-9 rounded-2xl transition-all duration-500 flex flex-col justify-between cursor-pointer group ${isPopular ? 'bg-[#A6852F]/8 text-[#1C1917] ring-1 ring-[#A6852F]/30 shadow-lg shadow-[#A6852F]/10' : 'text-[#1C1917] border border-[#E8E5DF]/60 hover:border-[#A6852F]/30 hover:shadow-lg hover:shadow-[#A6852F]/5'}`}>

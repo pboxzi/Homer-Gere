@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight, Calendar } from 'lucide-react';
-import { JOURNAL_ARTICLES } from '../data/content';
+import { useSiteContent } from '../context/SiteContentContext';
 import { JournalArticle } from '../types';
 
 interface JournalSectionProps {
@@ -9,6 +9,8 @@ interface JournalSectionProps {
 }
 
 export const JournalSection: React.FC<JournalSectionProps> = ({ onSelectArticle, onNavigate }) => {
+  const { journalArticles } = useSiteContent();
+
   return (
     <section id="journal" className="py-28 sm:py-36">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,7 +24,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({ onSelectArticle,
           </button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {JOURNAL_ARTICLES.map((article) => (
+          {journalArticles.map((article) => (
             <article key={article.id} onClick={() => onSelectArticle(article)} className="group p-5 rounded-2xl border border-[#E8E5DF]/60 transition-all duration-500 flex flex-col justify-between cursor-pointer hover:border-[#A6852F]/30 hover:shadow-lg hover:shadow-[#A6852F]/5">
               <div>
                 <div className="relative h-56 rounded-xl overflow-hidden mb-5">

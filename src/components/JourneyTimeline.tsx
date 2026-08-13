@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowRight, User, Users, GraduationCap, Film, Award, Star, Heart, Sparkles } from 'lucide-react';
-import { TIMELINE_MILESTONES } from '../data/content';
+import { useSiteContent } from '../context/SiteContentContext';
 import { TimelineMilestone } from '../types';
 
 interface JourneyTimelineProps {
@@ -10,6 +10,7 @@ interface JourneyTimelineProps {
 
 export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ onSelectMilestone, onViewFullTimeline }) => {
   const [activeId, setActiveId] = useState<string>('today');
+  const { timelineMilestones } = useSiteContent();
 
   const getMilestoneIcon = (iconName: string) => {
     switch (iconName) {
@@ -24,7 +25,7 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ onSelectMilest
     }
   };
 
-  const activeMilestone = TIMELINE_MILESTONES.find((m) => m.id === activeId) || TIMELINE_MILESTONES[5];
+  const activeMilestone = timelineMilestones.find((m) => m.id === activeId) || timelineMilestones[5];
 
   return (
     <section id="journey" className="py-28 sm:py-36">
@@ -41,7 +42,7 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ onSelectMilest
         <div className="relative py-4">
           <div className="absolute top-8 left-4 right-4 h-[1px] bg-[#E8E5DF] z-0 hidden md:block" />
           <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-4 relative z-10">
-            {TIMELINE_MILESTONES.map((item) => {
+            {timelineMilestones.map((item) => {
               const isSelected = item.id === activeId;
               const isToday = item.id === 'today';
               return (

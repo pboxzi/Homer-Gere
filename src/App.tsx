@@ -33,6 +33,7 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import { DashboardProvider } from './context/DashboardContext';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import { SiteContentProvider } from './context/SiteContentContext';
 
 function HomePage() {
   const [activeSection, setActiveSection] = useState<string>('home');
@@ -66,7 +67,7 @@ function HomePage() {
       <Navbar activeSection={activeSection} onNavigate={handleNavigate} onOpenChat={handleOpenChat} onOpenSignIn={() => setActiveModal({ type: 'signin' })} />
 
       <main>
-        <Hero onExploreJourney={() => handleNavigate('journey')} onViewProject={(projectId) => setActiveModal({ type: 'project', projectId })} onOpenChat={handleOpenChat} />
+        <Hero onExploreJourney={() => handleNavigate('journey')} onViewProject={(projectId) => navigate(`/projects/${projectId}`)} onOpenChat={() => navigate('/chat')} />
 
         <SectionFadeIn><FeaturedProject onDiscoverMore={(projectId) => setActiveModal({ type: 'project', projectId })} /></SectionFadeIn>
 
@@ -95,27 +96,29 @@ function HomePage() {
 export default function App() {
   return (
     <HelmetProvider>
-      <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/journey" element={<JourneyPage />} />
-          <Route path="/projects" element={<ProjectsPage />} />
-          <Route path="/projects/:slug" element={<ProjectDetailPage />} />
-          <Route path="/gallery" element={<GalleryPage />} />
-          <Route path="/journal" element={<JournalPage />} />
-          <Route path="/journal/:slug" element={<ArticleDetailPage />} />
-          <Route path="/media" element={<MediaPage />} />
-          <Route path="/experiences" element={<ExperiencesPage />} />
-          <Route path="/membership" element={<MembershipPage />} />
-          <Route path="/chat" element={<ChatPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/dashboard" element={<DashboardProvider><DashboardPage /></DashboardProvider>} />
-          <Route path="/admin" element={<AdminDashboard />} />
-        </Routes>
-      </BrowserRouter>
+      <SiteContentProvider>
+        <BrowserRouter>
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/journey" element={<JourneyPage />} />
+            <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/projects/:slug" element={<ProjectDetailPage />} />
+            <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/journal" element={<JournalPage />} />
+            <Route path="/journal/:slug" element={<ArticleDetailPage />} />
+            <Route path="/media" element={<MediaPage />} />
+            <Route path="/experiences" element={<ExperiencesPage />} />
+            <Route path="/membership" element={<MembershipPage />} />
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/dashboard" element={<DashboardProvider><DashboardPage /></DashboardProvider>} />
+            <Route path="/admin" element={<AdminDashboard />} />
+          </Routes>
+        </BrowserRouter>
+      </SiteContentProvider>
     </HelmetProvider>
   );
 }

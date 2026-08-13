@@ -1,12 +1,14 @@
 import React from 'react';
 import { ArrowRight, Users, Calendar, Heart, Mic, Briefcase, Sparkles, Video, Play } from 'lucide-react';
-import { EXPERIENCES } from '../data/content';
+import { useSiteContent } from '../context/SiteContentContext';
 
 interface ExperiencesSectionProps {
   onNavigate: (sectionId: string) => void;
 }
 
 export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNavigate }) => {
+  const { experiences } = useSiteContent();
+
   const getExperienceIcon = (iconName: string) => {
     switch (iconName) {
       case 'users': return <Users className="w-5 h-5" />;
@@ -47,7 +49,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNaviga
 
         {/* Featured large card */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
-          {EXPERIENCES.slice(0, 2).map((exp) => (
+          {experiences.slice(0, 2).map((exp) => (
             <div key={exp.id} onClick={() => onNavigate('experiences')} className="group relative rounded-[1.5rem] overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-xl hover:shadow-[#A6852F]/10 hover:-translate-y-1">
               {exp.image && (
                 <div className="relative h-72 sm:h-80 overflow-hidden bg-[#E8E5DF]">
@@ -77,7 +79,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNaviga
 
         {/* Smaller cards grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {EXPERIENCES.slice(2, 6).map((exp) => (
+          {experiences.slice(2, 6).map((exp) => (
             <div key={exp.id} onClick={() => onNavigate('experiences')} className="group relative rounded-[1.5rem] overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-xl hover:shadow-[#A6852F]/10 hover:-translate-y-1">
               {exp.image && (
                 <div className="relative h-44 overflow-hidden bg-[#E8E5DF]">
