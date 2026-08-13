@@ -2,8 +2,7 @@ import React, { createContext, useContext, useState, useCallback, useEffect } fr
 import { useAuth } from '../context/AuthContext';
 import {
   MemberProfile, MemberMembership, DashboardRequest, DashboardNotification,
-  DashboardConversation, SecuritySession, MOCK_MEMBER, MOCK_MEMBERSHIP,
-  MOCK_REQUESTS, MOCK_NOTIFICATIONS, MOCK_CONVERSATIONS, MOCK_SESSIONS,
+  DashboardConversation, SecuritySession, DEFAULT_MEMBER_PROFILE, DEFAULT_MEMBERSHIP,
 } from '../data/dashboardData';
 
 // ============================================================
@@ -149,19 +148,10 @@ function todayStr() {
 }
 
 // ============================================================
-// Initial data
+// Initial data (empty by default — populated by Supabase)
 // ============================================================
 
-const INITIAL_MESSAGES: MessageThread[] = [
-  {
-    id: 'm1', subject: 'Welcome to Homer Gere', lastMessage: 'Welcome to the community! I\'m glad you\'re here.',
-    lastDate: 'Jan 15, 2025', lastSender: 'homer', read: true,
-    messages: [
-      { id: 'msg1', sender: 'system', text: 'Your account has been created. Welcome to the Homer Gere community!', date: 'Jan 15, 2025', read: true },
-      { id: 'msg2', sender: 'homer', text: 'Welcome to the community! I\'m glad you\'re here. Feel free to explore and reach out anytime.', date: 'Jan 15, 2025', read: true },
-    ],
-  },
-];
+const INITIAL_MESSAGES: MessageThread[] = [];
 
 const INITIAL_HELP_TICKETS: HelpTicket[] = [];
 
@@ -183,21 +173,21 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const getDefaultProfile = (): MemberProfile => {
     if (user) {
       return {
-        ...MOCK_MEMBER,
-        firstName: user.firstName || MOCK_MEMBER.firstName,
-        lastName: user.lastName || MOCK_MEMBER.lastName,
-        email: user.email || MOCK_MEMBER.email,
+        ...DEFAULT_MEMBER_PROFILE,
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
       };
     }
-    return MOCK_MEMBER;
+    return DEFAULT_MEMBER_PROFILE;
   };
 
   const [profile, setProfile] = useState<MemberProfile>(() => loadState('profile', getDefaultProfile()));
-  const [membership, setMembership] = useState<MemberMembership>(() => loadState('membership', MOCK_MEMBERSHIP));
-  const [requests, setRequests] = useState<DashboardRequest[]>(() => loadState('requests', MOCK_REQUESTS));
-  const [notifications, setNotifications] = useState<DashboardNotification[]>(() => loadState('notifications', MOCK_NOTIFICATIONS));
-  const [conversations, setConversations] = useState<DashboardConversation[]>(() => loadState('conversations', MOCK_CONVERSATIONS));
-  const [sessions, setSessions] = useState<SecuritySession[]>(() => loadState('sessions', MOCK_SESSIONS));
+  const [membership, setMembership] = useState<MemberMembership>(() => loadState('membership', DEFAULT_MEMBERSHIP));
+  const [requests, setRequests] = useState<DashboardRequest[]>(() => loadState('requests', []));
+  const [notifications, setNotifications] = useState<DashboardNotification[]>(() => loadState('notifications', []));
+  const [conversations, setConversations] = useState<DashboardConversation[]>(() => loadState('conversations', []));
+  const [sessions, setSessions] = useState<SecuritySession[]>(() => loadState('sessions', []));
   const [messages, setMessages] = useState<MessageThread[]>(() => loadState('messages', INITIAL_MESSAGES));
   const [bookmarks, setBookmarks] = useState<BookmarkedArticle[]>(() => loadState('bookmarks', []));
   const [favorites, setFavorites] = useState<FavoritePhoto[]>(() => loadState('favorites', []));

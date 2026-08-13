@@ -57,38 +57,9 @@ function hashColor(str: string): string {
   return colors[Math.abs(h) % colors.length];
 }
 
-const FAN_MESSAGES: Record<string, { sender: string; text: string; time: string }[]> = {
-  c1: [
-    { sender: 'Sarah Johnson', text: 'Hi! I just wanted to say how much I admire your work.', time: '10:30 AM' },
-    { sender: 'Admin', text: 'Thank you so much Sarah, that means a lot!', time: '10:45 AM' },
-    { sender: 'Sarah Johnson', text: 'Any upcoming events in New York?', time: '11:02 AM' },
-    { sender: 'Admin', text: 'Stay tuned — we have something special planned for next month!', time: '11:15 AM' },
-  ],
-  c3: [
-    { sender: 'Emma Wilson', text: 'Hello! When is the next fan event?', time: '2:10 PM' },
-    { sender: 'Admin', text: 'Hi Emma! We are finalizing dates for September. Will share details soon.', time: '2:30 PM' },
-    { sender: 'Emma Wilson', text: 'That sounds wonderful, thank you!', time: '2:35 PM' },
-  ],
-  c4: [
-    { sender: 'David Kim', text: 'Could you sign my poster? I would treasure it forever.', time: '9:00 AM' },
-    { sender: 'Admin', text: 'Of course David! Send us a message through the membership portal.', time: '9:20 AM' },
-    { sender: 'David Kim', text: 'Done! You are the best!', time: '9:25 AM' },
-  ],
-};
+const FAN_MESSAGES: Record<string, { sender: string; text: string; time: string }[]> = {};
 
-const BUSINESS_MESSAGES: Record<string, { sender: string; text: string; time: string }[]> = {
-  c2: [
-    { sender: 'Michael Chen', text: 'Good morning. We would love to discuss a partnership opportunity.', time: '9:00 AM' },
-    { sender: 'Admin', text: 'Good morning Michael. We are open to exploring this. Could you share more details?', time: '9:30 AM' },
-    { sender: 'Michael Chen', text: 'Partnership proposal attached. Looking forward to your thoughts.', time: '10:00 AM' },
-    { sender: 'Admin', text: 'Received. Our team will review and get back to you within 48 hours.', time: '10:15 AM' },
-  ],
-  c7: [
-    { sender: 'Lisa Wang', text: 'Contract ready for review. Please let us know if any changes are needed.', time: '11:00 AM' },
-    { sender: 'Admin', text: 'Thanks Lisa. Legal team is reviewing now.', time: '11:30 AM' },
-    { sender: 'Lisa Wang', text: 'Perfect. We are flexible on the timeline.', time: '11:45 AM' },
-  ],
-};
+const BUSINESS_MESSAGES: Record<string, { sender: string; text: string; time: string }[]> = {};
 
 export const AdminCommunications: React.FC<AdminCommunicationsProps> = ({ activeSection }) => {
   const {

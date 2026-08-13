@@ -12,18 +12,7 @@ import {
   type AdminMediaItem,
   type AdminPayment,
   type AdminPage,
-  MOCK_ADMIN_STATS,
-  MOCK_ADMIN_MEMBERS,
-  MOCK_ADMIN_PLANS,
-  MOCK_ADMIN_APPLICATIONS,
-  MOCK_ADMIN_EXPERIENCES,
-  MOCK_ADMIN_EXPERIENCE_REQUESTS,
-  MOCK_ADMIN_CONVERSATIONS,
-  MOCK_ADMIN_CONTACT_MESSAGES,
-  MOCK_ADMIN_NOTIFICATIONS,
-  MOCK_ADMIN_MEDIA,
-  MOCK_ADMIN_PAYMENTS,
-  MOCK_ADMIN_PAGES,
+  EMPTY_ADMIN_STATS,
 } from '../data/adminData';
 
 // ============================================================
@@ -302,169 +291,20 @@ const DEFAULT_INTEGRATIONS: IntegrationSettings = {
 };
 
 // ============================================================
-// Extended mock data (minimums: 10 members, 8 conversations,
-// 10 contact messages, 15 media items, 20 payments)
+// Empty defaults — populated by Supabase when connected
 // ============================================================
 
-const INITIAL_MEMBERS: AdminMember[] = [
-  { id: 'm1', name: 'Sarah Johnson', email: 'sarah@email.com', membership: 'Gold', status: 'active', joinDate: 'Jan 15, 2025', lastActive: '2 hours ago' },
-  { id: 'm2', name: 'Michael Chen', email: 'michael@email.com', membership: 'Platinum', status: 'active', joinDate: 'Nov 20, 2024', lastActive: '1 day ago' },
-  { id: 'm3', name: 'Emma Wilson', email: 'emma@email.com', membership: 'Silver', status: 'active', joinDate: 'Mar 8, 2025', lastActive: '3 days ago' },
-  { id: 'm4', name: 'James Rodriguez', email: 'james@email.com', membership: 'Gold', status: 'suspended', joinDate: 'Sep 12, 2024', lastActive: '2 weeks ago' },
-  { id: 'm5', name: 'Olivia Brown', email: 'olivia@email.com', membership: 'None', status: 'pending', joinDate: 'Aug 10, 2025', lastActive: 'Just now' },
-  { id: 'm6', name: 'David Kim', email: 'david@email.com', membership: 'Silver', status: 'active', joinDate: 'Feb 28, 2025', lastActive: '5 hours ago' },
-  { id: 'm7', name: 'Isabella Martinez', email: 'isabella@email.com', membership: 'Gold', status: 'active', joinDate: 'Apr 3, 2025', lastActive: '12 hours ago' },
-  { id: 'm8', name: 'Ethan Thompson', email: 'ethan@email.com', membership: 'Platinum', status: 'active', joinDate: 'Dec 1, 2024', lastActive: '6 hours ago' },
-  { id: 'm9', name: 'Sophia Davis', email: 'sophia@email.com', membership: 'Silver', status: 'active', joinDate: 'Jun 15, 2025', lastActive: '1 day ago' },
-  { id: 'm10', name: 'Alexander Patel', email: 'alex@email.com', membership: 'Gold', status: 'active', joinDate: 'May 22, 2025', lastActive: '4 hours ago' },
-  { id: 'm11', name: 'Mia Anderson', email: 'mia@email.com', membership: 'Platinum', status: 'active', joinDate: 'Jul 8, 2025', lastActive: '30 minutes ago' },
-  { id: 'm12', name: 'Benjamin Lee', email: 'ben@email.com', membership: 'Silver', status: 'suspended', joinDate: 'Oct 5, 2024', lastActive: '1 month ago' },
-  { id: 'm13', name: 'Charlotte White', email: 'charlotte@email.com', membership: 'Gold', status: 'active', joinDate: 'Aug 1, 2025', lastActive: '2 days ago' },
-  { id: 'm14', name: 'Daniel Garcia', email: 'daniel@email.com', membership: 'None', status: 'pending', joinDate: 'Aug 9, 2025', lastActive: 'Just now' },
-  { id: 'm15', name: 'Amelia Robinson', email: 'amelia@email.com', membership: 'Silver', status: 'active', joinDate: 'Mar 18, 2025', lastActive: '8 hours ago' },
-];
-
-const INITIAL_PLANS: AdminPlan[] = [
-  { id: 'p1', name: 'Silver', price: 99, period: 'year', members: 423, status: 'active' },
-  { id: 'p2', name: 'Gold', price: 199, period: 'year', members: 312, status: 'active' },
-  { id: 'p3', name: 'Platinum', price: 499, period: 'year', members: 157, status: 'active' },
-  { id: 'p4', name: 'Bronze', price: 49, period: 'year', members: 0, status: 'draft' },
-  { id: 'p5', name: 'VIP Lifetime', price: 4999, period: 'lifetime', members: 23, status: 'active' },
-];
-
-const INITIAL_APPLICATIONS: AdminApplication[] = [
-  { id: 'a1', name: 'Olivia Brown', email: 'olivia@email.com', plan: 'Gold', date: 'Aug 10, 2025', status: 'pending' },
-  { id: 'a2', name: 'Lucas Taylor', email: 'lucas@email.com', plan: 'Silver', date: 'Aug 9, 2025', status: 'pending' },
-  { id: 'a3', name: 'Sophia Davis', email: 'sophia@email.com', plan: 'Platinum', date: 'Aug 8, 2025', status: 'approved' },
-  { id: 'a4', name: 'Daniel Garcia', email: 'daniel@email.com', plan: 'Gold', date: 'Aug 7, 2025', status: 'pending' },
-  { id: 'a5', name: 'Mia Thompson', email: 'mia.t@email.com', plan: 'Silver', date: 'Aug 6, 2025', status: 'declined' },
-  { id: 'a6', name: 'Noah Harris', email: 'noah@email.com', plan: 'Platinum', date: 'Aug 5, 2025', status: 'approved' },
-  { id: 'a7', name: 'Ava Clark', email: 'ava@email.com', plan: 'Gold', date: 'Aug 4, 2025', status: 'pending' },
-  { id: 'a8', name: 'Liam Lewis', email: 'liam@email.com', plan: 'Silver', date: 'Aug 3, 2025', status: 'approved' },
-];
-
-const INITIAL_EXPERIENCES: AdminExperience[] = [
-  { id: 'e1', title: 'Meet & Greet', type: 'meet-and-greet', price: '$500', availability: 'available', requests: 45 },
-  { id: 'e2', title: 'Virtual Greeting', type: 'video-greeting', price: '$150', availability: 'available', requests: 78 },
-  { id: 'e3', title: 'Private Event', type: 'private-event', price: '$5,000', availability: 'limited', requests: 12 },
-  { id: 'e4', title: 'Speaking Engagement', type: 'speaking-engagement', price: '$2,500', availability: 'unavailable', requests: 21 },
-  { id: 'e5', title: 'Signed Memorabilia', type: 'signed-item', price: '$250', availability: 'available', requests: 63 },
-  { id: 'e6', title: 'Birthday Shoutout', type: 'video-greeting', price: '$75', availability: 'available', requests: 112 },
-];
-
-const INITIAL_EXPERIENCE_REQUESTS: AdminExperienceRequest[] = [
-  { id: 'er1', requester: 'Sarah Johnson', experience: 'Meet & Greet — NYC Premiere', date: 'Aug 10, 2025', status: 'pending' },
-  { id: 'er2', requester: 'Michael Chen', experience: 'Virtual Greeting — Birthday', date: 'Aug 9, 2025', status: 'approved' },
-  { id: 'er3', requester: 'Emma Wilson', experience: 'Private Event', date: 'Aug 7, 2025', status: 'completed' },
-  { id: 'er4', requester: 'David Kim', experience: 'Signed Memorabilia', date: 'Aug 6, 2025', status: 'approved' },
-  { id: 'er5', requester: 'Isabella Martinez', experience: 'Meet & Greet — LA Screening', date: 'Aug 5, 2025', status: 'pending' },
-  { id: 'er6', requester: 'Ethan Thompson', experience: 'Speaking Engagement', date: 'Aug 4, 2025', status: 'declined' },
-  { id: 'er7', requester: 'Mia Anderson', experience: 'Birthday Shoutout', date: 'Aug 3, 2025', status: 'completed' },
-  { id: 'er8', requester: 'Alexander Patel', experience: 'Virtual Greeting — Anniversary', date: 'Aug 2, 2025', status: 'approved' },
-];
-
-const INITIAL_CONVERSATIONS: AdminConversation[] = [
-  { id: 'c1', type: 'fan', participant: 'Sarah Johnson', email: 'sarah@email.com', lastMessage: 'Thank you so much!', status: 'open', date: 'Aug 10, 2025' },
-  { id: 'c2', type: 'business', participant: 'Michael Chen', email: 'michael@luxeco.com', company: 'Luxe Brand Co.', lastMessage: 'Partnership proposal attached.', status: 'in_progress', date: 'Aug 9, 2025' },
-  { id: 'c3', type: 'fan', participant: 'Emma Wilson', email: 'emma@email.com', lastMessage: 'When is the next event?', status: 'closed', date: 'Aug 8, 2025' },
-  { id: 'c4', type: 'fan', participant: 'David Kim', email: 'david@email.com', lastMessage: 'I loved the latest project!', status: 'open', date: 'Aug 7, 2025' },
-  { id: 'c5', type: 'business', participant: 'Rachel Green', email: 'rachel@mediapro.com', company: 'MediaPro Studios', lastMessage: 'Could we schedule a call this week?', status: 'open', date: 'Aug 6, 2025' },
-  { id: 'c6', type: 'fan', participant: 'Isabella Martinez', email: 'isabella@email.com', lastMessage: 'Will there be a signing event in Miami?', status: 'in_progress', date: 'Aug 5, 2025' },
-  { id: 'c7', type: 'business', participant: 'Tom Bradley', email: 'tom@eventful.com', company: 'Eventful Inc.', lastMessage: 'Budget and venue details confirmed.', status: 'in_progress', date: 'Aug 4, 2025' },
-  { id: 'c8', type: 'fan', participant: 'Ethan Thompson', email: 'ethan@email.com', lastMessage: 'Just wanted to say you\'re an inspiration.', status: 'open', date: 'Aug 3, 2025' },
-  { id: 'c9', type: 'fan', participant: 'Sophia Davis', email: 'sophia@email.com', lastMessage: 'Can I get a photo at the next premiere?', status: 'closed', date: 'Aug 2, 2025' },
-  { id: 'c10', type: 'business', participant: 'Karen Wu', email: 'karen@brandalliance.com', company: 'Brand Alliance Group', lastMessage: 'We have a sponsorship offer for review.', status: 'open', date: 'Aug 1, 2025' },
-];
-
-const INITIAL_CONTACT_MESSAGES: AdminContactMessage[] = [
-  { id: 'cm1', name: 'Robert Taylor', email: 'robert@email.com', department: 'Media & Press', subject: 'Interview Request', message: 'Would like to schedule an interview for Variety magazine.', date: 'Aug 10, 2025', read: false },
-  { id: 'cm2', name: 'Lisa Wang', email: 'lisa@brandco.com', department: 'Brand Partnerships', subject: 'Collaboration Proposal', message: 'Interested in a brand partnership for our luxury line.', date: 'Aug 9, 2025', read: true },
-  { id: 'cm3', name: 'Tom Anderson', email: 'tom@email.com', department: 'General Enquiries', subject: 'Fan Letter', message: 'Just wanted to express my admiration for Homer\'s work.', date: 'Aug 8, 2025', read: true },
-  { id: 'cm4', name: 'Nina Patel', email: 'nina@email.com', department: 'Technical Support', subject: 'Login Issue', message: 'Unable to log into my account after the latest update.', date: 'Aug 7, 2025', read: false },
-  { id: 'cm5', name: 'Marcus Brown', email: 'marcus@studio.com', department: 'Media & Press', subject: 'Photography Request', message: 'Requesting permission to use official photos for a feature article.', date: 'Aug 6, 2025', read: true },
-  { id: 'cm6', name: 'Elena Rodriguez', email: 'elena@email.com', department: 'General Enquiries', subject: 'Membership Question', message: 'What are the benefits of upgrading from Silver to Gold?', date: 'Aug 5, 2025', read: false },
-  { id: 'cm7', name: 'Chris Nguyen', email: 'chris@digital.com', department: 'Technical Support', subject: 'Payment Failed', message: 'My annual renewal payment was declined, please help.', date: 'Aug 4, 2025', read: true },
-  { id: 'cm8', name: 'Amanda Foster', email: 'amanda@email.com', department: 'Brand Partnerships', subject: 'Event Sponsorship', message: 'We would like to sponsor the upcoming fan meetup event.', date: 'Aug 3, 2025', read: false },
-  { id: 'cm9', name: 'Jake Morrison', email: 'jake@email.com', department: 'General Enquiries', subject: 'Merch Availability', message: 'Will there be signed merchandise available soon?', date: 'Aug 2, 2025', read: true },
-  { id: 'cm10', name: 'Priya Sharma', email: 'priya@media.com', department: 'Media & Press', subject: 'Documentary Feature', message: 'We are producing a documentary and would love to include an interview.', date: 'Aug 1, 2025', read: false },
-  { id: 'cm11', name: 'Victor Cruz', email: 'victor@email.com', department: 'Technical Support', subject: 'App Crash', message: 'The mobile app keeps crashing when I try to access the gallery.', date: 'Jul 31, 2025', read: true },
-  { id: 'cm12', name: 'Hannah Lee', email: 'hannah@agency.com', department: 'Brand Partnerships', subject: 'Talent Agency Inquiry', message: 'We represent several actors and would like to discuss collaboration.', date: 'Jul 30, 2025', read: false },
-];
-
-const INITIAL_NOTIFICATIONS: AdminNotification[] = [
-  { id: 'n1', title: 'New Membership Application', message: 'Olivia Brown applied for Gold membership.', date: '2 hours ago', read: false },
-  { id: 'n2', title: 'Experience Request', message: 'New Meet & Greet request from Sarah Johnson.', date: '5 hours ago', read: false },
-  { id: 'n3', title: 'Business Enquiry', message: 'Partnership proposal from Luxe Brand Co.', date: '1 day ago', read: true },
-  { id: 'n4', title: 'Contact Form Submission', message: 'New interview request from Robert Taylor (Variety).', date: '1 day ago', read: false },
-  { id: 'n5', title: 'Payment Received', message: 'Gold membership renewal from Sarah Johnson — $199.', date: '2 days ago', read: true },
-  { id: 'n6', title: 'Application Approved', message: 'Sophia Davis Platinum application approved.', date: '3 days ago', read: true },
-  { id: 'n7', title: 'System Alert', message: 'Backup completed successfully at 3:00 AM.', date: '3 days ago', read: true },
-  { id: 'n8', title: 'New Fan Chat', message: 'Ethan Thompson started a new conversation.', date: '4 days ago', read: false },
-  { id: 'n9', title: 'Content Update', message: 'New journal article published by Admin.', date: '5 days ago', read: true },
-  { id: 'n10', title: 'Security Alert', message: '3 failed login attempts detected from IP 192.168.1.105.', date: '5 days ago', read: false },
-];
-
-const INITIAL_MEDIA: AdminMediaItem[] = [
-  { id: 'mi1', name: 'hero-portrait.jpg', type: 'image', size: '2.4 MB', uploadedBy: 'Admin', date: 'Aug 10, 2025', url: '#' },
-  { id: 'mi2', name: 'shards-premiere.jpg', type: 'image', size: '3.1 MB', uploadedBy: 'Admin', date: 'Aug 9, 2025', url: '#' },
-  { id: 'mi3', name: 'interview-clip.mp4', type: 'video', size: '45.2 MB', uploadedBy: 'Admin', date: 'Aug 8, 2025', url: '#' },
-  { id: 'mi4', name: 'press-kit.pdf', type: 'document', size: '1.8 MB', uploadedBy: 'Admin', date: 'Aug 7, 2025', url: '#' },
-  { id: 'mi5', name: 'backstage-photo.jpg', type: 'image', size: '4.2 MB', uploadedBy: 'Admin', date: 'Aug 6, 2025', url: '#' },
-  { id: 'mi6', name: 'red-carpet.jpg', type: 'image', size: '3.8 MB', uploadedBy: 'Admin', date: 'Aug 5, 2025', url: '#' },
-  { id: 'mi7', name: 'behind-scenes.mp4', type: 'video', size: '128.5 MB', uploadedBy: 'Admin', date: 'Aug 4, 2025', url: '#' },
-  { id: 'mi8', name: 'biography.docx', type: 'document', size: '245 KB', uploadedBy: 'Admin', date: 'Aug 3, 2025', url: '#' },
-  { id: 'mi9', name: 'gallery-portrait-1.jpg', type: 'image', size: '5.1 MB', uploadedBy: 'Admin', date: 'Aug 2, 2025', url: '#' },
-  { id: 'mi10', name: 'fan-event-recap.mp4', type: 'video', size: '89.3 MB', uploadedBy: 'Admin', date: 'Aug 1, 2025', url: '#' },
-  { id: 'mi11', name: 'branding-kit.zip', type: 'document', size: '12.4 MB', uploadedBy: 'Admin', date: 'Jul 31, 2025', url: '#' },
-  { id: 'mi12', name: 'movie-poster.jpg', type: 'image', size: '1.9 MB', uploadedBy: 'Admin', date: 'Jul 30, 2025', url: '#' },
-  { id: 'mi13', name: 'podcast-episode-1.mp3', type: 'video', size: '34.7 MB', uploadedBy: 'Admin', date: 'Jul 29, 2025', url: '#' },
-  { id: 'mi14', name: 'event-flyer.png', type: 'image', size: '890 KB', uploadedBy: 'Admin', date: 'Jul 28, 2025', url: '#' },
-  { id: 'mi15', name: 'annual-report-2024.pdf', type: 'document', size: '3.6 MB', uploadedBy: 'Admin', date: 'Jul 27, 2025', url: '#' },
-  { id: 'mi16', name: 'candid-shoot.jpg', type: 'image', size: '2.7 MB', uploadedBy: 'Admin', date: 'Jul 26, 2025', url: '#' },
-  { id: 'mi17', name: 'teaser-trailer.mp4', type: 'video', size: '56.8 MB', uploadedBy: 'Admin', date: 'Jul 25, 2025', url: '#' },
-];
-
-const INITIAL_PAYMENTS: AdminPayment[] = [
-  { id: 'pay1', member: 'Sarah Johnson', plan: 'Gold', amount: 199, date: 'Aug 10, 2025', status: 'completed' },
-  { id: 'pay2', member: 'Michael Chen', plan: 'Platinum', amount: 499, date: 'Aug 9, 2025', status: 'completed' },
-  { id: 'pay3', member: 'Emma Wilson', plan: 'Silver', amount: 99, date: 'Aug 8, 2025', status: 'pending' },
-  { id: 'pay4', member: 'David Kim', plan: 'Silver', amount: 99, date: 'Aug 7, 2025', status: 'completed' },
-  { id: 'pay5', member: 'Isabella Martinez', plan: 'Gold', amount: 199, date: 'Aug 6, 2025', status: 'completed' },
-  { id: 'pay6', member: 'Ethan Thompson', plan: 'Platinum', amount: 499, date: 'Aug 5, 2025', status: 'completed' },
-  { id: 'pay7', member: 'Sophia Davis', plan: 'Silver', amount: 99, date: 'Aug 4, 2025', status: 'refunded' },
-  { id: 'pay8', member: 'Alexander Patel', plan: 'Gold', amount: 199, date: 'Aug 3, 2025', status: 'completed' },
-  { id: 'pay9', member: 'Mia Anderson', plan: 'Platinum', amount: 499, date: 'Aug 2, 2025', status: 'completed' },
-  { id: 'pay10', member: 'James Rodriguez', plan: 'Gold', amount: 199, date: 'Aug 1, 2025', status: 'refunded' },
-  { id: 'pay11', member: 'Charlotte White', plan: 'Gold', amount: 199, date: 'Jul 31, 2025', status: 'completed' },
-  { id: 'pay12', member: 'Amelia Robinson', plan: 'Silver', amount: 99, date: 'Jul 30, 2025', status: 'completed' },
-  { id: 'pay13', member: 'Benjamin Lee', plan: 'Silver', amount: 99, date: 'Jul 29, 2025', status: 'pending' },
-  { id: 'pay14', member: 'Sarah Johnson', plan: 'Gold', amount: 199, date: 'Jul 28, 2025', status: 'completed' },
-  { id: 'pay15', member: 'Michael Chen', plan: 'Platinum', amount: 499, date: 'Jul 27, 2025', status: 'completed' },
-  { id: 'pay16', member: 'David Kim', plan: 'Silver', amount: 99, date: 'Jul 26, 2025', status: 'completed' },
-  { id: 'pay17', member: 'Isabella Martinez', plan: 'Gold', amount: 199, date: 'Jul 25, 2025', status: 'completed' },
-  { id: 'pay18', member: 'Ethan Thompson', plan: 'Platinum', amount: 499, date: 'Jul 24, 2025', status: 'completed' },
-  { id: 'pay19', member: 'Emma Wilson', plan: 'Silver', amount: 99, date: 'Jul 23, 2025', status: 'completed' },
-  { id: 'pay20', member: 'Alexander Patel', plan: 'Gold', amount: 199, date: 'Jul 22, 2025', status: 'pending' },
-  { id: 'pay21', member: 'Mia Anderson', plan: 'Platinum', amount: 499, date: 'Jul 21, 2025', status: 'completed' },
-  { id: 'pay22', member: 'Charlotte White', plan: 'Gold', amount: 199, date: 'Jul 20, 2025', status: 'completed' },
-  { id: 'pay23', member: 'Sophia Davis', plan: 'Silver', amount: 99, date: 'Jul 19, 2025', status: 'refunded' },
-  { id: 'pay24', member: 'Amelia Robinson', plan: 'Silver', amount: 99, date: 'Jul 18, 2025', status: 'completed' },
-];
-
-const INITIAL_PAGES: AdminPage[] = [
-  { id: 'home', title: 'Homepage', status: 'published', lastModified: 'Aug 10, 2025', author: 'Admin' },
-  { id: 'journey', title: 'Journey', status: 'published', lastModified: 'Aug 9, 2025', author: 'Admin' },
-  { id: 'projects', title: 'Projects', status: 'published', lastModified: 'Aug 8, 2025', author: 'Admin' },
-  { id: 'gallery', title: 'Gallery', status: 'draft', lastModified: 'Aug 7, 2025', author: 'Admin' },
-  { id: 'journal', title: 'Journal', status: 'published', lastModified: 'Aug 6, 2025', author: 'Admin' },
-  { id: 'media', title: 'Media', status: 'published', lastModified: 'Aug 5, 2025', author: 'Admin' },
-  { id: 'membership', title: 'Membership', status: 'published', lastModified: 'Aug 4, 2025', author: 'Admin' },
-  { id: 'experiences', title: 'Experiences', status: 'published', lastModified: 'Aug 3, 2025', author: 'Admin' },
-  { id: 'contact', title: 'Contact', status: 'published', lastModified: 'Aug 2, 2025', author: 'Admin' },
-  { id: 'faq', title: 'FAQ', status: 'draft', lastModified: 'Aug 1, 2025', author: 'Admin' },
-  { id: 'terms', title: 'Terms & Conditions', status: 'published', lastModified: 'Jul 30, 2025', author: 'Admin' },
-  { id: 'privacy', title: 'Privacy Policy', status: 'published', lastModified: 'Jul 29, 2025', author: 'Admin' },
-];
+const INITIAL_MEMBERS: AdminMember[] = [];
+const INITIAL_PLANS: AdminPlan[] = [];
+const INITIAL_APPLICATIONS: AdminApplication[] = [];
+const INITIAL_EXPERIENCES: AdminExperience[] = [];
+const INITIAL_EXPERIENCE_REQUESTS: AdminExperienceRequest[] = [];
+const INITIAL_CONVERSATIONS: AdminConversation[] = [];
+const INITIAL_CONTACT_MESSAGES: AdminContactMessage[] = [];
+const INITIAL_NOTIFICATIONS: AdminNotification[] = [];
+const INITIAL_MEDIA: AdminMediaItem[] = [];
+const INITIAL_PAYMENTS: AdminPayment[] = [];
+const INITIAL_PAGES: AdminPage[] = [];
 
 // ============================================================
 // Context

@@ -16,11 +16,6 @@ import {
   ToggleRight,
 } from 'lucide-react';
 import type { AdminSection, ContentItem, FAQItem, JournalArticle } from '../../data/adminData';
-import {
-  MOCK_CONTENT_ITEMS,
-  MOCK_JOURNAL_ARTICLES,
-  MOCK_FAQS,
-} from '../../data/adminData';
 import { useAdmin } from '../../context/AdminContext';
 
 interface AdminContentProps {
@@ -1075,17 +1070,11 @@ function FAQList({ items, onAdd, onUpdate, onDelete, onReorder }: FAQListProps) 
 export const AdminContent: React.FC<AdminContentProps> = ({ activeSection }) => {
   const { pages } = useAdmin();
 
-  const [contentItems, setContentItems] = useState<ContentItem[]>(() => {
-    return MOCK_CONTENT_ITEMS.map((item) => ({ ...item }));
-  });
+  const [contentItems, setContentItems] = useState<ContentItem[]>([]);
 
-  const [journalArticles, setJournalArticles] = useState<JournalArticle[]>(() => {
-    return MOCK_JOURNAL_ARTICLES.map((a) => ({ ...a }));
-  });
+  const [journalArticles, setJournalArticles] = useState<JournalArticle[]>([]);
 
-  const [faqs, setFaqs] = useState<FAQItem[]>(() => {
-    return MOCK_FAQS.map((f) => ({ ...f }));
-  });
+  const [faqs, setFaqs] = useState<FAQItem[]>([]);
 
   const sectionMap: Record<string, ContentItem['section']> = {
     journey: 'journey',

@@ -9,10 +9,7 @@ export const DashboardMembership: React.FC = () => {
   const { membership } = useDashboard();
   const canUseWhatsApp = membership.plan === 'Gold' || membership.plan === 'Platinum';
 
-  const PAYMENT_HISTORY = [
-    { id: 'p1', plan: `${membership.plan} Membership — Annual`, date: membership.activationDate, amount: '$199.00' },
-    { id: 'p2', plan: `${membership.plan} Membership — Annual`, date: 'January 15, 2025', amount: '$199.00' },
-  ];
+  const PAYMENT_HISTORY: { id: string; plan: string; date: string; amount: string }[] = [];
 
   return (
     <div className="space-y-8">
@@ -76,12 +73,16 @@ export const DashboardMembership: React.FC = () => {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
         <h3 className="text-sm font-medium text-[#1C1917] mb-4">Your Benefits</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {membership.benefits.map((b, i) => (
-            <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white border border-[#E8E5DF]/60">
-              <Check className="w-4 h-4 text-[#16A34A] shrink-0" />
-              <span className="text-sm text-[#57534E]">{b}</span>
-            </div>
-          ))}
+          {membership.benefits && membership.benefits.length > 0 ? (
+            membership.benefits.map((b, i) => (
+              <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white border border-[#E8E5DF]/60">
+                <Check className="w-4 h-4 text-[#16A34A] shrink-0" />
+                <span className="text-sm text-[#57534E]">{b}</span>
+              </div>
+            ))
+          ) : (
+            <p className="text-xs text-[#57534E]/60 col-span-2">No benefits yet. Upgrade your membership to unlock exclusive perks.</p>
+          )}
           {canUseWhatsApp && (
             <div className="flex items-center gap-3 p-3 rounded-xl bg-[#25D366]/5 border border-[#25D366]/20">
               <Phone className="w-4 h-4 text-[#25D366] shrink-0" />
@@ -95,19 +96,23 @@ export const DashboardMembership: React.FC = () => {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
         <h3 className="text-sm font-medium text-[#1C1917] mb-4">Payment History</h3>
         <div className="rounded-2xl border border-[#E8E5DF]/60 bg-white overflow-hidden">
-          {PAYMENT_HISTORY.map((p, i) => (
-            <div key={p.id} className={`flex items-center gap-3 p-4 ${i < PAYMENT_HISTORY.length - 1 ? 'border-b border-[#E8E5DF]/40' : ''}`}>
-              <CreditCard className="w-4 h-4 text-[#57534E]" />
-              <div className="flex-1">
-                <p className="text-sm text-[#1C1917]">{p.plan}</p>
-                <p className="text-[11px] text-[#57534E]">{p.date}</p>
+          {PAYMENT_HISTORY.length > 0 ? (
+            PAYMENT_HISTORY.map((p, i) => (
+              <div key={p.id} className={`flex items-center gap-3 p-4 ${i < PAYMENT_HISTORY.length - 1 ? 'border-b border-[#E8E5DF]/40' : ''}`}>
+                <CreditCard className="w-4 h-4 text-[#57534E]" />
+                <div className="flex-1">
+                  <p className="text-sm text-[#1C1917]">{p.plan}</p>
+                  <p className="text-[11px] text-[#57534E]">{p.date}</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-[#1C1917]">{p.amount}</span>
+                  <button className="text-[10px] text-[#A6852F] hover:text-[#8B6F1F] font-medium transition-colors cursor-pointer">Receipt</button>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-[#1C1917]">{p.amount}</span>
-                <button className="text-[10px] text-[#A6852F] hover:text-[#8B6F1F] font-medium transition-colors cursor-pointer">Receipt</button>
-              </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="p-4 text-xs text-[#57534E]/60">No payment history yet.</p>
+          )}
         </div>
       </motion.div>
     </div>

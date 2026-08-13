@@ -85,68 +85,35 @@ export interface SecuritySession {
   current: boolean;
 }
 
-export const MOCK_MEMBER: MemberProfile = {
-  firstName: 'Alex',
-  lastName: 'Morgan',
-  username: 'alexmorgan',
-  email: 'alex.morgan@email.com',
-  phone: '+1 (555) 123-4567',
-  country: 'United States',
-  dateOfBirth: '1995-06-15',
+export const DEFAULT_MEMBER_PROFILE: MemberProfile = {
+  firstName: '',
+  lastName: '',
+  username: '',
+  email: '',
+  phone: '',
+  country: '',
+  dateOfBirth: '',
   avatar: '',
   language: 'English',
-  timezone: 'Pacific Time (PT)',
+  timezone: '',
   emailNotifications: true,
   smsNotifications: false,
   marketingPreferences: true,
   profileVisibility: 'members',
   showOnlineStatus: true,
   allowMessageRequests: true,
-  memberSince: 'January 2025',
-  lastLogin: 'Today, 10:32 AM',
+  memberSince: '',
+  lastLogin: '',
 };
 
-export const MOCK_MEMBERSHIP: MemberMembership = {
-  plan: 'Gold',
-  status: 'active',
-  renewalDate: 'January 15, 2026',
-  activationDate: 'January 15, 2024',
-  membershipNumber: 'HMR-GLD-2024-00147',
-  benefits: [
-    'Priority chat responses',
-    'Exclusive content access',
-    'Early event registration',
-    'Monthly Q&A sessions',
-    'Behind-the-scenes updates',
-  ],
+export const DEFAULT_MEMBERSHIP: MemberMembership = {
+  plan: '',
+  status: 'none',
+  renewalDate: '',
+  activationDate: '',
+  membershipNumber: '',
+  benefits: [],
 };
-
-export const MOCK_REQUESTS: DashboardRequest[] = [
-  { id: 'r1', type: 'experience', title: 'Meet & Greet — NYC Premiere', description: 'Requested attendance at The Shards NYC premiere meet and greet.', status: 'approved', date: 'Dec 10, 2025', eventDate: 'Jan 20, 2026', managementNotes: 'Approved. Check-in at VIP desk 30 minutes before event.' },
-  { id: 'r2', type: 'business', title: 'Podcast Interview Request', description: 'Interview request for The Deep Cut podcast.', status: 'under_review', date: 'Dec 8, 2025', managementNotes: 'Under review by management team.' },
-  { id: 'r3', type: 'experience', title: 'Virtual Greeting — Birthday', description: 'Personalized video greeting for fan birthday.', status: 'pending', date: 'Dec 5, 2025', eventDate: 'Feb 14, 2026' },
-  { id: 'r4', type: 'contact', title: 'Charity Collaboration', description: 'Partnership request for environmental nonprofit.', status: 'completed', date: 'Nov 28, 2025', managementNotes: 'Collaboration completed. Thank you for your support!' },
-];
-
-export const MOCK_NOTIFICATIONS: DashboardNotification[] = [
-  { id: 'n1', type: 'membership', title: 'Membership Renewal', message: 'Your Gold membership will renew on January 15, 2026.', date: '2 hours ago', read: false },
-  { id: 'n2', type: 'experience', title: 'Experience Approved', message: 'Your Meet & Greet request for the NYC premiere has been approved.', date: '1 day ago', read: false },
-  { id: 'n3', type: 'journal', title: 'New Journal Entry', message: 'Homer published a new journal entry: "Behind the Scenes of The Shards".', date: '2 days ago', read: true },
-  { id: 'n4', type: 'reply', title: 'Management Reply', message: 'Your podcast interview request is being reviewed by the team.', date: '3 days ago', read: true },
-  { id: 'n5', type: 'system', title: 'Platform Update', message: 'New features have been added to the member dashboard.', date: '5 days ago', read: true },
-];
-
-export const MOCK_CONVERSATIONS: DashboardConversation[] = [
-  { id: 'c1', type: 'fan', lastMessage: 'Thanks for the kind words! — Homer', date: 'Yesterday', status: 'replied' },
-  { id: 'c2', type: 'fan', lastMessage: 'Would love to hear about your favorite scene!', date: '3 days ago', status: 'open' },
-  { id: 'c3', type: 'business', lastMessage: 'Your enquiry has been forwarded to the team.', date: '1 week ago', status: 'closed' },
-];
-
-export const MOCK_SESSIONS: SecuritySession[] = [
-  { id: 's1', device: 'MacBook Pro', browser: 'Chrome 120', location: 'Los Angeles, CA', lastActive: 'Now', current: true },
-  { id: 's2', device: 'iPhone 15', browser: 'Safari', location: 'Los Angeles, CA', lastActive: '2 hours ago', current: false },
-  { id: 's3', device: 'iPad Air', browser: 'Safari', location: 'New York, NY', lastActive: '3 days ago', current: false },
-];
 
 export const DASHBOARD_NAV_ITEMS: { id: DashboardSection; label: string; icon: string; group: 'main' | 'activity' | 'account' }[] = [
   { id: 'home', label: 'Dashboard', icon: 'LayoutDashboard', group: 'main' },

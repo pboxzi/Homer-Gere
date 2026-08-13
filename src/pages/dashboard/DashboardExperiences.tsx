@@ -1,31 +1,49 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles, ArrowRight, Calendar, Check, X, Star, Clock, Trash2 } from 'lucide-react';
+import { Calendar, Check, X, Star, Clock, Trash2, Users, Heart, Mic, Briefcase, Sparkles, Video, Play } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
+import { EXPERIENCES } from '../../data/content';
+import type { Experience } from '../../types';
 
-const EXPERIENCES = [
-  { id: 'e1', title: 'Virtual Meet & Greet', description: 'A personal 15-minute video call with Homer.', price: '$49', duration: '15 min', category: 'Virtual', available: true, tier: 'Silver' },
-  { id: 'e2', title: 'Birthday Video Message', description: 'A personalized video greeting for your special day.', price: '$29', duration: '2-3 min', category: 'Video', available: true, tier: 'All' },
-  { id: 'e3', title: 'Signed Memorabilia', description: 'Receive a signed photo or item from Homer\'s collection.', price: '$35', duration: '3-5 days', category: 'Physical', available: true, tier: 'All' },
-  { id: 'e4', title: 'Premiere Meet & Greet', description: 'Exclusive meet and greet at a film premiere event.', price: '$199', duration: '30 min', category: 'In-Person', available: false, tier: 'Gold' },
-  { id: 'e5', title: 'Private Screening', description: 'Virtual private screening with Q&A session.', price: '$99', duration: '90 min', category: 'Virtual', available: true, tier: 'Gold' },
-  { id: 'e6', title: 'Behind the Scenes Tour', description: 'Virtual tour of a current production set.', price: '$79', duration: '45 min', category: 'Virtual', available: true, tier: 'Gold' },
-];
+const ICON_MAP: Record<string, React.ReactNode> = {
+  users: <Users className="w-4 h-4" />,
+  calendar: <Calendar className="w-4 h-4" />,
+  heart: <Heart className="w-4 h-4" />,
+  mic: <Mic className="w-4 h-4" />,
+  briefcase: <Briefcase className="w-4 h-4" />,
+  sparkles: <Sparkles className="w-4 h-4" />,
+  video: <Video className="w-4 h-4" />,
+  play: <Play className="w-4 h-4" />,
+};
 
 const CATEGORY_COLORS: Record<string, string> = {
-  Virtual: '#3B82F6',
-  Video: '#8B5CF6',
-  Physical: '#16A34A',
-  'In-Person': '#F59E0B',
+  'meet-and-greet': '#F59E0B',
+  'fan-event': '#3B82F6',
+  'charity-appearance': '#16A34A',
+  'speaking-engagement': '#8B5CF6',
+  'brand-collaboration': '#EC4899',
+  'private-event': '#A6852F',
+  'virtual-appearance': '#3B82F6',
+  'video-greeting': '#8B5CF6',
+};
+
+const TIER_ACCESS: Record<string, string[]> = {
+  'meet-and-greet': ['Gold', 'Platinum'],
+  'fan-event': ['Silver', 'Gold', 'Platinum'],
+  'charity-appearance': ['Silver', 'Gold', 'Platinum'],
+  'speaking-engagement': ['Gold', 'Platinum'],
+  'brand-collaboration': ['Platinum'],
+  'private-event': ['Gold', 'Platinum'],
+  'virtual-appearance': ['Silver', 'Gold', 'Platinum'],
+  'video-greeting': ['Silver', 'Gold', 'Platinum'],
 };
 
 export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onRequestFormOpened?: () => void }> = ({ openRequestForm, onRequestFormOpened }) => {
   const { requests, addRequest, membership, withdrawRequest } = useDashboard();
-  const [selectedExp, setSelectedExp] = useState<typeof EXPERIENCES[0] | null>(null);
+  const [selectedExp, setSelectedExp] = useState<Experience | null>(null);
   const [requestNote, setRequestNote] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  // Open request form when triggered from DashboardHome
   React.useEffect(() => {
     if (openRequestForm) {
       setSelectedExp(EXPERIENCES[0]);
@@ -35,12 +53,9 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
 
   const experienceRequests = requests.filter((r) => r.type === 'experience');
 
-  const canAccess = (tier: string) => {
-    if (tier === 'All') return true;
-    if (tier === 'Silver') return ['Silver', 'Gold', 'Platinum'].includes(membership.plan);
-    if (tier === 'Gold') return ['Gold', 'Platinum'].includes(membership.plan);
-    if (tier === 'Platinum') return membership.plan === 'Platinum';
-    return false;
+  const canAccess = (exp: Experience) => {
+    const requiredTiers = TIER_ACCESS[exp.type] || ['Silver', 'Gold', 'Platinum'];
+    return requiredTiers.includes(membership.plan);
   };
 
   const handleSubmit = () => {
@@ -80,8 +95,8 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
         <h3 className="text-sm font-medium text-[#1C1917] mb-4">Available Experiences</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {EXPERIENCES.map((exp, i) => {
-            const accessible = canAccess(exp.tier);
-            const color = CATEGORY_COLORS[exp.category] || '#57534E';
+            const accessible = canAccess(exp);
+            const color = CATEGORY_COLORS[exp.type] || '#57534E';
             return (
               <motion.div
                 key={exp.id}
@@ -92,17 +107,20 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
                 transition={{ duration: 0.4, delay: 0.15 + i * 0.05 }}
               >
                 <div className="flex items-start justify-between mb-3">
-                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ backgroundColor: `${color}15`, color }}>{exp.category}</span>
-                  <span className="text-[10px] font-medium text-[#57534E]">{exp.tier}+</span>
+                  <span className="text-[10px] font-medium px-2 py-0.5 rounded-full flex items-center gap-1" style={{ backgroundColor: `${color}15`, color }}>
+                    {ICON_MAP[exp.iconName] || <Sparkles className="w-3 h-3" />}
+                    {exp.title}
+                  </span>
+                  <span className="text-[10px] font-medium text-[#57534E]">{exp.availability === 'available' ? 'Available' : exp.availability === 'limited' ? 'Limited' : 'Unavailable'}</span>
                 </div>
                 <h4 className="text-sm font-medium text-[#1C1917] mb-1">{exp.title}</h4>
                 <p className="text-xs text-[#57534E] mb-3">{exp.description}</p>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 text-[10px] text-[#57534E]">
                     <span className="flex items-center gap-1"><Star className="w-3 h-3" /> {exp.price}</span>
-                    <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {exp.duration}</span>
+                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {exp.duration}</span>
                   </div>
-                  {accessible && exp.available ? (
+                  {accessible && exp.availability !== 'unavailable' ? (
                     <span className="text-[10px] text-[#16A34A] font-medium">Available</span>
                   ) : (
                     <span className="text-[10px] text-[#57534E]/60">{!accessible ? 'Upgrade required' : 'Unavailable'}</span>
@@ -159,7 +177,7 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
                   <p className="text-sm text-[#57534E]">{selectedExp.description}</p>
                   <div className="flex items-center gap-4 text-xs text-[#57534E]">
                     <span className="flex items-center gap-1"><Star className="w-3 h-3" /> {selectedExp.price}</span>
-                    <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {selectedExp.duration}</span>
+                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {selectedExp.duration}</span>
                   </div>
                   <textarea
                     value={requestNote}

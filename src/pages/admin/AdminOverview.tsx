@@ -16,16 +16,16 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
   const { stats, notifications } = useAdmin();
 
   const cards = [
-    { label: 'Total Members', value: stats.totalMembers.toLocaleString(), icon: Users, color: '#A6852F', change: '+12%', up: true },
-    { label: 'Active Memberships', value: stats.activeMemberships.toLocaleString(), icon: Crown, color: '#16A34A', change: '+8%', up: true },
-    { label: 'Pending Applications', value: stats.pendingApplications, icon: Clock, color: '#F59E0B', change: '+3', up: true },
-    { label: 'Fan Chat Messages', value: stats.fanChatMessages.toLocaleString(), icon: MessageSquare, color: '#3B82F6', change: '+156', up: true },
-    { label: 'Business Enquiries', value: stats.businessEnquiries, icon: Building2, color: '#8B5CF6', change: '+5', up: true },
-    { label: 'Experience Requests', value: stats.experienceRequests, icon: Sparkles, color: '#EC4899', change: '+12', up: true },
-    { label: 'Journal Articles', value: stats.journalArticles, icon: FileText, color: '#14B8A6', change: '+2', up: true },
-    { label: 'Gallery Images', value: stats.galleryImages, icon: Image, color: '#F97316', change: '+18', up: true },
-    { label: 'Media Items', value: stats.mediaItems, icon: Film, color: '#6366F1', change: '+7', up: true },
-    { label: 'Website Visitors', value: stats.websiteVisitors.toLocaleString(), icon: Globe, color: '#A6852F', change: '+2.4K', up: true },
+    { label: 'Total Members', value: stats.totalMembers.toLocaleString(), icon: Users, color: '#A6852F' },
+    { label: 'Active Memberships', value: stats.activeMemberships.toLocaleString(), icon: Crown, color: '#16A34A' },
+    { label: 'Pending Applications', value: stats.pendingApplications, icon: Clock, color: '#F59E0B' },
+    { label: 'Fan Chat Messages', value: stats.fanChatMessages.toLocaleString(), icon: MessageSquare, color: '#3B82F6' },
+    { label: 'Business Enquiries', value: stats.businessEnquiries, icon: Building2, color: '#8B5CF6' },
+    { label: 'Experience Requests', value: stats.experienceRequests, icon: Sparkles, color: '#EC4899' },
+    { label: 'Journal Articles', value: stats.journalArticles, icon: FileText, color: '#14B8A6' },
+    { label: 'Gallery Images', value: stats.galleryImages, icon: Image, color: '#F97316' },
+    { label: 'Media Items', value: stats.mediaItems, icon: Film, color: '#6366F1' },
+    { label: 'Website Visitors', value: stats.websiteVisitors.toLocaleString(), icon: Globe, color: '#A6852F' },
   ];
 
   const quickActions = [
@@ -35,12 +35,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
     { label: 'View Analytics', icon: TrendingUp, color: '#16A34A', target: 'visitors' as AdminSection },
   ];
 
-  const systemHealth = [
-    { label: 'Uptime', value: '99.9%', icon: Activity, color: '#16A34A' },
-    { label: 'Response Time', value: '142ms', icon: Zap, color: '#3B82F6' },
-    { label: 'Error Rate', value: '0.02%', icon: AlertTriangle, color: '#F59E0B' },
-    { label: 'Storage', value: '67%', icon: HardDrive, color: '#8B5CF6' },
-  ];
+  const systemHealth: { label: string; value: string; icon: React.ElementType; color: string }[] = [];
 
   return (
     <div className="space-y-8">
@@ -65,10 +60,6 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
             <div className="flex items-center justify-between mb-2.5">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: `${card.color}20`, color: card.color }}>
                 <card.icon className="w-4 h-4" />
-              </div>
-              <div className={`flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full ${card.up ? 'bg-[#16A34A]/12 text-[#16A34A]' : 'bg-[#DC2626]/12 text-[#DC2626]'}`}>
-                {card.up ? <ArrowUpRight className="w-2.5 h-2.5" /> : <ArrowDownRight className="w-2.5 h-2.5" />}
-                {card.change}
               </div>
             </div>
             <p className="text-xl font-editorial leading-none" style={{ color: card.color }}>{card.value}</p>

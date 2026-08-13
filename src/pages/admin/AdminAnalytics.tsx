@@ -28,24 +28,16 @@ interface AdminAnalyticsProps {
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-const MONTHLY_VISITORS = [3200, 3800, 4100, 3600, 4500, 5200, 4800, 5500, 6100, 5800, 6400, 7200];
-const DAILY_VISITORS = Array.from({ length: 30 }, (_, i) => 150 + Math.floor(Math.sin(i * 0.5) * 60 + Math.random() * 80));
+const MONTHLY_VISITORS: number[] = [];
+const DAILY_VISITORS: number[] = [];
 
-const TOP_PAGES = [
-  { page: '/homepage', views: 18420, unique: 12350, avgTime: '3:24' },
-  { page: '/projects', views: 9870, unique: 7620, avgTime: '4:12' },
-  { page: '/journey', views: 7340, unique: 5890, avgTime: '5:48' },
-  { page: '/gallery', views: 6210, unique: 4980, avgTime: '2:56' },
-  { page: '/membership', views: 5890, unique: 4320, avgTime: '3:45' },
-  { page: '/journal', views: 4560, unique: 3780, avgTime: '6:12' },
-  { page: '/contact', views: 3210, unique: 2980, avgTime: '1:32' },
-];
+const TOP_PAGES: { page: string; views: number; unique: number; avgTime: string }[] = [];
 
-const MEMBERSHIP_GROWTH = [820, 860, 910, 940, 980, 1020, 1060, 1100, 1150, 1190, 1220, 1247];
+const MEMBERSHIP_GROWTH: number[] = [];
 
-const EXPERIENCE_REQUESTS_MONTHLY = [8, 11, 14, 12, 16, 19, 22, 25, 28, 31, 34, 38];
+const EXPERIENCE_REQUESTS_MONTHLY: number[] = [];
 
-const CHAT_ACTIVITY_MONTHLY = [180, 210, 245, 280, 310, 350, 380, 420, 460, 510, 550, 600];
+const CHAT_ACTIVITY_MONTHLY: number[] = [];
 
 const STATUS_COLORS: Record<string, string> = {
   pending: '#F59E0B',
@@ -63,10 +55,10 @@ function VisitorsSection() {
   const { stats } = useAdmin();
 
   const summaryCards = [
-    { label: 'Total Visitors', value: stats.websiteVisitors.toLocaleString(), icon: Eye, color: '#A6852F', bg: '#A6852F15', change: '+12.4%', up: true },
-    { label: 'Page Views', value: '82,430', icon: BarChart3, color: '#3B82F6', bg: '#3B82F615', change: '+8.7%', up: true },
-    { label: 'Bounce Rate', value: '34.2%', icon: ArrowDownRight, color: '#EF4444', bg: '#EF444415', change: '-2.1%', up: false },
-    { label: 'Avg Session Duration', value: '4m 32s', icon: Clock, color: '#16A34A', bg: '#16A34A15', change: '+15.3%', up: true },
+    { label: 'Total Visitors', value: stats.websiteVisitors.toLocaleString(), icon: Eye, color: '#A6852F', bg: '#A6852F15' },
+    { label: 'Page Views', value: '0', icon: BarChart3, color: '#3B82F6', bg: '#3B82F615' },
+    { label: 'Bounce Rate', value: '0%', icon: ArrowDownRight, color: '#EF4444', bg: '#EF444415' },
+    { label: 'Avg Session Duration', value: '0m 0s', icon: Clock, color: '#16A34A', bg: '#16A34A15' },
   ];
 
   const maxVisitor = Math.max(...MONTHLY_VISITORS);
@@ -86,10 +78,6 @@ function VisitorsSection() {
               <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: card.bg, color: card.color }}>
                 <card.icon className="w-4 h-4" />
               </div>
-              <span className={`text-[10px] font-medium flex items-center gap-0.5 ${card.up ? 'text-[#16A34A]' : 'text-[#EF4444]'}`}>
-                {card.up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                {card.change}
-              </span>
             </div>
             <p className="text-xl font-bold text-[#1C1917]">{card.value}</p>
             <p className="text-[11px] text-[#57534E] mt-0.5">{card.label}</p>
@@ -203,7 +191,7 @@ function MembershipStatsSection() {
   const summaryCards = [
     { label: 'Total Members', value: stats.totalMembers.toLocaleString(), icon: Users, color: '#A6852F', bg: '#A6852F15' },
     { label: 'Active Members', value: stats.activeMemberships.toLocaleString(), icon: UserCheck, color: '#16A34A', bg: '#16A34A15' },
-    { label: 'Growth Rate', value: '18.4%', icon: TrendingUp, color: '#3B82F6', bg: '#3B82F615' },
+    { label: 'Growth Rate', value: '0%', icon: TrendingUp, color: '#3B82F6', bg: '#3B82F615' },
     { label: 'Revenue', value: `$${(revenue / 1000).toFixed(1)}k`, icon: DollarSign, color: '#8B5CF6', bg: '#8B5CF615' },
   ];
 
@@ -378,7 +366,7 @@ function ExperienceStatsSection() {
     { label: 'Total Requests', value: stats.experienceRequests.toString(), icon: Sparkles, color: '#8B5CF6', bg: '#8B5CF615' },
     { label: 'Pending', value: statusCounts.pending.toString(), icon: AlertCircle, color: '#F59E0B', bg: '#F59E0B15' },
     { label: 'Completed', value: statusCounts.completed.toString(), icon: CheckCircle, color: '#16A34A', bg: '#16A34A15' },
-    { label: 'Revenue', value: '$12.4k', icon: DollarSign, color: '#A6852F', bg: '#A6852F15' },
+    { label: 'Revenue', value: '$0.0k', icon: DollarSign, color: '#A6852F', bg: '#A6852F15' },
   ];
 
   return (
@@ -487,8 +475,8 @@ function ChatStatsSection() {
   const summaryCards = [
     { label: 'Total Conversations', value: conversations.length.toString(), icon: MessageSquare, color: '#3B82F6', bg: '#3B82F615' },
     { label: 'Open', value: openConversations.length.toString(), icon: AlertCircle, color: '#F59E0B', bg: '#F59E0B15' },
-    { label: 'Avg Response Time', value: '2.4h', icon: Timer, color: '#16A34A', bg: '#16A34A15' },
-    { label: 'Satisfaction', value: '96.2%', icon: ThumbsUp, color: '#8B5CF6', bg: '#8B5CF615' },
+    { label: 'Avg Response Time', value: '0h', icon: Timer, color: '#16A34A', bg: '#16A34A15' },
+    { label: 'Satisfaction', value: '0%', icon: ThumbsUp, color: '#8B5CF6', bg: '#8B5CF615' },
   ];
 
   return (
