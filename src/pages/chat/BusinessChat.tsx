@@ -100,8 +100,11 @@ export const BusinessChat: React.FC<BusinessChatProps> = ({ onBack, onComplete }
   }
 
   return (
-    <section className="py-24 sm:py-32 bg-[#FAF9F7]">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative min-h-screen bg-[#FAF9F7] overflow-hidden">
+      {/* Soft Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#1C1917]/3 via-transparent to-[#FAF9F7]" />
+
+      <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
