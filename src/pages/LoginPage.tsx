@@ -39,7 +39,7 @@ export default function LoginPage() {
       if (email === 'admin@homergere.com') {
         navigate('/admin');
       } else {
-        navigate('/');
+        navigate('/dashboard');
       }
     }, 1500);
   };
