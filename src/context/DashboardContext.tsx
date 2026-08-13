@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase';
 import {
   MemberProfile, MemberMembership, DashboardRequest, DashboardNotification,
   DashboardConversation, SecuritySession, DEFAULT_MEMBER_PROFILE, DEFAULT_MEMBERSHIP,
@@ -176,6 +177,35 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   }, [user?.id]);
 
+  // Load notifications from Supabase
+  useEffect(() => {
+    if (!user) return;
+    let mounted = true;
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from('notifications')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(50);
+        if (mounted && data && data.length > 0) {
+          setNotifications(data.map((n) => ({
+            id: n.id,
+            type: (n.type as DashboardNotification['type']) || 'system',
+            title: n.title,
+            message: n.message,
+            date: n.created_at,
+            read: n.read,
+          })));
+        }
+      } catch {
+        // Use empty defaults
+      }
+    })();
+    return () => { mounted = false; };
+  }, [user?.id]);
+
   // Profile
   const updateProfile = useCallback((updates: Partial<MemberProfile>) => {
     setProfile((prev) => ({ ...prev, ...updates }));
@@ -202,14 +232,19 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   // Notifications
   const markNotificationRead = useCallback((id: string) => {
     setNotifications((prev) => prev.map((n) => n.id === id ? { ...n, read: true } : n));
+    supabase.from('notifications').update({ read: true }).eq('id', id).then(() => {});
   }, []);
 
   const markAllNotificationsRead = useCallback(() => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  }, []);
+    if (user) {
+      supabase.from('notifications').update({ read: true }).eq('user_id', user.id).eq('read', false).then(() => {});
+    }
+  }, [user]);
 
   const deleteNotification = useCallback((id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
+    supabase.from('notifications').delete().eq('id', id).then(() => {});
   }, []);
 
   // Conversations

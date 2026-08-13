@@ -12,9 +12,10 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { TIMELINE_MILESTONES } from '../../data/content';
+import { useSiteContent } from '../../context/SiteContentContext';
 
 export const JourneyTimeline: React.FC = () => {
+  const { timelineMilestones } = useSiteContent();
   const [activeId, setActiveId] = useState<string>('today');
   const scrollRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -34,7 +35,7 @@ export const JourneyTimeline: React.FC = () => {
   };
 
   const activeMilestone =
-    TIMELINE_MILESTONES.find((m) => m.id === activeId) || TIMELINE_MILESTONES[5];
+    timelineMilestones.find((m) => m.id === activeId) || timelineMilestones[5];
 
   const scrollTimeline = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
@@ -109,7 +110,7 @@ export const JourneyTimeline: React.FC = () => {
 
               {/* Timeline Nodes */}
               <div className="flex items-start gap-0 relative z-10">
-                {TIMELINE_MILESTONES.map((item, idx) => {
+                {timelineMilestones.map((item, idx) => {
                   const isSelected = item.id === activeId;
                   const isToday = item.id === 'today';
 

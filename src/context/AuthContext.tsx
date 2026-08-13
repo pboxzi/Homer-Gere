@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { profilesRepository, adminsRepository, registrationRepository } from '../lib/repositories';
+import { emailService } from '../lib/email';
 import type { Profile, Admin } from '../types/database';
 
 interface User {
@@ -169,6 +170,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         rejection_reason: null,
         notes: null,
       });
+
+      // Send registration received email
+      emailService.registrationReceived(data.email, data.firstName).catch(() => {});
 
       setLoading(false);
       return {};

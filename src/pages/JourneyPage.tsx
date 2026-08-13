@@ -56,7 +56,7 @@ export default function JourneyPage() {
   const handleBtsImageClick = (imageSrc: string, title: string) => {
     setActiveModal({
       type: 'gallery',
-      item: { id: `bts-${title}`, title, caption: title, category: 'Behind the Scenes', image: imageSrc },
+      item: { id: `bts-${title}`, title, caption: title, category: 'Behind the Scenes', image: imageSrc, date: '', order: 0 },
     });
   };
 

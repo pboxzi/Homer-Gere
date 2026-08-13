@@ -1,14 +1,15 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Play, Calendar, ExternalLink } from 'lucide-react';
-import { MEDIA_VIDEOS } from '../../data/content';
+import { useSiteContent } from '../../context/SiteContentContext';
 
 interface FeaturedMediaProps {
   onWatch: (url: string) => void;
 }
 
 export const FeaturedMedia: React.FC<FeaturedMediaProps> = ({ onWatch }) => {
-  const featured = MEDIA_VIDEOS.find((v) => v.featured) || MEDIA_VIDEOS[0];
+  const { mediaVideos } = useSiteContent();
+  const featured = mediaVideos.find((v) => v.featured) || mediaVideos[0];
 
   return (
     <section className="py-24 sm:py-32">

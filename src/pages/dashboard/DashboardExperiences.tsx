@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Calendar, Check, X, Star, Clock, Trash2, Users, Heart, Mic, Briefcase, Sparkles, Video, Play } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
-import { EXPERIENCES } from '../../data/content';
+import { useSiteContent } from '../../context/SiteContentContext';
 import type { Experience } from '../../types';
 
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -40,13 +40,14 @@ const TIER_ACCESS: Record<string, string[]> = {
 
 export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onRequestFormOpened?: () => void }> = ({ openRequestForm, onRequestFormOpened }) => {
   const { requests, addRequest, membership, withdrawRequest } = useDashboard();
+  const { experiences } = useSiteContent();
   const [selectedExp, setSelectedExp] = useState<Experience | null>(null);
   const [requestNote, setRequestNote] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   React.useEffect(() => {
     if (openRequestForm) {
-      setSelectedExp(EXPERIENCES[0]);
+      setSelectedExp(experiences[0]);
       onRequestFormOpened?.();
     }
   }, [openRequestForm, onRequestFormOpened]);
@@ -94,7 +95,7 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
       <div>
         <h3 className="text-sm font-medium text-[#1C1917] mb-4">Available Experiences</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {EXPERIENCES.map((exp, i) => {
+          {experiences.map((exp, i) => {
             const accessible = canAccess(exp);
             const color = CATEGORY_COLORS[exp.type] || '#57534E';
             return (

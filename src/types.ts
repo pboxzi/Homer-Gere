@@ -7,6 +7,9 @@ export interface JournalArticle {
   date: string;
   image: string;
   readTime: string;
+  slug?: string;
+  author?: string;
+  imageAlt?: string;
 }
 
 export interface TimelineMilestone {
@@ -100,6 +103,12 @@ export interface GalleryItem {
   caption: string;
   category: string;
   image: string;
+  date: string;
+  event?: string;
+  photographer?: string;
+  featured?: boolean;
+  collectionId?: string;
+  order: number;
 }
 
 export interface ChatMessage {

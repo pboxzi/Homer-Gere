@@ -1,13 +1,14 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { ExternalLink, Calendar, ArrowRight, Newspaper } from 'lucide-react';
-import { MEDIA_PRESS } from '../../data/content';
+import { useSiteContent } from '../../context/SiteContentContext';
 
 interface PressHighlightsProps {
   onReadArticle: (url: string) => void;
 }
 
 export const PressHighlights: React.FC<PressHighlightsProps> = ({ onReadArticle }) => {
+  const { mediaPress } = useSiteContent();
   return (
     <section className="py-24 sm:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -26,9 +27,9 @@ export const PressHighlights: React.FC<PressHighlightsProps> = ({ onReadArticle 
         </div>
 
         {/* Featured Press — Large Card */}
-        {MEDIA_PRESS.length > 0 && (
+        {mediaPress.length > 0 && (
           <motion.div
-            onClick={() => onReadArticle(MEDIA_PRESS[0].url)}
+            onClick={() => onReadArticle(mediaPress[0].url)}
             className="group relative rounded-[2rem] overflow-hidden mb-8 cursor-pointer bg-[#F3F1ED]"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -36,11 +37,11 @@ export const PressHighlights: React.FC<PressHighlightsProps> = ({ onReadArticle 
             transition={{ duration: 0.8 }}
           >
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
-              {MEDIA_PRESS[0].image && (
+              {mediaPress[0].image && (
                 <div className="relative aspect-[4/3] lg:aspect-auto overflow-hidden">
                   <img
-                    src={MEDIA_PRESS[0].image}
-                    alt={MEDIA_PRESS[0].publisher}
+                    src={mediaPress[0].image}
+                    alt={mediaPress[0].publisher}
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
@@ -51,18 +52,18 @@ export const PressHighlights: React.FC<PressHighlightsProps> = ({ onReadArticle 
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-[10px] text-[#A6852F] font-medium tracking-wide uppercase">
                     <Newspaper className="w-3.5 h-3.5" />
-                    <span>{MEDIA_PRESS[0].publisher}</span>
+                    <span>{mediaPress[0].publisher}</span>
                     <span className="text-[#D6D3D1]">·</span>
                     <span className="flex items-center gap-1 text-[#71717A]">
                       <Calendar className="w-3 h-3" />
-                      {MEDIA_PRESS[0].date}
+                      {mediaPress[0].date}
                     </span>
                   </div>
                   <h3 className="text-xl sm:text-2xl font-editorial text-[#111827] group-hover:text-[#A6852F] transition-colors duration-300 leading-snug">
-                    {MEDIA_PRESS[0].headline}
+                    {mediaPress[0].headline}
                   </h3>
                   <p className="text-sm text-[#57534E] leading-relaxed">
-                    {MEDIA_PRESS[0].summary}
+                    {mediaPress[0].summary}
                   </p>
                   <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[#A6852F] group-hover:translate-x-0.5 transition-transform duration-300">
                     Read Article
@@ -76,7 +77,7 @@ export const PressHighlights: React.FC<PressHighlightsProps> = ({ onReadArticle 
 
         {/* Press Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {MEDIA_PRESS.slice(1).map((press, idx) => (
+          {mediaPress.slice(1).map((press, idx) => (
             <motion.div
               key={press.id}
               onClick={() => onReadArticle(press.url)}

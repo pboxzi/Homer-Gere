@@ -1,13 +1,14 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import { Calendar, ArrowRight, Clock } from 'lucide-react';
-import { FILMOGRAPHY } from '../../data/content';
+import { useSiteContent } from '../../context/SiteContentContext';
 
 export const ProjectUpcoming: React.FC = () => {
+  const { filmography } = useSiteContent();
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
-  const upcoming = FILMOGRAPHY.filter(
+  const upcoming = filmography.filter(
     (item) => item.status === 'Announced' || item.status === 'Post-Production' || item.status === 'In Production'
   );
 

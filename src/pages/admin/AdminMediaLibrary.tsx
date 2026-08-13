@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { type AdminSection } from '../../data/adminData';
 import { useAdmin } from '../../context/AdminContext';
+import { supabase } from '../../lib/supabase';
 
 const TYPE_ICONS = { image: Image, video: Film, document: FileText } as const;
 const TYPE_COLORS: Record<string, string> = { image: '#A6852F', video: '#8B5CF6', document: '#3B82F6' };
@@ -104,21 +105,41 @@ export const AdminMediaLibrary: React.FC<Props> = ({ activeSection }) => {
         progress = 100;
         clearInterval(interval);
         setUploadingItems((prev) => new Map(prev).set(id, { name: file.name, progress: 100 }));
-        setTimeout(() => {
-          addMedia({
-            name: file.name,
-            type,
-            size: sizeStr,
-            uploadedBy: 'Admin',
-            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-            url: '#',
+
+        const path = `admin/${Date.now()}_${file.name}`;
+        supabase.storage
+          .from('media')
+          .upload(path, file)
+          .then(({ data, error }) => {
+            if (error) throw error;
+            const { data: urlData } = supabase.storage.from('media').getPublicUrl(data.path);
+            addMedia({
+              name: file.name,
+              type,
+              size: sizeStr,
+              uploadedBy: 'Admin',
+              date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+              url: urlData.publicUrl,
+            });
+          })
+          .catch((err) => {
+            console.error('Upload failed:', err);
+            addMedia({
+              name: file.name,
+              type,
+              size: sizeStr,
+              uploadedBy: 'Admin',
+              date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+              url: '#',
+            });
+          })
+          .finally(() => {
+            setUploadingItems((prev) => {
+              const next = new Map(prev);
+              next.delete(id);
+              return next;
+            });
           });
-          setUploadingItems((prev) => {
-            const next = new Map(prev);
-            next.delete(id);
-            return next;
-          });
-        }, 500);
       } else {
         setUploadingItems((prev) => new Map(prev).set(id, { name: file.name, progress: Math.min(progress, 99) }));
       }

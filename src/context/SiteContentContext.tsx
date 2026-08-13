@@ -36,6 +36,7 @@ import {
   galleryRepository,
   mediaRepository,
 } from '../lib/repositories';
+import type { MediaVideo as DBMediaVideo, MediaPodcast as DBMediaPodcast, MediaPress as DBMediaPress } from '../types/database';
 
 // ============================================================
 // Context type
@@ -81,19 +82,19 @@ interface SiteContentType {
 // Mapping helpers: DB types -> Frontend types
 // ============================================================
 
-function mapJourneyToMilestone(entry: { id: string; year: number; title: string; description: string; details: string; highlight?: string; icon_name?: string }): TimelineMilestone {
+function mapJourneyToMilestone(entry: { id: string; year: number; title: string; description: string; details: string | null; highlight?: boolean; icon_name?: string | null }): TimelineMilestone {
   return {
     id: entry.id,
     year: String(entry.year),
     title: entry.title,
     description: entry.description,
-    details: entry.details,
-    highlight: entry.highlight || undefined,
+    details: entry.details || '',
+    highlight: entry.highlight ? 'Highlight' : undefined,
     iconName: entry.icon_name || 'Star',
   };
 }
 
-function mapJournalToFrontend(article: { id: string; title: string; excerpt: string; content: string; category: string; cover_image?: string; slug: string; published_date?: string; reading_time?: string }): JournalArticle {
+function mapJournalToFrontend(article: { id: string; title: string; excerpt: string; content: string; category: string; cover_image?: string; slug: string; published_date?: string; reading_time?: string; author?: string; image_alt?: string }): JournalArticle {
   return {
     id: article.id,
     title: article.title,
@@ -103,6 +104,9 @@ function mapJournalToFrontend(article: { id: string; title: string; excerpt: str
     image: article.cover_image || '',
     date: article.published_date || '',
     readTime: article.reading_time || '5 min read',
+    slug: article.slug,
+    author: article.author,
+    imageAlt: article.image_alt,
   };
 }
 
@@ -119,7 +123,7 @@ function mapFilmographyToFrontend(entry: { id: string; title: string; role: stri
   };
 }
 
-function mapExperienceToFrontend(exp: { id: string; title: string; description: string; type: string; price?: string; image_url?: string; availability?: string; duration?: string; location?: string; whats_included?: string[]; eligibility?: string[]; important_notes?: string[]; details?: string }): Experience {
+function mapExperienceToFrontend(exp: { id: string; title: string; description: string; type: string; price?: string | null; image?: string | null; availability?: string | null; duration?: string | null; location?: string | null; whats_included?: string[]; eligibility?: string | null; important_notes?: string | null; details?: string | null }): Experience {
   return {
     id: exp.id,
     title: exp.title,
@@ -128,13 +132,13 @@ function mapExperienceToFrontend(exp: { id: string; title: string; description: 
     price: exp.price || 'Price on request',
     iconName: 'Sparkles',
     type: (exp.type as Experience['type']) || 'meet-and-greet',
-    image: exp.image_url || undefined,
+    image: exp.image || undefined,
     availability: (exp.availability as Experience['availability']) || 'available',
     whatsIncluded: exp.whats_included || [],
-    eligibility: exp.eligibility || [],
+    eligibility: typeof exp.eligibility === 'string' ? exp.eligibility.split(';').filter(Boolean) : (exp.eligibility || []),
     duration: exp.duration || undefined,
     location: exp.location || undefined,
-    importantNotes: exp.important_notes || [],
+    importantNotes: typeof exp.important_notes === 'string' ? exp.important_notes.split(';').filter(Boolean) : (exp.important_notes || []),
   };
 }
 
@@ -156,13 +160,58 @@ function mapPlanToFrontend(plan: { id: string; name: string; description?: strin
   };
 }
 
-function mapGalleryToFrontend(photo: { id: string; title: string; caption?: string; category: string; image_url: string }): GalleryItem {
+function mapGalleryToFrontend(photo: { id: string; alt: string; caption?: string | null; category: string; src: string; date?: string | null; event?: string | null; photographer?: string | null; featured?: boolean; collection_id?: string | null; sort_order?: number }): GalleryItem {
   return {
     id: photo.id,
-    title: photo.title,
+    title: photo.alt,
     caption: photo.caption || '',
     category: photo.category,
-    image: photo.image_url,
+    image: photo.src,
+    date: photo.date || '',
+    event: photo.event || undefined,
+    photographer: photo.photographer || undefined,
+    featured: photo.featured || false,
+    collectionId: photo.collection_id || undefined,
+    order: photo.sort_order ?? 0,
+  };
+}
+
+function mapVideoToFrontend(v: DBMediaVideo): typeof MEDIA_VIDEOS[number] {
+  return {
+    id: v.id,
+    title: v.title,
+    description: v.description || '',
+    thumbnail: v.thumbnail || '',
+    duration: v.duration || '',
+    date: v.date || '',
+    source: v.source || '',
+    category: v.category || 'interviews',
+    url: v.url,
+    featured: v.featured,
+  };
+}
+
+function mapPodcastToFrontend(p: DBMediaPodcast): typeof MEDIA_PODCASTS[number] {
+  return {
+    id: p.id,
+    episodeTitle: p.episode_title,
+    showName: p.show_name,
+    description: p.description || '',
+    coverArt: p.cover_art || '',
+    date: p.date || '',
+    url: p.url,
+  };
+}
+
+function mapPressToFrontend(p: DBMediaPress): typeof MEDIA_PRESS[number] {
+  return {
+    id: p.id,
+    headline: p.headline,
+    publisher: p.publisher,
+    date: p.date || '',
+    summary: p.summary || '',
+    url: p.url,
+    image: p.image || '',
   };
 }
 
@@ -191,21 +240,24 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [membershipSteps] = useState<MembershipStep[]>(MEMBERSHIP_STEPS);
   const [experiencesFAQ] = useState<FAQItem[]>(EXPERIENCES_FAQ);
   const [membershipFAQ] = useState<MembershipFAQItem[]>(MEMBERSHIP_FAQ);
-  const [mediaVideos] = useState<typeof MEDIA_VIDEOS>(MEDIA_VIDEOS);
-  const [mediaPodcasts] = useState<typeof MEDIA_PODCASTS>(MEDIA_PODCASTS);
-  const [mediaPress] = useState<typeof MEDIA_PRESS>(MEDIA_PRESS);
+  const [mediaVideos, setMediaVideos] = useState<typeof MEDIA_VIDEOS>(MEDIA_VIDEOS);
+  const [mediaPodcasts, setMediaPodcasts] = useState<typeof MEDIA_PODCASTS>(MEDIA_PODCASTS);
+  const [mediaPress, setMediaPress] = useState<typeof MEDIA_PRESS>(MEDIA_PRESS);
   const [loading, setLoading] = useState(true);
 
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [journeyData, journalData, filmData, expData, planData, galleryData] = await Promise.allSettled([
+      const [journeyData, journalData, filmData, expData, planData, galleryData, vidData, podData, pressData] = await Promise.allSettled([
         journeyRepository.getAll(),
         journalRepository.getPublished(),
         filmographyRepository.getAll(),
         experiencesRepository.getAll(),
         membershipPlansRepository.getActive(),
         galleryRepository.getAllPhotos(),
+        mediaRepository.getVideos(),
+        mediaRepository.getPodcasts(),
+        mediaRepository.getPress(),
       ]);
 
       if (journeyData.status === 'fulfilled' && journeyData.value.length > 0) {
@@ -225,6 +277,15 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }
       if (galleryData.status === 'fulfilled' && galleryData.value.length > 0) {
         setGalleryItems(galleryData.value.map(mapGalleryToFrontend));
+      }
+      if (vidData.status === 'fulfilled' && vidData.value.length > 0) {
+        setMediaVideos(vidData.value.map(mapVideoToFrontend));
+      }
+      if (podData.status === 'fulfilled' && podData.value.length > 0) {
+        setMediaPodcasts(podData.value.map(mapPodcastToFrontend));
+      }
+      if (pressData.status === 'fulfilled' && pressData.value.length > 0) {
+        setMediaPress(pressData.value.map(mapPressToFrontend));
       }
     } catch {
       // Silent fail — use static defaults

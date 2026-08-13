@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { motion, useInView } from 'motion/react';
 import { Clock, ChevronDown } from 'lucide-react';
-import { getLatestPhotos } from '../../data/gallery';
+import { useSiteContent } from '../../context/SiteContentContext';
 import { GalleryGrid } from './GalleryGrid';
 
 interface GalleryLatestProps {
@@ -16,8 +16,9 @@ export const GalleryLatest: React.FC<GalleryLatestProps> = ({
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
   const [visibleCount, setVisibleCount] = useState(initialCount);
+  const { galleryItems } = useSiteContent();
 
-  const allPhotos = getLatestPhotos(16);
+  const allPhotos = galleryItems.slice(0, 16);
   const visiblePhotos = allPhotos.slice(0, visibleCount);
   const hasMore = visibleCount < allPhotos.length;
 

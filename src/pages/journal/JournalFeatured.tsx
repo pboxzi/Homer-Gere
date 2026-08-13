@@ -1,10 +1,10 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import { ArrowRight, Clock, User } from 'lucide-react';
-import { JournalArticleExtended } from '../../data/journal';
+import { JournalArticle } from '../../types';
 
 interface JournalFeaturedProps {
-  article: JournalArticleExtended;
+  article: JournalArticle;
   onArticleClick?: (slug: string) => void;
 }
 

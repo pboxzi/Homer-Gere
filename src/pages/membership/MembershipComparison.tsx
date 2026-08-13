@@ -1,14 +1,15 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import { Check, X } from 'lucide-react';
-import { MEMBERSHIP_TIERS } from '../../data/content';
+import { useSiteContent } from '../../context/SiteContentContext';
 
 export const MembershipComparison: React.FC = () => {
+  const { membershipTiers } = useSiteContent();
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
   const allBenefitLabels = Array.from(
-    new Set(MEMBERSHIP_TIERS.flatMap((tier) => tier.features.map((f) => f.label)))
+    new Set(membershipTiers.flatMap((tier) => tier.features.map((f) => f.label)))
   );
 
   return (
@@ -41,7 +42,7 @@ export const MembershipComparison: React.FC = () => {
             <div className="p-5 sm:p-6">
               <span className="text-xs font-medium text-[#57534E] uppercase tracking-[0.05em]">Benefits</span>
             </div>
-            {MEMBERSHIP_TIERS.map((tier) => (
+            {membershipTiers.map((tier) => (
               <div key={tier.id} className={`p-5 sm:p-6 text-center ${tier.isPopular ? 'bg-[#A6852F]/5' : ''}`}>
                 <span className={`text-[11px] font-medium tracking-[0.1em] uppercase ${
                   tier.isPopular ? 'text-[#A6852F]' : 'text-[#57534E]'
@@ -67,7 +68,7 @@ export const MembershipComparison: React.FC = () => {
               <div className="p-5 sm:p-6 flex items-center">
                 <span className="text-sm text-[#1C1917]">{benefitLabel}</span>
               </div>
-              {MEMBERSHIP_TIERS.map((tier) => {
+              {membershipTiers.map((tier) => {
                 const benefit = tier.features.find((f) => f.label === benefitLabel);
                 const isIncluded = benefit?.included ?? false;
 

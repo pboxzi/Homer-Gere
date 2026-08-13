@@ -12,22 +12,30 @@ import { JournalExplore } from './journal/JournalExplore';
 import { Footer } from '../components/Footer';
 import { SEO } from '../components/SEO';
 import { ModalType } from '../types';
-import {
-  JournalCategory,
-  FEATURED_ARTICLE,
-  TRENDING_ARTICLES,
-  getArticlesByCategory,
-} from '../data/journal';
+import { useSiteContent } from '../context/SiteContentContext';
+import { JournalCategory } from '../data/journal';
 
 export const JournalPage: React.FC = () => {
   const navigate = useNavigate();
+  const { journalArticles } = useSiteContent();
   const [activeCategory, setActiveCategory] = useState<JournalCategory>('All');
   const [activeSection, setActiveSection] = useState<string>('journal');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
-  const filteredArticles = useMemo(
-    () => getArticlesByCategory(activeCategory),
-    [activeCategory]
+
+  const featuredArticle = useMemo(
+    () => journalArticles.find((a) => a.slug) ?? journalArticles[0],
+    [journalArticles]
   );
+
+  const trendingArticles = useMemo(
+    () => journalArticles.filter((a) => a.slug).slice(0, 3),
+    [journalArticles]
+  );
+
+  const filteredArticles = useMemo(() => {
+    if (activeCategory === 'All') return journalArticles;
+    return journalArticles.filter((a) => a.category === activeCategory);
+  }, [journalArticles, activeCategory]);
 
   const handleNavigate = (sectionId: string) => {
     if (sectionId === 'home') { navigate('/'); return; }
@@ -65,7 +73,7 @@ export const JournalPage: React.FC = () => {
       <JournalHero />
 
       {/* 2. Featured Story */}
-      <JournalFeatured article={FEATURED_ARTICLE} onArticleClick={handleArticleClick} />
+      <JournalFeatured article={featuredArticle} onArticleClick={handleArticleClick} />
 
       {/* 3. Browse Categories + Latest Articles */}
       <section className="py-24 sm:py-32 bg-[#F3F1ED]">
@@ -111,7 +119,7 @@ export const JournalPage: React.FC = () => {
       </section>
 
       {/* 4. Trending Stories */}
-      <JournalTrending articles={TRENDING_ARTICLES} onArticleClick={handleArticleClick} />
+      <JournalTrending articles={trendingArticles} onArticleClick={handleArticleClick} />
 
       {/* 5. Newsletter */}
       <JournalNewsletter />

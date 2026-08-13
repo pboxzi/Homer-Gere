@@ -11,7 +11,7 @@ import {
 import { SEO } from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
 
-type Step = 'form' | 'welcome';
+type Step = 'form' | 'pending' | 'welcome';
 
 interface FormData {
   firstName: string;
@@ -131,9 +131,53 @@ export default function RegisterPage() {
       setError(result.error);
       setLoading(false);
     } else {
-      navigate('/dashboard');
+      setLoading(false);
+      setStep('pending');
     }
   };
+
+  if (step === 'pending') {
+    return (
+      <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased flex items-center justify-center px-4">
+        <SEO title="Application Submitted" />
+        <motion.div
+          className="w-full max-w-lg text-center"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="w-20 h-20 rounded-full bg-[#F59E0B]/10 flex items-center justify-center mx-auto mb-8">
+            <Clock className="w-10 h-10 text-[#F59E0B]" />
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-editorial text-[#1C1917] tracking-tight mb-4">
+            Application Submitted
+          </h1>
+          <p className="text-[#57534E] leading-relaxed mb-4 max-w-md mx-auto">
+            Thank you for applying to join the official Homer Gere platform.
+            Your application is now <span className="font-medium text-[#F59E0B]">pending review</span> by our admin team.
+          </p>
+          <p className="text-sm text-[#57534E]/70 leading-relaxed mb-10 max-w-md mx-auto">
+            You will receive an email at <span className="font-medium text-[#1C1917]">{formData.email}</span> once your application has been reviewed. This typically takes 1-2 business days.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={() => navigate('/')}
+              className="inline-flex items-center justify-center gap-2 bg-[#1C1917] hover:bg-[#292524] active:scale-95 text-white font-medium text-sm px-6 py-3 rounded-2xl transition-all duration-300 cursor-pointer"
+            >
+              Return to Home
+            </button>
+            <button
+              onClick={() => navigate('/login')}
+              className="inline-flex items-center justify-center gap-2 border border-[#E8E5DF]/60 hover:bg-[#F3F1ED]/60 text-[#57534E] font-medium text-sm px-6 py-3 rounded-2xl transition-all duration-300 cursor-pointer"
+            >
+              Sign In
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   if (step === 'welcome') {
     return (

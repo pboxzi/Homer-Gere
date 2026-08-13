@@ -1,13 +1,14 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import { Check, X, Star, Crown } from 'lucide-react';
-import { MEMBERSHIP_TIERS } from '../../data/content';
+import { useSiteContent } from '../../context/SiteContentContext';
 
 interface MembershipPlansProps {
   onSelectTier: (tierId: string) => void;
 }
 
 export const MembershipPlans: React.FC<MembershipPlansProps> = ({ onSelectTier }) => {
+  const { membershipTiers } = useSiteContent();
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
@@ -34,7 +35,7 @@ export const MembershipPlans: React.FC<MembershipPlansProps> = ({ onSelectTier }
 
         {/* Plans Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-          {MEMBERSHIP_TIERS.map((tier, idx) => {
+          {membershipTiers.map((tier, idx) => {
             const isPopular = tier.isPopular;
 
             return (

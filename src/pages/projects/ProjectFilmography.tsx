@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { motion, useInView, AnimatePresence } from 'motion/react';
 import { Film, Tv, Clock, ArrowRight, SlidersHorizontal } from 'lucide-react';
-import { FILMOGRAPHY } from '../../data/content';
+import { useSiteContent } from '../../context/SiteContentContext';
 
 type FilterType = 'all' | 'film' | 'television' | 'upcoming';
 
@@ -18,11 +18,12 @@ interface ProjectFilmographyProps {
 }
 
 export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemClick, onNavigateToProject }) => {
+  const { filmography } = useSiteContent();
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
-  const filteredItems = FILMOGRAPHY.filter((item) => {
+  const filteredItems = filmography.filter((item) => {
     switch (activeFilter) {
       case 'film': return item.type === 'film';
       case 'television': return item.type === 'television';

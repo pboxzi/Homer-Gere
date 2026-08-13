@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, ChevronLeft, ChevronRight, Maximize2, Camera, Calendar } from 'lucide-react';
-import { GalleryPhoto } from '../../data/gallery';
+import { GalleryItem } from '../../types';
 
 interface GalleryGridProps {
-  photos: GalleryPhoto[];
+  photos: GalleryItem[];
 }
 
 export const GalleryGrid: React.FC<GalleryGridProps> = ({ photos }) => {
@@ -77,8 +77,8 @@ export const GalleryGrid: React.FC<GalleryGridProps> = ({ photos }) => {
               onClick={() => openLightbox(idx)}
             >
               <img
-                src={photo.src}
-                alt={photo.alt}
+                src={photo.image}
+                alt={photo.title}
                 referrerPolicy="no-referrer"
                 className="w-full h-auto object-cover object-top group-hover:scale-105 transition-transform duration-700"
               />
@@ -151,8 +151,8 @@ export const GalleryGrid: React.FC<GalleryGridProps> = ({ photos }) => {
             >
               <motion.img
                 key={lightboxIndex}
-                src={photos[lightboxIndex].src}
-                alt={photos[lightboxIndex].alt}
+                src={photos[lightboxIndex].image}
+                alt={photos[lightboxIndex].title}
                 referrerPolicy="no-referrer"
                 className="max-h-[72vh] max-w-[90vw] object-contain rounded-2xl"
                 initial={{ opacity: 0, scale: 0.95 }}

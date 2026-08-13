@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Play, Clock, Calendar, ExternalLink, Search } from 'lucide-react';
-import { MEDIA_VIDEOS } from '../../data/content';
+import { useSiteContent } from '../../context/SiteContentContext';
 import { MediaCategory } from '../../types';
 
 interface VideoLibraryProps {
@@ -18,11 +18,12 @@ const CATEGORIES: { id: MediaCategory; label: string }[] = [
 
 export const VideoLibrary: React.FC<VideoLibraryProps> = ({ onWatch }) => {
   const [activeCategory, setActiveCategory] = useState<MediaCategory>('all');
+  const { mediaVideos } = useSiteContent();
 
   const filteredVideos =
     activeCategory === 'all'
-      ? MEDIA_VIDEOS
-      : MEDIA_VIDEOS.filter((v) => v.category === activeCategory);
+      ? mediaVideos
+      : mediaVideos.filter((v) => v.category === activeCategory);
 
   return (
     <section className="py-24 sm:py-32 bg-[#F3F1ED]">

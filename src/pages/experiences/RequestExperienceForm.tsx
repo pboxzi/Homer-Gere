@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, ArrowLeft, Check, ChevronRight, Send, AlertCircle, Loader2 } from 'lucide-react';
-import { EXPERIENCES } from '../../data/content';
+import { useSiteContent } from '../../context/SiteContentContext';
 import { ExperienceCategory, ExperienceRequest, Experience } from '../../types';
 
 interface RequestExperienceFormProps {
@@ -39,6 +39,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
   preselectedExperience,
   onClose,
 }) => {
+  const { experiences } = useSiteContent();
   const [currentStep, setCurrentStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -130,7 +131,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
   };
 
   const getSelectedExperience = () => {
-    return EXPERIENCES.find((e) => e.type === formData.experienceType);
+    return experiences.find((e) => e.type === formData.experienceType);
   };
 
   const renderError = (field: keyof FormErrors) => {
@@ -255,7 +256,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                 <h3 className="text-lg font-editorial text-[#1C1917] mb-2">Select experience type</h3>
                 <p className="text-sm text-[#57534E] mb-6">Choose the type of experience you're requesting.</p>
                 <div className="grid grid-cols-2 gap-3">
-                  {EXPERIENCES.map((exp) => (
+                  {experiences.map((exp) => (
                     <button
                       key={exp.type}
                       onClick={() => updateField('experienceType', exp.type)}

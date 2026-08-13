@@ -2,10 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, X, Film, BookOpen, ImageIcon, Users, MessageSquare, Sparkles } from 'lucide-react';
 import { PROJECT_DETAILS } from '../data/projectDetails';
-import { JOURNAL_ARTICLES } from '../data/journal';
-import { GALLERY_PHOTOS } from '../data/gallery';
-import { EXPERIENCES } from '../data/content';
-import { MEDIA_VIDEOS, MEDIA_PODCASTS, MEDIA_PRESS } from '../data/content';
+import { useSiteContent } from '../context/SiteContentContext';
 
 interface SearchResult {
   id: string;
@@ -22,6 +19,7 @@ export const GlobalSearch: React.FC = () => {
   const [results, setResults] = useState<SearchResult[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const { journalArticles, galleryItems, experiences, mediaVideos, mediaPodcasts, mediaPress } = useSiteContent();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -55,37 +53,37 @@ export const GlobalSearch: React.FC = () => {
       }
     });
 
-    JOURNAL_ARTICLES.forEach((a) => {
-      if (a.title.toLowerCase().includes(q) || a.excerpt.toLowerCase().includes(q) || a.tags.some((t) => t.toLowerCase().includes(q))) {
-        r.push({ id: a.id, type: 'journal', title: a.title, description: a.excerpt, url: `/journal/${a.slug}`, icon: <BookOpen className="w-4 h-4" /> });
+    journalArticles.forEach((a) => {
+      if (a.title.toLowerCase().includes(q) || a.excerpt.toLowerCase().includes(q)) {
+        r.push({ id: a.id, type: 'journal', title: a.title, description: a.excerpt, url: `/journal/${(a as any).slug || a.id}`, icon: <BookOpen className="w-4 h-4" /> });
       }
     });
 
-    GALLERY_PHOTOS.forEach((p) => {
-      if (p.caption.toLowerCase().includes(q) || p.alt.toLowerCase().includes(q)) {
-        r.push({ id: p.id, type: 'gallery', title: p.caption, description: `${p.category} — ${p.date}`, url: '/gallery', icon: <ImageIcon className="w-4 h-4" /> });
+    galleryItems.forEach((p) => {
+      if ((p.caption || '').toLowerCase().includes(q) || p.title.toLowerCase().includes(q)) {
+        r.push({ id: p.id, type: 'gallery', title: p.title, description: p.category, url: '/gallery', icon: <ImageIcon className="w-4 h-4" /> });
       }
     });
 
-    EXPERIENCES.forEach((e) => {
+    experiences.forEach((e) => {
       if (e.title.toLowerCase().includes(q) || e.description.toLowerCase().includes(q)) {
         r.push({ id: e.id, type: 'experience', title: e.title, description: e.description, url: '/experiences', icon: <Sparkles className="w-4 h-4" /> });
       }
     });
 
-    MEDIA_VIDEOS.forEach((v) => {
+    mediaVideos.forEach((v) => {
       if (v.title.toLowerCase().includes(q) || v.description.toLowerCase().includes(q)) {
         r.push({ id: v.id, type: 'media', title: v.title, description: v.description.slice(0, 100) + '...', url: '/media', icon: <Film className="w-4 h-4" /> });
       }
     });
 
-    MEDIA_PODCASTS.forEach((p) => {
+    mediaPodcasts.forEach((p) => {
       if (p.episodeTitle.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)) {
         r.push({ id: p.id, type: 'media', title: p.episodeTitle, description: p.showName, url: '/media', icon: <MessageSquare className="w-4 h-4" /> });
       }
     });
 
-    MEDIA_PRESS.forEach((p) => {
+    mediaPress.forEach((p) => {
       if (p.headline.toLowerCase().includes(q) || p.summary.toLowerCase().includes(q)) {
         r.push({ id: p.id, type: 'media', title: p.headline, description: p.publisher, url: '/media', icon: <Users className="w-4 h-4" /> });
       }

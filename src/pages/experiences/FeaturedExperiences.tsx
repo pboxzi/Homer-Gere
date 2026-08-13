@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import { ArrowRight, Users, Calendar, Heart, Mic, Briefcase, Sparkles, Video, Play } from 'lucide-react';
-import { EXPERIENCES } from '../../data/content';
+import { useSiteContent } from '../../context/SiteContentContext';
 import { Experience } from '../../types';
 
 interface FeaturedExperiencesProps {
@@ -13,6 +13,7 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
   onSelectExperience,
   onRequestExperience,
 }) => {
+  const { experiences } = useSiteContent();
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
@@ -67,7 +68,7 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {EXPERIENCES.map((exp, idx) => (
+          {experiences.map((exp, idx) => (
             <motion.div
               key={exp.id}
               className="group relative rounded-[1.5rem] overflow-hidden bg-white border border-[#E8E5DF]/60 hover:border-[#A6852F]/30 hover:shadow-xl hover:shadow-[#A6852F]/5 transition-all duration-500 hover:-translate-y-1 cursor-pointer"

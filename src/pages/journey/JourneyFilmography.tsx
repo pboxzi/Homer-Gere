@@ -1,18 +1,19 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import { Film, Tv, Clock, ArrowRight } from 'lucide-react';
-import { FILMOGRAPHY } from '../../data/content';
+import { useSiteContent } from '../../context/SiteContentContext';
 
 interface JourneyFilmographyProps {
   onItemClick?: (projectId: string) => void;
 }
 
 export const JourneyFilmography: React.FC<JourneyFilmographyProps> = ({ onItemClick }) => {
+  const { filmography } = useSiteContent();
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
-  const films = FILMOGRAPHY.filter((e) => e.type === 'film');
-  const television = FILMOGRAPHY.filter((e) => e.type === 'television');
+  const films = filmography.filter((e) => e.type === 'film');
+  const television = filmography.filter((e) => e.type === 'television');
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -24,7 +25,7 @@ export const JourneyFilmography: React.FC<JourneyFilmographyProps> = ({ onItemCl
     }
   };
 
-  const renderEntry = (entry: typeof FILMOGRAPHY[0], idx: number) => (
+  const renderEntry = (entry: typeof filmography[0], idx: number) => (
     <motion.article
       key={entry.id}
       className="group flex flex-col sm:flex-row gap-6 sm:gap-8 p-6 sm:p-8 rounded-[1.5rem] bg-[#FAF9F7] hover:bg-white transition-all duration-500 hover:shadow-lg hover:shadow-[#A6852F]/5 border border-transparent hover:border-[#E8E5DF]/60 cursor-pointer"

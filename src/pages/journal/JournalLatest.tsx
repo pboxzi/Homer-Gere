@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, Clock } from 'lucide-react';
-import { JournalArticleExtended } from '../../data/journal';
+import { JournalArticle } from '../../types';
 
 interface ArticleCardProps {
-  article: JournalArticleExtended;
+  article: JournalArticle;
   onArticleClick?: (slug: string) => void;
 }
 
@@ -62,7 +62,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onArticleClick }) =>
 };
 
 interface JournalLatestProps {
-  articles: JournalArticleExtended[];
+  articles: JournalArticle[];
   initialCount?: number;
   loadMore?: number;
   onArticleClick?: (slug: string) => void;

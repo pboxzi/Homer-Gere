@@ -537,6 +537,8 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     caption: 'SVA Theatre, New York City, July 2026',
     category: 'Events',
     image: SECTION_IMAGES.gallery[0],
+    date: 'July 2026',
+    order: 1,
   },
   {
     id: 'gallery-2',
@@ -544,6 +546,8 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     caption: 'Behind the scenes during principal photography',
     category: 'Behind The Scenes',
     image: SECTION_IMAGES.gallery[1],
+    date: '2026',
+    order: 2,
   },
   {
     id: 'gallery-3',
@@ -551,6 +555,8 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     caption: 'With Alexa Demie on the HBO set',
     category: 'Film Set',
     image: SECTION_IMAGES.gallery[2],
+    date: '2026',
+    order: 3,
   },
   {
     id: 'gallery-4',
@@ -558,6 +564,8 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     caption: 'Official skate party at Moonlight Rollerway, Glendale',
     category: 'Events',
     image: SECTION_IMAGES.gallery[3],
+    date: 'July 2026',
+    order: 4,
   },
   {
     id: 'gallery-5',
@@ -565,6 +573,8 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     caption: '"Oh, Canada" premiere, Palais des Festivals, May 2024',
     category: 'Events',
     image: SECTION_IMAGES.gallery[4],
+    date: 'May 2024',
+    order: 5,
   },
   {
     id: 'gallery-6',
@@ -572,6 +582,8 @@ export const GALLERY_ITEMS: GalleryItem[] = [
     caption: 'A candid moment between projects',
     category: 'Lifestyle',
     image: SECTION_IMAGES.gallery[5],
+    date: '2026',
+    order: 6,
   },
 ];
 

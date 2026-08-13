@@ -1,13 +1,14 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Headphones, ExternalLink, Calendar, ArrowRight } from 'lucide-react';
-import { MEDIA_PODCASTS } from '../../data/content';
+import { useSiteContent } from '../../context/SiteContentContext';
 
 interface AudioPodcastProps {
   onListen: (url: string) => void;
 }
 
 export const AudioPodcast: React.FC<AudioPodcastProps> = ({ onListen }) => {
+  const { mediaPodcasts } = useSiteContent();
   return (
     <section className="py-24 sm:py-32 bg-[#111827]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -27,7 +28,7 @@ export const AudioPodcast: React.FC<AudioPodcastProps> = ({ onListen }) => {
 
         {/* Podcast Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {MEDIA_PODCASTS.map((podcast, idx) => (
+          {mediaPodcasts.map((podcast, idx) => (
             <motion.div
               key={podcast.id}
               onClick={() => onListen(podcast.url)}

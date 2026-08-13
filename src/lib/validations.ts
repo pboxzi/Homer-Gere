@@ -116,7 +116,7 @@ export type FanChatInitData = z.infer<typeof fanChatInitSchema>;
 export const newsletterSchema = z.object({
   name: z.string().min(2, 'Name is required').max(100),
   email: z.string().email('Invalid email address'),
-  consent: z.literal(true, { errorMap: () => ({ message: 'You must consent to receive emails' }) }),
+  consent: z.literal(true, 'You must consent to receive emails'),
 });
 
 export type NewsletterFormData = z.infer<typeof newsletterSchema>;

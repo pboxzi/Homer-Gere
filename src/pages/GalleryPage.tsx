@@ -12,12 +12,17 @@ import { GalleryExplore } from './gallery/GalleryExplore';
 import { Footer } from '../components/Footer';
 import { SectionFadeIn } from '../components/SectionFadeIn';
 import { SEO } from '../components/SEO';
-import { GalleryCategory, getPhotosByCategory, GALLERY_PHOTOS } from '../data/gallery';
+import { GalleryCategory } from '../data/gallery';
+import { useSiteContent } from '../context/SiteContentContext';
 
 export const GalleryPage: React.FC = () => {
   const navigate = useNavigate();
+  const { galleryItems } = useSiteContent();
   const [activeCategory, setActiveCategory] = useState<GalleryCategory>('All');
-  const filteredPhotos = useMemo(() => getPhotosByCategory(activeCategory), [activeCategory]);
+  const filteredPhotos = useMemo(
+    () => activeCategory === 'All' ? galleryItems : galleryItems.filter((p) => p.category === activeCategory),
+    [activeCategory, galleryItems]
+  );
 
   const categorySectionRef = useRef<HTMLDivElement>(null);
   const categoryInView = useInView(categorySectionRef, { once: true, margin: '-60px' });

@@ -17,6 +17,8 @@ import {
   siteSettingsRepository,
   auditLogsRepository,
 } from '../lib/repositories';
+import { supabase } from '../lib/supabase';
+import { emailService } from '../lib/email';
 import {
   type AdminStats,
   type AdminMember,
@@ -321,9 +323,9 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
       if (fanChatRes.status === 'fulfilled') {
         setConversations(fanChatRes.value.map((c) => ({
-          id: c.id, type: c.type as AdminConversation['type'],
-          participant: c.subject || 'Member', email: '',
-          lastMessage: c.last_message || '', status: c.status as AdminConversation['status'],
+          id: c.id, type: 'fan' as const,
+          participant: c.participant || 'Member', email: c.email || '',
+          lastMessage: '', status: c.status as AdminConversation['status'],
           date: c.created_at,
         })));
       }
@@ -331,7 +333,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (bizChatRes.status === 'fulfilled') {
         setContactMessages(bizChatRes.value.map((b) => ({
           id: b.id, name: b.full_name, email: b.email,
-          department: b.department || 'general', subject: b.subject || '',
+          department: (b as any).department || 'general', subject: b.subject || '',
           message: b.message || '', date: b.created_at, read: false,
         })));
       }
@@ -361,7 +363,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         ...(mediaPressRes.status === 'fulfilled' ? mediaPressRes.value : []),
       ];
       if (totalMedia.length > 0) {
-        setMedia(totalMedia.map((m: Record<string, unknown>) => ({
+        setMedia((totalMedia as any[]).map((m) => ({
           id: m.id as string, name: (m.title as string) || 'Untitled',
           type: 'video' as const, size: '', uploadedBy: 'Admin',
           date: (m.created_at as string) || '', url: (m.url as string) || '',
@@ -403,8 +405,81 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setApplications((prev) => [{ ...app, id: generateId() }, ...prev]);
   }, []);
   const updateApplication = useCallback((id: string, updates: Partial<AdminApplication>) => {
+    // Optimistic local update
     setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, ...updates } : a)));
-  }, []);
+
+    // Persist to Supabase
+    if (updates.status === 'approved' || updates.status === 'declined') {
+      (async () => {
+        try {
+          const app = applications.find((a) => a.id === id);
+          if (!app) return;
+
+          // Update registration_application status
+          await supabase
+            .from('registration_applications')
+            .update({ status: updates.status, reviewed_at: new Date().toISOString() })
+            .eq('email', app.email);
+
+          if (updates.status === 'approved') {
+            // Create Supabase Auth user
+            const tempPassword = crypto.randomUUID().slice(0, 12) + 'A1!';
+            const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+              email: app.email,
+              password: tempPassword,
+              email_confirm: true,
+              user_metadata: { first_name: app.name.split(' ')[0], last_name: app.name.split(' ').slice(1).join(' ') },
+            });
+
+            if (!authError && authData?.user) {
+              // Create profile
+              await supabase.from('profiles').insert({
+                id: authData.user.id,
+                email: app.email,
+                first_name: app.name.split(' ')[0],
+                last_name: app.name.split(' ').slice(1).join(' ') || '',
+                role: 'member',
+                membership_tier: app.plan || 'silver',
+                email_verified: true,
+              });
+
+              // Create membership
+              const { data: plan } = await supabase
+                .from('membership_plans')
+                .select('id')
+                .eq('slug', app.plan || 'silver')
+                .single();
+              if (plan) {
+                await supabase.from('memberships').insert({
+                  user_id: authData.user.id,
+                  plan_id: plan.id,
+                  status: 'active',
+                });
+              }
+            }
+
+            // Notify
+            await supabase.from('notifications').insert({
+              title: 'Member Approved',
+              message: `${app.name} (${app.email}) has been approved as ${app.plan || 'silver'} member.`,
+              read: false,
+            });
+
+            // Send approval email
+            emailService.registrationApproved(app.email, app.name.split(' ')[0]).catch(() => {});
+            emailService.membershipApproved(app.email, app.name.split(' ')[0], app.plan || 'silver').catch(() => {});
+          }
+
+          if (updates.status === 'declined') {
+            // Send rejection email
+            emailService.registrationRejected(app.email, app.name.split(' ')[0], (updates as any).rejectionReason).catch(() => {});
+          }
+        } catch {
+          // Silent — optimistic update already shown
+        }
+      })();
+    }
+  }, [applications]);
   const deleteApplication = useCallback((id: string) => {
     setApplications((prev) => prev.filter((a) => a.id !== id));
   }, []);
@@ -451,13 +526,25 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // ----- CRUD: Notifications -----
   const addNotification = useCallback((notif: Omit<AdminNotification, 'id'>) => {
-    setNotifications((prev) => [{ ...notif, id: generateId() }, ...prev]);
+    const id = generateId();
+    setNotifications((prev) => [{ ...notif, id }, ...prev]);
+    supabase.from('notifications').insert({
+      user_id: 'admin',
+      type: 'system',
+      title: notif.title,
+      message: notif.message,
+      read: notif.read,
+    }).then(() => {});
   }, []);
   const updateNotification = useCallback((id: string, updates: Partial<AdminNotification>) => {
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, ...updates } : n)));
+    if (updates.read !== undefined) {
+      supabase.from('notifications').update({ read: updates.read }).eq('id', id).then(() => {});
+    }
   }, []);
   const deleteNotification = useCallback((id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
+    supabase.from('notifications').delete().eq('id', id).then(() => {});
   }, []);
 
   // ----- CRUD: Media -----

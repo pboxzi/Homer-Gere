@@ -32,16 +32,16 @@ import type {
   SiteSetting,
   EmailTemplate,
   AuditLog,
-  Database,
+  ConversationStatus,
 } from '../types/database';
 
 // ============================================================
 // CLIENT SINGLETON
 // ============================================================
 
-let supabaseInstance: SupabaseClient<Database> | null = null;
+let supabaseInstance: SupabaseClient | null = null;
 
-export function getSupabaseClient(): SupabaseClient<Database> {
+export function getSupabaseClient(): SupabaseClient {
   if (supabaseInstance) return supabaseInstance;
 
   const url = import.meta.env.VITE_SUPABASE_URL;
@@ -51,7 +51,7 @@ export function getSupabaseClient(): SupabaseClient<Database> {
     throw new Error('Missing Supabase environment variables: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
   }
 
-  supabaseInstance = createClient<Database>(url, key);
+  supabaseInstance = createClient(url, key);
   return supabaseInstance;
 }
 
