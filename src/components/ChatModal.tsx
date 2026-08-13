@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Send, User, Briefcase, Sparkles, Loader2, Bot } from 'lucide-react';
+import { X, Send, User, Briefcase, Loader2 } from 'lucide-react';
 import { ChatMessage } from '../types';
 
 interface ChatModalProps {

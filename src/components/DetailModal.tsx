@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Calendar, Clock, Check, ArrowRight, ShieldCheck, Heart } from 'lucide-react';
+import { X, Calendar, Clock, Check, ShieldCheck } from 'lucide-react';
 import { ModalType } from '../types';
 import { FEATURED_PROJECT } from '../data/content';
 

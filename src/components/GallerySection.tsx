@@ -5,12 +5,12 @@ import { GalleryItem } from '../types';
 
 interface GallerySectionProps {
   onSelectImage: (item: GalleryItem) => void;
-  onViewFullGallery: () => void;
+  onNavigate: (sectionId: string) => void;
 }
 
 export const GallerySection: React.FC<GallerySectionProps> = ({
   onSelectImage,
-  onViewFullGallery,
+  onNavigate,
 }) => {
   return (
     <section id="gallery" className="py-28 sm:py-36">
@@ -64,7 +64,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
           </div>
 
           <button
-            onClick={onViewFullGallery}
+            onClick={() => onNavigate('gallery')}
             className="inline-flex items-center gap-1.5 text-sm font-medium text-[#1C1917] hover:text-[#C9A84C] transition-colors duration-300 group focus:outline-none cursor-pointer"
           >
             View Full Gallery

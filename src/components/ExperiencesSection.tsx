@@ -1,26 +1,23 @@
 import React from 'react';
-import { ArrowRight, Users, Video, UserCheck, PenTool, Star, Grid } from 'lucide-react';
+import { ArrowRight, Users, Calendar, Heart, Mic, Briefcase, Sparkles, Video, Play } from 'lucide-react';
 import { EXPERIENCES } from '../data/content';
-import { Experience } from '../types';
 
 interface ExperiencesSectionProps {
-  onSelectExperience: (experience: Experience) => void;
-  onViewAllExperiences: () => void;
+  onNavigate: (sectionId: string) => void;
 }
 
-export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
-  onSelectExperience,
-  onViewAllExperiences,
-}) => {
+export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNavigate }) => {
   const getExperienceIcon = (iconName: string) => {
     switch (iconName) {
       case 'users': return <Users className="w-5 h-5 text-[#C9A84C]" />;
+      case 'calendar': return <Calendar className="w-5 h-5 text-[#C9A84C]" />;
+      case 'heart': return <Heart className="w-5 h-5 text-[#C9A84C]" />;
+      case 'mic': return <Mic className="w-5 h-5 text-[#C9A84C]" />;
+      case 'briefcase': return <Briefcase className="w-5 h-5 text-[#C9A84C]" />;
+      case 'sparkles': return <Sparkles className="w-5 h-5 text-[#C9A84C]" />;
       case 'video': return <Video className="w-5 h-5 text-[#C9A84C]" />;
-      case 'user-check': return <UserCheck className="w-5 h-5 text-[#C9A84C]" />;
-      case 'pen-tool': return <PenTool className="w-5 h-5 text-[#C9A84C]" />;
-      case 'star': return <Star className="w-5 h-5 text-[#C9A84C]" />;
-      case 'grid': return <Grid className="w-5 h-5 text-[#C9A84C]" />;
-      default: return <Star className="w-5 h-5 text-[#C9A84C]" />;
+      case 'play': return <Play className="w-5 h-5 text-[#C9A84C]" />;
+      default: return <Sparkles className="w-5 h-5 text-[#C9A84C]" />;
     }
   };
 
@@ -39,7 +36,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
           </div>
 
           <button
-            onClick={onViewAllExperiences}
+            onClick={() => onNavigate('experiences')}
             className="inline-flex items-center gap-1.5 text-sm font-medium text-[#57534E] hover:text-[#C9A84C] transition-colors duration-300 group focus:outline-none cursor-pointer"
           >
             View All Experiences
@@ -49,10 +46,10 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {EXPERIENCES.map((exp) => (
+          {EXPERIENCES.slice(0, 6).map((exp) => (
             <div
               key={exp.id}
-              onClick={() => onSelectExperience(exp)}
+              onClick={() => onNavigate('experiences')}
               className="p-6 transition-all duration-500 flex flex-col justify-between cursor-pointer group"
             >
               <div>

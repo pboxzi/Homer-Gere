@@ -179,3 +179,45 @@ export type ModalType =
   | { type: 'gallery'; item: GalleryItem }
   | { type: 'signin' }
   | { type: 'project'; projectId: string };
+
+export type ChatType = 'fan' | 'business';
+
+export type CommunicationMethod = 'whatsapp' | 'email' | 'telegram' | 'website';
+
+export type ConversationStatus = 'open' | 'in_progress' | 'closed';
+
+export interface ChatConversation {
+  id: string;
+  chatType: ChatType;
+  fullName: string;
+  email: string;
+  phone?: string;
+  organization?: string;
+  company?: string;
+  enquiryType?: string;
+  membershipTier?: string;
+  messages: ChatMessage[];
+  status: ConversationStatus;
+  method?: CommunicationMethod;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ChatSettings {
+  fanChat: {
+    enabled: boolean;
+    whatsappEnabled: boolean;
+    whatsappNumber: string;
+    requiredTierForWhatsApp: string;
+    autoReply: string;
+  };
+  businessChat: {
+    whatsappEnabled: boolean;
+    emailEnabled: boolean;
+    telegramEnabled: boolean;
+    websiteFormEnabled: boolean;
+    managementEmail: string;
+    managementWhatsApp: string;
+    telegramAccount: string;
+  };
+}

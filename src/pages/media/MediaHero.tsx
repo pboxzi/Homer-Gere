@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Play, Film, Mic, Newspaper } from 'lucide-react';
+import { Film, Mic, Newspaper } from 'lucide-react';
 import { SECTION_IMAGES } from '../../data/images';
 
 interface MediaHeroProps {}

@@ -1,17 +1,12 @@
 import React from 'react';
-import { ArrowRight, Check, X, Star, Crown } from 'lucide-react';
+import { Check, Star, Crown } from 'lucide-react';
 import { MEMBERSHIP_TIERS } from '../data/content';
-import { MembershipTier } from '../types';
 
 interface MembershipSectionProps {
-  onSelectTier: (tier: MembershipTier) => void;
-  onExploreMembership: () => void;
+  onNavigate: (sectionId: string) => void;
 }
 
-export const MembershipSection: React.FC<MembershipSectionProps> = ({
-  onSelectTier,
-  onExploreMembership,
-}) => {
+export const MembershipSection: React.FC<MembershipSectionProps> = ({ onNavigate }) => {
   return (
     <section id="membership" className="py-24 sm:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -31,10 +26,10 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
           </div>
 
           <button
-            onClick={onExploreMembership}
+            onClick={() => onNavigate('membership')}
             className="text-xs font-medium text-[#C9A84C] hover:text-[#B8983A] transition-colors duration-300 self-start md:self-auto focus:outline-none cursor-pointer"
           >
-            Compare All Benefits &rarr;
+            View All Plans &rarr;
           </button>
         </div>
 
@@ -46,10 +41,11 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
             return (
               <div
                 key={tier.id}
-                className={`relative p-8 sm:p-9 transition-all duration-500 flex flex-col justify-between ${
+                onClick={() => onNavigate('membership')}
+                className={`relative p-8 sm:p-9 transition-all duration-500 flex flex-col justify-between cursor-pointer group ${
                   isPopular
                     ? 'bg-[#C9A84C]/8 text-[#1C1917] ring-1 ring-[#C9A84C]/30'
-                    : 'text-[#1C1917]'
+                    : 'text-[#1C1917] hover:bg-[#F3F1ED]/60'
                 }`}
               >
                 {isPopular && (
@@ -74,30 +70,27 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
                     <span className="text-4xl sm:text-5xl font-editorial">
                       ${tier.price}
                     </span>
-                    <span className={`text-xs font-medium ${isPopular ? 'text-[#57534E]' : 'text-[#57534E]'}`}>{tier.period}</span>
+                    <span className="text-xs font-medium text-[#57534E]">{tier.period}</span>
                   </div>
 
                   <ul className="space-y-4 mb-8">
                     {tier.features.filter((f) => f.included).slice(0, 5).map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-3 text-xs sm:text-sm">
                         <Check className={`w-4 h-4 shrink-0 mt-0.5 ${isPopular ? 'text-[#C9A84C]' : 'text-[#C9A84C]'}`} />
-                        <span className={isPopular ? 'text-[#D6D3D1]' : 'text-[#1C1917]'}>{feature.label}</span>
+                        <span className="text-[#1C1917]">{feature.label}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
                 <div>
-                  <button
-                    onClick={() => onSelectTier(tier)}
-                    className={`w-full py-3.5 px-6 rounded-2xl text-xs font-medium transition-all duration-300 transform active:scale-95 focus:outline-none cursor-pointer ${
-                      isPopular
-                        ? 'bg-[#C9A84C] hover:bg-[#B8983A] text-white'
-                        : 'bg-[#1C1917] hover:bg-[#292524] text-white'
-                    }`}
-                  >
+                  <span className={`w-full py-3.5 px-6 rounded-2xl text-xs font-medium transition-all duration-300 block text-center ${
+                    isPopular
+                      ? 'bg-[#C9A84C] text-white group-hover:bg-[#B8983A]'
+                      : 'bg-[#1C1917] text-white group-hover:bg-[#292524]'
+                  }`}>
                     {tier.ctaText}
-                  </button>
+                  </span>
                 </div>
               </div>
             );

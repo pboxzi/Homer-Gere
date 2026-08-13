@@ -1,5 +1,5 @@
-import { JournalArticle, TimelineMilestone, Experience, MembershipTier, GalleryItem, FilmographyEntry, FAQItem, ExperienceCategory, MembershipFAQItem, MembershipStep } from '../types';
-import { IMAGES, SECTION_IMAGES, MEDIA_IMAGES, EXPERIENCE_IMAGES, MEMBERSHIP_IMAGES } from './images';
+import { JournalArticle, TimelineMilestone, Experience, MembershipTier, GalleryItem, FilmographyEntry, FAQItem, MembershipFAQItem, MembershipStep } from '../types';
+import { SECTION_IMAGES, MEDIA_IMAGES, EXPERIENCE_IMAGES } from './images';
 
 export const METRICS = [
   { label: 'Projects', value: '3', icon: 'clapperboard' },
@@ -193,7 +193,7 @@ export const EXPERIENCES: Experience[] = [
     image: EXPERIENCE_IMAGES['charity-appearance'],
     availability: 'available',
     whatsIncluded: [
-      '出席 Appearance at the charity event',
+      'Appearance at the charity event',
       'Speaking or presentation',
       'Photo opportunities with attendees',
       'Social media coverage',

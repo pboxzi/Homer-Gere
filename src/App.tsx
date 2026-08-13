@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate, useParams } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
@@ -17,8 +17,7 @@ import { DetailModal } from './components/DetailModal';
 import { SectionDivider } from './components/SectionDivider';
 import { SectionFadeIn } from './components/SectionFadeIn';
 import { ScrollToTop } from './components/ScrollToTop';
-import { ModalType, JournalArticle, TimelineMilestone, Experience, MembershipTier, GalleryItem } from './types';
-import { JOURNAL_ARTICLES, TIMELINE_MILESTONES, EXPERIENCES, MEMBERSHIP_TIERS, GALLERY_ITEMS } from './data/content';
+import { ModalType, JournalArticle, TimelineMilestone, GalleryItem } from './types';
 import JourneyPage from './pages/JourneyPage';
 import ProjectsPage from './pages/ProjectsPage';
 import ProjectDetailPage from './pages/project-detail/ProjectDetailPage';
@@ -28,6 +27,8 @@ import ArticleDetailPage from './pages/journal/ArticleDetailPage';
 import MediaPage from './pages/MediaPage';
 import ExperiencesPage from './pages/ExperiencesPage';
 import MembershipPage from './pages/MembershipPage';
+import ChatPage from './pages/chat/ChatPage';
+import AdminDashboard from './pages/admin/AdminDashboard';
 
 function HomePage() {
   const [activeSection, setActiveSection] = useState<string>('home');
@@ -115,9 +116,7 @@ function HomePage() {
             onSelectArticle={(article: JournalArticle) =>
               setActiveModal({ type: 'article', article })
             }
-            onViewAllArticles={() =>
-              setActiveModal({ type: 'article', article: JOURNAL_ARTICLES[0] })
-            }
+            onNavigate={handleNavigate}
           />
         </SectionFadeIn>
 
@@ -125,12 +124,7 @@ function HomePage() {
 
         <SectionFadeIn>
           <ExperiencesSection
-            onSelectExperience={(experience: Experience) =>
-              setActiveModal({ type: 'experience', experience })
-            }
-            onViewAllExperiences={() =>
-              setActiveModal({ type: 'experience', experience: EXPERIENCES[0] })
-            }
+            onNavigate={handleNavigate}
           />
         </SectionFadeIn>
 
@@ -138,12 +132,7 @@ function HomePage() {
 
         <SectionFadeIn>
           <MembershipSection
-            onSelectTier={(tier: MembershipTier) =>
-              setActiveModal({ type: 'membership', tier })
-            }
-            onExploreMembership={() =>
-              setActiveModal({ type: 'membership', tier: MEMBERSHIP_TIERS[1] })
-            }
+            onNavigate={handleNavigate}
           />
         </SectionFadeIn>
 
@@ -160,9 +149,7 @@ function HomePage() {
             onSelectImage={(item: GalleryItem) =>
               setActiveModal({ type: 'gallery', item })
             }
-            onViewFullGallery={() =>
-              setActiveModal({ type: 'gallery', item: GALLERY_ITEMS[0] })
-            }
+            onNavigate={handleNavigate}
           />
         </SectionFadeIn>
 
@@ -206,6 +193,8 @@ export default function App() {
           <Route path="/media" element={<MediaPage />} />
           <Route path="/experiences" element={<ExperiencesPage />} />
           <Route path="/membership" element={<MembershipPage />} />
+          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </BrowserRouter>
     </HelmetProvider>

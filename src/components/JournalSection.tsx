@@ -5,12 +5,12 @@ import { JournalArticle } from '../types';
 
 interface JournalSectionProps {
   onSelectArticle: (article: JournalArticle) => void;
-  onViewAllArticles: () => void;
+  onNavigate: (sectionId: string) => void;
 }
 
 export const JournalSection: React.FC<JournalSectionProps> = ({
   onSelectArticle,
-  onViewAllArticles,
+  onNavigate,
 }) => {
   return (
     <section id="journal" className="py-24 sm:py-32">
@@ -27,7 +27,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
           </div>
 
           <button
-            onClick={onViewAllArticles}
+            onClick={() => onNavigate('journal')}
             className="inline-flex items-center gap-1.5 text-sm font-medium text-[#57534E] hover:text-[#C9A84C] transition-colors duration-300 group focus:outline-none cursor-pointer"
           >
             View All Articles
