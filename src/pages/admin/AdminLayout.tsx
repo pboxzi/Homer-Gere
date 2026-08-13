@@ -1,0 +1,201 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'motion/react';
+import {
+  LayoutDashboard, Globe, FileText, Users, MessageSquare, Image, CreditCard,
+  BarChart3, Settings, LogOut, Menu, X, ChevronDown, ChevronRight, Shield,
+} from 'lucide-react';
+import { AdminSection, ADMIN_SIDEBAR_GROUPS } from '../../data/adminData';
+
+const SECTION_ICONS: Record<string, React.FC<{ className?: string }>> = {
+  overview: LayoutDashboard,
+  homepage: Globe, navigation: Globe, footer: Globe, menus: Globe, seo: Shield,
+  journey: FileText, projects: FileText, gallery: Image, 'media-content': Image, journal: FileText, faqs: FileText,
+  members: Users, plans: Users, applications: Users, experiences: Users, 'experience-requests': Users,
+  'fan-chat': MessageSquare, 'business-chat': MessageSquare, 'contact-messages': MessageSquare, 'admin-notifications': MessageSquare,
+  images: Image, videos: Image, documents: FileText,
+  'membership-payments': CreditCard, transactions: CreditCard,
+  visitors: BarChart3, 'membership-stats': BarChart3, 'experience-stats': BarChart3, 'chat-stats': BarChart3,
+  'website-settings': Settings, branding: Settings, 'comm-settings': Settings, 'email-templates': Settings, security: Shield, backups: Settings, integrations: Settings,
+};
+
+interface AdminLayoutProps {
+  activeSection: AdminSection;
+  onSectionChange: (section: AdminSection) => void;
+  children: React.ReactNode;
+}
+
+export const AdminLayout: React.FC<AdminLayoutProps> = ({
+  activeSection,
+  onSectionChange,
+  children,
+}) => {
+  const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    Object.fromEntries(ADMIN_SIDEBAR_GROUPS.filter((g) => g.label).map((g) => [g.label, true]))
+  );
+
+  const toggleGroup = (label: string) => {
+    setExpandedGroups((prev) => ({ ...prev, [label]: !prev[label] }));
+  };
+
+  const handleNav = (id: AdminSection) => {
+    onSectionChange(id);
+    setMobileOpen(false);
+  };
+
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full">
+      <div className="px-5 py-5 border-b border-[#E8E5DF]/40">
+        <button onClick={() => navigate('/')} className="group flex flex-col text-left focus:outline-none cursor-pointer">
+          <span className="font-editorial tracking-[0.06em] text-[#1C1917] group-hover:text-[#A6852F] transition-all duration-500 uppercase leading-none text-base">
+            Homer Gere
+          </span>
+          <span className="font-medium tracking-[0.35em] text-[#A6852F]/70 uppercase text-[7px] mt-0.5">
+            Admin CMS
+          </span>
+        </button>
+      </div>
+
+      <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-1">
+        {ADMIN_SIDEBAR_GROUPS.map((group) => {
+          if (!group.label) {
+            return group.items.map((item) => {
+              const Icon = SECTION_ICONS[item.id] || LayoutDashboard;
+              const isActive = activeSection === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => handleNav(item.id)}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all duration-200 cursor-pointer ${
+                    isActive ? 'bg-[#A6852F]/10 text-[#A6852F] font-medium' : 'text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917]'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="flex-1 text-left">{item.label}</span>
+                </button>
+              );
+            });
+          }
+
+          const isExpanded = expandedGroups[group.label] ?? true;
+          const hasActive = group.items.some((i) => i.id === activeSection);
+
+          return (
+            <div key={group.label}>
+              <button
+                onClick={() => toggleGroup(group.label)}
+                className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-medium uppercase tracking-[0.1em] transition-colors cursor-pointer ${
+                  hasActive ? 'text-[#A6852F]' : 'text-[#57534E]/60 hover:text-[#57534E]'
+                }`}
+              >
+                <motion.div animate={{ rotate: isExpanded ? 90 : 0 }} transition={{ duration: 0.2 }}>
+                  <ChevronRight className="w-3 h-3" />
+                </motion.div>
+                {group.label}
+              </button>
+              <AnimatePresence>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="space-y-0.5 py-1">
+                      {group.items.map((item) => {
+                        const Icon = SECTION_ICONS[item.id] || LayoutDashboard;
+                        const isActive = activeSection === item.id;
+                        return (
+                          <button
+                            key={item.id}
+                            onClick={() => handleNav(item.id)}
+                            className={`w-full flex items-center gap-2.5 pl-7 pr-3 py-1.5 rounded-xl text-sm transition-all duration-200 cursor-pointer ${
+                              isActive ? 'bg-[#A6852F]/10 text-[#A6852F] font-medium' : 'text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917]'
+                            }`}
+                          >
+                            <Icon className="w-3.5 h-3.5" />
+                            <span className="flex-1 text-left">{item.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          );
+        })}
+      </nav>
+
+      <div className="px-3 py-4 border-t border-[#E8E5DF]/40">
+        <div className="flex items-center gap-3 px-3 mb-3">
+          <div className="w-8 h-8 rounded-lg bg-[#1C1917] flex items-center justify-center text-white text-xs font-medium">SA</div>
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-medium text-[#1C1917] truncate">Super Admin</p>
+            <p className="text-[10px] text-[#57534E] truncate">admin@homergere.com</p>
+          </div>
+        </div>
+        <button
+          onClick={() => navigate('/login')}
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-[#57534E] hover:text-[#DC2626] hover:bg-[#DC2626]/5 transition-all duration-200 cursor-pointer"
+        >
+          <LogOut className="w-4 h-4" />
+          Sign Out
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased flex">
+      <aside className="hidden lg:flex w-60 bg-white border-r border-[#E8E5DF]/40 flex-col fixed inset-y-0 left-0 z-30">
+        <SidebarContent />
+      </aside>
+
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div
+              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileOpen(false)}
+            />
+            <motion.aside
+              className="fixed inset-y-0 left-0 w-72 bg-white z-50 lg:hidden flex flex-col shadow-2xl"
+              initial={{ x: -288 }}
+              animate={{ x: 0 }}
+              exit={{ x: -288 }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            >
+              <button
+                onClick={() => setMobileOpen(false)}
+                className="absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer z-10"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              <SidebarContent />
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
+      <div className="flex-1 lg:ml-60 min-h-screen flex flex-col">
+        <header className="lg:hidden sticky top-0 z-20 bg-[#FAF9F7]/90 backdrop-blur-xl border-b border-[#E8E5DF]/40 px-4 py-3 flex items-center gap-3">
+          <button onClick={() => setMobileOpen(true)} className="w-9 h-9 rounded-xl flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
+            <Menu className="w-5 h-5" />
+          </button>
+          <span className="font-editorial text-sm text-[#1C1917] uppercase tracking-[0.06em]">Admin CMS</span>
+        </header>
+
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+};
