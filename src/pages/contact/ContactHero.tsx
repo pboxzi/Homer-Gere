@@ -11,7 +11,6 @@ export const ContactHero: React.FC = () => {
       ref={sectionRef}
       className="relative h-[65vh] min-h-[500px] flex items-end overflow-hidden bg-[#FAF9F7]"
     >
-      {/* Background Image */}
       <div className="absolute inset-0">
         <img
           src={SECTION_IMAGES.exploreMore.contact}
@@ -23,7 +22,6 @@ export const ContactHero: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-[#FAF9F7]/60 to-transparent" />
       </div>
 
-      {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20 w-full">
         <div className="max-w-2xl">
           <motion.div

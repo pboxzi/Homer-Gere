@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -8,6 +8,7 @@ import {
 import {
   REGISTER_CONFIG, COUNTRIES, LANGUAGES, TIMEZONES,
 } from '../data/registerData';
+import { useAuth } from '../context/AuthContext';
 
 type Step = 'form' | 'welcome';
 
@@ -71,12 +72,20 @@ function getPasswordStrength(password: string): { score: number; label: string; 
 export default function RegisterPage() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { signUp, isAuthenticated, user } = useAuth();
   const [step, setStep] = useState<Step>('form');
   const [formData, setFormData] = useState<FormData>(INITIAL_FORM);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const passwordStrength = getPasswordStrength(formData.password);
 
@@ -111,14 +120,16 @@ export default function RegisterPage() {
     return Object.keys(e).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     if (!validate()) return;
     setLoading(true);
-    setTimeout(() => {
+    const result = await signUp({ email: formData.email, password: formData.password, firstName: formData.firstName, lastName: formData.lastName });
+    if (result.error) {
+      setError(result.error);
       setLoading(false);
-      setStep('welcome');
-    }, 2000);
+    }
   };
 
   if (step === 'welcome') {
@@ -450,6 +461,9 @@ export default function RegisterPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
+            {error && (
+              <p className="text-sm text-red-500 w-full">{error}</p>
+            )}
             <button type="submit" disabled={loading} className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-[#1C1917] hover:bg-[#292524] disabled:bg-[#57534E] active:scale-95 text-white font-medium text-sm px-8 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#1C1917]/10 focus:outline-none cursor-pointer disabled:cursor-not-allowed">
               {loading ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />

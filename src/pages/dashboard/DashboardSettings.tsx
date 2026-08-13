@@ -1,16 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Save, Globe, Clock, Bell, Mail, Smartphone, Shield } from 'lucide-react';
+import { Save, Globe, Clock, Shield } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
-import { LANGUAGES, TIMEZONES } from '../../data/registerData';
 
 export const DashboardSettings: React.FC = () => {
   const { profile, updateProfile } = useDashboard();
-  const [language, setLanguage] = useState(profile.language);
-  const [timezone, setTimezone] = useState(profile.timezone);
-  const [emailNotif, setEmailNotif] = useState(profile.emailNotifications);
-  const [smsNotif, setSmsNotif] = useState(profile.smsNotifications);
-  const [marketing, setMarketing] = useState(profile.marketingPreferences);
   const [profileVisibility, setProfileVisibility] = useState(profile.profileVisibility);
   const [onlineStatus, setOnlineStatus] = useState(profile.showOnlineStatus);
   const [messageRequests, setMessageRequests] = useState(profile.allowMessageRequests);
@@ -18,11 +12,6 @@ export const DashboardSettings: React.FC = () => {
 
   const handleSave = () => {
     updateProfile({
-      language,
-      timezone,
-      emailNotifications: emailNotif,
-      smsNotifications: smsNotif,
-      marketingPreferences: marketing,
       profileVisibility,
       showOnlineStatus: onlineStatus,
       allowMessageRequests: messageRequests,
@@ -38,39 +27,13 @@ export const DashboardSettings: React.FC = () => {
         <p className="text-sm text-[#57534E] mt-1">Manage your account settings and preferences.</p>
       </motion.div>
 
+      {/* Privacy */}
       <motion.div className="space-y-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-        <h3 className="text-sm font-medium text-[#1C1917]">Preferences</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2 flex items-center gap-1.5"><Globe className="w-3 h-3" /> Language</label>
-            <select value={language} onChange={(e) => setLanguage(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-white border border-[#E8E5DF]/60 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 appearance-none">
-              {LANGUAGES.map((l) => <option key={l} value={l}>{l}</option>)}
-            </select>
-          </div>
-          <div>
-            <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2 flex items-center gap-1.5"><Clock className="w-3 h-3" /> Timezone</label>
-            <select value={timezone} onChange={(e) => setTimezone(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-white border border-[#E8E5DF]/60 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 appearance-none">
-              {TIMEZONES.map((t) => <option key={t} value={t}>{t}</option>)}
-            </select>
-          </div>
-        </div>
-      </motion.div>
-
-      <motion.div className="space-y-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
-        <h3 className="text-sm font-medium text-[#1C1917]">Notification Preferences</h3>
-        <div className="space-y-3">
-          <ToggleRow icon={<Mail className="w-4 h-4" />} label="Email notifications" checked={emailNotif} onChange={setEmailNotif} />
-          <ToggleRow icon={<Smartphone className="w-4 h-4" />} label="SMS notifications" checked={smsNotif} onChange={setSmsNotif} />
-          <ToggleRow icon={<Bell className="w-4 h-4" />} label="Marketing emails" checked={marketing} onChange={setMarketing} />
-        </div>
-      </motion.div>
-
-      <motion.div className="space-y-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
         <h3 className="text-sm font-medium text-[#1C1917]">Privacy</h3>
         <div className="rounded-2xl border border-[#E8E5DF]/60 bg-white divide-y divide-[#E8E5DF]/40">
-          <ToggleRow icon={<Shield className="w-4 h-4" />} label="Profile visibility" checked={profileVisibility === 'members'} onChange={(v) => setProfileVisibility(v ? 'members' : 'public')} />
-          <ToggleRow icon={<Globe className="w-4 h-4" />} label="Show online status" checked={onlineStatus} onChange={setOnlineStatus} />
-          <ToggleRow icon={<Mail className="w-4 h-4" />} label="Allow message requests" checked={messageRequests} onChange={setMessageRequests} />
+          <ToggleRow icon={<Shield className="w-4 h-4" />} label="Profile visibility" subtext={profileVisibility === 'members' ? 'Visible to members only' : 'Visible to everyone'} checked={profileVisibility === 'members'} onChange={(v) => setProfileVisibility(v ? 'members' : 'public')} />
+          <ToggleRow icon={<Globe className="w-4 h-4" />} label="Show online status" subtext="Allow others to see when you're online" checked={onlineStatus} onChange={setOnlineStatus} />
+          <ToggleRow icon={<Clock className="w-4 h-4" />} label="Allow message requests" subtext="Receive messages from other members" checked={messageRequests} onChange={setMessageRequests} />
         </div>
       </motion.div>
 
@@ -84,10 +47,13 @@ export const DashboardSettings: React.FC = () => {
   );
 };
 
-const ToggleRow: React.FC<{ icon: React.ReactNode; label: string; checked: boolean; onChange: (v: boolean) => void }> = ({ icon, label, checked, onChange }) => (
+const ToggleRow: React.FC<{ icon: React.ReactNode; label: string; subtext?: string; checked: boolean; onChange: (v: boolean) => void }> = ({ icon, label, subtext, checked, onChange }) => (
   <label className="flex items-center gap-3 p-3 rounded-xl bg-white border border-[#E8E5DF]/60 cursor-pointer">
     <div className="text-[#57534E]">{icon}</div>
-    <span className="flex-1 text-sm text-[#57534E]">{label}</span>
+    <div className="flex-1">
+      <span className="text-sm text-[#57534E]">{label}</span>
+      {subtext && <p className="text-[10px] text-[#57534E]/60 mt-0.5">{subtext}</p>}
+    </div>
     <div className="relative">
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="sr-only" />
       <div className={`w-10 h-5 rounded-full transition-colors duration-300 ${checked ? 'bg-[#A6852F]' : 'bg-[#E8E5DF]'}`} />

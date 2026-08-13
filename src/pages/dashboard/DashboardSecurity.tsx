@@ -25,13 +25,15 @@ export const DashboardSecurity: React.FC = () => {
     if (!currentPw || !newPw) { setPwError('Please fill in all fields.'); return; }
     if (newPw.length < 8) { setPwError('Password must be at least 8 characters.'); return; }
     if (newPw !== confirmPw) { setPwError('Passwords do not match.'); return; }
-    const ok = changePassword(currentPw, newPw);
-    if (ok) {
+    const result = changePassword(currentPw, newPw);
+    if (result.success) {
       setPwSaved(true);
       setCurrentPw('');
       setNewPw('');
       setConfirmPw('');
       setTimeout(() => { setPwSaved(false); setShowChangePw(false); }, 2000);
+    } else {
+      setPwError(result.error || 'Password change failed.');
     }
   };
 

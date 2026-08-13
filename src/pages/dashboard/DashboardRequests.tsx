@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Clock, CheckCircle, XCircle, Hourglass, ChevronDown, ChevronUp } from 'lucide-react';
+import { Clock, CheckCircle, XCircle, Hourglass, ChevronDown, ChevronUp, Calendar, FileText } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import { RequestStatus } from '../../data/dashboardData';
 
@@ -13,7 +13,7 @@ const STATUS_CONFIG: Record<RequestStatus, { label: string; icon: React.FC<{ cla
 };
 
 export const DashboardRequests: React.FC = () => {
-  const { requests } = useDashboard();
+  const { requests, withdrawRequest } = useDashboard();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   return (
@@ -58,15 +58,23 @@ export const DashboardRequests: React.FC = () => {
                     </div>
                     <p className="text-sm font-medium text-[#1C1917]">{r.title}</p>
                     <p className="text-xs text-[#57534E] mt-0.5">{r.description}</p>
-                    <p className="text-[10px] text-[#57534E]/60 mt-1">{r.date}</p>
+                    <div className="flex items-center gap-3 mt-1.5">
+                      <p className="text-[10px] text-[#57534E]/60">Submitted: {r.date}</p>
+                      {r.eventDate && <p className="text-[10px] text-[#16A34A] font-medium">Event: {r.eventDate}</p>}
+                    </div>
                   </div>
-                  {isExpanded ? <ChevronUp className="w-4 h-4 text-[#57534E]/40 shrink-0 mt-1" /> : <ChevronDown className="w-4 h-4 text-[#57534E]/40 shrink-0 mt-1" />}
+                  <div className="flex items-center gap-2 shrink-0 mt-1">
+                    {r.status === 'pending' && (
+                      <button onClick={(e) => { e.stopPropagation(); withdrawRequest(r.id); }} className="text-[10px] text-[#DC2626] hover:text-[#B91C1C] font-medium transition-colors cursor-pointer">Withdraw</button>
+                    )}
+                    {isExpanded ? <ChevronUp className="w-4 h-4 text-[#57534E]/40" /> : <ChevronDown className="w-4 h-4 text-[#57534E]/40" />}
+                  </div>
                 </button>
                 <AnimatePresence>
                   {isExpanded && (
                     <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
                       <div className="px-5 pb-4 pt-1 ml-14">
-                        <div className="rounded-xl bg-[#F3F1ED]/50 p-4 space-y-2">
+                        <div className="rounded-xl bg-[#F3F1ED]/50 p-4 space-y-2.5">
                           <div className="flex items-center justify-between text-xs">
                             <span className="text-[#57534E]">Request ID</span>
                             <span className="font-medium text-[#1C1917]">#{r.id}</span>
@@ -79,6 +87,12 @@ export const DashboardRequests: React.FC = () => {
                             <span className="text-[#57534E]">Submitted</span>
                             <span className="font-medium text-[#1C1917]">{r.date}</span>
                           </div>
+                          {r.eventDate && (
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-[#57534E] flex items-center gap-1"><Calendar className="w-3 h-3" /> Event Date</span>
+                              <span className="font-medium text-[#16A34A]">{r.eventDate}</span>
+                            </div>
+                          )}
                           <div className="flex items-center justify-between text-xs">
                             <span className="text-[#57534E]">Status</span>
                             <span className="font-medium capitalize" style={{ color: status.color }}>{status.label}</span>
@@ -87,6 +101,12 @@ export const DashboardRequests: React.FC = () => {
                             <div className="flex items-center justify-between text-xs">
                               <span className="text-[#57534E]">Department</span>
                               <span className="font-medium text-[#1C1917]">{r.department}</span>
+                            </div>
+                          )}
+                          {r.managementNotes && (
+                            <div className="pt-2 border-t border-[#E8E5DF]/40">
+                              <p className="text-[10px] text-[#57534E] uppercase font-medium mb-1 flex items-center gap-1"><FileText className="w-3 h-3" /> Management Notes</p>
+                              <p className="text-xs text-[#1C1917] leading-relaxed">{r.managementNotes}</p>
                             </div>
                           )}
                         </div>

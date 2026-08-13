@@ -87,14 +87,18 @@ interface DashboardContextType {
   updateMembership: (updates: Partial<MemberMembership>) => void;
   addRequest: (request: Omit<DashboardRequest, 'id' | 'date' | 'status'>) => void;
   updateRequestStatus: (id: string, status: DashboardRequest['status']) => void;
+  withdrawRequest: (id: string) => void;
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: () => void;
   deleteNotification: (id: string) => void;
   addConversation: (conversation: Omit<DashboardConversation, 'id' | 'date'>) => void;
   closeConversation: (id: string) => void;
+  deleteConversation: (id: string) => void;
   revokeSession: (id: string) => void;
   revokeAllSessions: () => void;
+  addMessageThread: (subject: string, text: string) => string;
   addMessage: (threadId: string, text: string) => void;
+  deleteMessageThread: (threadId: string) => void;
   markThreadRead: (threadId: string) => void;
   toggleBookmark: (article: Omit<BookmarkedArticle, 'id' | 'bookmarkedAt'>) => void;
   isBookmarked: (articleId: string) => boolean;
@@ -102,7 +106,8 @@ interface DashboardContextType {
   isFavorited: (photoId: string) => boolean;
   addHelpTicket: (ticket: Omit<HelpTicket, 'id' | 'date' | 'status' | 'replies'>) => void;
   replyHelpTicket: (ticketId: string, text: string) => void;
-  changePassword: (currentPw: string, newPw: string) => boolean;
+  closeHelpTicket: (ticketId: string) => void;
+  changePassword: (currentPw: string, newPw: string) => { success: boolean; error?: string };
   enable2FA: () => void;
   disable2FA: () => void;
   twoFactorEnabled: boolean;
@@ -136,6 +141,10 @@ function saveState(key: string, value: unknown) {
 
 function generateId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function todayStr() {
+  return new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 // ============================================================
@@ -179,6 +188,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [favorites, setFavorites] = useState<FavoritePhoto[]>(() => loadState('favorites', []));
   const [helpTickets, setHelpTickets] = useState<HelpTicket[]>(() => loadState('helpTickets', INITIAL_HELP_TICKETS));
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(() => loadState('twoFactorEnabled', false));
+  const [storedPassword] = useState(() => loadState('storedPassword', 'Password123!'));
 
   // Persist to localStorage on every change
   useEffect(() => { saveState('profile', profile); }, [profile]);
@@ -205,13 +215,15 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Requests
   const addRequest = useCallback((req: Omit<DashboardRequest, 'id' | 'date' | 'status'>) => {
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    setRequests((prev) => [{ ...req, id: generateId(), date: dateStr, status: 'pending' }, ...prev]);
+    setRequests((prev) => [{ ...req, id: generateId(), date: todayStr(), status: 'pending' }, ...prev]);
   }, []);
 
   const updateRequestStatus = useCallback((id: string, status: DashboardRequest['status']) => {
     setRequests((prev) => prev.map((r) => r.id === id ? { ...r, status } : r));
+  }, []);
+
+  const withdrawRequest = useCallback((id: string) => {
+    setRequests((prev) => prev.map((r) => r.id === id && r.status === 'pending' ? { ...r, status: 'declined' as const } : r));
   }, []);
 
   // Notifications
@@ -236,6 +248,10 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setConversations((prev) => prev.map((c) => c.id === id ? { ...c, status: 'closed' } : c));
   }, []);
 
+  const deleteConversation = useCallback((id: string) => {
+    setConversations((prev) => prev.filter((c) => c.id !== id));
+  }, []);
+
   // Sessions
   const revokeSession = useCallback((id: string) => {
     setSessions((prev) => prev.filter((s) => s.id !== id));
@@ -246,23 +262,50 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, []);
 
   // Messages
+  const addMessageThread = useCallback((subject: string, text: string) => {
+    const threadId = generateId();
+    const now = todayStr();
+    const newMsg: Message = { id: generateId(), sender: 'member', text, date: now, read: true };
+    const thread: MessageThread = {
+      id: threadId,
+      subject,
+      lastMessage: text,
+      lastDate: now,
+      lastSender: 'member',
+      read: true,
+      messages: [newMsg],
+    };
+    setMessages((prev) => [thread, ...prev]);
+    // Simulate Homer reply after 2s
+    setTimeout(() => {
+      const replyMsg: Message = { id: generateId(), sender: 'homer', text: 'Thanks for reaching out! I\'ll review this and get back to you shortly.', date: now, read: false };
+      setMessages((prev) => prev.map((t) => {
+        if (t.id !== threadId) return t;
+        return { ...t, messages: [...t.messages, replyMsg], lastMessage: replyMsg.text, lastDate: now, lastSender: 'homer' as const, read: false };
+      }));
+    }, 2000);
+    return threadId;
+  }, []);
+
   const addMessage = useCallback((threadId: string, text: string) => {
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    const newMsg: Message = { id: generateId(), sender: 'member', text, date: dateStr, read: true };
+    const now = todayStr();
+    const newMsg: Message = { id: generateId(), sender: 'member', text, date: now, read: true };
     setMessages((prev) => prev.map((t) => {
       if (t.id !== threadId) return t;
-      const updated = { ...t, messages: [...t.messages, newMsg], lastMessage: text, lastDate: dateStr, lastSender: 'member' as const };
-      return updated;
+      return { ...t, messages: [...t.messages, newMsg], lastMessage: text, lastDate: now, lastSender: 'member' as const };
     }));
     // Simulate Homer reply after 2s
     setTimeout(() => {
-      const replyMsg: Message = { id: generateId(), sender: 'homer', text: 'Thanks for your message! I\'ll get back to you soon.', date: dateStr, read: false };
+      const replyMsg: Message = { id: generateId(), sender: 'homer', text: 'Thanks for your message! I\'ll get back to you soon.', date: now, read: false };
       setMessages((prev) => prev.map((t) => {
         if (t.id !== threadId) return t;
-        return { ...t, messages: [...t.messages, replyMsg], lastMessage: replyMsg.text, lastDate: dateStr, lastSender: 'homer' as const, read: false };
+        return { ...t, messages: [...t.messages, replyMsg], lastMessage: replyMsg.text, lastDate: now, lastSender: 'homer' as const, read: false };
       }));
     }, 2000);
+  }, []);
+
+  const deleteMessageThread = useCallback((threadId: string) => {
+    setMessages((prev) => prev.filter((t) => t.id !== threadId));
   }, []);
 
   const markThreadRead = useCallback((threadId: string) => {
@@ -277,8 +320,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setBookmarks((prev) => {
       const exists = prev.find((b) => b.articleId === article.articleId);
       if (exists) return prev.filter((b) => b.articleId !== article.articleId);
-      const now = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      return [{ ...article, id: generateId(), bookmarkedAt: now }, ...prev];
+      return [{ ...article, id: generateId(), bookmarkedAt: todayStr() }, ...prev];
     });
   }, []);
 
@@ -291,8 +333,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setFavorites((prev) => {
       const exists = prev.find((f) => f.photoId === photo.photoId);
       if (exists) return prev.filter((f) => f.photoId !== photo.photoId);
-      const now = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      return [{ ...photo, id: generateId(), favoritedAt: now }, ...prev];
+      return [{ ...photo, id: generateId(), favoritedAt: todayStr() }, ...prev];
     });
   }, []);
 
@@ -302,26 +343,33 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Help
   const addHelpTicket = useCallback((ticket: Omit<HelpTicket, 'id' | 'date' | 'status' | 'replies'>) => {
-    const now = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    setHelpTickets((prev) => [{ ...ticket, id: generateId(), date: now, status: 'open', replies: [] }, ...prev]);
+    setHelpTickets((prev) => [{ ...ticket, id: generateId(), date: todayStr(), status: 'open', replies: [] }, ...prev]);
   }, []);
 
   const replyHelpTicket = useCallback((ticketId: string, text: string) => {
-    const now = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    const reply: HelpReply = { id: generateId(), sender: 'member', text, date: now };
+    const reply: HelpReply = { id: generateId(), sender: 'member', text, date: todayStr() };
     setHelpTickets((prev) => prev.map((t) => t.id === ticketId ? { ...t, replies: [...t.replies, reply] } : t));
     // Simulate support reply after 3s
     setTimeout(() => {
-      const supportReply: HelpReply = { id: generateId(), sender: 'support', text: 'Thank you for reaching out. Our team will review your message and respond shortly.', date: now };
+      const supportReply: HelpReply = { id: generateId(), sender: 'support', text: 'Thank you for reaching out. Our team will review your message and respond shortly.', date: todayStr() };
       setHelpTickets((prev) => prev.map((t) => t.id === ticketId ? { ...t, replies: [...t.replies, supportReply] } : t));
     }, 3000);
   }, []);
 
-  // Security
-  const changePassword = useCallback((_currentPw: string, _newPw: string) => {
-    // Simulated — in production would call API
-    return true;
+  const closeHelpTicket = useCallback((ticketId: string) => {
+    setHelpTickets((prev) => prev.map((t) => t.id === ticketId ? { ...t, status: 'closed' } : t));
   }, []);
+
+  // Security
+  const changePassword = useCallback((currentPw: string, newPw: string) => {
+    if (!currentPw || !newPw) return { success: false, error: 'Please fill in all fields.' };
+    if (currentPw !== storedPassword) return { success: false, error: 'Current password is incorrect.' };
+    if (newPw.length < 8) return { success: false, error: 'New password must be at least 8 characters.' };
+    if (!/[A-Z]/.test(newPw)) return { success: false, error: 'New password must contain an uppercase letter.' };
+    if (!/[0-9]/.test(newPw)) return { success: false, error: 'New password must contain a number.' };
+    if (!/[!@#$%^&*]/.test(newPw)) return { success: false, error: 'New password must contain a special character.' };
+    return { success: true };
+  }, [storedPassword]);
 
   const enable2FA = useCallback(() => { setTwoFactorEnabled(true); }, []);
   const disable2FA = useCallback(() => { setTwoFactorEnabled(false); }, []);
@@ -330,12 +378,12 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     <DashboardContext.Provider value={{
       profile, membership, requests, notifications, conversations, sessions,
       messages, bookmarks, favorites, helpTickets,
-      updateProfile, updateMembership, addRequest, updateRequestStatus,
+      updateProfile, updateMembership, addRequest, updateRequestStatus, withdrawRequest,
       markNotificationRead, markAllNotificationsRead, deleteNotification,
-      addConversation, closeConversation, revokeSession, revokeAllSessions,
-      addMessage, markThreadRead,
+      addConversation, closeConversation, deleteConversation, revokeSession, revokeAllSessions,
+      addMessageThread, addMessage, deleteMessageThread, markThreadRead,
       toggleBookmark, isBookmarked, toggleFavorite, isFavorited,
-      addHelpTicket, replyHelpTicket,
+      addHelpTicket, replyHelpTicket, closeHelpTicket,
       changePassword, enable2FA, disable2FA, twoFactorEnabled,
     }}>
       {children}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Navbar } from './components/Navbar';
@@ -17,23 +17,25 @@ import { DetailModal } from './components/DetailModal';
 import { SectionFadeIn } from './components/SectionFadeIn';
 import { ScrollToTop } from './components/ScrollToTop';
 import { ModalType, JournalArticle, TimelineMilestone, GalleryItem } from './types';
-import JourneyPage from './pages/JourneyPage';
-import ProjectsPage from './pages/ProjectsPage';
-import ProjectDetailPage from './pages/project-detail/ProjectDetailPage';
-import { GalleryPage } from './pages/GalleryPage';
-import { JournalPage } from './pages/JournalPage';
-import ArticleDetailPage from './pages/journal/ArticleDetailPage';
-import MediaPage from './pages/MediaPage';
-import ExperiencesPage from './pages/ExperiencesPage';
-import MembershipPage from './pages/MembershipPage';
-import ChatPage from './pages/chat/ChatPage';
-import ContactPage from './pages/ContactPage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import DashboardPage from './pages/DashboardPage';
 import { DashboardProvider } from './context/DashboardContext';
-import AdminDashboard from './pages/admin/AdminDashboard';
 import { SiteContentProvider } from './context/SiteContentContext';
+import { AuthProvider } from './context/AuthContext';
+
+const JourneyPage = React.lazy(() => import('./pages/JourneyPage'));
+const ProjectsPage = React.lazy(() => import('./pages/ProjectsPage'));
+const ProjectDetailPage = React.lazy(() => import('./pages/project-detail/ProjectDetailPage'));
+const GalleryPage = React.lazy(() => import('./pages/GalleryPage').then(m => ({ default: m.GalleryPage })));
+const JournalPage = React.lazy(() => import('./pages/JournalPage').then(m => ({ default: m.JournalPage })));
+const ArticleDetailPage = React.lazy(() => import('./pages/journal/ArticleDetailPage'));
+const MediaPage = React.lazy(() => import('./pages/MediaPage'));
+const ExperiencesPage = React.lazy(() => import('./pages/ExperiencesPage'));
+const MembershipPage = React.lazy(() => import('./pages/MembershipPage'));
+const ChatPage = React.lazy(() => import('./pages/chat/ChatPage'));
+const ContactPage = React.lazy(() => import('./pages/ContactPage'));
+const LoginPage = React.lazy(() => import('./pages/LoginPage'));
+const RegisterPage = React.lazy(() => import('./pages/RegisterPage'));
+const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
+const AdminDashboard = React.lazy(() => import('./pages/admin/AdminDashboard'));
 
 function HomePage() {
   const [activeSection, setActiveSection] = useState<string>('home');
@@ -96,29 +98,48 @@ function HomePage() {
 export default function App() {
   return (
     <HelmetProvider>
-      <SiteContentProvider>
+      <AuthProvider>
+        <SiteContentProvider>
         <BrowserRouter>
           <ScrollToTop />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/journey" element={<JourneyPage />} />
-            <Route path="/projects" element={<ProjectsPage />} />
-            <Route path="/projects/:slug" element={<ProjectDetailPage />} />
-            <Route path="/gallery" element={<GalleryPage />} />
-            <Route path="/journal" element={<JournalPage />} />
-            <Route path="/journal/:slug" element={<ArticleDetailPage />} />
-            <Route path="/media" element={<MediaPage />} />
-            <Route path="/experiences" element={<ExperiencesPage />} />
-            <Route path="/membership" element={<MembershipPage />} />
-            <Route path="/chat" element={<ChatPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/dashboard" element={<DashboardProvider><DashboardPage /></DashboardProvider>} />
-            <Route path="/admin" element={<AdminDashboard />} />
-          </Routes>
+          <Suspense fallback={
+            <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-8 h-8 border-2 border-[#A6852F] border-t-transparent rounded-full animate-spin" />
+                <p className="text-xs text-[#57534E]">Loading...</p>
+              </div>
+            </div>
+          }>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/journey" element={<JourneyPage />} />
+              <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/projects/:slug" element={<ProjectDetailPage />} />
+              <Route path="/gallery" element={<GalleryPage />} />
+              <Route path="/journal" element={<JournalPage />} />
+              <Route path="/journal/:slug" element={<ArticleDetailPage />} />
+              <Route path="/media" element={<MediaPage />} />
+              <Route path="/experiences" element={<ExperiencesPage />} />
+              <Route path="/membership" element={<MembershipPage />} />
+              <Route path="/chat" element={<ChatPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/dashboard" element={
+                <Suspense fallback={<div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center"><div className="w-8 h-8 border-2 border-[#A6852F] border-t-transparent rounded-full animate-spin" /></div>}>
+                  <DashboardProvider><DashboardPage /></DashboardProvider>
+                </Suspense>
+              } />
+              <Route path="/admin" element={
+                <Suspense fallback={<div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center"><div className="w-8 h-8 border-2 border-[#A6852F] border-t-transparent rounded-full animate-spin" /></div>}>
+                  <AdminDashboard />
+                </Suspense>
+              } />
+            </Routes>
+          </Suspense>
         </BrowserRouter>
       </SiteContentProvider>
+      </AuthProvider>
     </HelmetProvider>
   );
 }

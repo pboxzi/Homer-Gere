@@ -1,18 +1,16 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
-import { ArrowRight, Sparkles, Crown, MessageSquare } from 'lucide-react';
+import { ArrowRight, Sparkles, Crown } from 'lucide-react';
 import { SECTION_IMAGES } from '../../data/images';
 
 interface ContactContinueExploringProps {
   onExploreExperiences: () => void;
   onExploreMembership: () => void;
-  onOpenChat: () => void;
 }
 
 export const ContactContinueExploring: React.FC<ContactContinueExploringProps> = ({
   onExploreExperiences,
   onExploreMembership,
-  onOpenChat,
 }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
@@ -34,20 +32,11 @@ export const ContactContinueExploring: React.FC<ContactContinueExploringProps> =
       onClick: onExploreMembership,
       delay: 0.2,
     },
-    {
-      title: 'Chat with Homer',
-      description: 'Connect directly for fan messages or personal conversations.',
-      icon: MessageSquare,
-      image: SECTION_IMAGES.exploreMore.contact,
-      onClick: onOpenChat,
-      delay: 0.3,
-    },
   ];
 
   return (
     <section ref={sectionRef} className="py-24 sm:py-32 bg-[#FAF9F7]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <motion.div
           className="text-center mb-16 space-y-4"
           initial={{ opacity: 0, y: 30 }}
@@ -62,8 +51,7 @@ export const ContactContinueExploring: React.FC<ContactContinueExploringProps> =
           </h2>
         </motion.div>
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {options.map((option) => (
             <motion.button
               key={option.title}

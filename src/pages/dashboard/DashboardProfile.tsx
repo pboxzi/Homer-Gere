@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Camera, Save } from 'lucide-react';
+import { Camera, Save, Clock } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import { COUNTRIES, LANGUAGES, TIMEZONES } from '../../data/registerData';
 
@@ -27,6 +27,7 @@ export const DashboardProfile: React.FC = () => {
         <p className="text-sm text-[#57534E] mt-1">Manage your personal information and preferences.</p>
       </motion.div>
 
+      {/* Avatar + Meta */}
       <motion.div className="flex items-center gap-5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
         <div className="relative">
           <div className="w-20 h-20 rounded-2xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] text-2xl font-editorial overflow-hidden">
@@ -40,9 +41,14 @@ export const DashboardProfile: React.FC = () => {
         <div>
           <p className="text-sm font-medium text-[#1C1917]">{formData.firstName} {formData.lastName}</p>
           <p className="text-xs text-[#57534E]">Member since {formData.memberSince}</p>
+          <div className="flex items-center gap-1 mt-1">
+            <Clock className="w-3 h-3 text-[#57534E]/50" />
+            <p className="text-[10px] text-[#57534E]/60">Last login: {profile.lastLogin}</p>
+          </div>
         </div>
       </motion.div>
 
+      {/* Form */}
       <motion.div className="space-y-5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="First Name" value={formData.firstName} onChange={(v) => update('firstName', v)} />
@@ -54,29 +60,9 @@ export const DashboardProfile: React.FC = () => {
           <Field label="Phone" value={formData.phone} onChange={(v) => update('phone', v)} />
           <SelectField label="Country" value={formData.country} options={COUNTRIES} onChange={(v) => update('country', v)} />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <SelectField label="Language" value={formData.language} options={LANGUAGES} onChange={(v) => update('language', v)} />
-          <SelectField label="Timezone" value={formData.timezone} options={TIMEZONES} onChange={(v) => update('timezone', v)} />
-        </div>
+        <Field label="Date of Birth" value={formData.dateOfBirth} type="date" onChange={(v) => update('dateOfBirth', v)} />
 
-        <div className="pt-2">
-          <p className="text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-3">Notification Preferences</p>
-          <div className="space-y-2">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" checked={formData.emailNotifications} onChange={(e) => update('emailNotifications', e.target.checked)} className="w-4 h-4 rounded border-[#E8E5DF] text-[#A6852F] accent-[#A6852F]" />
-              <span className="text-sm text-[#57534E]">Email notifications</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" checked={formData.smsNotifications} onChange={(e) => update('smsNotifications', e.target.checked)} className="w-4 h-4 rounded border-[#E8E5DF] text-[#A6852F] accent-[#A6852F]" />
-              <span className="text-sm text-[#57534E]">SMS notifications</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" checked={formData.marketingPreferences} onChange={(e) => update('marketingPreferences', e.target.checked)} className="w-4 h-4 rounded border-[#E8E5DF] text-[#A6852F] accent-[#A6852F]" />
-              <span className="text-sm text-[#57534E]">Marketing emails</span>
-            </label>
-          </div>
-        </div>
-
+        {/* Save */}
         <div className="flex items-center gap-3 pt-2">
           <button onClick={handleSave} className="inline-flex items-center gap-2 bg-[#1C1917] hover:bg-[#292524] active:scale-95 text-white font-medium text-sm px-6 py-2.5 rounded-2xl transition-all duration-300 cursor-pointer">
             <Save className="w-4 h-4" /> Save Changes

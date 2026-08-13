@@ -37,7 +37,7 @@ export const ProjectHomerRole: React.FC<ProjectHomerRoleProps> = ({ project }) =
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <img
-              src={project.homerRole.image || project.heroImage}
+              src={project.heroImage}
               alt={`${project.homerRole.character} — ${project.title}`}
               referrerPolicy="no-referrer"
               className="w-full aspect-[4/5] object-cover object-top"

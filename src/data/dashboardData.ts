@@ -35,12 +35,15 @@ export interface MemberProfile {
   showOnlineStatus: boolean;
   allowMessageRequests: boolean;
   memberSince: string;
+  lastLogin: string;
 }
 
 export interface MemberMembership {
   plan: string;
   status: 'active' | 'expired' | 'pending' | 'none';
   renewalDate: string;
+  activationDate: string;
+  membershipNumber: string;
   benefits: string[];
 }
 
@@ -51,6 +54,8 @@ export interface DashboardRequest {
   description: string;
   status: RequestStatus;
   date: string;
+  eventDate?: string;
+  managementNotes?: string;
   department?: string;
 }
 
@@ -98,12 +103,15 @@ export const MOCK_MEMBER: MemberProfile = {
   showOnlineStatus: true,
   allowMessageRequests: true,
   memberSince: 'January 2025',
+  lastLogin: 'Today, 10:32 AM',
 };
 
 export const MOCK_MEMBERSHIP: MemberMembership = {
   plan: 'Gold',
   status: 'active',
   renewalDate: 'January 15, 2026',
+  activationDate: 'January 15, 2024',
+  membershipNumber: 'HMR-GLD-2024-00147',
   benefits: [
     'Priority chat responses',
     'Exclusive content access',
@@ -114,10 +122,10 @@ export const MOCK_MEMBERSHIP: MemberMembership = {
 };
 
 export const MOCK_REQUESTS: DashboardRequest[] = [
-  { id: 'r1', type: 'experience', title: 'Meet & Greet — NYC Premiere', description: 'Requested attendance at The Shards NYC premiere meet and greet.', status: 'approved', date: 'Dec 10, 2025' },
-  { id: 'r2', type: 'business', title: 'Podcast Interview Request', description: 'Interview request for The Deep Cut podcast.', status: 'under_review', date: 'Dec 8, 2025' },
-  { id: 'r3', type: 'experience', title: 'Virtual Greeting — Birthday', description: 'Personalized video greeting for fan birthday.', status: 'pending', date: 'Dec 5, 2025' },
-  { id: 'r4', type: 'contact', title: 'Charity Collaboration', description: 'Partnership request for environmental nonprofit.', status: 'completed', date: 'Nov 28, 2025' },
+  { id: 'r1', type: 'experience', title: 'Meet & Greet — NYC Premiere', description: 'Requested attendance at The Shards NYC premiere meet and greet.', status: 'approved', date: 'Dec 10, 2025', eventDate: 'Jan 20, 2026', managementNotes: 'Approved. Check-in at VIP desk 30 minutes before event.' },
+  { id: 'r2', type: 'business', title: 'Podcast Interview Request', description: 'Interview request for The Deep Cut podcast.', status: 'under_review', date: 'Dec 8, 2025', managementNotes: 'Under review by management team.' },
+  { id: 'r3', type: 'experience', title: 'Virtual Greeting — Birthday', description: 'Personalized video greeting for fan birthday.', status: 'pending', date: 'Dec 5, 2025', eventDate: 'Feb 14, 2026' },
+  { id: 'r4', type: 'contact', title: 'Charity Collaboration', description: 'Partnership request for environmental nonprofit.', status: 'completed', date: 'Nov 28, 2025', managementNotes: 'Collaboration completed. Thank you for your support!' },
 ];
 
 export const MOCK_NOTIFICATIONS: DashboardNotification[] = [

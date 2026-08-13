@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles, ArrowRight, Calendar, Check, X, Star, Clock } from 'lucide-react';
+import { Sparkles, ArrowRight, Calendar, Check, X, Star, Clock, Trash2 } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 
 const EXPERIENCES = [
@@ -20,7 +20,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onRequestFormOpened?: () => void }> = ({ openRequestForm, onRequestFormOpened }) => {
-  const { requests, addRequest, membership } = useDashboard();
+  const { requests, addRequest, membership, withdrawRequest } = useDashboard();
   const [selectedExp, setSelectedExp] = useState<typeof EXPERIENCES[0] | null>(null);
   const [requestNote, setRequestNote] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -129,6 +129,9 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
                   <p className="text-[10px] text-[#57534E] mt-0.5">{r.date}</p>
                 </div>
                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium capitalize ${r.status === 'approved' ? 'bg-[#16A34A]/10 text-[#16A34A]' : r.status === 'completed' ? 'bg-[#57534E]/10 text-[#57534E]' : 'bg-[#F59E0B]/10 text-[#F59E0B]'}`}>{r.status.replace('_', ' ')}</span>
+                {r.status === 'pending' && (
+                  <button onClick={() => withdrawRequest(r.id)} className="text-[10px] text-[#DC2626] hover:text-[#B91C1C] font-medium transition-colors cursor-pointer">Withdraw</button>
+                )}
               </motion.div>
             ))}
           </div>

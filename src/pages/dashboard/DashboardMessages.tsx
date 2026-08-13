@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Inbox, Send, ArrowLeft, Circle } from 'lucide-react';
+import { Inbox, Send, ArrowLeft, Circle, Trash2 } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 
 export const DashboardMessages: React.FC = () => {
-  const { messages, addMessage, markThreadRead, addConversation } = useDashboard();
+  const { messages, addMessage, markThreadRead, addMessageThread, deleteMessageThread } = useDashboard();
   const [selectedThread, setSelectedThread] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
   const [newSubject, setNewSubject] = useState('');
@@ -21,7 +21,8 @@ export const DashboardMessages: React.FC = () => {
 
   const handleCreateThread = () => {
     if (!newSubject.trim() || !newBody.trim()) return;
-    addConversation({ type: 'fan', lastMessage: newBody.trim(), status: 'open' });
+    const threadId = addMessageThread(newSubject.trim(), newBody.trim());
+    setSelectedThread(threadId);
     setNewSubject('');
     setNewBody('');
     setShowNewThread(false);
@@ -136,8 +137,11 @@ export const DashboardMessages: React.FC = () => {
         {messages.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/30 p-12 text-center">
             <Inbox className="w-8 h-8 text-[#57534E]/30 mx-auto mb-3" />
-            <p className="text-sm text-[#57534E]">No messages yet.</p>
-            <p className="text-xs text-[#57534E]/60 mt-1">Start a conversation from the Chat page.</p>
+            <p className="text-sm font-medium text-[#1C1917]">No messages yet</p>
+            <p className="text-xs text-[#57534E] mt-1">Start a new thread to begin a conversation.</p>
+            <button onClick={() => setShowNewThread(true)} className="inline-flex items-center gap-1.5 mt-4 text-xs font-medium text-[#A6852F] hover:text-[#8B6F1F] transition-colors cursor-pointer">
+              <Inbox className="w-3 h-3" /> New Thread
+            </button>
           </div>
         ) : (
           messages.map((t, i) => (
@@ -162,6 +166,9 @@ export const DashboardMessages: React.FC = () => {
                 <p className="text-xs text-[#57534E] truncate mt-0.5">{t.lastMessage}</p>
                 <p className="text-[10px] text-[#57534E]/60 mt-0.5">{t.lastDate}</p>
               </div>
+              <button onClick={(e) => { e.stopPropagation(); deleteMessageThread(t.id); }} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E]/30 hover:text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer shrink-0">
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
             </motion.button>
           ))
         )}

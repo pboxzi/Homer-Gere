@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Eye, EyeOff, ArrowRight, Chrome, Apple, LayoutGrid, Shield, Lock } from 'lucide-react';
 import { LOGIN_CONFIG, LOGIN_SECURITY_NOTICE } from '../data/loginData';
+import { useAuth } from '../context/AuthContext';
 
 const SOCIAL_ICONS: Record<string, React.FC<{ className?: string; style?: React.CSSProperties }>> = {
   Chrome,
@@ -12,12 +13,20 @@ const SOCIAL_ICONS: Record<string, React.FC<{ className?: string; style?: React.
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { signIn, isAuthenticated, user } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  React.useEffect(() => {
+    if (isAuthenticated && user) {
+      if (user.role === 'admin') navigate('/admin');
+      else navigate('/dashboard');
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const enabledProviders = LOGIN_CONFIG.socialProviders.filter((p) => p.enabled);
 
@@ -32,16 +41,12 @@ export default function LoginPage() {
 
     setLoading(true);
 
-    // Simulated auth — replace with real auth when backend is ready
-    setTimeout(() => {
+    const result = await signIn(email, password);
+    if (result.error) {
+      setError(result.error);
       setLoading(false);
-      // Simulate admin login
-      if (email === 'admin@homergere.com') {
-        navigate('/admin');
-      } else {
-        navigate('/dashboard');
-      }
-    }, 1500);
+    }
+    // Loading stays true if successful (will redirect)
   };
 
   return (

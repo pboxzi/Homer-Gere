@@ -100,13 +100,13 @@ export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemCl
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                onClick={() => onNavigateToProject?.(entry.id) || onItemClick(entry.id)}
+                onClick={() => { if (onNavigateToProject) onNavigateToProject(entry.id); else onItemClick(entry.id); }}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    onNavigateToProject?.(entry.id) || onItemClick(entry.id);
+                    if (onNavigateToProject) onNavigateToProject(entry.id); else onItemClick(entry.id);
                   }
                 }}
               >

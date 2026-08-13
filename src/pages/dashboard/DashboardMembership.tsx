@@ -1,16 +1,17 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Crown, Check, ArrowRight, CreditCard } from 'lucide-react';
+import { Crown, Check, ArrowRight, CreditCard, Hash, Calendar, Phone } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 
 export const DashboardMembership: React.FC = () => {
   const navigate = useNavigate();
   const { membership } = useDashboard();
+  const canUseWhatsApp = membership.plan === 'Gold' || membership.plan === 'Platinum';
 
   const PAYMENT_HISTORY = [
-    { id: 'p1', plan: `${membership.plan} Membership — Annual`, date: 'Jan 15, 2025', amount: '$199.00' },
-    { id: 'p2', plan: `${membership.plan} Membership — Annual`, date: 'Jan 15, 2024', amount: '$199.00' },
+    { id: 'p1', plan: `${membership.plan} Membership — Annual`, date: membership.activationDate, amount: '$199.00' },
+    { id: 'p2', plan: `${membership.plan} Membership — Annual`, date: 'January 15, 2025', amount: '$199.00' },
   ];
 
   return (
@@ -20,6 +21,7 @@ export const DashboardMembership: React.FC = () => {
         <p className="text-sm text-[#57534E] mt-1">Manage your membership plan and benefits.</p>
       </motion.div>
 
+      {/* Current Plan Card */}
       <motion.div className="rounded-2xl border border-[#A6852F]/20 bg-gradient-to-br from-[#A6852F]/5 to-transparent p-6 sm:p-8" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
         <div className="flex items-start justify-between mb-6">
           <div>
@@ -31,12 +33,46 @@ export const DashboardMembership: React.FC = () => {
           </div>
           <span className="text-[10px] px-2.5 py-1 rounded-full bg-[#16A34A]/10 text-[#16A34A] font-medium uppercase">{membership.status}</span>
         </div>
-        <p className="text-sm text-[#57534E] mb-4">Renewal date: <span className="font-medium text-[#1C1917]">{membership.renewalDate}</span></p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+          <div className="flex items-center gap-2">
+            <Hash className="w-4 h-4 text-[#57534E]" />
+            <div>
+              <p className="text-[10px] text-[#57534E] uppercase">Membership #</p>
+              <p className="text-sm font-medium text-[#1C1917] font-mono">{membership.membershipNumber}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-[#57534E]" />
+            <div>
+              <p className="text-[10px] text-[#57534E] uppercase">Active Since</p>
+              <p className="text-sm font-medium text-[#1C1917]">{membership.activationDate}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-[#57534E]" />
+            <div>
+              <p className="text-[10px] text-[#57534E] uppercase">Next Renewal</p>
+              <p className="text-sm font-medium text-[#1C1917]">{membership.renewalDate}</p>
+            </div>
+          </div>
+          {canUseWhatsApp && (
+            <div className="flex items-center gap-2">
+              <Phone className="w-4 h-4 text-[#25D366]" />
+              <div>
+                <p className="text-[10px] text-[#57534E] uppercase">WhatsApp Access</p>
+                <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-[#25D366] hover:underline">Message Homer</a>
+              </div>
+            </div>
+          )}
+        </div>
+
         <button onClick={() => navigate('/membership')} className="inline-flex items-center gap-2 text-sm font-medium text-[#A6852F] hover:text-[#8B6F1F] transition-colors cursor-pointer">
           Upgrade Plan <ArrowRight className="w-4 h-4" />
         </button>
       </motion.div>
 
+      {/* Benefits */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
         <h3 className="text-sm font-medium text-[#1C1917] mb-4">Your Benefits</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -46,9 +82,16 @@ export const DashboardMembership: React.FC = () => {
               <span className="text-sm text-[#57534E]">{b}</span>
             </div>
           ))}
+          {canUseWhatsApp && (
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-[#25D366]/5 border border-[#25D366]/20">
+              <Phone className="w-4 h-4 text-[#25D366] shrink-0" />
+              <span className="text-sm text-[#1C1917]">Direct WhatsApp messaging</span>
+            </div>
+          )}
         </div>
       </motion.div>
 
+      {/* Payment History */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
         <h3 className="text-sm font-medium text-[#1C1917] mb-4">Payment History</h3>
         <div className="rounded-2xl border border-[#E8E5DF]/60 bg-white overflow-hidden">
@@ -59,7 +102,10 @@ export const DashboardMembership: React.FC = () => {
                 <p className="text-sm text-[#1C1917]">{p.plan}</p>
                 <p className="text-[11px] text-[#57534E]">{p.date}</p>
               </div>
-              <span className="text-sm font-medium text-[#1C1917]">{p.amount}</span>
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium text-[#1C1917]">{p.amount}</span>
+                <button className="text-[10px] text-[#A6852F] hover:text-[#8B6F1F] font-medium transition-colors cursor-pointer">Receipt</button>
+              </div>
             </div>
           ))}
         </div>
