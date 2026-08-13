@@ -35,10 +35,6 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
           <div className="relative z-10 p-6 sm:p-10 md:p-14 lg:p-16 lg:pb-12 w-full lg:w-[48%] flex flex-col items-start justify-between h-full space-y-6 lg:space-y-0">
             <div className="flex flex-col items-start gap-5 sm:gap-6 max-w-xl">
               <div className="space-y-3">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-editorial text-[#1C1917] tracking-tight leading-[1.05]">
-                  Homer Gere
-                </h1>
-              </div>
               <p className="text-sm sm:text-base text-[#57534E] font-normal leading-relaxed max-w-lg">
                 American actor known for Euphoria Season 3, The Shards, and upcoming projects with
                 Oliver Stone. Discover his work, exclusive experiences, and official updates.
