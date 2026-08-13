@@ -28,6 +28,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const isExperiencesPage = location.pathname === '/experiences';
   const isMembershipPage = location.pathname === '/membership';
   const isChatPage = location.pathname === '/chat';
+  const isContactPage = location.pathname === '/contact';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -50,6 +51,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'experiences', label: 'Experiences' },
     { id: 'membership', label: 'Membership' },
     { id: 'chat', label: 'Chat' },
+    { id: 'contact', label: 'Contact' },
   ];
 
   const handleNavClick = (id: string) => {
@@ -69,7 +71,9 @@ export const Navbar: React.FC<NavbarProps> = ({
       routerNavigate('/membership');
     } else if (id === 'chat') {
       routerNavigate('/chat');
-    } else if ((isJourneyPage || isProjectsPage || isMediaPage || isGalleryPage || isJournalPage || isExperiencesPage || isMembershipPage || isChatPage) && id === 'home') {
+    } else if (id === 'contact') {
+      routerNavigate('/contact');
+    } else if ((isJourneyPage || isProjectsPage || isMediaPage || isGalleryPage || isJournalPage || isExperiencesPage || isMembershipPage || isChatPage || isContactPage) && id === 'home') {
       routerNavigate('/');
     } else {
       onNavigate(id);
@@ -91,10 +95,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={() => handleNavClick('home')}
           className="group flex flex-col text-left focus:outline-none cursor-pointer"
         >
-          <span className={`font-editorial tracking-[0.06em] text-[#1C1917] group-hover:text-[#C9A84C] transition-all duration-500 uppercase leading-none ${scrolled ? 'text-base' : 'text-lg sm:text-xl'}`}>
+          <span className={`font-editorial tracking-[0.06em] text-[#1C1917] group-hover:text-[#A6852F] transition-all duration-500 uppercase leading-none ${scrolled ? 'text-base' : 'text-lg sm:text-xl'}`}>
             Homer Gere
           </span>
-          <span className={`font-medium tracking-[0.35em] text-[#C9A84C]/70 uppercase transition-all duration-500 ${scrolled ? 'text-[7px] mt-0.5' : 'text-[8px] sm:text-[9px] mt-1'}`}>
+          <span className={`font-medium tracking-[0.35em] text-[#A6852F]/70 uppercase transition-all duration-500 ${scrolled ? 'text-[7px] mt-0.5' : 'text-[8px] sm:text-[9px] mt-1'}`}>
             Official Website
           </span>
         </button>
@@ -102,15 +106,15 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-0.5">
           {navItems.map((item) => {
-            const isActive = item.id === 'journey' ? isJourneyPage : item.id === 'projects' ? isProjectsPage : item.id === 'gallery' ? isGalleryPage : item.id === 'journal' ? isJournalPage : item.id === 'media' ? isMediaPage : item.id === 'experiences' ? isExperiencesPage : item.id === 'membership' ? isMembershipPage : item.id === 'chat' ? isChatPage : activeSection === item.id;
+            const isActive = item.id === 'journey' ? isJourneyPage : item.id === 'projects' ? isProjectsPage : item.id === 'gallery' ? isGalleryPage : item.id === 'journal' ? isJournalPage : item.id === 'media' ? isMediaPage : item.id === 'experiences' ? isExperiencesPage : item.id === 'membership' ? isMembershipPage : item.id === 'chat' ? isChatPage : item.id === 'contact' ? isContactPage : activeSection === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
                 className={`relative px-3.5 py-1.5 text-[11px] font-medium tracking-[0.03em] transition-all duration-300 focus:outline-none rounded-full ${
                   isActive
-                    ? 'text-[#C9A84C] bg-[#C9A84C]/10'
-                    : 'text-[#57534E] hover:text-[#1C1917] hover:bg-[#C9A84C]/5'
+                    ? 'text-[#A6852F] bg-[#A6852F]/10'
+                    : 'text-[#57534E] hover:text-[#1C1917] hover:bg-[#A6852F]/5'
                 }`}
               >
                 {item.label}
@@ -156,25 +160,25 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Scroll progress bar */}
       <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-[#E8E5DF]/50">
         <div
-          className="h-full bg-gradient-to-r from-[#C9A84C]/40 via-[#C9A84C] to-[#C9A84C]/40 transition-[width] duration-150 ease-out"
+          className="h-full bg-gradient-to-r from-[#A6852F]/40 via-[#A6852F] to-[#A6852F]/40 transition-[width] duration-150 ease-out"
           style={{ width: `${scrollProgress}%` }}
         />
       </div>
 
       {/* Mobile Drawer with staggered animation */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#FAF9F7]/95 backdrop-blur-2xl px-5 pt-4 pb-6 border-t border-[#C9A84C]/10">
+        <div className="lg:hidden bg-[#FAF9F7]/95 backdrop-blur-2xl px-5 pt-4 pb-6 border-t border-[#A6852F]/10">
           <div className="flex flex-col gap-0.5">
             {navItems.map((item, index) => {
-            const isActive = item.id === 'journey' ? isJourneyPage : item.id === 'projects' ? isProjectsPage : item.id === 'media' ? isMediaPage : item.id === 'gallery' ? isGalleryPage : item.id === 'journal' ? isJournalPage : item.id === 'experiences' ? isExperiencesPage : item.id === 'membership' ? isMembershipPage : item.id === 'chat' ? isChatPage : activeSection === item.id;
+            const isActive = item.id === 'journey' ? isJourneyPage : item.id === 'projects' ? isProjectsPage : item.id === 'media' ? isMediaPage : item.id === 'gallery' ? isGalleryPage : item.id === 'journal' ? isJournalPage : item.id === 'experiences' ? isExperiencesPage : item.id === 'membership' ? isMembershipPage : item.id === 'chat' ? isChatPage : item.id === 'contact' ? isContactPage : activeSection === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
                   className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
                     isActive
-                      ? 'bg-[#C9A84C]/10 text-[#C9A84C]'
-                      : 'text-[#57534E] hover:bg-[#C9A84C]/5 hover:text-[#1C1917]'
+                      ? 'bg-[#A6852F]/10 text-[#A6852F]'
+                      : 'text-[#57534E] hover:bg-[#A6852F]/5 hover:text-[#1C1917]'
                   }`}
                   style={{
                     animation: `fadeSlideIn 0.3s ease forwards`,

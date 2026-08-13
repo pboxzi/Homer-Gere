@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Navbar } from './components/Navbar';
@@ -14,7 +14,6 @@ import { GallerySection } from './components/GallerySection';
 import { Footer } from './components/Footer';
 import { ChatModal } from './components/ChatModal';
 import { DetailModal } from './components/DetailModal';
-import { SectionDivider } from './components/SectionDivider';
 import { SectionFadeIn } from './components/SectionFadeIn';
 import { ScrollToTop } from './components/ScrollToTop';
 import { ModalType, JournalArticle, TimelineMilestone, GalleryItem } from './types';
@@ -28,6 +27,7 @@ import MediaPage from './pages/MediaPage';
 import ExperiencesPage from './pages/ExperiencesPage';
 import MembershipPage from './pages/MembershipPage';
 import ChatPage from './pages/chat/ChatPage';
+import ContactPage from './pages/ContactPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 
 function HomePage() {
@@ -38,35 +38,18 @@ function HomePage() {
   const navigate = useNavigate();
 
   const handleNavigate = (sectionId: string) => {
-    if (sectionId === 'journey') {
-      navigate('/journey');
-      return;
-    }
-    if (sectionId === 'projects') {
-      navigate('/projects');
-      return;
-    }
-    if (sectionId === 'gallery') {
-      navigate('/gallery');
-      return;
-    }
-    if (sectionId === 'journal') {
-      navigate('/journal');
-      return;
-    }
-    if (sectionId === 'experiences') {
-      navigate('/experiences');
-      return;
-    }
-    if (sectionId === 'membership') {
-      navigate('/membership');
-      return;
-    }
+    if (sectionId === 'journey') { navigate('/journey'); return; }
+    if (sectionId === 'projects') { navigate('/projects'); return; }
+    if (sectionId === 'gallery') { navigate('/gallery'); return; }
+    if (sectionId === 'journal') { navigate('/journal'); return; }
+    if (sectionId === 'experiences') { navigate('/experiences'); return; }
+    if (sectionId === 'membership') { navigate('/membership'); return; }
+    if (sectionId === 'chat') { navigate('/chat'); return; }
+    if (sectionId === 'contact') { navigate('/contact'); return; }
+    if (sectionId === 'media') { navigate('/media'); return; }
     setActiveSection(sectionId);
     const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    if (element) { element.scrollIntoView({ behavior: 'smooth' }); }
   };
 
   const handleOpenChat = (mode: 'fan' | 'business' = 'fan') => {
@@ -76,103 +59,31 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
-      <Navbar
-        activeSection={activeSection}
-        onNavigate={handleNavigate}
-        onOpenChat={handleOpenChat}
-        onOpenSignIn={() => setActiveModal({ type: 'signin' })}
-      />
+      <Navbar activeSection={activeSection} onNavigate={handleNavigate} onOpenChat={handleOpenChat} onOpenSignIn={() => setActiveModal({ type: 'signin' })} />
 
       <main>
-        <Hero
-          onExploreJourney={() => handleNavigate('journey')}
-          onViewProject={(projectId) => setActiveModal({ type: 'project', projectId })}
-          onOpenChat={handleOpenChat}
-        />
+        <Hero onExploreJourney={() => handleNavigate('journey')} onViewProject={(projectId) => setActiveModal({ type: 'project', projectId })} onOpenChat={handleOpenChat} />
 
-        <SectionDivider />
+        <SectionFadeIn><FeaturedProject onDiscoverMore={(projectId) => setActiveModal({ type: 'project', projectId })} /></SectionFadeIn>
 
-        <SectionFadeIn>
-          <FeaturedProject
-            onDiscoverMore={(projectId) => setActiveModal({ type: 'project', projectId })}
-          />
-        </SectionFadeIn>
+        <SectionFadeIn><JourneyTimeline onSelectMilestone={(milestone: TimelineMilestone) => setActiveModal({ type: 'milestone', milestone })} onViewFullTimeline={() => navigate('/journey')} /></SectionFadeIn>
 
-        <SectionDivider />
+        <SectionFadeIn><JournalSection onSelectArticle={(article: JournalArticle) => setActiveModal({ type: 'article', article })} onNavigate={handleNavigate} /></SectionFadeIn>
 
-        <SectionFadeIn>
-          <JourneyTimeline
-            onSelectMilestone={(milestone: TimelineMilestone) =>
-              setActiveModal({ type: 'milestone', milestone })
-            }
-            onViewFullTimeline={() => navigate('/journey')}
-          />
-        </SectionFadeIn>
+        <SectionFadeIn><ExperiencesSection onNavigate={handleNavigate} /></SectionFadeIn>
 
-        <SectionDivider />
+        <SectionFadeIn><MembershipSection onNavigate={handleNavigate} /></SectionFadeIn>
 
-        <SectionFadeIn>
-          <JournalSection
-            onSelectArticle={(article: JournalArticle) =>
-              setActiveModal({ type: 'article', article })
-            }
-            onNavigate={handleNavigate}
-          />
-        </SectionFadeIn>
+        <SectionFadeIn><ChatSection onStartChat={(mode) => handleOpenChat(mode)} /></SectionFadeIn>
 
-        <SectionDivider />
+        <SectionFadeIn><GallerySection onSelectImage={(item: GalleryItem) => setActiveModal({ type: 'gallery', item })} onNavigate={handleNavigate} /></SectionFadeIn>
 
-        <SectionFadeIn>
-          <ExperiencesSection
-            onNavigate={handleNavigate}
-          />
-        </SectionFadeIn>
-
-        <SectionDivider />
-
-        <SectionFadeIn>
-          <MembershipSection
-            onNavigate={handleNavigate}
-          />
-        </SectionFadeIn>
-
-        <SectionDivider />
-
-        <SectionFadeIn>
-          <ChatSection onStartChat={(mode) => handleOpenChat(mode)} />
-        </SectionFadeIn>
-
-        <SectionDivider />
-
-        <SectionFadeIn>
-          <GallerySection
-            onSelectImage={(item: GalleryItem) =>
-              setActiveModal({ type: 'gallery', item })
-            }
-            onNavigate={handleNavigate}
-          />
-        </SectionFadeIn>
-
-        <SectionDivider />
-
-        <SectionFadeIn>
-          <NewsletterBar />
-        </SectionFadeIn>
+        <SectionFadeIn><NewsletterBar /></SectionFadeIn>
       </main>
 
       <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />
-
-      <ChatModal
-        isOpen={chatOpen}
-        initialMode={chatMode}
-        onClose={() => setChatOpen(false)}
-      />
-
-      <DetailModal
-        modal={activeModal}
-        onClose={() => setActiveModal(null)}
-        onOpenChat={handleOpenChat}
-      />
+      <ChatModal isOpen={chatOpen} initialMode={chatMode} onClose={() => setChatOpen(false)} />
+      <DetailModal modal={activeModal} onClose={() => setActiveModal(null)} onOpenChat={handleOpenChat} />
     </div>
   );
 }
@@ -194,6 +105,7 @@ export default function App() {
           <Route path="/experiences" element={<ExperiencesPage />} />
           <Route path="/membership" element={<MembershipPage />} />
           <Route path="/chat" element={<ChatPage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </BrowserRouter>
