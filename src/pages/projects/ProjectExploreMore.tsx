@@ -27,11 +27,11 @@ export const ProjectExploreMore: React.FC<ProjectExploreMoreProps> = ({ onNaviga
       image: SECTION_IMAGES.exploreMore.journal,
     },
     {
-      id: 'press',
-      title: 'Press',
-      description: 'Coverage from BBC News, British Vogue, Hollywood Reporter, and more.',
-      icon: <Newspaper className="w-5 h-5" />,
-      image: SECTION_IMAGES.exploreMore.press,
+      id: 'journal',
+      title: 'Journal',
+      description: 'Read behind-the-scenes insights, personal reflections, and career updates.',
+      icon: <BookOpen className="w-5 h-5" />,
+      image: SECTION_IMAGES.exploreMore.journal,
     },
   ];
 

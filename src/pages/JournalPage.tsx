@@ -32,19 +32,16 @@ export const JournalPage: React.FC = () => {
   );
 
   const handleNavigate = (sectionId: string) => {
-    if (sectionId === 'home') {
-      navigate('/');
-    } else if (sectionId === 'journey') {
-      navigate('/journey');
-    } else if (sectionId === 'projects') {
-      navigate('/projects');
-    } else if (sectionId === 'media') {
-      navigate('/media');
-    } else if (sectionId === 'gallery') {
-      navigate('/gallery');
-    } else {
-      navigate('/');
-    }
+    if (sectionId === 'home') { navigate('/'); return; }
+    if (sectionId === 'journey') { navigate('/journey'); return; }
+    if (sectionId === 'projects') { navigate('/projects'); return; }
+    if (sectionId === 'gallery') { navigate('/gallery'); return; }
+    if (sectionId === 'journal') { navigate('/journal'); return; }
+    if (sectionId === 'experiences') { navigate('/experiences'); return; }
+    if (sectionId === 'membership') { navigate('/membership'); return; }
+    if (sectionId === 'media') { navigate('/media'); return; }
+    if (sectionId === 'chat') { navigate('/chat'); return; }
+    navigate('/');
   };
 
   const handleOpenChat = (mode: 'fan' | 'business' = 'fan') => {

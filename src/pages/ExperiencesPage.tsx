@@ -26,20 +26,23 @@ export default function ExperiencesPage() {
   const [preselectedForRequest, setPreselectedForRequest] = useState<Experience | null>(null);
 
   const handleNavigate = (sectionId: string) => {
-    if (sectionId === 'home') { navigate('/'); }
-    else if (sectionId === 'journey') { navigate('/journey'); }
-    else if (sectionId === 'projects') { navigate('/projects'); }
-    else if (sectionId === 'media') { navigate('/media'); }
-    else if (sectionId === 'gallery') { navigate('/gallery'); }
-    else if (sectionId === 'journal') { navigate('/journal'); }
-    else { const el = document.getElementById(sectionId); if (el) el.scrollIntoView({ behavior: 'smooth' }); }
+    if (sectionId === 'home') { navigate('/'); return; }
+    if (sectionId === 'journey') { navigate('/journey'); return; }
+    if (sectionId === 'projects') { navigate('/projects'); return; }
+    if (sectionId === 'gallery') { navigate('/gallery'); return; }
+    if (sectionId === 'journal') { navigate('/journal'); return; }
+    if (sectionId === 'experiences') { navigate('/experiences'); return; }
+    if (sectionId === 'membership') { navigate('/membership'); return; }
+    if (sectionId === 'media') { navigate('/media'); return; }
+    if (sectionId === 'chat') { navigate('/chat'); return; }
+    navigate('/');
   };
 
   const handleOpenChat = (mode: 'fan' | 'business' = 'fan') => { setChatMode(mode); setChatOpen(true); };
   const handleSelectExperience = (experience: Experience) => { setSelectedExperience(experience); setShowDetailModal(true); };
   const handleRequestExperience = (experience?: Experience) => { setShowDetailModal(false); setPreselectedForRequest(experience || null); setShowRequestForm(true); };
   const handleRequestFromHero = () => { setShowRequestForm(true); };
-  const handleExploreMembership = () => { navigate('/'); setTimeout(() => { document.getElementById('membership')?.scrollIntoView({ behavior: 'smooth' }); }, 100); };
+  const handleExploreMembership = () => { navigate('/membership'); };
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">

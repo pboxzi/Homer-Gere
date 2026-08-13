@@ -11,7 +11,7 @@ const HIGHLIGHTS = [
       'Made his television debut portraying Dylan Reid in HBO\'s Euphoria Season 3. The casting was announced by BBC News in October 2025; the season premiered in May 2026.',
     date: '2026',
     image: SECTION_IMAGES.highlights.euphoriaDebut,
-    targetId: 'journey-timeline',
+    slug: 'euphoria',
   },
   {
     id: 'the-shards',
@@ -20,7 +20,7 @@ const HIGHLIGHTS = [
       'Cast as Robert Mallory in Ryan Murphy and Bret Easton Ellis\'s FX/Hulu series, starring alongside Igby Rigney, Kaia Gerber, Hayes Warner, Graham Campbell, Wes Bentley, and Evan Rachel Wood. His first major leading role, premiered August 5, 2026.',
     date: '2025–2026',
     image: SECTION_IMAGES.highlights.firstLeadRole,
-    targetId: 'journey-filmography',
+    slug: 'the-shards',
   },
   {
     id: 'white-lies',
@@ -29,7 +29,7 @@ const HIGHLIGHTS = [
       'Cast in an upcoming film directed by Oliver Stone, announced in June 2026. Details about the role and release date are forthcoming.',
     date: '2026',
     image: SECTION_IMAGES.highlights.whiteLies,
-    targetId: 'journey-filmography',
+    slug: 'white-lies',
   },
   {
     id: 'brown-university',
@@ -38,12 +38,12 @@ const HIGHLIGHTS = [
       'Studied Cognitive Neuroscience and Visual Arts at Brown University in Providence, Rhode Island. Graduated in 2024.',
     date: '2019–2024',
     image: SECTION_IMAGES.highlights.brownUniversity,
-    targetId: 'journey-glance',
+    slug: 'journey-glance',
   },
 ];
 
 interface JourneyHighlightsProps {
-  onItemClick?: (targetId: string) => void;
+  onItemClick?: (slug: string) => void;
 }
 
 export const JourneyHighlights: React.FC<JourneyHighlightsProps> = ({ onItemClick }) => {
@@ -81,13 +81,13 @@ export const JourneyHighlights: React.FC<JourneyHighlightsProps> = ({ onItemClic
                 delay: 0.15 + idx * 0.12,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              onClick={() => onItemClick?.(item.targetId)}
+              onClick={() => onItemClick?.(item.slug)}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  onItemClick?.(item.targetId);
+                  onItemClick?.(item.slug);
                 }
               }}
             >
