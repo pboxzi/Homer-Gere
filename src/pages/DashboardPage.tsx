@@ -15,24 +15,21 @@ import { DashboardNotifications } from './dashboard/DashboardNotifications';
 import { DashboardSettings } from './dashboard/DashboardSettings';
 import { DashboardSecurity } from './dashboard/DashboardSecurity';
 import { DashboardHelp } from './dashboard/DashboardHelp';
-import { ChatModal } from '../components/ChatModal';
+import { SEO } from '../components/SEO';
 import { DashboardSection } from '../data/dashboardData';
 
 export default function DashboardPage() {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<DashboardSection>('home');
-  const [chatOpen, setChatOpen] = useState(false);
-  const [chatMode, setChatMode] = useState<'fan' | 'business'>('fan');
   const [openRequestForm, setOpenRequestForm] = useState(false);
 
   useEffect(() => {
     if (!isAuthenticated) navigate('/login');
   }, [isAuthenticated, navigate]);
 
-  const handleOpenChat = (mode: 'fan' | 'business' = 'fan') => {
-    setChatMode(mode);
-    setChatOpen(true);
+  const handleOpenChat = () => {
+    navigate('/chat');
   };
 
   const handleRequestExperience = () => {
@@ -61,8 +58,8 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout activeSection={activeSection} onSectionChange={setActiveSection}>
+      <SEO title="Dashboard" />
       {renderSection()}
-      <ChatModal isOpen={chatOpen} initialMode={chatMode} onClose={() => setChatOpen(false)} />
     </DashboardLayout>
   );
 }

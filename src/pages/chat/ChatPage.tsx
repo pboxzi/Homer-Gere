@@ -1,18 +1,29 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useCallback } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Navbar } from '../../components/Navbar';
-import { ChatModal } from '../../components/ChatModal';
 import { DetailModal } from '../../components/DetailModal';
 import { FanChat } from './FanChat';
+import { BusinessChat } from './BusinessChat';
+import { ChatConfirmation } from './ChatConfirmation';
 import { SEO } from '../../components/SEO';
 import { ModalType } from '../../types';
 
+
 export default function ChatPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const mode = searchParams.get('mode') || 'fan';
   const [activeSection] = useState<string>('chat');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
-  const [chatOpen, setChatOpen] = useState<boolean>(false);
-  const [chatMode, setChatMode] = useState<'fan' | 'business'>('fan');
+  const [submittedData, setSubmittedData] = useState<{
+    fullName: string;
+    email: string;
+    company: string;
+    enquiryType: string;
+    message: string;
+    method: string;
+  } | null>(null);
+
 
   const handleNavigate = (sectionId: string) => {
     if (sectionId === 'home') { navigate('/'); return; }
@@ -27,10 +38,25 @@ export default function ChatPage() {
     navigate('/');
   };
 
-  const handleOpenChat = (mode: 'fan' | 'business' = 'fan') => {
-    setChatMode(mode);
-    setChatOpen(true);
+  const handleOpenChat = () => {
+    navigate('/chat');
   };
+
+  const handleBusinessComplete = useCallback((data: {
+    fullName: string;
+    email: string;
+    company: string;
+    enquiryType: string;
+    message: string;
+    method: string;
+  }) => {
+    setSubmittedData(data);
+  }, []);
+
+  const handleCloseConfirmation = useCallback(() => {
+    setSubmittedData(null);
+    navigate('/');
+  }, [navigate]);
 
   return (
     <div className="h-dvh h-screen flex flex-col bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
@@ -43,14 +69,19 @@ export default function ChatPage() {
       />
 
       <div className="flex-1 min-h-0 pt-16 lg:pt-20">
-        <FanChat onBack={() => navigate('/')} />
+        {submittedData ? (
+          <ChatConfirmation
+            chatType="business"
+            method={submittedData.method}
+            formData={submittedData}
+            onClose={handleCloseConfirmation}
+          />
+        ) : mode === 'business' ? (
+          <BusinessChat onBack={() => navigate('/')} onComplete={handleBusinessComplete} />
+        ) : (
+          <FanChat onBack={() => navigate('/')} />
+        )}
       </div>
-
-      <ChatModal
-        isOpen={chatOpen}
-        initialMode={chatMode}
-        onClose={() => setChatOpen(false)}
-      />
 
       <DetailModal
         modal={activeModal}

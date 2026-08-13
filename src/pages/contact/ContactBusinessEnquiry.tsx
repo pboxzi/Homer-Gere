@@ -1,12 +1,25 @@
 import React, { useState, useRef } from 'react';
 import { motion, useInView } from 'motion/react';
-import { Send, CheckCircle, ArrowRight } from 'lucide-react';
+import { Send, CheckCircle, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
 import { ENQUIRY_TYPES } from '../../data/chatSettings';
+import { sanitizeInput, sanitizeEmail } from '../../lib/security';
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+interface FormErrors {
+  fullName?: string;
+  email?: string;
+  enquiryType?: string;
+  message?: string;
+}
 
 export const ContactBusinessEnquiry: React.FC = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -17,23 +30,79 @@ export const ContactBusinessEnquiry: React.FC = () => {
 
   const updateField = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field as keyof FormErrors]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
   };
 
-  const isFormValid = formData.fullName.trim() !== '' && formData.email.trim() !== '' && formData.enquiryType !== '' && formData.message.trim() !== '';
+  const handleBlur = (field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    validateField(field);
+  };
 
-  const handleSubmit = () => {
-    if (!isFormValid) return;
-    const subject = encodeURIComponent(`Business Enquiry from ${formData.fullName}`);
-    const body = encodeURIComponent(
-      `Name: ${formData.fullName}\nEmail: ${formData.email}\nCompany: ${formData.company}\nEnquiry Type: ${formData.enquiryType}\n\nMessage:\n${formData.message}`
-    );
-    window.open(`mailto:management@homergere.com?subject=${subject}&body=${body}`, '_blank');
-    setSubmitted(true);
+  const validateField = (field: string) => {
+    const newErrors = { ...errors };
+    switch (field) {
+      case 'fullName':
+        newErrors.fullName = formData.fullName.trim() ? undefined : 'Full name is required';
+        break;
+      case 'email':
+        if (!formData.email.trim()) {
+          newErrors.email = 'Email is required';
+        } else if (!EMAIL_REGEX.test(formData.email)) {
+          newErrors.email = 'Please enter a valid email address';
+        } else {
+          newErrors.email = undefined;
+        }
+        break;
+      case 'enquiryType':
+        newErrors.enquiryType = formData.enquiryType ? undefined : 'Please select an enquiry type';
+        break;
+      case 'message':
+        newErrors.message = formData.message.trim() ? undefined : 'Message is required';
+        break;
+    }
+    setErrors(newErrors);
+    return !newErrors[field as keyof FormErrors];
+  };
+
+  const validateAll = (): boolean => {
+    const fields = ['fullName', 'email', 'enquiryType', 'message'];
+    const allTouched: Record<string, boolean> = {};
+    fields.forEach((f) => { allTouched[f] = true; });
+    setTouched(allTouched);
+    return fields.every((f) => validateField(f));
+  };
+
+  const isFormValid = formData.fullName.trim() !== '' && EMAIL_REGEX.test(formData.email) && formData.enquiryType !== '' && formData.message.trim() !== '';
+
+  const handleSubmit = async () => {
+    if (!validateAll() || !isFormValid || isSubmitting) return;
+    if (!sanitizeEmail(formData.email)) {
+      setErrors({ email: 'Please enter a valid email address' });
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      const subject = encodeURIComponent(`Business Enquiry from ${sanitizeInput(formData.fullName)}`);
+      const body = encodeURIComponent(
+        `Name: ${sanitizeInput(formData.fullName)}\nEmail: ${sanitizeInput(formData.email)}\nCompany: ${sanitizeInput(formData.company)}\nEnquiry Type: ${formData.enquiryType}\n\nMessage:\n${sanitizeInput(formData.message)}`
+      );
+      window.open(`mailto:management@homergere.com?subject=${subject}&body=${body}`, '_blank');
+      await new Promise((r) => setTimeout(r, 500));
+      setSubmitted(true);
+    } catch {
+      setErrors({ message: 'Something went wrong. Please try again.' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReset = () => {
     setSubmitted(false);
     setFormData({ fullName: '', email: '', company: '', enquiryType: '', message: '' });
+    setErrors({});
+    setTouched({});
   };
 
   if (submitted) {
@@ -58,6 +127,16 @@ export const ContactBusinessEnquiry: React.FC = () => {
     );
   }
 
+  const renderError = (field: keyof FormErrors) => {
+    if (!touched[field] || !errors[field]) return null;
+    return (
+      <p className="text-[11px] text-[#DC2626] mt-1.5 flex items-center gap-1">
+        <AlertCircle className="w-3 h-3" />
+        {errors[field]}
+      </p>
+    );
+  };
+
   return (
     <section ref={sectionRef} className="py-24 sm:py-32 bg-[#FAF9F7]">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -80,11 +159,27 @@ export const ContactBusinessEnquiry: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Full Name *</label>
-                <input type="text" value={formData.fullName} onChange={(e) => updateField('fullName', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300" placeholder="Your full name" />
+                <input
+                  type="text"
+                  value={formData.fullName}
+                  onChange={(e) => updateField('fullName', e.target.value)}
+                  onBlur={() => handleBlur('fullName')}
+                  className={`w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300 ${touched.fullName && errors.fullName ? 'ring-2 ring-[#DC2626]/30' : ''}`}
+                  placeholder="Your full name"
+                />
+                {renderError('fullName')}
               </div>
               <div>
                 <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Email *</label>
-                <input type="email" value={formData.email} onChange={(e) => updateField('email', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300" placeholder="you@company.com" />
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => updateField('email', e.target.value)}
+                  onBlur={() => handleBlur('email')}
+                  className={`w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300 ${touched.email && errors.email ? 'ring-2 ring-[#DC2626]/30' : ''}`}
+                  placeholder="you@company.com"
+                />
+                {renderError('email')}
               </div>
             </div>
 
@@ -95,24 +190,51 @@ export const ContactBusinessEnquiry: React.FC = () => {
               </div>
               <div>
                 <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Enquiry Type *</label>
-                <select value={formData.enquiryType} onChange={(e) => updateField('enquiryType', e.target.value)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300 appearance-none">
+                <select
+                  value={formData.enquiryType}
+                  onChange={(e) => updateField('enquiryType', e.target.value)}
+                  onBlur={() => handleBlur('enquiryType')}
+                  className={`w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300 appearance-none ${touched.enquiryType && errors.enquiryType ? 'ring-2 ring-[#DC2626]/30' : ''}`}
+                >
                   <option value="">Select type</option>
                   {ENQUIRY_TYPES.map((type) => (
                     <option key={type} value={type}>{type}</option>
                   ))}
                 </select>
+                {renderError('enquiryType')}
               </div>
             </div>
 
             <div>
               <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Message *</label>
-              <textarea value={formData.message} onChange={(e) => updateField('message', e.target.value)} rows={5} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300 resize-none" placeholder="Describe your enquiry..." />
+              <textarea
+                value={formData.message}
+                onChange={(e) => updateField('message', e.target.value)}
+                onBlur={() => handleBlur('message')}
+                rows={5}
+                className={`w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300 resize-none ${touched.message && errors.message ? 'ring-2 ring-[#DC2626]/30' : ''}`}
+                placeholder="Describe your enquiry..."
+              />
+              {renderError('message')}
             </div>
           </div>
 
-          <button onClick={handleSubmit} disabled={!isFormValid} className="mt-6 inline-flex items-center justify-center gap-2.5 bg-[#1C1917] hover:bg-[#292524] disabled:bg-[#E8E5DF] disabled:text-[#57534E] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 cursor-pointer disabled:cursor-not-allowed">
-            Send Enquiry
-            <ArrowRight className="w-4 h-4" />
+          <button
+            onClick={handleSubmit}
+            disabled={!isFormValid || isSubmitting}
+            className="mt-6 inline-flex items-center justify-center gap-2.5 bg-[#1C1917] hover:bg-[#292524] disabled:bg-[#E8E5DF] disabled:text-[#57534E] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 cursor-pointer disabled:cursor-not-allowed"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Sending...
+              </>
+            ) : (
+              <>
+                Send Enquiry
+                <ArrowRight className="w-4 h-4" />
+              </>
+            )}
           </button>
 
           <p className="text-[11px] text-[#57534E] mt-6 leading-relaxed">

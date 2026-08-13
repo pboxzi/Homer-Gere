@@ -9,7 +9,7 @@ import { useDashboard } from '../../context/DashboardContext';
 import { DashboardSection } from '../../data/dashboardData';
 
 export const DashboardHome: React.FC<{
-  onOpenChat: (mode?: 'fan' | 'business') => void;
+  onOpenChat: () => void;
   onRequestExperience: () => void;
   onNavigate: (section: DashboardSection) => void;
 }> = ({ onOpenChat, onRequestExperience, onNavigate }) => {
@@ -88,7 +88,7 @@ export const DashboardHome: React.FC<{
         <h2 className="text-xs font-semibold text-[#1C1917] mb-3 uppercase tracking-[0.05em]">Quick Actions</h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
           {[
-            { icon: MessageSquare, label: 'Chat with Homer', onClick: () => onOpenChat('fan'), color: '#A6852F' },
+            { icon: MessageSquare, label: 'Chat with Homer', onClick: onOpenChat, color: '#A6852F' },
             { icon: Crown, label: 'Upgrade Membership', onClick: () => onNavigate('membership'), color: '#F59E0B' },
             { icon: Sparkles, label: 'Request Experience', onClick: onRequestExperience, color: '#8B5CF6' },
             { icon: User, label: 'Edit Profile', onClick: () => onNavigate('profile'), color: '#3B82F6' },
@@ -146,7 +146,7 @@ export const DashboardHome: React.FC<{
               <div className="text-center py-6">
                 <MessageSquare className="w-5 h-5 text-[#57534E]/20 mx-auto mb-1.5" />
                 <p className="text-xs text-[#57534E]/60">No conversations yet</p>
-                <button onClick={() => onOpenChat('fan')} className="text-[10px] text-[#A6852F] font-medium mt-1 hover:text-[#8B6F1F] cursor-pointer">Start a chat</button>
+                <button onClick={onOpenChat} className="text-[10px] text-[#A6852F] font-medium mt-1 hover:text-[#8B6F1F] cursor-pointer">Start a chat</button>
               </div>
             ) : messages.slice(0, 3).map((t) => (
               <button key={t.id} onClick={() => onNavigate('chat')} className={`w-full flex items-center gap-2.5 p-2.5 rounded-lg transition-colors cursor-pointer border text-left ${!t.read ? 'bg-[#A6852F]/5 border-[#A6852F]/15' : 'hover:bg-[#F3F1ED]/50 border-transparent'}`}>

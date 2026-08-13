@@ -25,7 +25,7 @@ export const ProjectContinueExploring: React.FC<ProjectContinueExploringProps> =
       title: 'View Gallery',
       description: 'Browse editorial photography, premiere moments, and behind-the-scenes images.',
       icon: <ImageIcon className="w-5 h-5" />,
-      action: () => onNavigate('/journey'),
+      action: () => onNavigate('/gallery'),
       image: SECTION_IMAGES.exploreMore.gallery,
     },
     {
@@ -33,7 +33,7 @@ export const ProjectContinueExploring: React.FC<ProjectContinueExploringProps> =
       title: 'Read Journal',
       description: 'Behind-the-scenes insights, personal reflections, and career updates.',
       icon: <BookOpen className="w-5 h-5" />,
-      action: () => onNavigate('/journey'),
+      action: () => onNavigate('/journal'),
       image: SECTION_IMAGES.exploreMore.journal,
     },
   ];

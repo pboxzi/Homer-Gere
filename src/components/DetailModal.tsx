@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { X, Calendar, Clock, Check, ShieldCheck } from 'lucide-react';
+import { X, Calendar, Clock, Check, ShieldCheck, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { ModalType } from '../types';
 import { FEATURED_PROJECT } from '../data/content';
+import { useAuth } from '../context/AuthContext';
+import { sanitizeInput } from '../lib/security';
 
 interface DetailModalProps {
   modal: ModalType;
   onClose: () => void;
-  onOpenChat: (mode?: 'fan' | 'business') => void;
+  onOpenChat: () => void;
 }
 
 export const DetailModal: React.FC<DetailModalProps> = ({
@@ -14,16 +17,45 @@ export const DetailModal: React.FC<DetailModalProps> = ({
   onClose,
   onOpenChat,
 }) => {
+  const navigate = useNavigate();
+  const { signIn } = useAuth();
   const [successMsg, setSuccessMsg] = useState('');
+  const [signinEmail, setSigninEmail] = useState('');
+  const [signinPassword, setSigninPassword] = useState('');
+  const [signinError, setSigninError] = useState('');
+  const [signinLoading, setSigninLoading] = useState(false);
+  const [membershipLoading, setMembershipLoading] = useState(false);
+  const [experienceLoading, setExperienceLoading] = useState(false);
 
   if (!modal || modal.type === 'chat') return null;
 
-  const handleActionClick = (title: string) => {
-    setSuccessMsg(`Your request for "${title}" has been registered! We will follow up shortly.`);
-    setTimeout(() => {
-      setSuccessMsg('');
-      onClose();
-    }, 2500);
+  const handleActionClick = async (title: string) => {
+    setExperienceLoading(true);
+    try {
+      await new Promise((r) => setTimeout(r, 1000));
+      setSuccessMsg(`Your request for "${title}" has been registered! We will follow up shortly.`);
+      setTimeout(() => {
+        setSuccessMsg('');
+        onClose();
+      }, 2500);
+    } finally {
+      setExperienceLoading(false);
+    }
+  };
+
+  const handleMembershipClick = async () => {
+    const tierName = 'tier' in modal && modal.tier ? modal.tier.name : 'Premium';
+    setMembershipLoading(true);
+    try {
+      await new Promise((r) => setTimeout(r, 1200));
+      setSuccessMsg(`Your ${tierName} membership registration has been received! Check your email for next steps.`);
+      setTimeout(() => {
+        setSuccessMsg('');
+        onClose();
+      }, 3000);
+    } finally {
+      setMembershipLoading(false);
+    }
   };
 
   return (
@@ -161,14 +193,22 @@ export const DetailModal: React.FC<DetailModalProps> = ({
               <div className="pt-4 flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={() => handleActionClick(modal.experience.title)}
-                  className="flex-1 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-sm font-medium text-center"
+                  disabled={experienceLoading}
+                  className="flex-1 py-3.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-full text-sm font-medium text-center inline-flex items-center justify-center gap-2"
                 >
-                  Request Experience
+                  {experienceLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    'Request Experience'
+                  )}
                 </button>
                 <button
                   onClick={() => {
                     onClose();
-                    onOpenChat('business');
+                    onOpenChat();
                   }}
                   className="px-6 py-3.5 bg-[#EDE9E0] hover:bg-[#E4DFD5] text-[#1C1917] rounded-full text-sm font-medium text-center"
                 >
@@ -209,10 +249,18 @@ export const DetailModal: React.FC<DetailModalProps> = ({
 
               <div className="pt-2">
                 <button
-                  onClick={() => handleActionClick(`${modal.tier.name} Membership`)}
-                  className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-sm font-medium"
+                  onClick={handleMembershipClick}
+                  disabled={membershipLoading}
+                  className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-full text-sm font-medium inline-flex items-center justify-center gap-2"
                 >
-                  Complete Registration &rarr;
+                  {membershipLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Processing Registration...
+                    </>
+                  ) : (
+                    <>Complete Registration &rarr;</>
+                  )}
                 </button>
               </div>
             </div>
@@ -264,9 +312,22 @@ export const DetailModal: React.FC<DetailModalProps> = ({
               </div>
 
               <form
-                onSubmit={(e) => {
+                onSubmit={async (e) => {
                   e.preventDefault();
-                  handleActionClick('Member Portal Login');
+                  setSigninError('');
+                  if (!signinEmail.trim() || !signinPassword.trim()) {
+                    setSigninError('Please fill in all fields.');
+                    return;
+                  }
+                  setSigninLoading(true);
+                  const result = await signIn(sanitizeInput(signinEmail), sanitizeInput(signinPassword));
+                  if (result.error) {
+                    setSigninError(result.error);
+                    setSigninLoading(false);
+                  } else {
+                    onClose();
+                    navigate('/dashboard');
+                  }
                 }}
                 className="space-y-4"
               >
@@ -278,6 +339,8 @@ export const DetailModal: React.FC<DetailModalProps> = ({
                     type="email"
                     required
                     placeholder="you@example.com"
+                    value={signinEmail}
+                    onChange={(e) => { setSigninEmail(e.target.value); setSigninError(''); }}
                     className="w-full px-4 py-3 bg-[#F5F2EB] border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
                   />
                 </div>
@@ -290,15 +353,26 @@ export const DetailModal: React.FC<DetailModalProps> = ({
                     type="password"
                     required
                     placeholder="••••••••"
+                    value={signinPassword}
+                    onChange={(e) => { setSigninPassword(e.target.value); setSigninError(''); }}
                     className="w-full px-4 py-3 bg-[#F5F2EB] border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-600"
                   />
                 </div>
 
+                {signinError && (
+                  <p className="text-xs text-red-500">{signinError}</p>
+                )}
+
                 <button
                   type="submit"
-                  className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-sm font-medium shadow"
+                  disabled={signinLoading}
+                  className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-full text-sm font-medium shadow"
                 >
-                  Sign In to Account
+                  {signinLoading ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" />
+                  ) : (
+                    'Sign In to Account'
+                  )}
                 </button>
               </form>
             </div>
@@ -351,7 +425,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
                 <button
                   onClick={() => {
                     onClose();
-                    onOpenChat('fan');
+                    onOpenChat();
                   }}
                   className="inline-flex items-center gap-2 text-xs font-medium text-blue-600 hover:text-blue-700"
                 >

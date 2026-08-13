@@ -577,28 +577,28 @@ export const GALLERY_ITEMS: GalleryItem[] = [
 
 export const FOOTER_LINKS = {
   Site: [
-    { label: 'Home', href: '#home' },
-    { label: 'Journey', href: '#journey' },
-    { label: 'Projects', href: '#projects' },
-    { label: 'Gallery', href: '#gallery' },
-    { label: 'Journal', href: '#journal' },
+    { label: 'Home', href: '/' },
+    { label: 'Journey', href: '/journey' },
+    { label: 'Projects', href: '/projects' },
+    { label: 'Gallery', href: '/gallery' },
+    { label: 'Journal', href: '/journal' },
   ],
   Experiences: [
-    { label: 'All Experiences', href: '#experiences' },
-    { label: 'How It Works', href: '#experiences' },
-    { label: 'Gift an Experience', href: '#experiences' },
-    { label: 'FAQs', href: '#experiences' },
+    { label: 'All Experiences', href: '/experiences' },
+    { label: 'How It Works', href: '/experiences' },
+    { label: 'Gift an Experience', href: '/experiences' },
+    { label: 'FAQs', href: '/experiences' },
   ],
   Membership: [
-    { label: 'Membership Plans', href: '#membership' },
-    { label: 'Benefits', href: '#membership' },
-    { label: 'Compare Plans', href: '#membership' },
-    { label: 'Member Login', href: '#membership' },
+    { label: 'Membership Plans', href: '/membership' },
+    { label: 'Benefits', href: '/membership' },
+    { label: 'Compare Plans', href: '/membership' },
+    { label: 'Member Login', href: '/login' },
   ],
   Connect: [
-    { label: 'Chat with Homer', href: '#chat' },
-    { label: 'Contact', href: '#chat' },
-    { label: 'Help Center', href: '#chat' },
+    { label: 'Chat with Homer', href: '/chat' },
+    { label: 'Contact', href: '/contact' },
+    { label: 'Help Center', href: '/contact' },
   ],
 };
 

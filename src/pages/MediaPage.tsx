@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
-import { ChatModal } from '../components/ChatModal';
 import { DetailModal } from '../components/DetailModal';
 import { SEO } from '../components/SEO';
 import { ModalType } from '../types';
@@ -16,8 +15,6 @@ import { ContinueExploring } from './media/ContinueExploring';
 export default function MediaPage() {
   const [activeSection] = useState<string>('media');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
-  const [chatOpen, setChatOpen] = useState<boolean>(false);
-  const [chatMode, setChatMode] = useState<'fan' | 'business'>('fan');
   const navigate = useNavigate();
 
   const handleNavigate = (sectionId: string) => {
@@ -33,7 +30,7 @@ export default function MediaPage() {
     navigate('/');
   };
 
-  const handleOpenChat = (mode: 'fan' | 'business' = 'fan') => { setChatMode(mode); setChatOpen(true); };
+  const handleOpenChat = () => { navigate('/chat'); };
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
@@ -48,7 +45,6 @@ export default function MediaPage() {
         <ContinueExploring onNavigate={handleNavigate} />
       </main>
       <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />
-      <ChatModal isOpen={chatOpen} initialMode={chatMode} onClose={() => setChatOpen(false)} />
       <DetailModal modal={activeModal} onClose={() => setActiveModal(null)} onOpenChat={handleOpenChat} />
     </div>
   );

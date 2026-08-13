@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { SEO } from '../../components/SEO';
 import { Navbar } from '../../components/Navbar';
-import { ChatModal } from '../../components/ChatModal';
 import { DetailModal } from '../../components/DetailModal';
 import { getArticleBySlug, getRelatedArticles } from '../../data/journal';
 import { ArticleDetailHero } from './article/ArticleDetailHero';
@@ -18,8 +18,6 @@ export default function ArticleDetailPage() {
   const relatedArticles = slug ? getRelatedArticles(slug, 3) : [];
   const [activeSection] = React.useState<string>('journal');
   const [activeModal, setActiveModal] = React.useState<ModalType>(null);
-  const [chatOpen, setChatOpen] = React.useState<boolean>(false);
-  const [chatMode, setChatMode] = React.useState<'fan' | 'business'>('fan');
 
   const handleNavigate = (sectionId: string) => {
     if (sectionId === 'home') {
@@ -37,9 +35,8 @@ export default function ArticleDetailPage() {
     }
   };
 
-  const handleOpenChat = (mode: 'fan' | 'business' = 'fan') => {
-    setChatMode(mode);
-    setChatOpen(true);
+  const handleOpenChat = () => {
+    navigate('/chat');
   };
 
   useEffect(() => {
@@ -73,6 +70,7 @@ export default function ArticleDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
+      <SEO title={article.title} description={article.seoDescription} />
       <Navbar
         activeSection={activeSection}
         onNavigate={handleNavigate}
@@ -181,12 +179,6 @@ export default function ArticleDetailPage() {
 
       {/* Footer */}
       <Footer onNavigate={(path) => navigate(path)} onOpenChat={handleOpenChat} />
-
-      <ChatModal
-        isOpen={chatOpen}
-        initialMode={chatMode}
-        onClose={() => setChatOpen(false)}
-      />
 
       <DetailModal
         modal={activeModal}

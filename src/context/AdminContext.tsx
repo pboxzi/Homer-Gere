@@ -145,6 +145,7 @@ interface AdminContextType {
   addConversation: (conv: Omit<AdminConversation, 'id'>) => void;
   updateConversation: (id: string, updates: Partial<AdminConversation>) => void;
   deleteConversation: (id: string) => void;
+  sendConversationMessage: (conversationId: string, sender: string, text: string) => void;
 
   // CRUD – contact messages
   addContactMessage: (msg: Omit<AdminContactMessage, 'id'>) => void;
@@ -583,6 +584,19 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setConversations((prev) => prev.filter((c) => c.id !== id));
   }, []);
 
+  const sendConversationMessage = useCallback((conversationId: string, sender: string, text: string) => {
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    setConversations((prev) => prev.map((c) => {
+      if (c.id !== conversationId) return c;
+      const existingMessages = c.messages || [];
+      return {
+        ...c,
+        lastMessage: text,
+        messages: [...existingMessages, { sender, text, time }],
+      };
+    }));
+  }, []);
+
   // ----- CRUD: Contact Messages -----
   const addContactMessage = useCallback((msg: Omit<AdminContactMessage, 'id'>) => {
     setContactMessages((prev) => [{ ...msg, id: generateId() }, ...prev]);
@@ -781,7 +795,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     addPlan, updatePlan, deletePlan,
     addApplication, updateApplication, deleteApplication,
     addExperience, updateExperience, deleteExperience,
-    addConversation, updateConversation, deleteConversation,
+    addConversation, updateConversation, deleteConversation, sendConversationMessage,
     addContactMessage, updateContactMessage, deleteContactMessage,
     addNotification, updateNotification, deleteNotification,
     addMedia, updateMedia, deleteMedia,
@@ -801,7 +815,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     addPlan, updatePlan, deletePlan,
     addApplication, updateApplication, deleteApplication,
     addExperience, updateExperience, deleteExperience,
-    addConversation, updateConversation, deleteConversation,
+    addConversation, updateConversation, deleteConversation, sendConversationMessage,
     addContactMessage, updateContactMessage, deleteContactMessage,
     addNotification, updateNotification, deleteNotification,
     addMedia, updateMedia, deleteMedia,

@@ -23,8 +23,6 @@ export const GalleryPage: React.FC = () => {
   const categoryInView = useInView(categorySectionRef, { once: true, margin: '-60px' });
 
   const [activeSection, setActiveSection] = useState<string>('gallery');
-  const [chatOpen, setChatOpen] = useState<boolean>(false);
-  const [chatMode, setChatMode] = useState<'fan' | 'business'>('fan');
 
   const handleNavigate = (sectionId: string) => {
     if (sectionId === 'home') { navigate('/'); return; }
@@ -39,13 +37,17 @@ export const GalleryPage: React.FC = () => {
     navigate('/');
   };
 
+  const handleOpenChat = () => {
+    navigate('/chat');
+  };
+
   return (
     <main className="min-h-screen bg-[#FAF9F7]">
       <SEO title="Gallery" />
       <Navbar
         activeSection={activeSection}
         onNavigate={handleNavigate}
-        onOpenChat={(mode) => { setChatMode(mode || 'fan'); setChatOpen(true); }}
+        onOpenChat={handleOpenChat}
         onOpenSignIn={() => {}}
       />
       {/* 1. Hero */}
@@ -116,7 +118,7 @@ export const GalleryPage: React.FC = () => {
       <GalleryExplore onNavigate={(path) => navigate(path)} />
 
       {/* Footer */}
-      <Footer onNavigate={(path) => navigate(path)} onOpenChat={() => {}} />
+      <Footer onNavigate={(path) => navigate(path)} onOpenChat={handleOpenChat} />
     </main>
   );
 };

@@ -97,6 +97,7 @@ export const AdminCommunications: React.FC<AdminCommunicationsProps> = ({ active
     notifications,
     updateConversation,
     deleteConversation,
+    sendConversationMessage,
     updateContactMessage,
     deleteContactMessage,
     updateNotification,
@@ -106,9 +107,9 @@ export const AdminCommunications: React.FC<AdminCommunicationsProps> = ({ active
 
   switch (activeSection) {
     case 'fan-chat':
-      return <FanChatSection conversations={conversations} updateConversation={updateConversation} deleteConversation={deleteConversation} />;
+      return <FanChatSection conversations={conversations} updateConversation={updateConversation} deleteConversation={deleteConversation} sendConversationMessage={sendConversationMessage} />;
     case 'business-chat':
-      return <BusinessChatSection conversations={conversations} updateConversation={updateConversation} deleteConversation={deleteConversation} />;
+      return <BusinessChatSection conversations={conversations} updateConversation={updateConversation} deleteConversation={deleteConversation} sendConversationMessage={sendConversationMessage} />;
     case 'contact-messages':
       return <ContactMessagesSection messages={contactMessages} updateMessage={updateContactMessage} deleteMessage={deleteContactMessage} />;
     case 'admin-notifications':
@@ -133,7 +134,8 @@ const FanChatSection: React.FC<{
   conversations: AdminConversation[];
   updateConversation: (id: string, updates: Partial<AdminConversation>) => void;
   deleteConversation: (id: string) => void;
-}> = ({ conversations, updateConversation, deleteConversation }) => {
+  sendConversationMessage: (conversationId: string, sender: string, text: string) => void;
+}> = ({ conversations, updateConversation, deleteConversation, sendConversationMessage }) => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -152,7 +154,7 @@ const FanChatSection: React.FC<{
   }, [conversations, search, statusFilter]);
 
   const selectedConversation = conversations.find((c) => c.id === selectedId);
-  const messages = selectedId ? FAN_MESSAGES[selectedId] || [] : [];
+  const messages = selectedId ? (selectedConversation?.messages || FAN_MESSAGES[selectedId] || []) : [];
 
   const handleArchive = (id: string) => {
     updateConversation(id, { status: 'closed' });
@@ -164,6 +166,7 @@ const FanChatSection: React.FC<{
 
   const handleSendReply = () => {
     if (!replyText.trim() || !selectedId) return;
+    sendConversationMessage(selectedId, 'Admin', replyText.trim());
     setReplyText('');
   };
 
@@ -340,7 +343,8 @@ const BusinessChatSection: React.FC<{
   conversations: AdminConversation[];
   updateConversation: (id: string, updates: Partial<AdminConversation>) => void;
   deleteConversation: (id: string) => void;
-}> = ({ conversations, updateConversation, deleteConversation }) => {
+  sendConversationMessage: (conversationId: string, sender: string, text: string) => void;
+}> = ({ conversations, updateConversation, deleteConversation, sendConversationMessage }) => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -364,7 +368,7 @@ const BusinessChatSection: React.FC<{
   }, [conversations, search, statusFilter]);
 
   const selectedConversation = conversations.find((c) => c.id === selectedId);
-  const messages = selectedId ? BUSINESS_MESSAGES[selectedId] || [] : [];
+  const messages = selectedId ? (selectedConversation?.messages || BUSINESS_MESSAGES[selectedId] || []) : [];
 
   const handleArchive = (id: string) => {
     updateConversation(id, { status: 'closed' });
@@ -380,6 +384,7 @@ const BusinessChatSection: React.FC<{
 
   const handleSendReply = () => {
     if (!replyText.trim() || !selectedId) return;
+    sendConversationMessage(selectedId, 'Admin', replyText.trim());
     setReplyText('');
   };
 

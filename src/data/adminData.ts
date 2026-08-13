@@ -67,6 +67,12 @@ export interface AdminExperienceRequest {
   status: 'pending' | 'approved' | 'declined' | 'completed';
 }
 
+export interface AdminConversationMessage {
+  sender: string;
+  text: string;
+  time: string;
+}
+
 export interface AdminConversation {
   id: string;
   type: 'fan' | 'business';
@@ -76,6 +82,7 @@ export interface AdminConversation {
   lastMessage: string;
   status: 'open' | 'in_progress' | 'closed';
   date: string;
+  messages?: AdminConversationMessage[];
 }
 
 export interface AdminContactMessage {

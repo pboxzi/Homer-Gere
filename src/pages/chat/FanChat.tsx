@@ -1,23 +1,80 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Send, ArrowLeft, Phone, Image, X, Play, Smile, Lock } from 'lucide-react';
+import { Send, ArrowLeft, Phone, Image, X, Play, Smile, Lock, AlertCircle, Loader2 } from 'lucide-react';
 import { ChatMessage, ChatMedia } from '../../types';
 import { CHAT_SETTINGS } from '../../data/chatSettings';
 import { IMAGES } from '../../data/images';
 import { useAuth } from '../../context/AuthContext';
+import type { AdminConversation } from '../../data/adminData';
+import { checkRateLimit, sanitizeInput } from '../../lib/security';
+
+const ADMIN_STORAGE_KEY = 'homer_admin';
+
+function getFanConversationId(user?: { email?: string; firstName?: string; lastName?: string }): string {
+  if (user?.email) return `fan-${user.email}`;
+  let sessionId = localStorage.getItem('homer_fan_session_id');
+  if (!sessionId) {
+    sessionId = 'fan-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    localStorage.setItem('homer_fan_session_id', sessionId);
+  }
+  return sessionId;
+}
+
+function loadAdminConversations(): AdminConversation[] {
+  try {
+    const raw = localStorage.getItem(ADMIN_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return parsed.conversations || [];
+  } catch { return []; }
+}
+
+function saveAdminConversations(conversations: AdminConversation[]) {
+  try {
+    const raw = localStorage.getItem(ADMIN_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    parsed.conversations = conversations;
+    localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(parsed));
+  } catch { /* ignore */ }
+}
+
+function findOrCreateFanConversation(conversations: AdminConversation[], participantId: string, participantName: string): AdminConversation {
+  const existing = conversations.find((c) => c.id === participantId);
+  if (existing) return existing;
+  const newConv: AdminConversation = {
+    id: participantId,
+    type: 'fan',
+    participant: participantName,
+    email: participantId.replace('fan-', ''),
+    lastMessage: '',
+    status: 'open',
+    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    messages: [],
+  };
+  conversations.unshift(newConv);
+  return newConv;
+}
 
 interface FanChatProps {
   onBack: () => void;
 }
+
+const RATE_LIMIT_WINDOW = 60000;
+const RATE_LIMIT_MAX = 10;
+const MAX_MESSAGE_LENGTH = 2000;
 
 export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [mediaPreview, setMediaPreview] = useState<ChatMedia | null>(null);
+  const [inputError, setInputError] = useState('');
+  const [rateLimited, setRateLimited] = useState(false);
+  const [rateLimitCountdown, setRateLimitCountdown] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const messageTimestampsRef = useRef<number[]>([]);
   const settings = CHAT_SETTINGS.fanChat;
   const { user } = useAuth();
   const hasMembership = user?.membershipTier === 'Gold' || user?.membershipTier === 'Platinum';
@@ -28,16 +85,52 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
 
   useEffect(() => {
     if (messages.length === 0) {
-      setMessages([
-        {
-          id: 'welcome',
-          sender: 'homer',
-          text: "Hey, I'm glad you're here. This is my private space — no noise, just us. So tell me, what brings you here tonight?",
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        },
-      ]);
+      const conversationId = getFanConversationId(user);
+      const conversations = loadAdminConversations();
+      const conv = conversations.find((c) => c.id === conversationId);
+      if (conv && conv.messages && conv.messages.length > 0) {
+        const loaded: ChatMessage[] = conv.messages.map((m, i) => ({
+          id: `loaded-${i}`,
+          sender: m.sender === 'Admin' ? 'homer' as const : 'user' as const,
+          text: m.text,
+          timestamp: m.time,
+        }));
+        setMessages(loaded);
+      } else {
+        setMessages([
+          {
+            id: 'welcome',
+            sender: 'homer',
+            text: "Hey, I'm glad you're here. This is my private space — no noise, just us. So tell me, what brings you here tonight?",
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          },
+        ]);
+      }
     }
-  }, []);
+  }, [user]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (messages.length === 0) return;
+      const conversationId = getFanConversationId(user);
+      const conversations = loadAdminConversations();
+      const conv = conversations.find((c) => c.id === conversationId);
+      if (!conv || !conv.messages) return;
+      const adminMsgs = conv.messages.filter((m) => m.sender === 'Admin');
+      const homerMsgs = messages.filter((m) => m.sender === 'homer');
+      if (adminMsgs.length > homerMsgs.length) {
+        const newAdminMsgs = adminMsgs.slice(homerMsgs.length);
+        const newChatMsgs: ChatMessage[] = newAdminMsgs.map((m, i) => ({
+          id: `admin-${Date.now()}-${i}`,
+          sender: 'homer' as const,
+          text: m.text,
+          timestamp: m.time,
+        }));
+        setMessages((prev) => [...prev, ...newChatMsgs]);
+      }
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [messages.length, user]);
 
   useEffect(() => {
     scrollToBottom();
@@ -61,17 +154,60 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
 
   const handleSend = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if ((!input.trim() && !mediaPreview) || loading) return;
+    setInputError('');
 
     const userText = input.trim();
+    if (!userText && !mediaPreview) {
+      setInputError('Please enter a message or attach media.');
+      return;
+    }
+
+    if (!checkRateLimit('fan-chat', RATE_LIMIT_MAX, RATE_LIMIT_WINDOW)) {
+      setInputError('You\'re sending messages too quickly. Please wait a moment and try again.');
+      return;
+    }
+
+    const sanitizedText = userText ? sanitizeInput(userText) : '';
+
+    if (sanitizedText.length > MAX_MESSAGE_LENGTH) {
+      setInputError(`Message is too long. Maximum ${MAX_MESSAGE_LENGTH} characters allowed.`);
+      return;
+    }
+
+    const now = Date.now();
+    messageTimestampsRef.current = messageTimestampsRef.current.filter((t) => now - t < RATE_LIMIT_WINDOW);
+    if (messageTimestampsRef.current.length >= RATE_LIMIT_MAX) {
+      const oldestInWindow = messageTimestampsRef.current[0];
+      const waitTime = Math.ceil((RATE_LIMIT_WINDOW - (now - oldestInWindow)) / 1000);
+      setRateLimited(true);
+      setRateLimitCountdown(waitTime);
+      const countdownInterval = setInterval(() => {
+        setRateLimitCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(countdownInterval);
+            setRateLimited(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      setInputError(`You're sending messages too quickly. Please wait ${waitTime}s.`);
+      return;
+    }
+
+    if (loading) return;
+    messageTimestampsRef.current.push(now);
+
     const attachedMedia = mediaPreview ? { ...mediaPreview } : undefined;
     setInput('');
     setMediaPreview(null);
 
+    const displayText = sanitizedText || (attachedMedia ? `Sent a ${attachedMedia.type}` : '');
+
     const userMsg: ChatMessage = {
       id: Date.now().toString(),
       sender: 'user',
-      text: userText || (attachedMedia ? `Sent a ${attachedMedia.type}` : ''),
+      text: displayText,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       media: attachedMedia,
     };
@@ -79,36 +215,18 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
     setMessages((prev) => [...prev, userMsg]);
     setLoading(true);
 
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          mode: 'fan',
-          messages: [...messages, userMsg].map((m) => ({
-            role: m.sender === 'user' ? 'user' : 'assistant',
-            text: m.text,
-          })),
-        }),
-      });
-      const data = await response.json();
-      const replyText = data.reply || "That means a lot. Thanks for sharing that with me.";
-      setMessages((prev) => [...prev, {
-        id: (Date.now() + 1).toString(),
-        sender: 'homer',
-        text: replyText,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      }]);
-    } catch {
-      setMessages((prev) => [...prev, {
-        id: (Date.now() + 1).toString(),
-        sender: 'homer',
-        text: "Sorry, I missed that. Can you say it again?",
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      }]);
-    } finally {
-      setLoading(false);
-    }
+    const conversationId = getFanConversationId(user);
+    const participantName = user ? `${user.firstName} ${user.lastName}`.trim() : 'Fan Visitor';
+    const conversations = loadAdminConversations();
+    const conv = findOrCreateFanConversation(conversations, conversationId, participantName);
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    conv.messages = conv.messages || [];
+    conv.messages.push({ sender: participantName, text: displayText, time });
+    conv.lastMessage = displayText;
+    conv.date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    saveAdminConversations(conversations);
+
+    setLoading(false);
   };
 
   const handleOpenWhatsApp = () => {
@@ -150,9 +268,9 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
             </button>
           )}
           {settings.whatsappEnabled && !hasMembership && (
-            <div className="flex items-center gap-1.5 bg-[#A6852F]/8 px-2.5 py-1.5 rounded-full cursor-default" title="Upgrade to Gold or Platinum membership to chat on WhatsApp">
+            <div className="flex items-center gap-1.5 bg-[#A6852F]/8 px-2.5 py-1.5 rounded-full cursor-default" title="Unlock WhatsApp access with Gold membership or higher">
               <Phone className="w-3 h-3 text-[#A6852F]" />
-              <span className="text-xs font-medium text-[#A6852F] whitespace-nowrap">Join Gold for WhatsApp</span>
+              <span className="text-xs font-medium text-[#A6852F] whitespace-nowrap">Unlock WhatsApp with Gold</span>
             </div>
           )}
         </div>
@@ -257,33 +375,60 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
             </div>
           )}
 
-          <form onSubmit={handleSend} className="flex items-end gap-2.5 px-4 py-3">
-            <button type="button" onClick={() => fileInputRef.current?.click()} className="w-11 h-11 rounded-full flex items-center justify-center text-[#57534E] hover:text-[#A6852F] hover:bg-[#F3F1ED] transition-colors cursor-pointer shrink-0 mb-0.5">
-              <Image className="w-[18px] h-[18px]" />
-            </button>
-            <input ref={fileInputRef} type="file" accept="image/*,video/*" onChange={handleFileSelect} className="hidden" />
+          <form onSubmit={handleSend} className="px-4 pb-3 pt-1">
+            {inputError && (
+              <p className="text-[11px] text-[#DC2626] mb-2 flex items-center gap-1">
+                <AlertCircle className="w-3 h-3" />
+                {inputError}
+              </p>
+            )}
+            {input.length > MAX_MESSAGE_LENGTH * 0.9 && input.length <= MAX_MESSAGE_LENGTH && (
+              <p className="text-[10px] text-[#F59E0B] mb-2">
+                {MAX_MESSAGE_LENGTH - input.length} characters remaining
+              </p>
+            )}
+            {input.length > MAX_MESSAGE_LENGTH && (
+              <p className="text-[10px] text-[#DC2626] mb-2">
+                {input.length - MAX_MESSAGE_LENGTH} characters over limit
+              </p>
+            )}
+            <div className="flex items-end gap-2.5">
+              <button type="button" onClick={() => fileInputRef.current?.click()} className="w-11 h-11 rounded-full flex items-center justify-center text-[#57534E] hover:text-[#A6852F] hover:bg-[#F3F1ED] transition-colors cursor-pointer shrink-0 mb-0.5">
+                <Image className="w-[18px] h-[18px]" />
+              </button>
+              <input ref={fileInputRef} type="file" accept="image/*,video/*" onChange={handleFileSelect} className="hidden" />
 
-            <div className="flex-1 flex items-end bg-[#F3F1ED] rounded-[22px] px-4 py-2.5 min-h-[42px]">
-              <input
-                ref={inputRef}
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type a message..."
-                className="flex-1 bg-transparent text-[14px] text-[#1C1917] placeholder:text-[#A8A29E] focus:outline-none min-w-0 leading-[1.4]"
-              />
-              <button type="button" className="w-11 h-11 rounded-full flex items-center justify-center text-[#A8A29E] hover:text-[#57534E] transition-colors cursor-pointer shrink-0 ml-2 mb-px">
-                <Smile className="w-[18px] h-[18px]" />
+              <div className="flex-1 flex items-end bg-[#F3F1ED] rounded-[22px] px-4 py-2.5 min-h-[42px]">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={input}
+                  onChange={(e) => {
+                    setInput(e.target.value);
+                    if (inputError) setInputError('');
+                  }}
+                  placeholder={rateLimited ? `Wait ${rateLimitCountdown}s...` : 'Type a message...'}
+                  maxLength={MAX_MESSAGE_LENGTH + 100}
+                  disabled={rateLimited}
+                  className="flex-1 bg-transparent text-[14px] text-[#1C1917] placeholder:text-[#A8A29E] focus:outline-none min-w-0 leading-[1.4] disabled:opacity-50"
+                />
+                <button type="button" className="w-11 h-11 rounded-full flex items-center justify-center text-[#A8A29E] hover:text-[#57534E] transition-colors cursor-pointer shrink-0 ml-2 mb-px">
+                  <Smile className="w-[18px] h-[18px]" />
+                </button>
+              </div>
+
+              <button
+                type="submit"
+                disabled={(!input.trim() && !mediaPreview) || loading || rateLimited}
+                className="w-11 h-11 rounded-full bg-[#A6852F] hover:bg-[#8B6F1F] disabled:bg-[#D4CFC7] text-white flex items-center justify-center shrink-0 transition-all duration-200 cursor-pointer mb-0.5 shadow-sm disabled:shadow-none"
+              >
+                {loading ? (
+                  <Loader2 className="w-[15px] h-[15px] animate-spin" />
+                ) : (
+                  <Send className="w-[15px] h-[15px] -translate-x-px" />
+                )}
               </button>
             </div>
-
-            <button
-              type="submit"
-              disabled={(!input.trim() && !mediaPreview) || loading}
-              className="w-11 h-11 rounded-full bg-[#A6852F] hover:bg-[#8B6F1F] disabled:bg-[#D4CFC7] text-white flex items-center justify-center shrink-0 transition-all duration-200 cursor-pointer mb-0.5 shadow-sm disabled:shadow-none"
-            >
-              <Send className="w-[15px] h-[15px] -translate-x-px" />
-            </button>
           </form>
         </div>
 

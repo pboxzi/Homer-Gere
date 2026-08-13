@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Eye, EyeOff, ArrowRight, Chrome, Apple, LayoutGrid, Shield, Lock } from 'lucide-react';
 import { LOGIN_CONFIG, LOGIN_SECURITY_NOTICE } from '../data/loginData';
+import { SEO } from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
 
 const SOCIAL_ICONS: Record<string, React.FC<{ className?: string; style?: React.CSSProperties }>> = {
@@ -13,6 +14,7 @@ const SOCIAL_ICONS: Record<string, React.FC<{ className?: string; style?: React.
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { signIn, isAuthenticated, user } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,10 +25,11 @@ export default function LoginPage() {
 
   React.useEffect(() => {
     if (isAuthenticated && user) {
+      const from = (location.state as { from?: string })?.from;
       if (user.role === 'admin') navigate('/admin');
-      else navigate('/dashboard');
+      else navigate(from || '/dashboard');
     }
-  }, [isAuthenticated, user, navigate]);
+  }, [isAuthenticated, user, navigate, location]);
 
   const enabledProviders = LOGIN_CONFIG.socialProviders.filter((p) => p.enabled);
 
@@ -51,6 +54,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased flex flex-col">
+      <SEO title="Sign In" />
       {/* Minimal top bar */}
       <header className="px-5 sm:px-8 py-5">
         <button

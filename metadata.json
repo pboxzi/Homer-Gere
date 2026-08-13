@@ -2,5 +2,5 @@
   "name": "Homer Gere",
   "description": "Official website for Homer Gere - actor, storyteller, and dreamer. Explore journey, projects, journal, gallery, experiences, membership, and chat with Homer.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": []
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowRight, ArrowLeft, Check, ChevronRight, Send } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Check, ChevronRight, Send, AlertCircle, Loader2 } from 'lucide-react';
 import { EXPERIENCES } from '../../data/content';
 import { ExperienceCategory, ExperienceRequest, Experience } from '../../types';
 
@@ -23,12 +23,27 @@ const COUNTRIES = [
   'Netherlands', 'Sweden', 'Other',
 ];
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+interface FormErrors {
+  fullName?: string;
+  email?: string;
+  phone?: string;
+  country?: string;
+  eventDate?: string;
+  eventLocation?: string;
+  purpose?: string;
+}
+
 export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
   preselectedExperience,
   onClose,
 }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [formData, setFormData] = useState<ExperienceRequest>({
     experienceType: (preselectedExperience?.type as ExperienceCategory) || '',
     fullName: '',
@@ -45,12 +60,55 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
 
   const updateField = (field: keyof ExperienceRequest, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field as keyof FormErrors]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const handleBlur = (field: string) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
+    validateField(field);
+  };
+
+  const validateField = (field: string) => {
+    const newErrors = { ...errors };
+    switch (field) {
+      case 'fullName':
+        newErrors.fullName = formData.fullName.trim() ? undefined : 'Full name is required';
+        break;
+      case 'email':
+        if (!formData.email.trim()) {
+          newErrors.email = 'Email is required';
+        } else if (!EMAIL_REGEX.test(formData.email)) {
+          newErrors.email = 'Please enter a valid email address';
+        } else {
+          newErrors.email = undefined;
+        }
+        break;
+      case 'phone':
+        newErrors.phone = formData.phone.trim() ? undefined : 'Phone number is required';
+        break;
+      case 'country':
+        newErrors.country = formData.country ? undefined : 'Please select a country';
+        break;
+      case 'eventDate':
+        newErrors.eventDate = formData.eventDate ? undefined : 'Event date is required';
+        break;
+      case 'eventLocation':
+        newErrors.eventLocation = formData.eventLocation.trim() ? undefined : 'Event location is required';
+        break;
+      case 'purpose':
+        newErrors.purpose = formData.purpose.trim() ? undefined : 'Purpose is required';
+        break;
+    }
+    setErrors(newErrors);
+    return !newErrors[field as keyof FormErrors];
   };
 
   const isStepValid = (step: number) => {
     switch (step) {
       case 1: return formData.experienceType !== '';
-      case 2: return formData.fullName.trim() !== '' && formData.email.trim() !== '' && formData.phone.trim() !== '' && formData.country !== '';
+      case 2: return formData.fullName.trim() !== '' && EMAIL_REGEX.test(formData.email) && formData.phone.trim() !== '' && formData.country !== '';
       case 3: return formData.eventDate !== '' && formData.eventLocation.trim() !== '';
       case 4: return formData.purpose.trim() !== '';
       case 5: return true;
@@ -58,12 +116,31 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
     }
   };
 
-  const handleSubmit = () => {
-    setSubmitted(true);
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    try {
+      await new Promise((r) => setTimeout(r, 1200));
+      setSubmitted(true);
+    } catch {
+      setErrors({ purpose: 'Something went wrong. Please try again.' });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const getSelectedExperience = () => {
     return EXPERIENCES.find((e) => e.type === formData.experienceType);
+  };
+
+  const renderError = (field: keyof FormErrors) => {
+    if (!touched[field] || !errors[field]) return null;
+    return (
+      <p className="text-[11px] text-[#DC2626] mt-1.5 flex items-center gap-1">
+        <AlertCircle className="w-3 h-3" />
+        {errors[field]}
+      </p>
+    );
   };
 
   if (submitted) {
@@ -221,9 +298,11 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                     type="text"
                     value={formData.fullName}
                     onChange={(e) => updateField('fullName', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300"
+                    onBlur={() => handleBlur('fullName')}
+                    className={`w-full px-4 py-3 rounded-xl border bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300 ${touched.fullName && errors.fullName ? 'border-[#DC2626]/50' : 'border-[#E8E5DF]/60'}`}
                     placeholder="Enter your full name"
                   />
+                  {renderError('fullName')}
                 </div>
 
                 <div>
@@ -232,9 +311,11 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                     type="email"
                     value={formData.email}
                     onChange={(e) => updateField('email', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300"
+                    onBlur={() => handleBlur('email')}
+                    className={`w-full px-4 py-3 rounded-xl border bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300 ${touched.email && errors.email ? 'border-[#DC2626]/50' : 'border-[#E8E5DF]/60'}`}
                     placeholder="your@email.com"
                   />
+                  {renderError('email')}
                 </div>
 
                 <div>
@@ -243,9 +324,11 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => updateField('phone', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300"
+                    onBlur={() => handleBlur('phone')}
+                    className={`w-full px-4 py-3 rounded-xl border bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300 ${touched.phone && errors.phone ? 'border-[#DC2626]/50' : 'border-[#E8E5DF]/60'}`}
                     placeholder="+1 (555) 000-0000"
                   />
+                  {renderError('phone')}
                 </div>
 
                 <div>
@@ -253,13 +336,15 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                   <select
                     value={formData.country}
                     onChange={(e) => updateField('country', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300 appearance-none"
+                    onBlur={() => handleBlur('country')}
+                    className={`w-full px-4 py-3 rounded-xl border bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300 appearance-none ${touched.country && errors.country ? 'border-[#DC2626]/50' : 'border-[#E8E5DF]/60'}`}
                   >
                     <option value="">Select your country</option>
                     {COUNTRIES.map((c) => (
                       <option key={c} value={c}>{c}</option>
                     ))}
                   </select>
+                  {renderError('country')}
                 </div>
               </motion.div>
             )}
@@ -294,8 +379,10 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                     type="date"
                     value={formData.eventDate}
                     onChange={(e) => updateField('eventDate', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300"
+                    onBlur={() => handleBlur('eventDate')}
+                    className={`w-full px-4 py-3 rounded-xl border bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300 ${touched.eventDate && errors.eventDate ? 'border-[#DC2626]/50' : 'border-[#E8E5DF]/60'}`}
                   />
+                  {renderError('eventDate')}
                 </div>
 
                 <div>
@@ -304,9 +391,11 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                     type="text"
                     value={formData.eventLocation}
                     onChange={(e) => updateField('eventLocation', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300"
+                    onBlur={() => handleBlur('eventLocation')}
+                    className={`w-full px-4 py-3 rounded-xl border bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300 ${touched.eventLocation && errors.eventLocation ? 'border-[#DC2626]/50' : 'border-[#E8E5DF]/60'}`}
                     placeholder="City, State / Country"
                   />
+                  {renderError('eventLocation')}
                 </div>
 
                 <div>
@@ -340,10 +429,12 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
                   <textarea
                     value={formData.purpose}
                     onChange={(e) => updateField('purpose', e.target.value)}
+                    onBlur={() => handleBlur('purpose')}
                     rows={4}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300 resize-none"
+                    className={`w-full px-4 py-3 rounded-xl border bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F] focus:ring-1 focus:ring-[#A6852F]/20 transition-all duration-300 resize-none ${touched.purpose && errors.purpose ? 'border-[#DC2626]/50' : 'border-[#E8E5DF]/60'}`}
                     placeholder="Describe the purpose of your request..."
                   />
+                  {renderError('purpose')}
                 </div>
 
                 <div>
@@ -440,10 +531,20 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
           ) : (
             <button
               onClick={handleSubmit}
-              className="inline-flex items-center justify-center gap-2 bg-[#1C1917] hover:bg-[#292524] text-white font-medium text-sm px-6 py-3 rounded-xl transition-all duration-300 focus:outline-none cursor-pointer"
+              disabled={isSubmitting}
+              className="inline-flex items-center justify-center gap-2 bg-[#1C1917] hover:bg-[#292524] disabled:bg-[#E8E5DF] disabled:text-[#57534E] text-white font-medium text-sm px-6 py-3 rounded-xl transition-all duration-300 focus:outline-none cursor-pointer disabled:cursor-not-allowed"
             >
-              <Send className="w-4 h-4" />
-              Submit Request
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4" />
+                  Submit Request
+                </>
+              )}
             </button>
           )}
         </div>

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
-import { ChatModal } from '../components/ChatModal';
 import { DetailModal } from '../components/DetailModal';
 import { Footer } from '../components/Footer';
 import { ProjectHero } from './projects/ProjectHero';
@@ -16,8 +15,6 @@ export default function ProjectsPage() {
   const navigate = useNavigate();
   const [activeSection] = useState<string>('projects');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
-  const [chatOpen, setChatOpen] = useState<boolean>(false);
-  const [chatMode, setChatMode] = useState<'fan' | 'business'>('fan');
 
   const handleNavigate = (sectionId: string) => {
     if (sectionId === 'home') { navigate('/'); return; }
@@ -32,9 +29,8 @@ export default function ProjectsPage() {
     navigate('/');
   };
 
-  const handleOpenChat = (mode: 'fan' | 'business' = 'fan') => {
-    setChatMode(mode);
-    setChatOpen(true);
+  const handleOpenChat = () => {
+    navigate('/chat');
   };
 
   const handleProjectClick = (projectId: string) => {
@@ -74,12 +70,6 @@ export default function ProjectsPage() {
       </main>
 
       <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />
-
-      <ChatModal
-        isOpen={chatOpen}
-        initialMode={chatMode}
-        onClose={() => setChatOpen(false)}
-      />
 
       <DetailModal
         modal={activeModal}

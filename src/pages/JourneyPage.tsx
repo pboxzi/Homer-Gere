@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
-import { ChatModal } from '../components/ChatModal';
 import { DetailModal } from '../components/DetailModal';
 import { Footer } from '../components/Footer';
 import { JourneyHero } from './journey/JourneyHero';
@@ -22,8 +21,6 @@ export default function JourneyPage() {
   const navigate = useNavigate();
   const [activeSection] = useState<string>('journey');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
-  const [chatOpen, setChatOpen] = useState<boolean>(false);
-  const [chatMode, setChatMode] = useState<'fan' | 'business'>('fan');
 
   const handleNavigate = (sectionId: string) => {
     if (sectionId === 'home') { navigate('/'); return; }
@@ -39,9 +36,8 @@ export default function JourneyPage() {
     if (element) { element.scrollIntoView({ behavior: 'smooth' }); }
   };
 
-  const handleOpenChat = (mode: 'fan' | 'business' = 'fan') => {
-    setChatMode(mode);
-    setChatOpen(true);
+  const handleOpenChat = () => {
+    navigate('/chat');
   };
 
   const handleHighlightClick = (slug: string) => {
@@ -86,18 +82,17 @@ export default function JourneyPage() {
 
         <JourneyNext
           onExploreProjects={() => navigate('/projects')}
-          onOpenChat={() => handleOpenChat('fan')}
+          onOpenChat={handleOpenChat}
         />
 
         <JourneyContinueExploring
           onExploreProjects={() => navigate('/projects')}
           onReadJournal={() => navigate('/journal')}
-          onOpenChat={() => handleOpenChat('fan')}
+          onOpenChat={handleOpenChat}
         />
       </main>
 
       <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />
-      <ChatModal isOpen={chatOpen} initialMode={chatMode} onClose={() => setChatOpen(false)} />
       <DetailModal modal={activeModal} onClose={() => setActiveModal(null)} onOpenChat={handleOpenChat} />
     </div>
   );

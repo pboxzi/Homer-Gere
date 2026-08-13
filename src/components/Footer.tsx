@@ -1,24 +1,27 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowUp, Instagram, Twitter, Youtube } from 'lucide-react';
 import { useSiteContent } from '../context/SiteContentContext';
 
 interface FooterProps {
   onNavigate: (sectionId: string) => void;
-  onOpenChat: (mode?: 'fan' | 'business') => void;
+  onOpenChat: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
   const { footerLinks } = useSiteContent();
+  const navigate = useNavigate();
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleLinkClick = (href: string) => {
-    if (href === '#chat') {
-      onOpenChat('fan');
+    if (href === '/') {
+      navigate('/');
+    } else if (href.startsWith('/')) {
+      navigate(href);
     } else {
-      const targetId = href.replace('#', '');
-      onNavigate(targetId);
+      onNavigate(href);
     }
   };
 

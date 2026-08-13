@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate as useRouterNavigate } from 'react-router-dom';
-import { User } from 'lucide-react';
+import { User, LayoutDashboard, LogOut, Shield } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 interface NavbarProps {
   activeSection: string;
   onNavigate: (sectionId: string) => void;
-  onOpenChat: (mode?: 'fan' | 'business') => void;
+  onOpenChat: () => void;
   onOpenSignIn: () => void;
 }
 
@@ -19,6 +19,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const routerNavigate = useRouterNavigate();
   const { isAuthenticated, user, signOut } = useAuth();
@@ -41,6 +43,16 @@ export const Navbar: React.FC<NavbarProps> = ({
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const navItems = [
@@ -84,6 +96,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
+    <>
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
@@ -128,30 +141,88 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Action Buttons */}
         <div className="hidden lg:flex items-center gap-3">
           {isAuthenticated ? (
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-[#57534E]">Hi, {user?.firstName}</span>
-              <a href={user?.role === 'admin' ? '/admin' : '/dashboard'} className="text-xs font-medium text-[#A6852F] hover:text-[#8B6F1F]">
-                {user?.role === 'admin' ? 'Admin' : 'Dashboard'}
-              </a>
-              <button onClick={signOut} className="text-xs text-[#57534E] hover:text-[#DC2626]">
-                Sign Out
+            <div className="relative" ref={userMenuRef}>
+              <button
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full hover:bg-[#A6852F]/5 transition-colors"
+              >
+                <div className="w-7 h-7 rounded-full bg-[#A6852F]/15 flex items-center justify-center">
+                  <span className="text-[11px] font-semibold text-[#A6852F]">
+                    {user?.firstName?.[0]}{user?.lastName?.[0]}
+                  </span>
+                </div>
+                <span className="text-xs font-medium text-[#57534E]">{user?.firstName}</span>
               </button>
+              {userMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-[#E8E5DF]/60 py-1.5 z-50">
+                  <div className="px-4 py-2.5 border-b border-[#E8E5DF]/60">
+                    <p className="text-xs font-medium text-[#1C1917]">{user?.firstName} {user?.lastName}</p>
+                    <p className="text-[11px] text-[#57534E] mt-0.5 truncate">{user?.email}</p>
+                  </div>
+                  <div className="py-1">
+                    <button
+                      onClick={() => { setUserMenuOpen(false); routerNavigate(user?.role === 'admin' ? '/admin' : '/dashboard'); }}
+                      className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors"
+                    >
+                      {user?.role === 'admin' ? <Shield className="w-3.5 h-3.5" /> : <LayoutDashboard className="w-3.5 h-3.5" />}
+                      {user?.role === 'admin' ? 'Admin Panel' : 'Dashboard'}
+                    </button>
+                    <button
+                      onClick={() => { signOut(); setUserMenuOpen(false); routerNavigate('/'); }}
+                      className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-[#57534E] hover:bg-[#FEF2F2] hover:text-[#DC2626] transition-colors"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
-            <a href="/login" className="text-xs font-medium text-[#A6852F] hover:text-[#8B6F1F]">
+            <button onClick={() => routerNavigate('/login')} className="text-xs font-medium text-[#A6852F] hover:text-[#8B6F1F]">
               Sign In
-            </a>
+            </button>
           )}
         </div>
 
         {/* Mobile */}
         <div className="lg:hidden flex items-center gap-2">
           {isAuthenticated ? (
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-[#57534E]">Hi, {user?.firstName}</span>
-              <button onClick={signOut} className="text-xs text-[#57534E] hover:text-[#DC2626]">
-                Sign Out
+            <div className="relative" ref={userMenuRef}>
+              <button
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                className="flex items-center gap-1.5 pl-1.5 pr-2.5 py-1 rounded-full hover:bg-[#A6852F]/5 transition-colors"
+              >
+                <div className="w-7 h-7 rounded-full bg-[#A6852F]/15 flex items-center justify-center">
+                  <span className="text-[11px] font-semibold text-[#A6852F]">
+                    {user?.firstName?.[0]}{user?.lastName?.[0]}
+                  </span>
+                </div>
               </button>
+              {userMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-[#E8E5DF]/60 py-1.5 z-50">
+                  <div className="px-4 py-2.5 border-b border-[#E8E5DF]/60">
+                    <p className="text-xs font-medium text-[#1C1917]">{user?.firstName} {user?.lastName}</p>
+                    <p className="text-[11px] text-[#57534E] mt-0.5 truncate">{user?.email}</p>
+                  </div>
+                  <div className="py-1">
+                    <button
+                      onClick={() => { setUserMenuOpen(false); routerNavigate(user?.role === 'admin' ? '/admin' : '/dashboard'); }}
+                      className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors"
+                    >
+                      {user?.role === 'admin' ? <Shield className="w-3.5 h-3.5" /> : <LayoutDashboard className="w-3.5 h-3.5" />}
+                      {user?.role === 'admin' ? 'Admin Panel' : 'Dashboard'}
+                    </button>
+                    <button
+                      onClick={() => { signOut(); setUserMenuOpen(false); routerNavigate('/'); }}
+                      className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-[#57534E] hover:bg-[#FEF2F2] hover:text-[#DC2626] transition-colors"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <button
@@ -213,5 +284,6 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       )}
     </header>
+    </>
   );
 };

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
-import { ChatModal } from '../components/ChatModal';
 import { DetailModal } from '../components/DetailModal';
 import { Footer } from '../components/Footer';
 import { SectionFadeIn } from '../components/SectionFadeIn';
@@ -19,8 +18,6 @@ export default function MembershipPage() {
   const navigate = useNavigate();
   const [activeSection] = useState<string>('membership');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
-  const [chatOpen, setChatOpen] = useState<boolean>(false);
-  const [chatMode, setChatMode] = useState<'fan' | 'business'>('fan');
 
   const handleNavigate = (sectionId: string) => {
     if (sectionId === 'home') { navigate('/'); return; }
@@ -35,7 +32,7 @@ export default function MembershipPage() {
     navigate('/');
   };
 
-  const handleOpenChat = (mode: 'fan' | 'business' = 'fan') => { setChatMode(mode); setChatOpen(true); };
+  const handleOpenChat = () => { navigate('/chat'); };
   const handleBecomeMember = () => { document.getElementById('membership-plans')?.scrollIntoView({ behavior: 'smooth' }); };
   const handleComparePlans = () => { document.getElementById('membership-comparison')?.scrollIntoView({ behavior: 'smooth' }); };
   const handleSelectTier = (tierId: string) => { setActiveModal({ type: 'membership', tier: { id: tierId } as any }); };
@@ -51,10 +48,9 @@ export default function MembershipPage() {
         <SectionFadeIn><MembershipComparison /></SectionFadeIn>
         <SectionFadeIn><MembershipHowItWorks /></SectionFadeIn>
         <SectionFadeIn><MembershipFAQ /></SectionFadeIn>
-        <MembershipCTA onBecomeMember={handleBecomeMember} onOpenChat={() => handleOpenChat('fan')} />
+        <MembershipCTA onBecomeMember={handleBecomeMember} onOpenChat={handleOpenChat} />
       </main>
       <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />
-      <ChatModal isOpen={chatOpen} initialMode={chatMode} onClose={() => setChatOpen(false)} />
       <DetailModal modal={activeModal} onClose={() => setActiveModal(null)} onOpenChat={handleOpenChat} />
     </div>
   );

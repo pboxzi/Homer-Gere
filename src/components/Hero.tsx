@@ -6,7 +6,7 @@ import { IMAGES } from '../data/images';
 interface HeroProps {
   onExploreJourney?: () => void;
   onViewProject?: (projectId: string) => void;
-  onOpenChat?: (mode?: 'fan' | 'business') => void;
+  onOpenChat?: () => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onOpenChat }) => {
@@ -39,7 +39,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
                 Oliver Stone. Discover his work, exclusive experiences, and official updates.
               </p>
               <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-1">
-                <button onClick={() => onOpenChat?.('fan')} className="inline-flex items-center justify-center gap-2.5 bg-[#A6852F] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#A6852F]/25 focus:outline-none cursor-pointer">
+                <button onClick={onOpenChat} className="inline-flex items-center justify-center gap-2.5 bg-[#A6852F] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#A6852F]/25 focus:outline-none cursor-pointer">
                   <MessageSquare className="w-4 h-4" /><span>Chat with Homer Gere</span>
                 </button>
                 <button onClick={() => onViewProject?.(featuredProject.id)} className="inline-flex items-center justify-center gap-2 bg-transparent hover:bg-[#F3F1ED] active:scale-95 text-[#1C1917] font-medium text-sm px-6 py-3.5 rounded-2xl transition-all duration-300 focus:outline-none cursor-pointer group/btn">

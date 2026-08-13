@@ -8,11 +8,9 @@ import { JourneyTimeline } from './components/JourneyTimeline';
 import { JournalSection } from './components/JournalSection';
 import { ExperiencesSection } from './components/ExperiencesSection';
 import { MembershipSection } from './components/MembershipSection';
-import { ChatSection } from './components/ChatSection';
 import { NewsletterBar } from './components/NewsletterBar';
 import { GallerySection } from './components/GallerySection';
 import { Footer } from './components/Footer';
-import { ChatModal } from './components/ChatModal';
 import { DetailModal } from './components/DetailModal';
 import { SectionFadeIn } from './components/SectionFadeIn';
 import { ScrollToTop } from './components/ScrollToTop';
@@ -20,6 +18,7 @@ import { ModalType, JournalArticle, TimelineMilestone, GalleryItem } from './typ
 import { DashboardProvider } from './context/DashboardContext';
 import { SiteContentProvider } from './context/SiteContentContext';
 import { AuthProvider } from './context/AuthContext';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 const JourneyPage = React.lazy(() => import('./pages/JourneyPage'));
 const ProjectsPage = React.lazy(() => import('./pages/ProjectsPage'));
@@ -40,8 +39,6 @@ const AdminDashboard = React.lazy(() => import('./pages/admin/AdminDashboard'));
 function HomePage() {
   const [activeSection, setActiveSection] = useState<string>('home');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
-  const [chatOpen, setChatOpen] = useState<boolean>(false);
-  const [chatMode, setChatMode] = useState<'fan' | 'business'>('fan');
   const navigate = useNavigate();
 
   const handleNavigate = (sectionId: string) => {
@@ -59,9 +56,8 @@ function HomePage() {
     if (element) { element.scrollIntoView({ behavior: 'smooth' }); }
   };
 
-  const handleOpenChat = (mode: 'fan' | 'business' = 'fan') => {
-    setChatMode(mode);
-    setChatOpen(true);
+  const handleOpenChat = () => {
+    navigate('/chat');
   };
 
   return (
@@ -69,7 +65,7 @@ function HomePage() {
       <Navbar activeSection={activeSection} onNavigate={handleNavigate} onOpenChat={handleOpenChat} onOpenSignIn={() => setActiveModal({ type: 'signin' })} />
 
       <main>
-        <Hero onExploreJourney={() => handleNavigate('journey')} onViewProject={(projectId) => navigate(`/projects/${projectId}`)} onOpenChat={() => navigate('/chat')} />
+        <Hero onExploreJourney={() => handleNavigate('journey')} onViewProject={(projectId) => navigate(`/projects/${projectId}`)} onOpenChat={handleOpenChat} />
 
         <SectionFadeIn><FeaturedProject onDiscoverMore={(projectId) => setActiveModal({ type: 'project', projectId })} /></SectionFadeIn>
 
@@ -81,15 +77,12 @@ function HomePage() {
 
         <SectionFadeIn><MembershipSection onNavigate={handleNavigate} /></SectionFadeIn>
 
-        <SectionFadeIn><ChatSection onStartChat={(mode) => handleOpenChat(mode)} /></SectionFadeIn>
-
         <SectionFadeIn><GallerySection onSelectImage={(item: GalleryItem) => setActiveModal({ type: 'gallery', item })} onNavigate={handleNavigate} /></SectionFadeIn>
 
         <SectionFadeIn><NewsletterBar /></SectionFadeIn>
       </main>
 
       <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />
-      <ChatModal isOpen={chatOpen} initialMode={chatMode} onClose={() => setChatOpen(false)} />
       <DetailModal modal={activeModal} onClose={() => setActiveModal(null)} onOpenChat={handleOpenChat} />
     </div>
   );
@@ -126,14 +119,14 @@ export default function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/dashboard" element={
-                <Suspense fallback={<div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center"><div className="w-8 h-8 border-2 border-[#A6852F] border-t-transparent rounded-full animate-spin" /></div>}>
+                <ProtectedRoute>
                   <DashboardProvider><DashboardPage /></DashboardProvider>
-                </Suspense>
+                </ProtectedRoute>
               } />
               <Route path="/admin" element={
-                <Suspense fallback={<div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center"><div className="w-8 h-8 border-2 border-[#A6852F] border-t-transparent rounded-full animate-spin" /></div>}>
+                <ProtectedRoute requireAdmin>
                   <AdminDashboard />
-                </Suspense>
+                </ProtectedRoute>
               } />
             </Routes>
           </Suspense>

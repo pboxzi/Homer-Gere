@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Navbar } from '../../components/Navbar';
-import { ChatModal } from '../../components/ChatModal';
 import { DetailModal } from '../../components/DetailModal';
 import { Footer } from '../../components/Footer';
 import { getProjectBySlug } from '../../data/projectDetails';
@@ -14,6 +13,7 @@ import { ProjectVideos } from './ProjectVideos';
 import { ProjectRecognition } from './ProjectRecognition';
 import { ProjectRelated } from './ProjectRelated';
 import { ProjectContinueExploring } from './ProjectContinueExploring';
+import { SEO } from '../../components/SEO';
 import { ModalType } from '../../types';
 
 export default function ProjectDetailPage() {
@@ -22,8 +22,6 @@ export default function ProjectDetailPage() {
   const project = slug ? getProjectBySlug(slug) : undefined;
   const [activeSection] = React.useState<string>('projects');
   const [activeModal, setActiveModal] = React.useState<ModalType>(null);
-  const [chatOpen, setChatOpen] = React.useState<boolean>(false);
-  const [chatMode, setChatMode] = React.useState<'fan' | 'business'>('fan');
 
   const handleNavigate = (sectionId: string) => {
     if (sectionId === 'home') {
@@ -41,9 +39,8 @@ export default function ProjectDetailPage() {
     }
   };
 
-  const handleOpenChat = (mode: 'fan' | 'business' = 'fan') => {
-    setChatMode(mode);
-    setChatOpen(true);
+  const handleOpenChat = () => {
+    navigate('/chat');
   };
 
   useEffect(() => {
@@ -71,6 +68,7 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
+      <SEO title={project.title} description={project.tagline || project.synopsis} />
       <Navbar
         activeSection={activeSection}
         onNavigate={handleNavigate}
@@ -104,12 +102,6 @@ export default function ProjectDetailPage() {
 
       {/* Footer */}
       <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />
-
-      <ChatModal
-        isOpen={chatOpen}
-        initialMode={chatMode}
-        onClose={() => setChatOpen(false)}
-      />
 
       <DetailModal
         modal={activeModal}

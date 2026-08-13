@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
-import { ChatModal } from '../components/ChatModal';
 import { DetailModal } from '../components/DetailModal';
 import { JournalHero } from './journal/JournalHero';
 import { JournalFeatured } from './journal/JournalFeatured';
@@ -25,8 +24,6 @@ export const JournalPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState<JournalCategory>('All');
   const [activeSection, setActiveSection] = useState<string>('journal');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
-  const [chatOpen, setChatOpen] = useState<boolean>(false);
-  const [chatMode, setChatMode] = useState<'fan' | 'business'>('fan');
   const filteredArticles = useMemo(
     () => getArticlesByCategory(activeCategory),
     [activeCategory]
@@ -45,9 +42,8 @@ export const JournalPage: React.FC = () => {
     navigate('/');
   };
 
-  const handleOpenChat = (mode: 'fan' | 'business' = 'fan') => {
-    setChatMode(mode);
-    setChatOpen(true);
+  const handleOpenChat = () => {
+    navigate('/chat');
   };
 
   const handleArticleClick = (slug: string) => {
@@ -126,12 +122,6 @@ export const JournalPage: React.FC = () => {
       {/* Footer */}
       <Footer onNavigate={(path) => navigate(path)} onOpenChat={handleOpenChat} />
       </main>
-
-      <ChatModal
-        isOpen={chatOpen}
-        initialMode={chatMode}
-        onClose={() => setChatOpen(false)}
-      />
 
       <DetailModal
         modal={activeModal}

@@ -8,6 +8,7 @@ import {
 import {
   REGISTER_CONFIG, COUNTRIES, LANGUAGES, TIMEZONES,
 } from '../data/registerData';
+import { SEO } from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
 
 type Step = 'form' | 'welcome';
@@ -129,12 +130,15 @@ export default function RegisterPage() {
     if (result.error) {
       setError(result.error);
       setLoading(false);
+    } else {
+      navigate('/dashboard');
     }
   };
 
   if (step === 'welcome') {
     return (
       <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased flex items-center justify-center px-4">
+        <SEO title="Register" />
         <motion.div
           className="w-full max-w-lg text-center"
           initial={{ opacity: 0, scale: 0.95 }}
@@ -190,6 +194,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
+      <SEO title="Register" />
       {/* Header */}
       <header className="px-5 sm:px-8 py-5">
         <button

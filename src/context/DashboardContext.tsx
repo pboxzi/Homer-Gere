@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
 import {
   MemberProfile, MemberMembership, DashboardRequest, DashboardNotification,
   DashboardConversation, SecuritySession, MOCK_MEMBER, MOCK_MEMBERSHIP,
@@ -177,7 +178,21 @@ export const useDashboard = () => {
 };
 
 export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [profile, setProfile] = useState<MemberProfile>(() => loadState('profile', MOCK_MEMBER));
+  const { user } = useAuth();
+
+  const getDefaultProfile = (): MemberProfile => {
+    if (user) {
+      return {
+        ...MOCK_MEMBER,
+        firstName: user.firstName || MOCK_MEMBER.firstName,
+        lastName: user.lastName || MOCK_MEMBER.lastName,
+        email: user.email || MOCK_MEMBER.email,
+      };
+    }
+    return MOCK_MEMBER;
+  };
+
+  const [profile, setProfile] = useState<MemberProfile>(() => loadState('profile', getDefaultProfile()));
   const [membership, setMembership] = useState<MemberMembership>(() => loadState('membership', MOCK_MEMBERSHIP));
   const [requests, setRequests] = useState<DashboardRequest[]>(() => loadState('requests', MOCK_REQUESTS));
   const [notifications, setNotifications] = useState<DashboardNotification[]>(() => loadState('notifications', MOCK_NOTIFICATIONS));
@@ -202,6 +217,17 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => { saveState('favorites', favorites); }, [favorites]);
   useEffect(() => { saveState('helpTickets', helpTickets); }, [helpTickets]);
   useEffect(() => { saveState('twoFactorEnabled', twoFactorEnabled); }, [twoFactorEnabled]);
+
+  useEffect(() => {
+    if (user) {
+      setProfile((prev) => ({
+        ...prev,
+        firstName: user.firstName || prev.firstName,
+        lastName: user.lastName || prev.lastName,
+        email: user.email || prev.email,
+      }));
+    }
+  }, [user?.id]);
 
   // Profile
   const updateProfile = useCallback((updates: Partial<MemberProfile>) => {
