@@ -19,6 +19,8 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const settings = CHAT_SETTINGS.fanChat;
+  const { user } = useAuth();
+  const hasMembership = user?.membershipTier === 'Gold' || user?.membershipTier === 'Platinum';
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -142,10 +144,16 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
               Online now
             </p>
           </div>
-          {settings.whatsappEnabled && (
+          {settings.whatsappEnabled && hasMembership && (
             <button onClick={handleOpenWhatsApp} className="w-9 h-9 rounded-full flex items-center justify-center text-[#25D366] hover:bg-[#25D366]/10 transition-colors cursor-pointer">
               <Phone className="w-4.5 h-4.5" />
             </button>
+          )}
+          {settings.whatsappEnabled && !hasMembership && (
+            <div className="flex items-center gap-1.5 bg-[#A6852F]/8 px-2.5 py-1.5 rounded-full cursor-default" title="Upgrade to Gold or Platinum membership to chat on WhatsApp">
+              <Phone className="w-3 h-3 text-[#A6852F]" />
+              <span className="text-[10px] font-medium text-[#A6852F] whitespace-nowrap">Join Gold for WhatsApp</span>
+            </div>
           )}
         </div>
 

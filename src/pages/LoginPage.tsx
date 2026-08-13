@@ -249,6 +249,21 @@ export default function LoginPage() {
               {LOGIN_SECURITY_NOTICE}
             </p>
           </motion.div>
+
+          {/* 6. Back to Homepage */}
+          <motion.div
+            className="mt-6 text-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            <button
+              onClick={() => navigate('/')}
+              className="text-[11px] text-[#57534E]/70 hover:text-[#A6852F] transition-colors duration-300 cursor-pointer"
+            >
+              ← Back to Homer Gere
+            </button>
+          </motion.div>
         </div>
       </main>
     </div>

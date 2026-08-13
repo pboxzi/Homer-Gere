@@ -482,6 +482,21 @@ export default function RegisterPage() {
             </p>
           </motion.div>
         </form>
+
+        {/* Back to Homepage */}
+        <motion.div
+          className="mt-8 text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.7 }}
+        >
+          <button
+            onClick={() => navigate('/')}
+            className="text-[11px] text-[#57534E]/70 hover:text-[#A6852F] transition-colors duration-300 cursor-pointer"
+          >
+            ← Back to Homer Gere
+          </button>
+        </motion.div>
       </main>
     </div>
   );
