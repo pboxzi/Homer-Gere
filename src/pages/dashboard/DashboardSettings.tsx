@@ -11,9 +11,9 @@ export const DashboardSettings: React.FC = () => {
   const [emailNotif, setEmailNotif] = useState(profile.emailNotifications);
   const [smsNotif, setSmsNotif] = useState(profile.smsNotifications);
   const [marketing, setMarketing] = useState(profile.marketingPreferences);
-  const [profileVisibility, setProfileVisibility] = useState('members');
-  const [onlineStatus, setOnlineStatus] = useState(true);
-  const [messageRequests, setMessageRequests] = useState(true);
+  const [profileVisibility, setProfileVisibility] = useState(profile.profileVisibility);
+  const [onlineStatus, setOnlineStatus] = useState(profile.showOnlineStatus);
+  const [messageRequests, setMessageRequests] = useState(profile.allowMessageRequests);
   const [saved, setSaved] = useState(false);
 
   const handleSave = () => {
@@ -23,6 +23,9 @@ export const DashboardSettings: React.FC = () => {
       emailNotifications: emailNotif,
       smsNotifications: smsNotif,
       marketingPreferences: marketing,
+      profileVisibility,
+      showOnlineStatus: onlineStatus,
+      allowMessageRequests: messageRequests,
     });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);

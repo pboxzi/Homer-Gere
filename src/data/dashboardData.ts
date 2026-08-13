@@ -31,6 +31,9 @@ export interface MemberProfile {
   emailNotifications: boolean;
   smsNotifications: boolean;
   marketingPreferences: boolean;
+  profileVisibility: 'members' | 'public';
+  showOnlineStatus: boolean;
+  allowMessageRequests: boolean;
   memberSince: string;
 }
 
@@ -91,6 +94,9 @@ export const MOCK_MEMBER: MemberProfile = {
   emailNotifications: true,
   smsNotifications: false,
   marketingPreferences: true,
+  profileVisibility: 'members',
+  showOnlineStatus: true,
+  allowMessageRequests: true,
   memberSince: 'January 2025',
 };
 

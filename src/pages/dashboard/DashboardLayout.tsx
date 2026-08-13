@@ -6,7 +6,8 @@ import {
   FileText, Bookmark, Heart, Bell, Settings, Shield, HelpCircle,
   LogOut, Menu, X, ChevronRight,
 } from 'lucide-react';
-import { DashboardSection, DASHBOARD_NAV_ITEMS, MOCK_MEMBER } from '../../data/dashboardData';
+import { DashboardSection, DASHBOARD_NAV_ITEMS } from '../../data/dashboardData';
+import { useDashboard } from '../../context/DashboardContext';
 
 const ICON_MAP: Record<string, React.FC<{ className?: string }>> = {
   LayoutDashboard, User, Crown, MessageSquare, Inbox, Sparkles,
@@ -25,6 +26,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
 }) => {
   const navigate = useNavigate();
+  const { profile } = useDashboard();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const mainItems = DASHBOARD_NAV_ITEMS.filter((i) => i.group === 'main');
@@ -61,11 +63,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <div className="px-3 py-4 border-t border-[#E8E5DF]/40">
         <div className="flex items-center gap-3 px-3 mb-3">
           <div className="w-9 h-9 rounded-xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] text-sm font-medium">
-            {MOCK_MEMBER.firstName[0]}{MOCK_MEMBER.lastName[0]}
+            {profile.firstName[0]}{profile.lastName[0]}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-[#1C1917] truncate">{MOCK_MEMBER.firstName} {MOCK_MEMBER.lastName}</p>
-            <p className="text-[10px] text-[#57534E] truncate">{MOCK_MEMBER.email}</p>
+            <p className="text-sm font-medium text-[#1C1917] truncate">{profile.firstName} {profile.lastName}</p>
+            <p className="text-[10px] text-[#57534E] truncate">{profile.email}</p>
           </div>
         </div>
         <button

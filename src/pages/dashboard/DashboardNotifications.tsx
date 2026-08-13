@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Crown, MessageSquare, Sparkles, BookOpen, Settings as SettingsIcon, Check, Trash2 } from 'lucide-react';
+import { Bell, Crown, MessageSquare, Sparkles, BookOpen, Settings as SettingsIcon, Check, Trash2 } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import { NotificationType } from '../../data/dashboardData';
 
@@ -43,7 +43,9 @@ export const DashboardNotifications: React.FC = () => {
       <div className="space-y-2">
         {notifications.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/30 p-12 text-center">
-            <p className="text-sm text-[#57534E]">No notifications.</p>
+            <Bell className="w-8 h-8 text-[#57534E]/30 mx-auto mb-3" />
+            <p className="text-sm font-medium text-[#1C1917]">You're all caught up!</p>
+            <p className="text-xs text-[#57534E] mt-1">No new notifications at the moment.</p>
           </div>
         ) : (
           notifications.map((n, i) => {

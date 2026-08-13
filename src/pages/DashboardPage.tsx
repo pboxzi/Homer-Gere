@@ -34,7 +34,7 @@ export default function DashboardPage() {
 
   const renderSection = () => {
     switch (activeSection) {
-      case 'home': return <DashboardHome onOpenChat={handleOpenChat} onRequestExperience={handleRequestExperience} />;
+      case 'home': return <DashboardHome onOpenChat={handleOpenChat} onRequestExperience={handleRequestExperience} onNavigate={(section) => setActiveSection(section)} />;
       case 'profile': return <DashboardProfile />;
       case 'membership': return <DashboardMembership />;
       case 'chat': return <DashboardChat />;
@@ -47,7 +47,7 @@ export default function DashboardPage() {
       case 'settings': return <DashboardSettings />;
       case 'security': return <DashboardSecurity />;
       case 'help': return <DashboardHelp />;
-      default: return <DashboardHome onOpenChat={handleOpenChat} onRequestExperience={handleRequestExperience} />;
+      default: return <DashboardHome onOpenChat={handleOpenChat} onRequestExperience={handleRequestExperience} onNavigate={(section) => setActiveSection(section)} />;
     }
   };
 

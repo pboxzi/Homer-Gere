@@ -1,6 +1,6 @@
-import React from 'react';
-import { motion } from 'motion/react';
-import { Clock, CheckCircle, XCircle, Hourglass } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Clock, CheckCircle, XCircle, Hourglass, ChevronDown, ChevronUp } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import { RequestStatus } from '../../data/dashboardData';
 
@@ -14,6 +14,7 @@ const STATUS_CONFIG: Record<RequestStatus, { label: string; icon: React.FC<{ cla
 
 export const DashboardRequests: React.FC = () => {
   const { requests } = useDashboard();
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   return (
     <div className="space-y-8">
@@ -37,25 +38,62 @@ export const DashboardRequests: React.FC = () => {
       <div className="space-y-3">
         {requests.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/30 p-12 text-center">
-            <p className="text-sm text-[#57534E]">No requests yet.</p>
-            <p className="text-xs text-[#57534E]/60 mt-1">Submit a request from the Experiences page.</p>
+            <Clock className="w-8 h-8 text-[#57534E]/30 mx-auto mb-3" />
+            <p className="text-sm font-medium text-[#1C1917]">No requests yet</p>
+            <p className="text-xs text-[#57534E] mt-1">Submit a request from the Experiences page.</p>
           </div>
         ) : (
           requests.map((r, i) => {
             const status = STATUS_CONFIG[r.status];
             const StatusIcon = status.icon;
+            const isExpanded = expandedId === r.id;
             return (
-              <motion.div key={r.id} className="flex items-start gap-4 p-5 rounded-2xl border border-[#E8E5DF]/60 bg-white hover:border-[#A6852F]/20 transition-all cursor-pointer" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 + i * 0.05 }}>
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: status.bg }}><StatusIcon className="w-5 h-5" /></div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-medium text-[#A6852F] uppercase">{r.type}</span>
-                    <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium" style={{ backgroundColor: status.bg, color: status.color }}>{status.label}</span>
+              <motion.div key={r.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 + i * 0.05 }}>
+                <button onClick={() => setExpandedId(isExpanded ? null : r.id)} className="w-full flex items-start gap-4 p-5 rounded-2xl border border-[#E8E5DF]/60 bg-white hover:border-[#A6852F]/20 transition-all cursor-pointer text-left">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: status.bg }}><StatusIcon className="w-5 h-5" /></div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-[10px] font-medium text-[#A6852F] uppercase">{r.type}</span>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium" style={{ backgroundColor: status.bg, color: status.color }}>{status.label}</span>
+                    </div>
+                    <p className="text-sm font-medium text-[#1C1917]">{r.title}</p>
+                    <p className="text-xs text-[#57534E] mt-0.5">{r.description}</p>
+                    <p className="text-[10px] text-[#57534E]/60 mt-1">{r.date}</p>
                   </div>
-                  <p className="text-sm font-medium text-[#1C1917]">{r.title}</p>
-                  <p className="text-xs text-[#57534E] mt-0.5">{r.description}</p>
-                  <p className="text-[10px] text-[#57534E]/60 mt-1">{r.date}</p>
-                </div>
+                  {isExpanded ? <ChevronUp className="w-4 h-4 text-[#57534E]/40 shrink-0 mt-1" /> : <ChevronDown className="w-4 h-4 text-[#57534E]/40 shrink-0 mt-1" />}
+                </button>
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
+                      <div className="px-5 pb-4 pt-1 ml-14">
+                        <div className="rounded-xl bg-[#F3F1ED]/50 p-4 space-y-2">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-[#57534E]">Request ID</span>
+                            <span className="font-medium text-[#1C1917]">#{r.id}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-[#57534E]">Type</span>
+                            <span className="font-medium text-[#1C1917] capitalize">{r.type}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-[#57534E]">Submitted</span>
+                            <span className="font-medium text-[#1C1917]">{r.date}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-[#57534E]">Status</span>
+                            <span className="font-medium capitalize" style={{ color: status.color }}>{status.label}</span>
+                          </div>
+                          {r.department && (
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-[#57534E]">Department</span>
+                              <span className="font-medium text-[#1C1917]">{r.department}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             );
           })
