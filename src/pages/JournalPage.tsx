@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
+import { ChatModal } from '../components/ChatModal';
+import { DetailModal } from '../components/DetailModal';
 import { JournalHero } from './journal/JournalHero';
 import { JournalFeatured } from './journal/JournalFeatured';
 import { JournalCategories } from './journal/JournalCategories';
@@ -9,6 +11,7 @@ import { JournalTrending } from './journal/JournalTrending';
 import { JournalNewsletter } from './journal/JournalNewsletter';
 import { JournalExplore } from './journal/JournalExplore';
 import { Footer } from '../components/Footer';
+import { ModalType } from '../types';
 import {
   JournalCategory,
   FEATURED_ARTICLE,
@@ -20,6 +23,7 @@ export const JournalPage: React.FC = () => {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState<JournalCategory>('All');
   const [activeSection, setActiveSection] = useState<string>('journal');
+  const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [chatOpen, setChatOpen] = useState<boolean>(false);
   const [chatMode, setChatMode] = useState<'fan' | 'business'>('fan');
   const filteredArticles = useMemo(
@@ -28,26 +32,45 @@ export const JournalPage: React.FC = () => {
   );
 
   const handleNavigate = (sectionId: string) => {
-    if (sectionId === 'journey') navigate('/journey');
-    else if (sectionId === 'projects') navigate('/projects');
-    else if (sectionId === 'media') navigate('/media');
-    else if (sectionId === 'home') navigate('/');
-    else navigate('/');
+    if (sectionId === 'home') {
+      navigate('/');
+    } else if (sectionId === 'journey') {
+      navigate('/journey');
+    } else if (sectionId === 'projects') {
+      navigate('/projects');
+    } else if (sectionId === 'media') {
+      navigate('/media');
+    } else if (sectionId === 'gallery') {
+      navigate('/gallery');
+    } else {
+      navigate('/');
+    }
+  };
+
+  const handleOpenChat = (mode: 'fan' | 'business' = 'fan') => {
+    setChatMode(mode);
+    setChatOpen(true);
+  };
+
+  const handleArticleClick = (slug: string) => {
+    navigate(`/journal/${slug}`);
   };
 
   return (
-    <main className="min-h-screen bg-[#FAF9F7]">
+    <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
       <Navbar
         activeSection={activeSection}
         onNavigate={handleNavigate}
-        onOpenChat={(mode) => { setChatMode(mode || 'fan'); setChatOpen(true); }}
-        onOpenSignIn={() => {}}
+        onOpenChat={handleOpenChat}
+        onOpenSignIn={() => setActiveModal({ type: 'signin' })}
       />
+
+      <main>
       {/* 1. Hero */}
       <JournalHero onBack={() => navigate('/')} />
 
       {/* 2. Featured Story */}
-      <JournalFeatured article={FEATURED_ARTICLE} />
+      <JournalFeatured article={FEATURED_ARTICLE} onArticleClick={handleArticleClick} />
 
       {/* 3. Browse Categories + Latest Articles */}
       <section className="py-24 sm:py-32 bg-[#F3F1ED]">
@@ -83,12 +106,17 @@ export const JournalPage: React.FC = () => {
             )}
           </div>
 
-          <JournalLatest articles={filteredArticles} initialCount={6} loadMore={3} />
+          <JournalLatest
+            articles={filteredArticles}
+            initialCount={6}
+            loadMore={3}
+            onArticleClick={handleArticleClick}
+          />
         </div>
       </section>
 
       {/* 4. Trending Stories */}
-      <JournalTrending articles={TRENDING_ARTICLES} />
+      <JournalTrending articles={TRENDING_ARTICLES} onArticleClick={handleArticleClick} />
 
       {/* 5. Newsletter */}
       <JournalNewsletter />
@@ -97,7 +125,20 @@ export const JournalPage: React.FC = () => {
       <JournalExplore onNavigate={(path) => navigate(path)} />
 
       {/* Footer */}
-      <Footer onNavigate={(path) => navigate(path)} onOpenChat={() => {}} />
-    </main>
+      <Footer onNavigate={(path) => navigate(path)} onOpenChat={handleOpenChat} />
+      </main>
+
+      <ChatModal
+        isOpen={chatOpen}
+        initialMode={chatMode}
+        onClose={() => setChatOpen(false)}
+      />
+
+      <DetailModal
+        modal={activeModal}
+        onClose={() => setActiveModal(null)}
+        onOpenChat={handleOpenChat}
+      />
+    </div>
   );
 };

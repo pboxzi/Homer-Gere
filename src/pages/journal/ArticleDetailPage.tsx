@@ -1,17 +1,46 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { Navbar } from '../../components/Navbar';
+import { ChatModal } from '../../components/ChatModal';
+import { DetailModal } from '../../components/DetailModal';
 import { getArticleBySlug, getRelatedArticles } from '../../data/journal';
 import { ArticleDetailHero } from './article/ArticleDetailHero';
 import { ArticleDetailBody } from './article/ArticleDetailBody';
 import { ArticleDetailRelated } from './article/ArticleDetailRelated';
 import { Footer } from '../../components/Footer';
+import { ModalType } from '../../types';
 
 export default function ArticleDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const article = slug ? getArticleBySlug(slug) : undefined;
   const relatedArticles = slug ? getRelatedArticles(slug, 3) : [];
+  const [activeSection] = React.useState<string>('journal');
+  const [activeModal, setActiveModal] = React.useState<ModalType>(null);
+  const [chatOpen, setChatOpen] = React.useState<boolean>(false);
+  const [chatMode, setChatMode] = React.useState<'fan' | 'business'>('fan');
+
+  const handleNavigate = (sectionId: string) => {
+    if (sectionId === 'home') {
+      navigate('/');
+    } else if (sectionId === 'journey') {
+      navigate('/journey');
+    } else if (sectionId === 'projects') {
+      navigate('/projects');
+    } else if (sectionId === 'media') {
+      navigate('/media');
+    } else if (sectionId === 'gallery') {
+      navigate('/gallery');
+    } else {
+      navigate('/');
+    }
+  };
+
+  const handleOpenChat = (mode: 'fan' | 'business' = 'fan') => {
+    setChatMode(mode);
+    setChatOpen(true);
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -44,6 +73,13 @@ export default function ArticleDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
+      <Navbar
+        activeSection={activeSection}
+        onNavigate={handleNavigate}
+        onOpenChat={handleOpenChat}
+        onOpenSignIn={() => setActiveModal({ type: 'signin' })}
+      />
+
       {/* SEO */}
       <Helmet>
         <title>{article.seoTitle}</title>
@@ -144,7 +180,19 @@ export default function ArticleDetailPage() {
       />
 
       {/* Footer */}
-      <Footer onNavigate={(path) => navigate(path)} onOpenChat={() => {}} />
+      <Footer onNavigate={(path) => navigate(path)} onOpenChat={handleOpenChat} />
+
+      <ChatModal
+        isOpen={chatOpen}
+        initialMode={chatMode}
+        onClose={() => setChatOpen(false)}
+      />
+
+      <DetailModal
+        modal={activeModal}
+        onClose={() => setActiveModal(null)}
+        onOpenChat={handleOpenChat}
+      />
     </div>
   );
 }

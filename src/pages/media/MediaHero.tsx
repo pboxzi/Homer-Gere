@@ -1,58 +1,103 @@
 import React from 'react';
-import { Play, ArrowRight } from 'lucide-react';
+import { motion } from 'motion/react';
+import { ArrowLeft, Play, Film, Mic, Newspaper } from 'lucide-react';
+import { SECTION_IMAGES } from '../../data/images';
 
 interface MediaHeroProps {
-  onWatchMedia: () => void;
+  onBack: () => void;
 }
 
-export const MediaHero: React.FC<MediaHeroProps> = ({ onWatchMedia }) => {
+export const MediaHero: React.FC<MediaHeroProps> = ({ onBack }) => {
   return (
-    <section className="pt-28 sm:pt-36 pb-16 sm:pb-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Content */}
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
-                Official Media
+    <section className="relative h-[85vh] min-h-[600px] bg-[#111827] overflow-hidden">
+      {/* Background Image */}
+      <motion.div
+        className="absolute inset-0 z-0"
+        initial={{ scale: 1.08 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 2, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <img
+          src={SECTION_IMAGES.media.hero}
+          alt="Homer Gere — Media"
+          referrerPolicy="no-referrer"
+          className="w-full h-full object-cover object-top opacity-35"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#111827] via-[#111827]/80 to-[#111827]/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-[#111827]/20 to-[#111827]/60" />
+      </motion.div>
+
+      {/* Content */}
+      <div className="relative z-10 h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-between py-8">
+        {/* Back Button */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-2 text-white/70 hover:text-white text-sm font-medium transition-colors duration-300 cursor-pointer group"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
+            <span>Back to Home</span>
+          </button>
+        </motion.div>
+
+        {/* Hero Content */}
+        <div className="max-w-3xl">
+          <motion.span
+            className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+          >
+            Official Media Hub
+          </motion.span>
+
+          <motion.h1
+            className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-editorial text-white tracking-tight leading-[1.02] mt-4 mb-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.4 }}
+          >
+            Media
+          </motion.h1>
+
+          <motion.p
+            className="text-lg sm:text-xl text-white/70 leading-relaxed max-w-2xl mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.5 }}
+          >
+            The official source for verified interviews, trailers, behind-the-scenes
+            content, podcasts, and press appearances featuring Homer Gere. Every
+            piece of media is officially published and verified.
+          </motion.p>
+
+          <motion.div
+            className="flex flex-wrap items-center gap-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.6 }}
+          >
+            <div className="flex items-center gap-6 text-sm text-white/50">
+              <span className="inline-flex items-center gap-2">
+                <Film className="w-4 h-4 text-[#C9A84C]" />
+                12+ Videos
               </span>
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-editorial text-[#1C1917] tracking-tight leading-[1.05]">
-                Media
-              </h1>
-              <p className="text-base sm:text-lg text-[#44403C] leading-relaxed max-w-lg">
-                The official source for verified interviews, trailers, behind-the-scenes content,
-                and press appearances featuring Homer Gere.
-              </p>
+              <span className="w-1 h-1 rounded-full bg-white/30" />
+              <span className="inline-flex items-center gap-2">
+                <Mic className="w-4 h-4 text-[#C9A84C]" />
+                6 Podcasts
+              </span>
+              <span className="w-1 h-1 rounded-full bg-white/30" />
+              <span className="inline-flex items-center gap-2">
+                <Newspaper className="w-4 h-4 text-[#C9A84C]" />
+                12 Press Articles
+              </span>
             </div>
-
-            <button
-              onClick={onWatchMedia}
-              className="inline-flex items-center gap-2.5 bg-[#C9A84C] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#C9A84C]/25 focus:outline-none cursor-pointer"
-            >
-              <Play className="w-4 h-4 fill-current" />
-              <span>Watch Featured</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Hero Image */}
-          <div className="relative">
-            <div className="relative rounded-[2rem] overflow-hidden aspect-[4/3]">
-              <img
-                src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=800&q=80"
-                alt="Homer Gere — Media"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#1C1917]/30 to-transparent" />
-            </div>
-            {/* Floating stat */}
-            <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl p-5 shadow-lg shadow-black/5">
-              <div className="text-2xl font-editorial text-[#1C1917]">20+</div>
-              <div className="text-[11px] text-[#57534E] font-medium tracking-wide uppercase">
-                Verified Appearances
-              </div>
-            </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

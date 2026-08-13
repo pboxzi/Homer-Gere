@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
 import { Clock, Tag, ArrowUp } from 'lucide-react';
-import { JournalArticleExtended } from '../../data/journal';
+import { JournalArticleExtended } from '../../../data/journal';
 
 interface ArticleDetailBodyProps {
   article: JournalArticleExtended;

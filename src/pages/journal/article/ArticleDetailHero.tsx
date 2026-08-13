@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, Clock, User, Calendar, Share2, Bookmark } from 'lucide-react';
-import { JournalArticleExtended } from '../../data/journal';
+import { JournalArticleExtended } from '../../../data/journal';
 
 interface ArticleDetailHeroProps {
   article: JournalArticleExtended;

@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import { ArrowRight, Clock } from 'lucide-react';
-import { JournalArticleExtended } from '../../data/journal';
+import { JournalArticleExtended } from '../../../data/journal';
 
 interface ArticleDetailRelatedProps {
   articles: JournalArticleExtended[];

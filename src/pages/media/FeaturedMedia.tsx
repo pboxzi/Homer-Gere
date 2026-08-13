@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import { Play, Calendar, ExternalLink } from 'lucide-react';
 import { MEDIA_VIDEOS } from '../../data/content';
 
@@ -10,7 +11,7 @@ export const FeaturedMedia: React.FC<FeaturedMediaProps> = ({ onWatch }) => {
   const featured = MEDIA_VIDEOS.find((v) => v.featured) || MEDIA_VIDEOS[0];
 
   return (
-    <section className="py-16 sm:py-24">
+    <section className="py-24 sm:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-10">
           <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
@@ -21,12 +22,20 @@ export const FeaturedMedia: React.FC<FeaturedMediaProps> = ({ onWatch }) => {
           </h2>
         </div>
 
-        <div className="relative rounded-[2rem] overflow-hidden group cursor-pointer" onClick={() => onWatch(featured.url)}>
+        <motion.div
+          className="relative rounded-[2rem] overflow-hidden group cursor-pointer"
+          onClick={() => onWatch(featured.url)}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        >
           {/* Thumbnail */}
           <div className="relative aspect-[16/7] sm:aspect-[16/6]">
             <img
               src={featured.thumbnail}
               alt={featured.title}
+              referrerPolicy="no-referrer"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#1C1917]/80 via-[#1C1917]/20 to-transparent" />
@@ -66,7 +75,7 @@ export const FeaturedMedia: React.FC<FeaturedMediaProps> = ({ onWatch }) => {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

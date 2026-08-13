@@ -104,6 +104,50 @@ export const SECTION_IMAGES = {
     press: bwInterview,
     contact: bwInterview,
   },
+  media: {
+    hero: bwInterview,
+    featured: shardsPremiereCast,
+  },
+};
+
+// Media item image mappings — each thumbnail matches the actual content
+export const MEDIA_IMAGES = {
+  // Videos — thumbnails match the actual event/interview
+  'the-shards-official-trailer': shardsPremiereCast,
+  'vogue-september-cover-kaia-homer': homerBrightLuxuryEditorial,
+  'variety-full-interview': bwInterview,
+  'et-euphoria-premiere': agencyPremiereMoma,
+  'gma-shards-advice': shardsRobertMallory,
+  'people-richard-gere-emotional': shardsPremiereCarey,
+  'euphoria-s3-premiere': agencyPremiereMoma,
+  'the-shards-premiere-nyc': shardsPremiereCast,
+  'the-shards-launch-party': shardsLaunchSkate,
+  'cannes-2024': cannesRedCarpet,
+  'e-news-richard-gere-reacts': veniceFilmFestival,
+  'itn-shards-cast-interview': disneyUpfrontCast,
+  'awards-buzz-cast-interview': shardsEpisodeScene,
+
+  // Podcasts — cover art matches the show/interview context
+  'the-shards-official-podcast': shardsEpisodeScene,
+  'vogue-run-through-podcast': homerBrightLuxuryEditorial,
+  'et-interview-homer': journalOnset,
+  'extra-richard-gere-homer': shardsPremiereCarey,
+  'who-weekly-podcast': journalPortrait,
+  'spreaker-page-six': bwInterview,
+
+  // Press — images match the publication/event context
+  'press-vogue-september': homerBrightLuxuryEditorial,
+  'press-people-scientist': shardsPremiereCast,
+  'press-british-vogue': homerGqLifestyleStudio,
+  'press-ew-shards': shardsPremiereCast,
+  'press-variety-stone': cannesRedCarpet,
+  'press-hollywoodReporter-gere': shardsPremiereCarey,
+  'press-upi-shards': shardsRobertMallory,
+  'press-scmp': euphoriaEpisodeScene,
+  'press-vogue-premiere': shardsPremiereCast,
+  'press-cnn-family': disneyUpfrontCast,
+  'press-deadline-shards': shardsPremiereCast,
+  'press-bbc-euphoria': euphoriaEpisodeScene,
 };
 
 // Project-specific image mappings for detail pages

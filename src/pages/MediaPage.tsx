@@ -5,7 +5,6 @@ import { Footer } from '../components/Footer';
 import { ChatModal } from '../components/ChatModal';
 import { DetailModal } from '../components/DetailModal';
 import { SectionDivider } from '../components/SectionDivider';
-import { SectionFadeIn } from '../components/SectionFadeIn';
 import { ModalType } from '../types';
 import { MediaHero } from './media/MediaHero';
 import { FeaturedMedia } from './media/FeaturedMedia';
@@ -15,21 +14,31 @@ import { PressHighlights } from './media/PressHighlights';
 import { ContinueExploring } from './media/ContinueExploring';
 
 export default function MediaPage() {
-  const [activeSection, setActiveSection] = useState<string>('media');
+  const [activeSection] = useState<string>('media');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [chatOpen, setChatOpen] = useState<boolean>(false);
   const [chatMode, setChatMode] = useState<'fan' | 'business'>('fan');
   const navigate = useNavigate();
 
   const handleNavigate = (sectionId: string) => {
-    if (sectionId === 'journey') {
+    if (sectionId === 'home') {
+      navigate('/');
+    } else if (sectionId === 'journey') {
       navigate('/journey');
     } else if (sectionId === 'projects') {
       navigate('/projects');
-    } else if (sectionId === 'media') {
-      navigate('/media');
-    } else if (sectionId === 'home') {
+    } else if (sectionId === 'journal') {
+      navigate('/journal');
+    } else if (sectionId === 'gallery') {
+      navigate('/gallery');
+    } else if (sectionId === 'experiences') {
       navigate('/');
+      setTimeout(() => {
+        document.getElementById('experiences')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else if (sectionId === 'chat') {
+      setChatMode('fan');
+      setChatOpen(true);
     } else {
       navigate('/');
     }
@@ -41,7 +50,7 @@ export default function MediaPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F5EF] text-[#1C1917] font-body antialiased">
+    <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
       <Navbar
         activeSection={activeSection}
         onNavigate={handleNavigate}
@@ -50,37 +59,31 @@ export default function MediaPage() {
       />
 
       <main>
-        <MediaHero onWatchMedia={() => {}} />
+        {/* 1. Hero */}
+        <MediaHero onBack={() => navigate('/')} />
 
         <SectionDivider />
 
-        <SectionFadeIn>
-          <FeaturedMedia onWatch={(url) => window.open(url, '_blank')} />
-        </SectionFadeIn>
+        {/* 2. Featured Media */}
+        <FeaturedMedia onWatch={(url) => window.open(url, '_blank')} />
 
         <SectionDivider />
 
-        <SectionFadeIn>
-          <VideoLibrary onWatch={(url) => window.open(url, '_blank')} />
-        </SectionFadeIn>
+        {/* 3. Video Library */}
+        <VideoLibrary onWatch={(url) => window.open(url, '_blank')} />
+
+        {/* 4. Audio & Podcasts */}
+        <AudioPodcast onListen={(url) => window.open(url, '_blank')} />
 
         <SectionDivider />
 
-        <SectionFadeIn>
-          <AudioPodcast onListen={(url) => window.open(url, '_blank')} />
-        </SectionFadeIn>
+        {/* 5. Press Highlights */}
+        <PressHighlights onReadArticle={(url) => window.open(url, '_blank')} />
 
         <SectionDivider />
 
-        <SectionFadeIn>
-          <PressHighlights onReadArticle={(url) => window.open(url, '_blank')} />
-        </SectionFadeIn>
-
-        <SectionDivider />
-
-        <SectionFadeIn>
-          <ContinueExploring onNavigate={handleNavigate} />
-        </SectionFadeIn>
+        {/* 6. Continue Exploring */}
+        <ContinueExploring onNavigate={handleNavigate} />
       </main>
 
       <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />
