@@ -1,0 +1,197 @@
+import React, { useState } from 'react';
+import { motion } from 'motion/react';
+import { ArrowRight, ArrowLeft, Building2, Phone, Mail, Send as Telegram, MessageCircle, CheckCircle } from 'lucide-react';
+import { CHAT_SETTINGS, ENQUIRY_TYPES } from '../../data/chatSettings';
+
+interface BusinessChatProps {
+  onBack: () => void;
+  onComplete: (data: { fullName: string; email: string; company: string; enquiryType: string; message: string; method: string }) => void;
+}
+
+export const BusinessChat: React.FC<BusinessChatProps> = ({ onBack, onComplete }) => {
+  const [step, setStep] = useState<'form' | 'methods'>('form');
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    company: '',
+    enquiryType: '',
+    message: '',
+  });
+
+  const settings = CHAT_SETTINGS.businessChat;
+
+  const updateField = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const isFormValid = formData.fullName.trim() !== '' && formData.email.trim() !== '' && formData.enquiryType !== '' && formData.message.trim() !== '';
+
+  const handleFormSubmit = () => {
+    if (isFormValid) {
+      setStep('methods');
+    }
+  };
+
+  const handleMethodSelect = (method: string) => {
+    onComplete({ ...formData, method });
+  };
+
+  const enabledMethods = [
+    settings.whatsappEnabled && { id: 'whatsapp', label: 'WhatsApp', icon: Phone, color: '#25D366', description: 'Send via WhatsApp to management' },
+    settings.emailEnabled && { id: 'email', label: 'Email', icon: Mail, color: '#C9A84C', description: 'Send via email to management' },
+    settings.telegramEnabled && { id: 'telegram', label: 'Telegram', icon: Telegram, color: '#0088CC', description: 'Send via Telegram to management' },
+    settings.websiteFormEnabled && { id: 'website', label: 'Website Form', icon: MessageCircle, color: '#1C1917', description: 'Submit through the website' },
+  ].filter(Boolean) as Array<{ id: string; label: string; icon: React.FC<{ className?: string; style?: React.CSSProperties }>; color: string; description: string }>;
+
+  if (step === 'methods') {
+    return (
+      <section className="py-24 sm:py-32 bg-[#FAF9F7]">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <button
+              onClick={() => setStep('form')}
+              className="inline-flex items-center gap-2 text-sm font-medium text-[#57534E] hover:text-[#C9A84C] transition-colors duration-300 mb-8 cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Form
+            </button>
+
+            <h2 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight mb-3">
+              Choose communication method
+            </h2>
+            <p className="text-sm text-[#57534E] mb-8">
+              Select how you'd like to send your enquiry to Homer's management team.
+            </p>
+
+            <div className="space-y-4">
+              {enabledMethods.map((method) => (
+                <button
+                  key={method.id}
+                  onClick={() => handleMethodSelect(method.id)}
+                  className="w-full flex items-center gap-4 p-5 rounded-2xl border border-[#E8E5DF]/60 bg-white hover:border-[#C9A84C]/30 hover:shadow-lg hover:shadow-[#C9A84C]/5 transition-all duration-300 text-left cursor-pointer group"
+                >
+                  <div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center text-white transition-all duration-500 shrink-0"
+                    style={{ backgroundColor: `${method.color}15` }}
+                  >
+                    <method.icon className="w-5 h-5" style={{ color: method.color }} />
+                  </div>
+                  <div className="flex-1">
+                    <span className="text-sm font-medium text-[#1C1917] block">{method.label}</span>
+                    <span className="text-xs text-[#57534E]">{method.description}</span>
+                  </div>
+                  <CheckCircle className="w-5 h-5 text-[#16A34A] shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                </button>
+              ))}
+            </div>
+
+            <p className="text-[11px] text-[#57534E] mt-6 leading-relaxed">
+              All business enquiries are routed exclusively to Homer's management team.
+              You will receive a response within 5–10 business days.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="py-24 sm:py-32 bg-[#FAF9F7]">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-2 text-sm font-medium text-[#57534E] hover:text-[#C9A84C] transition-colors duration-300 mb-8 cursor-pointer"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </button>
+
+          <h2 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight mb-3">
+            Business Chat
+          </h2>
+          <p className="text-sm text-[#57534E] mb-8">
+            Submit a professional enquiry. All messages are routed to Homer's management team.
+          </p>
+
+          <div className="space-y-5">
+            <div>
+              <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Full Name *</label>
+              <input
+                type="text"
+                value={formData.fullName}
+                onChange={(e) => updateField('fullName', e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300"
+                placeholder="Enter your full name"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Email *</label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => updateField('email', e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300"
+                placeholder="your@company.com"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Company / Organization</label>
+              <input
+                type="text"
+                value={formData.company}
+                onChange={(e) => updateField('company', e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300"
+                placeholder="Company or organization name"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Enquiry Type *</label>
+              <select
+                value={formData.enquiryType}
+                onChange={(e) => updateField('enquiryType', e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300 appearance-none"
+              >
+                <option value="">Select enquiry type</option>
+                {ENQUIRY_TYPES.map((type) => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Message *</label>
+              <textarea
+                value={formData.message}
+                onChange={(e) => updateField('message', e.target.value)}
+                rows={5}
+                className="w-full px-4 py-3 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#C9A84C] focus:ring-1 focus:ring-[#C9A84C]/20 transition-all duration-300 resize-none"
+                placeholder="Describe your enquiry..."
+              />
+            </div>
+          </div>
+
+          <button
+            onClick={handleFormSubmit}
+            disabled={!isFormValid}
+            className="mt-6 inline-flex items-center justify-center gap-2.5 bg-[#1C1917] hover:bg-[#292524] disabled:bg-[#E8E5DF] disabled:text-[#57534E] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#1C1917]/10 focus:outline-none cursor-pointer disabled:cursor-not-allowed"
+          >
+            Continue
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </motion.div>
+      </div>
+    </section>
+  );
+};

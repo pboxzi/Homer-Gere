@@ -27,6 +27,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const isMediaPage = location.pathname === '/media';
   const isExperiencesPage = location.pathname === '/experiences';
   const isMembershipPage = location.pathname === '/membership';
+  const isChatPage = location.pathname === '/chat';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,6 +49,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'journal', label: 'Journal' },
     { id: 'experiences', label: 'Experiences' },
     { id: 'membership', label: 'Membership' },
+    { id: 'chat', label: 'Chat' },
   ];
 
   const handleNavClick = (id: string) => {
@@ -65,7 +67,9 @@ export const Navbar: React.FC<NavbarProps> = ({
       routerNavigate('/experiences');
     } else if (id === 'membership') {
       routerNavigate('/membership');
-    } else if ((isJourneyPage || isProjectsPage || isMediaPage || isGalleryPage || isJournalPage || isExperiencesPage || isMembershipPage) && id === 'home') {
+    } else if (id === 'chat') {
+      routerNavigate('/chat');
+    } else if ((isJourneyPage || isProjectsPage || isMediaPage || isGalleryPage || isJournalPage || isExperiencesPage || isMembershipPage || isChatPage) && id === 'home') {
       routerNavigate('/');
     } else {
       onNavigate(id);
@@ -98,7 +102,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-0.5">
           {navItems.map((item) => {
-            const isActive = item.id === 'journey' ? isJourneyPage : item.id === 'projects' ? isProjectsPage : item.id === 'gallery' ? isGalleryPage : item.id === 'journal' ? isJournalPage : item.id === 'media' ? isMediaPage : item.id === 'experiences' ? isExperiencesPage : item.id === 'membership' ? isMembershipPage : activeSection === item.id;
+            const isActive = item.id === 'journey' ? isJourneyPage : item.id === 'projects' ? isProjectsPage : item.id === 'gallery' ? isGalleryPage : item.id === 'journal' ? isJournalPage : item.id === 'media' ? isMediaPage : item.id === 'experiences' ? isExperiencesPage : item.id === 'membership' ? isMembershipPage : item.id === 'chat' ? isChatPage : activeSection === item.id;
             return (
               <button
                 key={item.id}
@@ -162,7 +166,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="lg:hidden bg-[#FAF9F7]/95 backdrop-blur-2xl px-5 pt-4 pb-6 border-t border-[#C9A84C]/10">
           <div className="flex flex-col gap-0.5">
             {navItems.map((item, index) => {
-            const isActive = item.id === 'journey' ? isJourneyPage : item.id === 'projects' ? isProjectsPage : item.id === 'media' ? isMediaPage : item.id === 'gallery' ? isGalleryPage : item.id === 'journal' ? isJournalPage : item.id === 'experiences' ? isExperiencesPage : item.id === 'membership' ? isMembershipPage : activeSection === item.id;
+            const isActive = item.id === 'journey' ? isJourneyPage : item.id === 'projects' ? isProjectsPage : item.id === 'media' ? isMediaPage : item.id === 'gallery' ? isGalleryPage : item.id === 'journal' ? isJournalPage : item.id === 'experiences' ? isExperiencesPage : item.id === 'membership' ? isMembershipPage : item.id === 'chat' ? isChatPage : activeSection === item.id;
               return (
                 <button
                   key={item.id}
