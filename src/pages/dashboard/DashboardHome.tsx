@@ -3,93 +3,154 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import {
   MessageSquare, Crown, Sparkles, User, Bell, ArrowRight,
-  Calendar,
+  Calendar, ArrowUpRight,
 } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 
-export const DashboardHome: React.FC = () => {
+export const DashboardHome: React.FC<{ onOpenChat: (mode?: 'fan' | 'business') => void; onRequestExperience: () => void }> = ({ onOpenChat, onRequestExperience }) => {
   const navigate = useNavigate();
   const { profile, membership, notifications, conversations, requests } = useDashboard();
   const unread = notifications.filter((n) => !n.read).length;
   const upcoming = requests.filter((r) => r.status === 'approved');
 
+  const cards = [
+    { label: 'Membership', value: membership.plan, sub: membership.status === 'active' ? `Renews ${membership.renewalDate}` : 'No active plan', icon: Crown, color: '#A6852F' },
+    { label: 'Notifications', value: `${unread}`, sub: `${notifications.length} total`, icon: Bell, color: '#3B82F6' },
+    { label: 'Conversations', value: `${conversations.length}`, sub: 'Active chats', icon: MessageSquare, color: '#16A34A' },
+    { label: 'Requests', value: `${upcoming.length}`, sub: `${requests.length} total`, icon: Sparkles, color: '#8B5CF6' },
+  ];
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <h1 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight">Welcome back, {profile.firstName}</h1>
         <p className="text-sm text-[#57534E] mt-1">Here's what's happening with your account today.</p>
       </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatusCard label="Membership" value={membership.plan} sub={membership.status === 'active' ? `Renews ${membership.renewalDate}` : 'No active plan'} icon={<Crown className="w-5 h-5" />} color="#A6852F" delay={0.1} />
-        <StatusCard label="Notifications" value={`${unread} unread`} sub={`${notifications.length} total`} icon={<Bell className="w-5 h-5" />} color="#3B82F6" delay={0.15} />
-        <StatusCard label="Conversations" value={`${conversations.length} active`} sub="With Homer" icon={<MessageSquare className="w-5 h-5" />} color="#16A34A" delay={0.2} />
-        <StatusCard label="Requests" value={`${upcoming.length} approved`} sub={`${requests.length} total`} icon={<Sparkles className="w-5 h-5" />} color="#8B5CF6" delay={0.25} />
+      {/* Status Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {cards.map((card, i) => (
+          <motion.div
+            key={card.label}
+            className="rounded-xl p-4 border transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 cursor-default group"
+            style={{
+              backgroundColor: `${card.color}10`,
+              borderColor: `${card.color}20`,
+            }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.05 * i }}
+          >
+            <div className="flex items-center justify-between mb-2.5">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: `${card.color}20`, color: card.color }}>
+                <card.icon className="w-4 h-4" />
+              </div>
+              <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: card.color }} />
+            </div>
+            <p className="text-xl font-editorial leading-none" style={{ color: card.color }}>{card.value}</p>
+            <p className="text-[10px] text-[#57534E] mt-1 font-medium">{card.label}</p>
+          </motion.div>
+        ))}
       </div>
 
+      {/* Quick Actions */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
-        <h2 className="text-sm font-medium text-[#1C1917] mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <QuickAction icon={<MessageSquare className="w-4 h-4" />} label="Chat with Homer" onClick={() => navigate('/chat')} />
-          <QuickAction icon={<Crown className="w-4 h-4" />} label="Upgrade Membership" onClick={() => navigate('/membership')} />
-          <QuickAction icon={<Sparkles className="w-4 h-4" />} label="Request Experience" onClick={() => navigate('/experiences')} />
-          <QuickAction icon={<User className="w-4 h-4" />} label="Update Profile" onClick={() => {}} />
+        <h2 className="text-xs font-semibold text-[#1C1917] mb-3 uppercase tracking-[0.05em]">Quick Actions</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          {[
+            { icon: MessageSquare, label: 'Chat with Homer', onClick: () => onOpenChat('fan'), color: '#A6852F' },
+            { icon: Crown, label: 'Upgrade Membership', onClick: () => navigate('/membership'), color: '#F59E0B' },
+            { icon: Sparkles, label: 'Request Experience', onClick: onRequestExperience, color: '#8B5CF6' },
+            { icon: User, label: 'Update Profile', onClick: () => {}, color: '#3B82F6' },
+          ].map((action) => (
+            <button
+              key={action.label}
+              onClick={action.onClick}
+              className="flex items-center gap-3 p-4 rounded-xl border-2 transition-all duration-300 cursor-pointer group hover:shadow-lg hover:-translate-y-1"
+              style={{
+                backgroundColor: `${action.color}12`,
+                borderColor: `${action.color}25`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = `${action.color}22`;
+                e.currentTarget.style.borderColor = `${action.color}45`;
+                e.currentTarget.style.boxShadow = `0 8px 25px ${action.color}20`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = `${action.color}12`;
+                e.currentTarget.style.borderColor = `${action.color}25`;
+                e.currentTarget.style.boxShadow = '';
+              }}
+            >
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300" style={{ backgroundColor: `${action.color}22`, color: action.color }}>
+                <action.icon className="w-5 h-5" />
+              </div>
+              <span className="text-[11px] font-bold text-[#1C1917] leading-tight">{action.label}</span>
+            </button>
+          ))}
         </div>
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div className="rounded-2xl border border-[#E8E5DF]/60 bg-white p-5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-[#1C1917]">Recent Notifications</h3>
-            <button className="text-[10px] text-[#A6852F] font-medium hover:text-[#8B6F1F] transition-colors cursor-pointer">View All</button>
+      {/* Notifications + Conversations */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <motion.div className="rounded-xl border border-[#E8E5DF]/80 bg-white p-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-xs font-semibold text-[#1C1917] uppercase tracking-[0.05em]">Recent Notifications</h3>
+            <button className="text-[9px] text-[#A6852F] font-bold hover:text-[#8B6F1F] transition-colors cursor-pointer">View All</button>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-1.5">
             {notifications.slice(0, 4).map((n) => (
-              <div key={n.id} className={`flex items-start gap-3 p-3 rounded-xl ${!n.read ? 'bg-[#A6852F]/5' : ''}`}>
-                <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!n.read ? 'bg-[#A6852F]' : 'bg-transparent'}`} />
+              <div key={n.id} className={`flex items-start gap-2.5 p-2.5 rounded-lg transition-colors ${!n.read ? 'bg-[#A6852F]/8 border border-[#A6852F]/15' : 'hover:bg-[#F3F1ED]/50 border border-transparent'}`}>
+                <div className={`w-2 h-2 rounded-full mt-1 shrink-0 ${!n.read ? 'bg-[#A6852F]' : 'bg-[#E8E5DF]'}`} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-[#1C1917]">{n.title}</p>
-                  <p className="text-[11px] text-[#57534E] mt-0.5 truncate">{n.message}</p>
-                  <p className="text-[10px] text-[#57534E]/60 mt-1">{n.date}</p>
+                  <p className="text-[11px] font-semibold text-[#1C1917]">{n.title}</p>
+                  <p className="text-[10px] text-[#57534E] mt-0.5 leading-relaxed truncate">{n.message}</p>
+                  <p className="text-[9px] text-[#57534E]/50 mt-0.5">{n.date}</p>
                 </div>
               </div>
             ))}
           </div>
         </motion.div>
 
-        <motion.div className="rounded-2xl border border-[#E8E5DF]/60 bg-white p-5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.5 }}>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-[#1C1917]">Recent Conversations</h3>
-            <button onClick={() => navigate('/chat')} className="text-[10px] text-[#A6852F] font-medium hover:text-[#8B6F1F] transition-colors cursor-pointer">View All</button>
+        <motion.div className="rounded-xl border border-[#E8E5DF]/80 bg-white p-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.5 }}>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-xs font-semibold text-[#1C1917] uppercase tracking-[0.05em]">Recent Conversations</h3>
+            <button onClick={() => navigate('/chat')} className="text-[9px] text-[#A6852F] font-bold hover:text-[#8B6F1F] transition-colors cursor-pointer">View All</button>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-1.5">
             {conversations.map((c) => (
-              <div key={c.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#F3F1ED]/40 transition-colors cursor-pointer">
-                <div className="w-9 h-9 rounded-xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F]"><MessageSquare className="w-4 h-4" /></div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-medium text-[#A6852F] uppercase">{c.type}</span>
-                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${c.status === 'open' ? 'bg-[#16A34A]/10 text-[#16A34A]' : c.status === 'replied' ? 'bg-[#3B82F6]/10 text-[#3B82F6]' : 'bg-[#57534E]/10 text-[#57534E]'}`}>{c.status}</span>
-                  </div>
-                  <p className="text-xs text-[#57534E] truncate mt-0.5">{c.lastMessage}</p>
-                  <p className="text-[10px] text-[#57534E]/60 mt-0.5">{c.date}</p>
+              <div key={c.id} className="flex items-center gap-2.5 p-2.5 rounded-lg hover:bg-[#F3F1ED]/50 transition-colors cursor-pointer border border-transparent hover:border-[#E8E5DF]/60">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: c.type === 'fan' ? '#A6852F12' : '#8B5CF612', color: c.type === 'fan' ? '#A6852F' : '#8B5CF6' }}>
+                  <MessageSquare className="w-3.5 h-3.5" />
                 </div>
-                <ArrowRight className="w-3.5 h-3.5 text-[#57534E]/40" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[9px] font-bold uppercase" style={{ color: c.type === 'fan' ? '#A6852F' : '#8B5CF6' }}>{c.type}</span>
+                    <span className={`text-[8px] px-1.5 py-0.5 rounded-full font-bold ${c.status === 'open' ? 'bg-[#16A34A]/10 text-[#16A34A]' : c.status === 'replied' ? 'bg-[#3B82F6]/10 text-[#3B82F6]' : 'bg-[#57534E]/10 text-[#57534E]'}`}>{c.status}</span>
+                  </div>
+                  <p className="text-[10px] text-[#57534E] truncate mt-0.5">{c.lastMessage}</p>
+                  <p className="text-[9px] text-[#57534E]/50 mt-0.5">{c.date}</p>
+                </div>
+                <ArrowRight className="w-3 h-3 text-[#57534E]/30 shrink-0" />
               </div>
             ))}
           </div>
         </motion.div>
       </div>
 
+      {/* Upcoming */}
       {upcoming.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}>
-          <h2 className="text-sm font-medium text-[#1C1917] mb-4">Upcoming Experiences</h2>
-          <div className="space-y-3">
+          <h2 className="text-xs font-semibold text-[#1C1917] mb-3 uppercase tracking-[0.05em]">Upcoming Experiences</h2>
+          <div className="space-y-2">
             {upcoming.map((r) => (
-              <div key={r.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#E8E5DF]/60 bg-white">
-                <div className="w-10 h-10 rounded-xl bg-[#16A34A]/10 flex items-center justify-center text-[#16A34A]"><Calendar className="w-5 h-5" /></div>
-                <div className="flex-1"><p className="text-sm font-medium text-[#1C1917]">{r.title}</p><p className="text-xs text-[#57534E] mt-0.5">{r.description}</p></div>
-                <span className="text-[10px] px-2 py-1 rounded-full bg-[#16A34A]/10 text-[#16A34A] font-medium">{r.status}</span>
+              <div key={r.id} className="flex items-center gap-3 p-3 rounded-xl border border-[#E8E5DF]/80 bg-white hover:border-[#16A34A]/20 transition-all">
+                <div className="w-8 h-8 rounded-lg bg-[#16A34A]/10 flex items-center justify-center text-[#16A34A]"><Calendar className="w-4 h-4" /></div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[11px] font-semibold text-[#1C1917]">{r.title}</p>
+                  <p className="text-[10px] text-[#57534E] truncate">{r.description}</p>
+                </div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#16A34A]/10 text-[#16A34A] font-bold">{r.status}</span>
               </div>
             ))}
           </div>
@@ -98,21 +159,3 @@ export const DashboardHome: React.FC = () => {
     </div>
   );
 };
-
-const StatusCard: React.FC<{ label: string; value: string; sub: string; icon: React.ReactNode; color: string; delay: number }> = ({ label, value, sub, icon, color, delay }) => (
-  <motion.div className="rounded-2xl border border-[#E8E5DF]/60 bg-white p-5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay }}>
-    <div className="flex items-center justify-between mb-3">
-      <span className="text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em]">{label}</span>
-      <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${color}12`, color }}>{icon}</div>
-    </div>
-    <p className="text-xl font-editorial text-[#1C1917]">{value}</p>
-    <p className="text-[11px] text-[#57534E] mt-0.5">{sub}</p>
-  </motion.div>
-);
-
-const QuickAction: React.FC<{ icon: React.ReactNode; label: string; onClick: () => void }> = ({ icon, label, onClick }) => (
-  <button onClick={onClick} className="flex items-center gap-3 p-4 rounded-2xl border border-[#E8E5DF]/60 bg-white hover:border-[#A6852F]/30 hover:bg-[#A6852F]/5 transition-all duration-300 cursor-pointer group text-left">
-    <div className="w-9 h-9 rounded-xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] group-hover:bg-[#A6852F] group-hover:text-white transition-all duration-500">{icon}</div>
-    <span className="text-xs font-medium text-[#1C1917] group-hover:text-[#A6852F] transition-colors duration-300">{label}</span>
-  </button>
-);
