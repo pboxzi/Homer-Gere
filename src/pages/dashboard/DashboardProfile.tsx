@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Camera, Save } from 'lucide-react';
-import { MOCK_MEMBER } from '../../data/dashboardData';
+import { useDashboard } from '../../context/DashboardContext';
 import { COUNTRIES, LANGUAGES, TIMEZONES } from '../../data/registerData';
 
 export const DashboardProfile: React.FC = () => {
-  const [formData, setFormData] = useState({ ...MOCK_MEMBER });
+  const { profile, updateProfile } = useDashboard();
+  const [formData, setFormData] = useState({ ...profile });
   const [saved, setSaved] = useState(false);
 
   const update = (field: string, value: string | boolean) => {
@@ -14,6 +15,7 @@ export const DashboardProfile: React.FC = () => {
   };
 
   const handleSave = () => {
+    updateProfile(formData);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -25,13 +27,7 @@ export const DashboardProfile: React.FC = () => {
         <p className="text-sm text-[#57534E] mt-1">Manage your personal information and preferences.</p>
       </motion.div>
 
-      {/* Avatar */}
-      <motion.div
-        className="flex items-center gap-5"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-      >
+      <motion.div className="flex items-center gap-5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
         <div className="relative">
           <div className="w-20 h-20 rounded-2xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] text-2xl font-editorial">
             {formData.firstName[0]}{formData.lastName[0]}
@@ -46,13 +42,7 @@ export const DashboardProfile: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Form */}
-      <motion.div
-        className="space-y-5"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-      >
+      <motion.div className="space-y-5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="First Name" value={formData.firstName} onChange={(v) => update('firstName', v)} />
           <Field label="Last Name" value={formData.lastName} onChange={(v) => update('lastName', v)} />
@@ -68,7 +58,6 @@ export const DashboardProfile: React.FC = () => {
           <SelectField label="Timezone" value={formData.timezone} options={TIMEZONES} onChange={(v) => update('timezone', v)} />
         </div>
 
-        {/* Notification Preferences */}
         <div className="pt-2">
           <p className="text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-3">Notification Preferences</p>
           <div className="space-y-2">
@@ -87,11 +76,9 @@ export const DashboardProfile: React.FC = () => {
           </div>
         </div>
 
-        {/* Save */}
         <div className="flex items-center gap-3 pt-2">
           <button onClick={handleSave} className="inline-flex items-center gap-2 bg-[#1C1917] hover:bg-[#292524] active:scale-95 text-white font-medium text-sm px-6 py-2.5 rounded-2xl transition-all duration-300 cursor-pointer">
-            <Save className="w-4 h-4" />
-            Save Changes
+            <Save className="w-4 h-4" /> Save Changes
           </button>
           {saved && <span className="text-xs text-[#16A34A] font-medium">Saved!</span>}
         </div>

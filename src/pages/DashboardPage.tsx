@@ -4,10 +4,15 @@ import { DashboardHome } from './dashboard/DashboardHome';
 import { DashboardProfile } from './dashboard/DashboardProfile';
 import { DashboardMembership } from './dashboard/DashboardMembership';
 import { DashboardChat } from './dashboard/DashboardChat';
+import { DashboardMessages } from './dashboard/DashboardMessages';
+import { DashboardExperiences } from './dashboard/DashboardExperiences';
 import { DashboardRequests } from './dashboard/DashboardRequests';
+import { DashboardBookmarks } from './dashboard/DashboardBookmarks';
+import { DashboardFavorites } from './dashboard/DashboardFavorites';
 import { DashboardNotifications } from './dashboard/DashboardNotifications';
 import { DashboardSettings } from './dashboard/DashboardSettings';
 import { DashboardSecurity } from './dashboard/DashboardSecurity';
+import { DashboardHelp } from './dashboard/DashboardHelp';
 import { DashboardSection } from '../data/dashboardData';
 
 export default function DashboardPage() {
@@ -19,15 +24,15 @@ export default function DashboardPage() {
       case 'profile': return <DashboardProfile />;
       case 'membership': return <DashboardMembership />;
       case 'chat': return <DashboardChat />;
-      case 'messages': return <Placeholder title="My Messages" description="View and manage all your message threads." />;
-      case 'experiences': return <Placeholder title="Experiences" description="Browse and request exclusive experiences." />;
+      case 'messages': return <DashboardMessages />;
+      case 'experiences': return <DashboardExperiences />;
       case 'requests': return <DashboardRequests />;
-      case 'bookmarks': return <Placeholder title="Journal Bookmarks" description="Articles and entries you've saved for later." />;
-      case 'favorites': return <Placeholder title="Gallery Favorites" description="Your saved photos and media from the gallery." />;
+      case 'bookmarks': return <DashboardBookmarks />;
+      case 'favorites': return <DashboardFavorites />;
       case 'notifications': return <DashboardNotifications />;
       case 'settings': return <DashboardSettings />;
       case 'security': return <DashboardSecurity />;
-      case 'help': return <Placeholder title="Help & Support" description="Get help with your account, membership, or platform features." />;
+      case 'help': return <DashboardHelp />;
       default: return <DashboardHome />;
     }
   };
@@ -38,13 +43,3 @@ export default function DashboardPage() {
     </DashboardLayout>
   );
 }
-
-const Placeholder: React.FC<{ title: string; description: string }> = ({ title, description }) => (
-  <div className="space-y-4">
-    <h1 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight">{title}</h1>
-    <p className="text-sm text-[#57534E]">{description}</p>
-    <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/30 p-12 text-center">
-      <p className="text-sm text-[#57534E]">This section is coming soon.</p>
-    </div>
-  </div>
-);
