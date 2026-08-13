@@ -7,21 +7,21 @@ interface ChatSectionProps {
 
 export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
   return (
-    <section id="chat" className="py-24 sm:py-32 bg-[#F5F2EB]">
+    <section id="chat" className="py-24 sm:py-32 bg-[#FAF9F7]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#EDE9E0] rounded-[2rem] p-8 sm:p-12 lg:p-16">
+        <div className="bg-[#F3F1ED] rounded-[2rem] p-8 sm:p-12 lg:p-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left Description */}
             <div className="lg:col-span-5 space-y-5">
-              <span className="text-[11px] font-semibold tracking-[0.2em] text-[#C8A96A] uppercase">
+              <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
                 Chat with Homer
               </span>
 
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial font-bold text-[#111827] tracking-tight leading-[1.1]">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#3F3F46] tracking-tight leading-[1.1]">
                 Let's start a conversation.
               </h2>
 
-              <p className="text-[#78716C] text-sm sm:text-base leading-relaxed">
+              <p className="text-[#52525B] text-sm sm:text-base leading-relaxed">
                 Choose how you'd like to connect with Homer. We'll guide you to the right place.
               </p>
             </div>
@@ -31,23 +31,23 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
               {/* Fan Chat */}
               <div
                 onClick={() => onStartChat('fan')}
-                className="bg-[#F5F2EB] p-7 rounded-[1.5rem] transition-all duration-500 cursor-pointer group flex flex-col justify-between hover:bg-white hover:shadow-xl hover:shadow-[#C8A96A]/5"
+                className="bg-[#FAF9F7] p-7 rounded-[1.5rem] transition-all duration-500 cursor-pointer group flex flex-col justify-between hover:bg-white hover:shadow-xl hover:shadow-[#C9A84C]/5"
               >
                 <div>
-                  <div className="w-12 h-12 rounded-2xl bg-[#C8A96A]/10 text-[#C8A96A] flex items-center justify-center mb-5 group-hover:bg-[#C8A96A] group-hover:text-white transition-all duration-500">
+                  <div className="w-12 h-12 rounded-2xl bg-[#C9A84C]/10 text-[#C9A84C] flex items-center justify-center mb-5 group-hover:bg-[#C9A84C] group-hover:text-white transition-all duration-500">
                     <User className="w-6 h-6" />
                   </div>
 
-                  <h3 className="text-lg font-editorial font-bold text-[#111827] group-hover:text-[#C8A96A] transition-colors duration-300">
+                  <h3 className="text-lg font-editorial text-[#3F3F46] group-hover:text-[#C9A84C] transition-colors duration-300">
                     Fan Chat
                   </h3>
 
-                  <p className="mt-2 text-xs sm:text-sm text-[#78716C] leading-relaxed">
+                  <p className="mt-2 text-xs sm:text-sm text-[#52525B] leading-relaxed">
                     Send a message, ask a question, or share your support directly.
                   </p>
                 </div>
 
-                <div className="mt-6 flex items-center text-xs font-semibold text-[#C8A96A] group-hover:translate-x-1 transition-transform duration-300">
+                <div className="mt-6 flex items-center text-xs font-medium text-[#C9A84C] group-hover:translate-x-1 transition-transform duration-300">
                   <span>Start Fan Chat</span>
                   <ArrowRight className="w-4 h-4 ml-1.5" />
                 </div>
@@ -56,23 +56,23 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
               {/* Business Chat */}
               <div
                 onClick={() => onStartChat('business')}
-                className="bg-[#F5F2EB] p-7 rounded-[1.5rem] transition-all duration-500 cursor-pointer group flex flex-col justify-between hover:bg-white hover:shadow-xl hover:shadow-[#C8A96A]/5"
+                className="bg-[#FAF9F7] p-7 rounded-[1.5rem] transition-all duration-500 cursor-pointer group flex flex-col justify-between hover:bg-white hover:shadow-xl hover:shadow-[#C9A84C]/5"
               >
                 <div>
-                  <div className="w-12 h-12 rounded-2xl bg-[#C8A96A]/10 text-[#C8A96A] flex items-center justify-center mb-5 group-hover:bg-[#C8A96A] group-hover:text-white transition-all duration-500">
+                  <div className="w-12 h-12 rounded-2xl bg-[#C9A84C]/10 text-[#C9A84C] flex items-center justify-center mb-5 group-hover:bg-[#C9A84C] group-hover:text-white transition-all duration-500">
                     <Briefcase className="w-6 h-6" />
                   </div>
 
-                  <h3 className="text-lg font-editorial font-bold text-[#111827] group-hover:text-[#C8A96A] transition-colors duration-300">
+                  <h3 className="text-lg font-editorial text-[#3F3F46] group-hover:text-[#C9A84C] transition-colors duration-300">
                     Business Chat
                   </h3>
 
-                  <p className="mt-2 text-xs sm:text-sm text-[#78716C] leading-relaxed">
+                  <p className="mt-2 text-xs sm:text-sm text-[#52525B] leading-relaxed">
                     Media, collaborations, opportunities, and professional inquiries.
                   </p>
                 </div>
 
-                <div className="mt-6 flex items-center text-xs font-semibold text-[#C8A96A] group-hover:translate-x-1 transition-transform duration-300">
+                <div className="mt-6 flex items-center text-xs font-medium text-[#C9A84C] group-hover:translate-x-1 transition-transform duration-300">
                   <span>Start Business Chat</span>
                   <ArrowRight className="w-4 h-4 ml-1.5" />
                 </div>

@@ -5,36 +5,36 @@ import { IMAGES } from '../../data/images';
 
 const HIGHLIGHTS = [
   {
-    id: 'early-theater',
-    title: 'First Steps on Stage',
+    id: 'euphoria-debut',
+    title: 'Euphoria Season 3 — TV Debut',
     description:
-      'At age 13, Homer stepped onto a regional theater stage for the first time in a production of "Our Town," discovering a lifelong calling for performance.',
-    date: '2013',
-    image: IMAGES.journalPortrait,
-  },
-  {
-    id: 'drama-training',
-    title: 'Intensive Drama Training',
-    description:
-      'Enrolled in an intensive drama studio in New York, immersing in Meisner and Stanislavski techniques under the guidance of renowned coaches.',
-    date: '2015',
-    image: IMAGES.homerGqLifestyleStudio,
-  },
-  {
-    id: 'breakthrough-role',
-    title: 'Breakout in "Echoes of Midnight"',
-    description:
-      'A compelling lead performance in the feature drama "Echoes of Midnight" captured critical acclaim and established Homer as a rising talent.',
-    date: '2020',
-    image: IMAGES.shardsBanner,
+      'Made his television debut portraying Dylan Reid in HBO\'s Euphoria Season 3. The casting was announced by BBC News in October 2025; the season premiered in May 2026.',
+    date: '2026',
+    image: IMAGES.journalOnset,
   },
   {
     id: 'the-shards',
-    title: 'Starring in "The Shards"',
+    title: 'The Shards — First Lead Role',
     description:
-      'Leading a major studio feature set in 1980s New York, delivering a haunting performance that marks the next defining chapter in Homer\'s career.',
+      'Cast as Robert Mallory in Ryan Murphy\'s adaptation of Bret Easton Ellis\'s novel, starring alongside Kaia Gerber. His first major leading role, set for release in August 2026.',
+    date: '2025–2026',
+    image: IMAGES.shardsBanner,
+  },
+  {
+    id: 'white-lies',
+    title: 'White Lies — Oliver Stone Film',
+    description:
+      'Cast in an upcoming film directed by Oliver Stone, announced in June 2026. Details about the role and release date are forthcoming.',
     date: '2026',
     image: IMAGES.homerBrightLuxuryEditorial,
+  },
+  {
+    id: 'brown-university',
+    title: 'Brown University',
+    description:
+      'Studied Cognitive Neuroscience and Visual Arts at Brown University in Providence, Rhode Island, an interdisciplinary education that shaped his approach to performance.',
+    date: '2019',
+    image: IMAGES.homerGqLifestyleStudio,
   },
 ];
 
@@ -43,7 +43,7 @@ export const JourneyHighlights: React.FC = () => {
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
   return (
-    <section id="journey-highlights" ref={sectionRef} className="py-24 sm:py-32 bg-[#F5F2EB]">
+    <section id="journey-highlights" ref={sectionRef} className="py-24 sm:py-32 bg-[#FAF9F7]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -52,10 +52,10 @@ export const JourneyHighlights: React.FC = () => {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-semibold tracking-[0.2em] text-[#C8A96A] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
             Career Highlights
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial font-bold text-[#111827] tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#3F3F46] tracking-tight">
             Moments that defined the path.
           </h2>
         </motion.div>
@@ -65,7 +65,7 @@ export const JourneyHighlights: React.FC = () => {
           {HIGHLIGHTS.map((item, idx) => (
             <motion.article
               key={item.id}
-              className="group rounded-[1.5rem] overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-[#C8A96A]/5 cursor-pointer hover:-translate-y-1 bg-[#EDE9E0]/60"
+              className="group rounded-[1.5rem] overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-[#C9A84C]/5 cursor-pointer hover:-translate-y-1 bg-[#F3F1ED]/60"
               initial={{ opacity: 0, y: 50 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{
@@ -75,7 +75,7 @@ export const JourneyHighlights: React.FC = () => {
               }}
             >
               {/* Image */}
-              <div className="relative h-72 sm:h-80 overflow-hidden bg-[#E4DFD5]">
+              <div className="relative h-72 sm:h-80 overflow-hidden bg-[#E8E5DF]">
                 <img
                   src={item.image}
                   alt={item.title}
@@ -83,23 +83,23 @@ export const JourneyHighlights: React.FC = () => {
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.2s] ease-out"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute top-5 left-5 bg-[#F5F2EB]/95 backdrop-blur-md px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 text-[10px] font-semibold tracking-wider text-[#57534E] uppercase shadow-sm">
-                  <Calendar className="w-3 h-3 text-[#C8A96A]" />
+                <div className="absolute top-5 left-5 bg-[#FAF9F7]/95 backdrop-blur-md px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 text-[10px] font-medium tracking-wider text-[#3F3F46] uppercase shadow-sm">
+                  <Calendar className="w-3 h-3 text-[#C9A84C]" />
                   {item.date}
                 </div>
               </div>
 
               {/* Content */}
               <div className="p-7 sm:p-9">
-                <h3 className="text-xl sm:text-2xl font-editorial font-bold text-[#111827] group-hover:text-[#C8A96A] transition-colors duration-300 mb-3">
+                <h3 className="text-xl sm:text-2xl font-editorial text-[#3F3F46] group-hover:text-[#C9A84C] transition-colors duration-300 mb-3">
                   {item.title}
                 </h3>
 
-                <p className="text-sm sm:text-base text-[#78716C] leading-relaxed mb-7 group-hover:text-[#57534E] transition-colors duration-300">
+                <p className="text-sm sm:text-base text-[#52525B] leading-relaxed mb-7 group-hover:text-[#3F3F46] transition-colors duration-300">
                   {item.description}
                 </p>
 
-                <div className="flex items-center text-xs font-semibold text-[#C8A96A] group-hover:translate-x-1 transition-transform duration-300">
+                <div className="flex items-center text-xs font-medium text-[#C9A84C] group-hover:translate-x-1 transition-transform duration-300">
                   <span>Learn More</span>
                   <ArrowRight className="w-4 h-4 ml-1.5" />
                 </div>

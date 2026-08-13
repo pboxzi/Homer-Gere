@@ -43,7 +43,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
 
           {/* Success Message Banner */}
           {successMsg && (
-            <div className="p-4 bg-green-50 rounded-2xl text-green-800 text-sm font-semibold flex items-center gap-2">
+            <div className="p-4 bg-green-50 rounded-2xl text-green-800 text-sm font-medium flex items-center gap-2">
               <Check className="w-5 h-5 text-green-600 shrink-0" />
               <span>{successMsg}</span>
             </div>
@@ -61,10 +61,10 @@ export const DetailModal: React.FC<DetailModalProps> = ({
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6 text-white">
-                  <span className="bg-blue-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                  <span className="bg-blue-600 px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider">
                     {modal.article.category}
                   </span>
-                  <h2 className="text-2xl sm:text-3xl font-serif font-bold mt-2">
+                  <h2 className="text-2xl sm:text-3xl font-editorial mt-2">
                     {modal.article.title}
                   </h2>
                   <div className="flex items-center gap-4 text-xs text-gray-300 mt-2">
@@ -88,7 +88,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
                 <span className="text-xs text-gray-500">Written by Homer Gere</span>
                 <button
                   onClick={onClose}
-                  className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-full text-sm font-semibold transition-colors"
+                  className="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-full text-sm font-medium transition-colors"
                 >
                   Close Article
                 </button>
@@ -100,10 +100,10 @@ export const DetailModal: React.FC<DetailModalProps> = ({
           {modal.type === 'milestone' && modal.milestone && (
             <div className="space-y-6 pt-2">
               <div className="flex items-center gap-3">
-                <span className="text-xs font-bold bg-blue-600 text-white px-3 py-1 rounded-full">
+                <span className="text-xs font-medium bg-blue-600 text-white px-3 py-1 rounded-full">
                   {modal.milestone.year}
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-serif font-bold text-gray-900">
+                <h2 className="text-2xl sm:text-3xl font-editorial text-gray-700">
                   {modal.milestone.title}
                 </h2>
               </div>
@@ -132,14 +132,14 @@ export const DetailModal: React.FC<DetailModalProps> = ({
             <div className="space-y-6 pt-2">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">
+                  <span className="text-xs font-medium text-blue-600 uppercase tracking-widest">
                     Exclusive Experience
                   </span>
-                  <h2 className="text-2xl sm:text-3xl font-serif font-bold text-gray-900 mt-1">
+                  <h2 className="text-2xl sm:text-3xl font-editorial text-gray-700 mt-1">
                     {modal.experience.title}
                   </h2>
                 </div>
-                <div className="text-2xl font-bold text-blue-600 font-serif">
+                <div className="text-2xl font-medium text-blue-600 font-editorial">
                   {modal.experience.price}
                 </div>
               </div>
@@ -149,7 +149,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
               </p>
 
               <div className="bg-gray-50 p-4 rounded-2xl space-y-2 text-xs text-gray-600">
-                <div className="flex items-center gap-2 font-semibold text-gray-900">
+                <div className="flex items-center gap-2 font-medium text-gray-700">
                   <ShieldCheck className="w-4 h-4 text-blue-600" />
                   Official Booking Guarantee
                 </div>
@@ -161,7 +161,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
               <div className="pt-4 flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={() => handleActionClick(modal.experience.title)}
-                  className="flex-1 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-sm font-semibold text-center"
+                  className="flex-1 py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-sm font-medium text-center"
                 >
                   Request Experience
                 </button>
@@ -182,19 +182,19 @@ export const DetailModal: React.FC<DetailModalProps> = ({
           {modal.type === 'membership' && modal.tier && (
             <div className="space-y-6 pt-2">
               <div className="text-center space-y-2">
-                <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">
+                <span className="text-xs font-medium text-blue-600 uppercase tracking-widest">
                   Membership Checkout
                 </span>
-                <h2 className="text-3xl font-serif font-bold text-gray-900">
+                <h2 className="text-3xl font-editorial text-gray-700">
                   Join {modal.tier.name} Tier
                 </h2>
-                <div className="text-3xl font-serif font-extrabold text-blue-600">
+                <div className="text-3xl font-editorial font-extrabold text-blue-600">
                   ${modal.tier.price} <span className="text-sm text-gray-500 font-normal">{modal.tier.period}</span>
                 </div>
               </div>
 
               <div className="bg-gray-50 p-6 rounded-2xl space-y-3">
-                <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider">
+                <h4 className="text-xs font-medium text-gray-700 uppercase tracking-wider">
                   Included Benefits:
                 </h4>
                 <ul className="space-y-2">
@@ -210,7 +210,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
               <div className="pt-2">
                 <button
                   onClick={() => handleActionClick(`${modal.tier.name} Membership`)}
-                  className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-sm font-bold"
+                  className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-sm font-medium"
                 >
                   Complete Registration &rarr;
                 </button>
@@ -232,10 +232,10 @@ export const DetailModal: React.FC<DetailModalProps> = ({
 
               <div className="flex items-center justify-between pt-2">
                 <div>
-                  <span className="text-xs font-bold text-blue-600 uppercase">
+                  <span className="text-xs font-medium text-blue-600 uppercase">
                     {modal.item.category}
                   </span>
-                  <h3 className="text-xl font-serif font-bold text-gray-900">
+                  <h3 className="text-xl font-editorial text-gray-700">
                     {modal.item.title}
                   </h3>
                   <p className="text-xs text-gray-500">{modal.item.caption}</p>
@@ -243,7 +243,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
 
                 <button
                   onClick={onClose}
-                  className="px-5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-full text-xs font-semibold"
+                  className="px-5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-full text-xs font-medium"
                 >
                   Close Lightbox
                 </button>
@@ -255,7 +255,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
           {modal.type === 'signin' && (
             <div className="space-y-6 pt-2">
               <div className="text-center space-y-1">
-                <h2 className="text-2xl font-serif font-bold text-gray-900">
+                <h2 className="text-2xl font-editorial text-gray-700">
                   Member Sign In
                 </h2>
                 <p className="text-xs text-gray-500">
@@ -271,7 +271,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
                 className="space-y-4"
               >
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Email Address
                   </label>
                   <input
@@ -283,7 +283,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  <label className="block text-xs font-medium text-gray-700 mb-1">
                     Password
                   </label>
                   <input
@@ -296,7 +296,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
 
                 <button
                   type="submit"
-                  className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-sm font-bold shadow"
+                  className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-sm font-medium shadow"
                 >
                   Sign In to Account
                 </button>
@@ -316,10 +316,10 @@ export const DetailModal: React.FC<DetailModalProps> = ({
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6 text-white">
-                  <span className="bg-blue-600 px-3 py-1 rounded-full text-xs font-bold uppercase">
+                  <span className="bg-blue-600 px-3 py-1 rounded-full text-xs font-medium uppercase">
                     {FEATURED_PROJECT.status}
                   </span>
-                  <h2 className="text-3xl font-serif font-bold mt-2">
+                  <h2 className="text-3xl font-editorial mt-2">
                     {FEATURED_PROJECT.title}
                   </h2>
                 </div>
@@ -329,16 +329,16 @@ export const DetailModal: React.FC<DetailModalProps> = ({
                 <div className="grid grid-cols-2 gap-4 p-4 bg-gray-50 rounded-2xl text-xs text-gray-700">
                   <div>
                     <span className="text-gray-400 block">Director</span>
-                    <strong className="text-sm font-semibold">{FEATURED_PROJECT.director}</strong>
+                    <strong className="text-sm font-medium">{FEATURED_PROJECT.director}</strong>
                   </div>
                   <div>
                     <span className="text-gray-400 block">Starring Role</span>
-                    <strong className="text-sm font-semibold">{FEATURED_PROJECT.role}</strong>
+                    <strong className="text-sm font-medium">{FEATURED_PROJECT.role}</strong>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider mb-2">
+                  <h4 className="text-xs font-medium text-gray-700 uppercase tracking-wider mb-2">
                     Project Synopsis
                   </h4>
                   <p className="text-sm text-gray-600 leading-relaxed">
@@ -353,13 +353,13 @@ export const DetailModal: React.FC<DetailModalProps> = ({
                     onClose();
                     onOpenChat('fan');
                   }}
-                  className="inline-flex items-center gap-2 text-xs font-bold text-blue-600 hover:text-blue-700"
+                  className="inline-flex items-center gap-2 text-xs font-medium text-blue-600 hover:text-blue-700"
                 >
                   Ask Homer about 'The Shards' &rarr;
                 </button>
                 <button
                   onClick={onClose}
-                  className="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-full text-xs font-semibold"
+                  className="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-full text-xs font-medium"
                 >
                   Close
                 </button>

@@ -18,10 +18,10 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
           <div className="max-w-xl">
-            <span className="text-[11px] font-semibold tracking-[0.2em] text-[#C8A96A] uppercase">
+            <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
               Membership
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial font-bold text-[#111827] mt-3 tracking-tight leading-[1.1]">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#3F3F46] mt-3 tracking-tight leading-[1.1]">
               Join the journey. <br className="hidden sm:inline" />
               Be part of more.
             </h2>
@@ -32,7 +32,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
 
           <button
             onClick={onExploreMembership}
-            className="text-xs font-semibold text-[#C8A96A] hover:text-[#B89A5A] transition-colors duration-300 self-start md:self-auto focus:outline-none cursor-pointer"
+            className="text-xs font-medium text-[#C9A84C] hover:text-[#B8983A] transition-colors duration-300 self-start md:self-auto focus:outline-none cursor-pointer"
           >
             Compare All Benefits &rarr;
           </button>
@@ -48,40 +48,40 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
                 key={tier.id}
                 className={`relative rounded-[1.5rem] p-8 sm:p-9 transition-all duration-500 flex flex-col justify-between ${
                   isPopular
-                    ? 'bg-[#111827] text-white shadow-2xl shadow-[#111827]/20 ring-1 ring-[#C8A96A]/30'
-                    : 'bg-[#F5F2EB] hover:bg-white text-[#111827] hover:shadow-xl hover:shadow-[#C8A96A]/5 border border-[#E4DFD5]/60'
+                    ? 'bg-[#111827] text-white shadow-2xl shadow-[#111827]/20 ring-1 ring-[#C9A84C]/30'
+                    : 'bg-[#FAF9F7] hover:bg-white text-[#3F3F46] hover:shadow-xl hover:shadow-[#C9A84C]/5 border border-[#E8E5DF]/60'
                 }`}
               >
                 {isPopular && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#C8A96A] text-white text-[10px] font-bold tracking-widest uppercase px-5 py-1 rounded-full shadow-lg shadow-[#C8A96A]/25">
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#C9A84C] text-white text-[10px] font-medium tracking-widest uppercase px-5 py-1 rounded-full shadow-lg shadow-[#C9A84C]/25">
                     Most Popular
                   </div>
                 )}
 
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <span className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${isPopular ? 'text-[#C8A96A]' : 'text-[#8A8580]'}`}>
+                    <span className={`text-[11px] font-medium tracking-[0.15em] uppercase ${isPopular ? 'text-[#C9A84C]' : 'text-[#71717A]'}`}>
                       {tier.name}
                     </span>
                     {tier.id === 'platinum' ? (
-                      <Crown className="w-5 h-5 text-[#C8A96A]" />
+                      <Crown className="w-5 h-5 text-[#C9A84C]" />
                     ) : (
-                      <Star className={`w-5 h-5 ${isPopular ? 'text-[#C8A96A] fill-[#C8A96A]' : 'text-[#D1D5DB]'}`} />
+                      <Star className={`w-5 h-5 ${isPopular ? 'text-[#C9A84C] fill-[#C9A84C]' : 'text-[#D1D5DB]'}`} />
                     )}
                   </div>
 
                   <div className="flex items-baseline gap-1 mb-7">
-                    <span className="text-4xl sm:text-5xl font-editorial font-bold">
+                    <span className="text-4xl sm:text-5xl font-editorial">
                       ${tier.price}
                     </span>
-                    <span className={`text-xs font-medium ${isPopular ? 'text-gray-400' : 'text-[#8A8580]'}`}>{tier.period}</span>
+                    <span className={`text-xs font-medium ${isPopular ? 'text-gray-400' : 'text-[#71717A]'}`}>{tier.period}</span>
                   </div>
 
                   <ul className="space-y-4 mb-8">
                     {tier.features.map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-3 text-xs sm:text-sm">
-                        <Check className={`w-4 h-4 shrink-0 mt-0.5 ${isPopular ? 'text-[#C8A96A]' : 'text-[#C8A96A]'}`} />
-                        <span className={isPopular ? 'text-gray-300' : 'text-[#57534E]'}>{feature}</span>
+                        <Check className={`w-4 h-4 shrink-0 mt-0.5 ${isPopular ? 'text-[#C9A84C]' : 'text-[#C9A84C]'}`} />
+                        <span className={isPopular ? 'text-gray-300' : 'text-[#3F3F46]'}>{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -90,9 +90,9 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
                 <div>
                   <button
                     onClick={() => onSelectTier(tier)}
-                    className={`w-full py-3.5 px-6 rounded-2xl text-xs font-semibold transition-all duration-300 transform active:scale-95 focus:outline-none cursor-pointer ${
+                    className={`w-full py-3.5 px-6 rounded-2xl text-xs font-medium transition-all duration-300 transform active:scale-95 focus:outline-none cursor-pointer ${
                       isPopular
-                        ? 'bg-[#C8A96A] hover:bg-[#B89A5A] text-white shadow-lg shadow-[#C8A96A]/25'
+                        ? 'bg-[#C9A84C] hover:bg-[#B8983A] text-white shadow-lg shadow-[#C9A84C]/25'
                         : 'bg-[#111827] hover:bg-[#1F2937] text-white'
                     }`}
                   >

@@ -42,7 +42,7 @@ function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F2EB] text-[#111827] font-body antialiased">
+    <div className="min-h-screen bg-[#FAF9F7] text-[#44403C] font-body antialiased">
       <Navbar
         activeSection={activeSection}
         onNavigate={handleNavigate}
@@ -97,8 +97,6 @@ function HomePage() {
 
         <ChatSection onStartChat={(mode) => handleOpenChat(mode)} />
 
-        <NewsletterBar />
-
         <GallerySection
           onSelectImage={(item: GalleryItem) =>
             setActiveModal({ type: 'gallery', item })
@@ -107,6 +105,8 @@ function HomePage() {
             setActiveModal({ type: 'gallery', item: GALLERY_ITEMS[0] })
           }
         />
+
+        <NewsletterBar />
       </main>
 
       <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />

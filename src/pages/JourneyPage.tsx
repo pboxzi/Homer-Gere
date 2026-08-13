@@ -7,10 +7,11 @@ import { Footer } from '../components/Footer';
 import { JourneyHero } from './journey/JourneyHero';
 import { JourneyIntro } from './journey/JourneyIntro';
 import { JourneyTimeline } from './journey/JourneyTimeline';
-import { JourneyValues } from './journey/JourneyValues';
 import { JourneyHighlights } from './journey/JourneyHighlights';
+import { JourneyFilmography } from './journey/JourneyFilmography';
 import { JourneyBehindTheScenes } from './journey/JourneyBehindTheScenes';
 import { JourneyQuote } from './journey/JourneyQuote';
+import { JourneyFAQ } from './journey/JourneyFAQ';
 import { JourneyNext } from './journey/JourneyNext';
 import { ModalType } from '../types';
 
@@ -38,7 +39,7 @@ export default function JourneyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F2EB] text-[#111827] font-body antialiased">
+    <div className="min-h-screen bg-[#FAF9F7] text-[#44403C] font-body antialiased">
       <Navbar
         activeSection={activeSection}
         onNavigate={handleNavigate}
@@ -47,23 +48,34 @@ export default function JourneyPage() {
       />
 
       <main>
+        {/* 1. Editorial Hero */}
         <JourneyHero
           onExploreProjects={() => navigate('/')}
           onViewJournal={() => navigate('/')}
         />
 
+        {/* 2. Biography */}
         <JourneyIntro />
 
+        {/* 3. Career Timeline */}
         <JourneyTimeline />
 
-        <JourneyValues />
-
+        {/* 4. Career Highlights */}
         <JourneyHighlights />
 
+        {/* 5. Filmography & Television */}
+        <JourneyFilmography />
+
+        {/* 6. Behind The Scenes */}
         <JourneyBehindTheScenes />
 
+        {/* 7. Personal Philosophy */}
         <JourneyQuote />
 
+        {/* 8. Frequently Asked Questions */}
+        <JourneyFAQ />
+
+        {/* 9. Next Chapter */}
         <JourneyNext
           onExploreProjects={() => navigate('/')}
           onOpenChat={() => handleOpenChat('fan')}

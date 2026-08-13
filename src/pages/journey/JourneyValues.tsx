@@ -40,7 +40,7 @@ export const JourneyValues: React.FC = () => {
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
   return (
-    <section id="journey-values" ref={sectionRef} className="py-24 sm:py-32 bg-[#EDE9E0]">
+    <section id="journey-values" ref={sectionRef} className="py-24 sm:py-32 bg-[#F3F1ED]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -49,10 +49,10 @@ export const JourneyValues: React.FC = () => {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-semibold tracking-[0.2em] text-[#C8A96A] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
             Driven By Purpose
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial font-bold text-[#111827] tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#3F3F46] tracking-tight">
             The principles behind the craft.
           </h2>
         </motion.div>
@@ -64,7 +64,7 @@ export const JourneyValues: React.FC = () => {
             return (
               <motion.div
                 key={idx}
-                className="bg-[#F5F2EB] hover:bg-white rounded-[1.5rem] p-7 sm:p-8 transition-all duration-500 hover:shadow-xl hover:shadow-[#C8A96A]/5 flex flex-col items-start group cursor-default transform hover:-translate-y-1 border border-transparent hover:border-[#E4DFD5]/60"
+                className="bg-[#FAF9F7] hover:bg-white rounded-[1.5rem] p-7 sm:p-8 transition-all duration-500 hover:shadow-xl hover:shadow-[#C9A84C]/5 flex flex-col items-start group cursor-default transform hover:-translate-y-1 border border-transparent hover:border-[#E8E5DF]/60"
                 initial={{ opacity: 0, y: 40 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{
@@ -73,15 +73,15 @@ export const JourneyValues: React.FC = () => {
                   ease: [0.22, 1, 0.36, 1],
                 }}
               >
-                <div className="w-14 h-14 rounded-2xl bg-[#C8A96A]/10 text-[#C8A96A] flex items-center justify-center mb-6 group-hover:bg-[#C8A96A] group-hover:text-white transition-all duration-500 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-[#C8A96A]/20">
+                <div className="w-14 h-14 rounded-2xl bg-[#C9A84C]/10 text-[#C9A84C] flex items-center justify-center mb-6 group-hover:bg-[#C9A84C] group-hover:text-white transition-all duration-500 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-[#C9A84C]/20">
                   <Icon className="w-7 h-7" />
                 </div>
 
-                <h3 className="text-lg font-editorial font-bold text-[#111827] group-hover:text-[#C8A96A] transition-colors duration-300 mb-3">
+                <h3 className="text-lg font-editorial text-[#3F3F46] group-hover:text-[#C9A84C] transition-colors duration-300 mb-3">
                   {value.title}
                 </h3>
 
-                <p className="text-sm text-[#78716C] leading-relaxed group-hover:text-[#57534E] transition-colors duration-300">
+                <p className="text-sm text-[#52525B] leading-relaxed group-hover:text-[#3F3F46] transition-colors duration-300">
                   {value.description}
                 </p>
               </motion.div>

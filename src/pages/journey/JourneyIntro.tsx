@@ -4,13 +4,13 @@ import { Reveal } from './Reveal';
 
 export const JourneyIntro: React.FC = () => {
   return (
-    <section id="journey-intro" className="py-24 sm:py-32 bg-[#EDE9E0]">
+    <section id="journey-intro" className="py-24 sm:py-32 bg-[#F3F1ED]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           {/* Left — Editorial Photograph */}
           <Reveal direction="left">
             <div className="relative">
-              <div className="relative rounded-[2rem] overflow-hidden aspect-[4/5] bg-[#E4DFD5]">
+              <div className="relative rounded-[2rem] overflow-hidden aspect-[4/5] bg-[#E8E5DF]">
                 <img
                   src={IMAGES.heroPortraitClean}
                   alt="Homer Gere - Editorial Portrait"
@@ -19,8 +19,8 @@ export const JourneyIntro: React.FC = () => {
                 />
               </div>
               {/* Decorative accents */}
-              <div className="absolute -bottom-4 -right-4 w-24 h-24 rounded-[1rem] bg-[#C8A96A]/10 border border-[#C8A96A]/15 -z-10" />
-              <div className="absolute -top-4 -left-4 w-16 h-16 rounded-full bg-[#C8A96A]/5 -z-10" />
+              <div className="absolute -bottom-4 -right-4 w-24 h-24 rounded-[1rem] bg-[#C9A84C]/10 border border-[#C9A84C]/15 -z-10" />
+              <div className="absolute -top-4 -left-4 w-16 h-16 rounded-full bg-[#C9A84C]/5 -z-10" />
             </div>
           </Reveal>
 
@@ -28,35 +28,36 @@ export const JourneyIntro: React.FC = () => {
           <Reveal direction="right" delay={0.15}>
             <div className="space-y-8">
               <div className="space-y-4">
-                <span className="text-[11px] font-semibold tracking-[0.2em] text-[#C8A96A] uppercase">
-                  Meet Homer
+                <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
+                  Biography
                 </span>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial font-bold text-[#111827] tracking-tight leading-[1.08]">
-                  Meet Homer
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#3F3F46] tracking-tight leading-[1.08]">
+                  Homer James Jigme Gere
                 </h2>
               </div>
 
               <div className="space-y-6">
-                <p className="text-[#57534E] text-base sm:text-lg leading-[1.8]">
-                  Homer Gere is a 24-year-old actor, storyteller, and creative professional whose
-                  passion for performance began on the stages of small-town theaters. With an innate
-                  ability to inhabit complex characters, he has quickly established himself as one of
-                  the most compelling young talents in independent and studio cinema.
+                <p className="text-[#3F3F46] text-base sm:text-lg leading-[1.8]">
+                  Born February 6, 2000 in New York City, Homer Gere is an American actor and
+                  the son of actor Richard Gere and actress and former Bond girl Carey Lowell.
+                  His middle name "Jigme" is Tibetan for "fearless" or "courageous," reflecting
+                  his father's Buddhist faith.
                 </p>
 
-                <p className="text-[#57534E] text-base sm:text-lg leading-[1.8]">
-                  From early training in Meisner and Stanislavski techniques to breakout roles in
-                  acclaimed dramas, Homer's journey reflects a relentless pursuit of authenticity.
-                  His upcoming starring role in "The Shards" — an intense coming-of-age drama set in
-                  1980s New York — marks a defining chapter in a career built on dedication,
-                  curiosity, and a deep love for the craft of storytelling.
+                <p className="text-[#3F3F46] text-base sm:text-lg leading-[1.8]">
+                  Homer grew up in New York and attended the private Hackley School in
+                  Westchester, graduating in 2018. He then enrolled at Brown University in
+                  Providence, Rhode Island, where he studied Cognitive Neuroscience and Visual
+                  Arts — a combination that would later inform his approach to performance.
                 </p>
 
-                <p className="text-[#57534E] text-base sm:text-lg leading-[1.8]">
-                  Beyond the screen, Homer is a photographer, avid reader, and advocate for
-                  meaningful creative collaboration. He believes every story has the power to
-                  transform both the teller and the listener — and he approaches every project with
-                  that conviction.
+                <p className="text-[#3F3F46] text-base sm:text-lg leading-[1.8]">
+                  After appearing in several independent short films, Homer made his television
+                  debut in 2026 as Dylan Reid in HBO's Euphoria Season 3. He was then cast as
+                  Robert Mallory in Ryan Murphy's adaptation of the Bret Easton Ellis novel
+                  The Shards, marking his first major leading role. He stars alongside Kaia Gerber,
+                  with the series set for release in August 2026. In June 2026, it was announced
+                  that he was cast in an Oliver Stone film.
                 </p>
               </div>
             </div>

@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap');
 
 @theme {
-  --color-ivory: #F5F2EB;
-  --color-sand: #EDE9E0;
-  --color-stone: #E4DFD5;
-  --color-gold: #C8A96A;
-  --color-gold-light: #D4B87A;
-  --color-gold-dark: #B89A5A;
+  --color-ivory: #FAF9F7;
+  --color-sand: #F3F1ED;
+  --color-stone: #E8E5DF;
+  --color-gold: #C9A84C;
+  --color-gold-light: #D4B86A;
+  --color-gold-dark: #B8983A;
   --color-blue: #2563EB;
   --color-emerald: #16A34A;
   --color-amber: #F59E0B;
@@ -17,31 +17,35 @@
 
 @layer base {
   body {
-    font-family: 'Inter', sans-serif;
-    color: #111827;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    color: #44403C;
     background-color: #F8F5EF;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', 'Cormorant Garamond', serif;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
   }
 
   .font-editorial {
-    font-family: 'Playfair Display', 'Cormorant Garamond', serif;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
   }
 
   .font-body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', sans-serif;
   }
 
   .font-display {
-    font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
   }
 }
 
 /* Champagne Gold Utilities */
 .text-gold {
-  color: #C8A96A;
+  color: #C9A84C;
 }
 
 .text-gold-light {
@@ -49,15 +53,15 @@
 }
 
 .bg-gold {
-  background-color: #C8A96A;
+  background-color: #C9A84C;
 }
 
 .bg-gold-gradient {
-  background: linear-gradient(135deg, #D4B87A 0%, #C8A96A 50%, #B89A5A 100%);
+  background: linear-gradient(135deg, #D4B87A 0%, #C9A84C 50%, #B8983A 100%);
 }
 
 .border-gold {
-  border-color: #C8A96A;
+  border-color: #C9A84C;
 }
 
 /* Warm Background Utilities */
@@ -122,13 +126,13 @@
 
 /* Smooth focus ring */
 *:focus-visible {
-  outline: 2px solid #C8A96A;
+  outline: 2px solid #C9A84C;
   outline-offset: 2px;
   border-radius: 4px;
 }
 
 /* Selection color */
 ::selection {
-  background-color: #C8A96A;
+  background-color: #C9A84C;
   color: white;
 }

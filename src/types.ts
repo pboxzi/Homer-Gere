@@ -55,6 +55,23 @@ export interface ChatMessage {
   timestamp: string;
 }
 
+export interface FilmographyEntry {
+  id: string;
+  title: string;
+  role: string;
+  year: string;
+  status: 'Released' | 'Post-Production' | 'In Production' | 'Announced';
+  description: string;
+  type: 'film' | 'television';
+  image?: string;
+}
+
+export interface FAQItem {
+  id: string;
+  question: string;
+  answer: string;
+}
+
 export type ModalType =
   | null
   | { type: 'chat'; mode?: 'fan' | 'business' }

@@ -50,7 +50,7 @@ export const JourneyTimeline: React.FC = () => {
     <section
       id="journey-timeline"
       ref={sectionRef}
-      className="py-24 sm:py-32 bg-[#F5F2EB]"
+      className="py-24 sm:py-32 bg-[#FAF9F7]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -60,10 +60,10 @@ export const JourneyTimeline: React.FC = () => {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="text-[11px] font-semibold tracking-[0.2em] text-[#C8A96A] uppercase">
+          <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
             The Journey So Far
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial font-bold text-[#111827] tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#3F3F46] tracking-tight">
             Every step shapes the story.
           </h2>
         </motion.div>
@@ -77,20 +77,20 @@ export const JourneyTimeline: React.FC = () => {
         >
           {/* Scroll Controls */}
           <div className="flex items-center justify-between mb-6">
-            <span className="text-[11px] font-medium text-[#8A8580] uppercase tracking-wider">
+            <span className="text-[11px] font-medium text-[#71717A] uppercase tracking-wider">
               Scroll to explore
             </span>
             <div className="flex gap-2">
               <button
                 onClick={() => scrollTimeline('left')}
-                className="w-9 h-9 rounded-xl border border-[#E4DFD5] flex items-center justify-center text-[#78716C] hover:bg-[#C8A96A]/10 hover:text-[#C8A96A] hover:border-[#C8A96A]/30 transition-all duration-300 focus:outline-none cursor-pointer"
+                className="w-9 h-9 rounded-xl border border-[#E8E5DF] flex items-center justify-center text-[#52525B] hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:border-[#C9A84C]/30 transition-all duration-300 focus:outline-none cursor-pointer"
                 aria-label="Scroll left"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={() => scrollTimeline('right')}
-                className="w-9 h-9 rounded-xl border border-[#E4DFD5] flex items-center justify-center text-[#78716C] hover:bg-[#C8A96A]/10 hover:text-[#C8A96A] hover:border-[#C8A96A]/30 transition-all duration-300 focus:outline-none cursor-pointer"
+                className="w-9 h-9 rounded-xl border border-[#E8E5DF] flex items-center justify-center text-[#52525B] hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] hover:border-[#C9A84C]/30 transition-all duration-300 focus:outline-none cursor-pointer"
                 aria-label="Scroll right"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -105,7 +105,7 @@ export const JourneyTimeline: React.FC = () => {
           >
             <div className="relative min-w-max">
               {/* Connecting Line */}
-              <div className="absolute top-6 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#E4DFD5] to-transparent z-0" />
+              <div className="absolute top-6 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#E8E5DF] to-transparent z-0" />
 
               {/* Timeline Nodes */}
               <div className="flex items-start gap-0 relative z-10">
@@ -130,24 +130,24 @@ export const JourneyTimeline: React.FC = () => {
                       <div
                         className={`relative w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 ${
                           isToday || isSelected
-                            ? 'bg-[#C8A96A] text-white shadow-lg shadow-[#C8A96A]/25 scale-110'
-                            : 'bg-[#EDE9E0] text-[#78716C] group-hover:bg-[#C8A96A]/15 group-hover:text-[#C8A96A]'
+                            ? 'bg-[#C9A84C] text-white shadow-lg shadow-[#C9A84C]/25 scale-110'
+                            : 'bg-[#F3F1ED] text-[#52525B] group-hover:bg-[#C9A84C]/15 group-hover:text-[#C9A84C]'
                         }`}
                       >
                         {getMilestoneIcon(item.iconName)}
                         {isSelected && (
-                          <span className="absolute inset-0 rounded-full bg-[#C8A96A]/25 animate-ping" />
+                          <span className="absolute inset-0 rounded-full bg-[#C9A84C]/25 animate-ping" />
                         )}
                       </div>
 
                       <span
-                        className={`mt-3 text-xs sm:text-sm font-semibold transition-colors duration-300 leading-tight ${
-                          isSelected ? 'text-[#C8A96A]' : 'text-[#57534E] group-hover:text-[#111827]'
+                        className={`mt-3 text-xs sm:text-sm font-medium transition-colors duration-300 leading-tight ${
+                          isSelected ? 'text-[#C9A84C]' : 'text-[#3F3F46] group-hover:text-[#3F3F46]'
                         }`}
                       >
                         {item.title}
                       </span>
-                      <span className="text-[11px] text-[#8A8580] font-medium mt-0.5">
+                      <span className="text-[11px] text-[#71717A] font-medium mt-0.5">
                         {item.year}
                       </span>
                     </motion.button>
@@ -167,30 +167,30 @@ export const JourneyTimeline: React.FC = () => {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="bg-[#EDE9E0]/60 rounded-[1.5rem] p-6 sm:p-8 border border-[#E4DFD5]/60">
+              <div className="bg-[#F3F1ED]/60 rounded-[1.5rem] p-6 sm:p-8 border border-[#E8E5DF]/60">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 flex-wrap">
-                      <span className="text-[11px] font-bold text-[#C8A96A] bg-[#C8A96A]/10 px-3 py-1 rounded-full uppercase tracking-wider">
+                      <span className="text-[11px] font-medium text-[#C9A84C] bg-[#C9A84C]/10 px-3 py-1 rounded-full uppercase tracking-wider">
                         {activeMilestone.year}
                       </span>
-                      <h3 className="text-xl sm:text-2xl font-editorial font-bold text-[#111827]">
+                      <h3 className="text-xl sm:text-2xl font-editorial text-[#3F3F46]">
                         {activeMilestone.title}
                       </h3>
                       {activeMilestone.highlight && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#C8A96A] bg-[#C8A96A]/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-[#C8A96A]/20">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#C9A84C] bg-[#C9A84C]/10 px-2.5 py-0.5 rounded-full uppercase tracking-wider border border-[#C9A84C]/20">
                           <Sparkles className="w-3 h-3" />
                           {activeMilestone.highlight}
                         </span>
                       )}
                     </div>
-                    <p className="text-sm sm:text-base text-[#57534E] max-w-2xl leading-relaxed">
+                    <p className="text-sm sm:text-base text-[#3F3F46] max-w-2xl leading-relaxed">
                       {activeMilestone.details}
                     </p>
                   </div>
 
                   <div className="shrink-0 hidden sm:block">
-                    <div className="w-14 h-14 rounded-2xl bg-[#C8A96A]/10 flex items-center justify-center text-[#C8A96A]">
+                    <div className="w-14 h-14 rounded-2xl bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C]">
                       {getMilestoneIcon(activeMilestone.iconName)}
                     </div>
                   </div>

@@ -64,7 +64,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={() => handleNavClick('home')}
           className="group flex flex-col text-left focus:outline-none cursor-pointer py-1"
         >
-          <span className="font-editorial text-2xl sm:text-3xl font-bold tracking-[0.08em] text-[#111827] group-hover:text-[#C8A96A] transition-colors duration-500 uppercase leading-none">
+          <span className="font-editorial text-2xl sm:text-3xl tracking-[0.08em] text-[#3F3F46] group-hover:text-[#C8A96A] transition-colors duration-500 uppercase leading-none">
             Homer Gere
           </span>
           <span className="text-[9px] sm:text-[10px] font-medium tracking-[0.3em] text-[#C8A96A] uppercase mt-1.5">
@@ -83,7 +83,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className={`relative py-2 text-[13px] font-medium tracking-wide transition-colors duration-300 focus:outline-none ${
                   isActive
                     ? 'text-[#C8A96A] font-semibold'
-                    : 'text-[#6B7280] hover:text-[#111827]'
+                    : 'text-[#6B7280] hover:text-[#3F3F46]'
                 }`}
               >
                 {item.label}
@@ -117,7 +117,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 text-[#6B7280] hover:text-[#111827] rounded-xl hover:bg-[#F3EFE7] transition-colors focus:outline-none"
+            className="p-2 text-[#6B7280] hover:text-[#3F3F46] rounded-xl hover:bg-[#F3EFE7] transition-colors focus:outline-none"
             aria-label="Toggle Navigation Menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -138,7 +138,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   className={`text-left px-4 py-3 rounded-xl text-base font-medium transition-colors ${
                     isActive
                       ? 'bg-[#C8A96A]/10 text-[#C8A96A] font-semibold'
-                      : 'text-[#6B7280] hover:bg-[#F3EFE7] hover:text-[#111827]'
+                      : 'text-[#6B7280] hover:bg-[#F3EFE7] hover:text-[#3F3F46]'
                   }`}
                 >
                   {item.label}

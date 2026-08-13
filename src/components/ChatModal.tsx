@@ -111,17 +111,17 @@ export const ChatModal: React.FC<ChatModalProps> = ({
         <div className="p-4 sm:p-6 bg-white flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <div className="w-10 h-10 rounded-full bg-blue-600 text-white font-serif font-bold text-lg flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-blue-600 text-white font-editorial text-lg flex items-center justify-center">
                 HG
               </div>
               <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-serif font-bold text-gray-900 text-base sm:text-lg">
+                <h3 className="font-editorial text-gray-700 text-base sm:text-lg">
                   Homer Gere
                 </h3>
-                <span className="text-[10px] bg-blue-50 text-blue-600 font-bold px-2 py-0.5 rounded-full uppercase">
+                <span className="text-[10px] bg-blue-50 text-blue-600 font-medium px-2 py-0.5 rounded-full uppercase">
                   Verified AI
                 </span>
               </div>
@@ -143,10 +143,10 @@ export const ChatModal: React.FC<ChatModalProps> = ({
         <div className="px-4 py-2 bg-gray-50 flex items-center gap-2">
           <button
             onClick={() => setMode('fan')}
-            className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 focus:outline-none cursor-pointer ${
+            className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1.5 focus:outline-none cursor-pointer ${
               mode === 'fan'
                 ? 'bg-white text-blue-600'
-                : 'text-gray-500 hover:text-gray-900'
+                : 'text-gray-500 hover:text-gray-700'
             }`}
           >
             <User className="w-3.5 h-3.5" />
@@ -155,10 +155,10 @@ export const ChatModal: React.FC<ChatModalProps> = ({
 
           <button
             onClick={() => setMode('business')}
-            className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5 focus:outline-none cursor-pointer ${
+            className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1.5 focus:outline-none cursor-pointer ${
               mode === 'business'
                 ? 'bg-white text-blue-600'
-                : 'text-gray-500 hover:text-gray-900'
+                : 'text-gray-500 hover:text-gray-700'
             }`}
           >
             <Briefcase className="w-3.5 h-3.5" />
