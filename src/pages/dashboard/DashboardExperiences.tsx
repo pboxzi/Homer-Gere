@@ -113,14 +113,14 @@ export const DashboardExperiences: React.FC = () => {
           <div className="space-y-2">
             {experienceRequests.map((r, i) => (
               <motion.div key={r.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#E8E5DF]/60 bg-white" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 + i * 0.04 }}>
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: r.status === 'approved' ? '#16A34A10' : r.status === 'completed' ? '#57534E10' : '#F59E0B10' }}>
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${r.status === 'approved' ? 'bg-[#16A34A]/10 text-[#16A34A]' : r.status === 'completed' ? 'bg-[#57534E]/10 text-[#57534E]' : 'bg-[#F59E0B]/10 text-[#F59E0B]'}`}>
                   {r.status === 'approved' || r.status === 'completed' ? <Check className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-[#1C1917]">{r.title}</p>
                   <p className="text-[10px] text-[#57534E] mt-0.5">{r.date}</p>
                 </div>
-                <span className="text-[10px] px-2 py-0.5 rounded-full font-medium capitalize" style={{ backgroundColor: r.status === 'approved' ? '#16A34A10' : r.status === 'completed' ? '#57534E10' : '#F59E0B10', color: r.status === 'approved' ? '#16A34A' : r.status === 'completed' ? '#57534E' : '#F59E0B' }}>{r.status.replace('_', ' ')}</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium capitalize ${r.status === 'approved' ? 'bg-[#16A34A]/10 text-[#16A34A]' : r.status === 'completed' ? 'bg-[#57534E]/10 text-[#57534E]' : 'bg-[#F59E0B]/10 text-[#F59E0B]'}`}>{r.status.replace('_', ' ')}</span>
               </motion.div>
             ))}
           </div>
@@ -169,7 +169,3 @@ export const DashboardExperiences: React.FC = () => {
     </div>
   );
 };
-
-const Clock: React.FC<{ className?: string }> = ({ className }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-);

@@ -4,7 +4,7 @@ import { Inbox, Send, ArrowLeft, Circle } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 
 export const DashboardMessages: React.FC = () => {
-  const { messages, addMessage, markThreadRead } = useDashboard();
+  const { messages, addMessage, markThreadRead, addConversation } = useDashboard();
   const [selectedThread, setSelectedThread] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
   const [newSubject, setNewSubject] = useState('');
@@ -21,8 +21,7 @@ export const DashboardMessages: React.FC = () => {
 
   const handleCreateThread = () => {
     if (!newSubject.trim() || !newBody.trim()) return;
-    const { addConversation } = useDashboard.getState ? useDashboard() as any : { addConversation: () => {} };
-    // We need to use context properly — create thread via messages state
+    addConversation({ type: 'fan', lastMessage: newBody.trim(), status: 'open' });
     setNewSubject('');
     setNewBody('');
     setShowNewThread(false);
