@@ -142,7 +142,7 @@ export const JourneyBehindTheScenes: React.FC<JourneyBehindTheScenesProps> = ({ 
                 src={item.image}
                 alt={item.title}
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.2s] ease-out"
+                className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out"
               />
 
               {/* Dark gradient overlay — always visible */}

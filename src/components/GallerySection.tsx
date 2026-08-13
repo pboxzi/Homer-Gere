@@ -13,10 +13,10 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
   onViewFullGallery,
 }) => {
   return (
-    <section id="gallery" className="py-24 sm:py-32 bg-[#FAF9F7]">
+    <section id="gallery" className="py-24 sm:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Quote Block */}
-        <div className="relative rounded-[2rem] overflow-hidden mb-24 bg-[#FAF9F7] border border-[#E8E5DF]">
+        <div className="relative overflow-hidden mb-24">
           <div className="relative z-10 max-w-4xl mx-auto text-center py-20 sm:py-24 px-8 sm:px-12">
             {/* Large decorative quote mark */}
             <div className="font-editorial text-[8rem] sm:text-[10rem] leading-none text-[#C9A84C]/15 absolute top-8 left-1/2 -translate-x-1/2 select-none pointer-events-none">
@@ -78,13 +78,13 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
             <div
               key={item.id}
               onClick={() => onSelectImage(item)}
-              className="group relative rounded-[1.5rem] overflow-hidden aspect-square bg-[#E8E5DF] cursor-pointer transition-all duration-500"
+              className="group relative rounded-[1.5rem] overflow-hidden aspect-square cursor-pointer transition-all duration-500"
             >
               <img
                 src={item.image}
                 alt={item.title}
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
               />
 
               {/* Hover Overlay */}

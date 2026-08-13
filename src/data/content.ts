@@ -15,7 +15,7 @@ export const FEATURED_PROJECT = {
   status: 'Premiered August 5, 2026 • FX & Hulu',
   director: 'Ryan Murphy',
   role: 'Robert Mallory (Lead)',
-  image: IMAGES.shardsBanner,
+  image: SECTION_IMAGES.hero.projects,
   overview: `The Shards is a teen horror-thriller series on FX and FX on Hulu, adapted by Ryan Murphy and Bret Easton Ellis from the bestselling novel. Set in 1980s Los Angeles, it follows a group of privileged high school seniors at an elite prep school as they navigate identity, obsession, and the dangers of adolescence. Homer Gere stars as Robert Mallory, a magnetic and mysterious transfer student whose arrival coincides with the emergence of a serial killer known as The Trawler.`,
 };
 
@@ -337,6 +337,7 @@ export const FILMOGRAPHY: FilmographyEntry[] = [
     status: 'Released',
     description: 'Short film. Listed on Homer Gere\'s IMDB filmography.',
     type: 'film',
+    image: SECTION_IMAGES.filmography.shortFilms,
   },
 ];
 

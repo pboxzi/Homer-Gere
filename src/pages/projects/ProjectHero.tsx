@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, Film } from 'lucide-react';
-import { IMAGES } from '../../data/images';
+import { SECTION_IMAGES } from '../../data/images';
 
 interface ProjectHeroProps {
   onExploreFilms: () => void;
@@ -18,10 +18,10 @@ export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
         transition={{ duration: 2, ease: [0.22, 1, 0.36, 1] }}
       >
         <img
-          src={IMAGES.shardsBanner}
+          src={SECTION_IMAGES.hero.projects}
           alt="Homer Gere — Projects"
           referrerPolicy="no-referrer"
-          className="w-full h-full object-cover object-center opacity-50"
+          className="w-full h-full object-cover object-top opacity-50"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#111827] via-[#111827]/60 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-[#111827]/40" />

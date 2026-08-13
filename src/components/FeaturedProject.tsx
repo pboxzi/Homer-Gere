@@ -8,7 +8,7 @@ interface FeaturedProjectProps {
 
 export const FeaturedProject: React.FC<FeaturedProjectProps> = ({ onDiscoverMore }) => {
   return (
-    <section id="projects" className="py-20 sm:py-28 bg-[#F3F1ED]">
+    <section id="projects" className="py-20 sm:py-28">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative rounded-[2rem] overflow-hidden bg-[#111827] text-white min-h-[500px] lg:min-h-[560px]">
           {/* Background Image */}
@@ -17,7 +17,7 @@ export const FeaturedProject: React.FC<FeaturedProjectProps> = ({ onDiscoverMore
               src={FEATURED_PROJECT.image}
               alt={FEATURED_PROJECT.title}
               referrerPolicy="no-referrer"
-              className="w-full h-full object-cover object-center scale-105 hover:scale-100 transition-transform duration-[1.5s]"
+              className="w-full h-full object-cover object-top scale-105 hover:scale-100 transition-transform duration-[1.5s]"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#111827] via-[#111827]/60 to-transparent" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-[#111827]/30" />

@@ -22,6 +22,9 @@ import shardsEpisodeScene from '../assets/images/real/shards-episode-scene.jpg';
 import euphoriaEpisodeScene from '../assets/images/real/euphoria-episode-scene.jpg';
 import shardsPremiereCarey from '../assets/images/real/shards-premiere-carey.jpg';
 import cannesRedCarpet from '../assets/images/real/cannes-red-carpet.jpg';
+import disneyUpfrontCast from '../assets/images/real/disney-upfront-cast.jpg';
+import agencyPremiereMoma from '../assets/images/real/agency-premiere-moma.jpg';
+import veniceFilmFestival from '../assets/images/real/venice-film-festival.jpg';
 
 export const IMAGES = {
   heroPortrait,
@@ -46,6 +49,9 @@ export const IMAGES = {
   euphoriaEpisodeScene,
   shardsPremiereCarey,
   cannesRedCarpet,
+  disneyUpfrontCast,
+  agencyPremiereMoma,
+  veniceFilmFestival,
 };
 
 // Section-specific image mappings — each image used ONCE per section
@@ -65,18 +71,18 @@ export const SECTION_IMAGES = {
     shardsPremiereCast,
     shardsRobertMallory,
     euphoriaEpisodeScene,
-    shardsLaunchSkate,
+    disneyUpfrontCast,
     cannesRedCarpet,
-    galleryCafe,
+    agencyPremiereMoma,
   ],
   bts: [
     shardsPremiereCarey,
     shardsEpisodeScene,
+    shardsLaunchSkate,
+    veniceFilmFestival,
     journalOnset,
     journalPortrait,
     bwInterview,
-    roadChasing,
-    homerBrightLuxuryEditorial,
     homerGqLifestyleStudio,
   ],
   filmography: {

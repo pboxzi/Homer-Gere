@@ -35,12 +35,12 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
   };
 
   return (
-    <section id="home" className="pt-24 pb-0 bg-[#FAF9F7] overflow-hidden">
+    <section id="home" className="pt-24 pb-0 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Hero Container */}
         <div
           id="hero-container"
-          className="relative rounded-[2rem] overflow-hidden bg-[#F3F1ED] min-h-[600px] lg:aspect-[16/9] w-full flex flex-col justify-between group transition-all duration-300"
+          className="relative rounded-[2rem] overflow-hidden min-h-[600px] lg:aspect-[16/9] w-full flex flex-col justify-between group transition-all duration-300"
         >
           {/* Right Side — Cinematic Lifestyle Editorial */}
           <div className="relative lg:absolute top-0 right-0 w-full lg:w-[55%] h-[340px] sm:h-[420px] lg:h-full shrink-0">
@@ -89,7 +89,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
                 {METRICS.map((metric, idx) => (
                   <div
                     key={idx}
-                    className="flex flex-col items-start p-4 rounded-2xl bg-white/50 backdrop-blur-sm transition-all duration-300 hover:bg-white/80"
+                    className="flex flex-col items-start p-4 transition-all duration-300"
                   >
                     <div className="flex items-center justify-between w-full mb-2">
                       <div className="w-8 h-8 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center shrink-0">

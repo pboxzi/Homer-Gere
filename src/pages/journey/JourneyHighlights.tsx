@@ -97,7 +97,7 @@ export const JourneyHighlights: React.FC<JourneyHighlightsProps> = ({ onItemClic
                   src={item.image}
                   alt={item.title}
                   referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.2s] ease-out"
+                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="absolute top-5 left-5 bg-[#FAF9F7]/95 backdrop-blur-md px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 text-[10px] font-medium tracking-wider text-[#1C1917] uppercase shadow-sm">

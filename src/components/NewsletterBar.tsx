@@ -14,7 +14,7 @@ export const NewsletterBar: React.FC = () => {
   };
 
   return (
-    <section id="newsletter" className="py-20 sm:py-24 bg-[#F3F1ED]">
+    <section id="newsletter" className="py-20 sm:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto text-center space-y-6">
           <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">

@@ -30,7 +30,7 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({
   const activeMilestone = TIMELINE_MILESTONES.find((m) => m.id === activeId) || TIMELINE_MILESTONES[5];
 
   return (
-    <section id="journey" className="py-24 sm:py-32 bg-[#FAF9F7]">
+    <section id="journey" className="py-24 sm:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
@@ -69,8 +69,8 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({
                     setActiveId(item.id);
                     onSelectMilestone(item);
                   }}
-                  className={`flex flex-col items-center text-center group p-3 rounded-2xl transition-all duration-300 focus:outline-none cursor-pointer ${
-                    isSelected ? 'bg-[#C9A84C]/8' : 'hover:bg-[#F3F1ED]'
+                  className={`flex flex-col items-center text-center group p-3 transition-all duration-300 focus:outline-none cursor-pointer ${
+                    isSelected ? 'bg-[#C9A84C]/8' : ''
                   }`}
                 >
                   <div
@@ -100,7 +100,7 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({
         </div>
 
         {/* Active Milestone Spotlight */}
-        <div className="mt-10 pt-8 bg-[#F3F1ED]/60 rounded-[1.5rem] p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 transition-all duration-500">
+        <div className="mt-10 pt-8 p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 transition-all duration-500">
           <div className="space-y-2">
             <div className="flex items-center gap-3 flex-wrap">
               <span className="text-[11px] font-medium text-[#C9A84C] bg-[#C9A84C]/10 px-3 py-1 rounded-full uppercase tracking-wider">

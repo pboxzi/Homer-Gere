@@ -25,7 +25,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
   };
 
   return (
-    <section id="experiences" className="py-24 sm:py-32 bg-[#FAF9F7]">
+    <section id="experiences" className="py-24 sm:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-14">
@@ -53,7 +53,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
             <div
               key={exp.id}
               onClick={() => onSelectExperience(exp)}
-              className="bg-[#F3F1ED]/60 hover:bg-white p-6 rounded-[1.25rem] transition-all duration-500 hover:shadow-xl hover:shadow-[#C9A84C]/5 flex flex-col justify-between cursor-pointer group transform hover:-translate-y-1"
+              className="p-6 transition-all duration-500 flex flex-col justify-between cursor-pointer group"
             >
               <div>
                 <div className="w-11 h-11 rounded-2xl bg-[#C9A84C]/10 flex items-center justify-center mb-5 group-hover:bg-[#C9A84C] group-hover:text-white transition-all duration-500">
@@ -69,7 +69,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
                 </p>
               </div>
 
-              <div className="mt-5 pt-4 border-t border-[#E8E5DF] flex items-center justify-between">
+              <div className="mt-5 pt-4 flex items-center justify-between">
                 <span className="text-xs font-medium text-[#C9A84C]">
                   {exp.price}
                 </span>

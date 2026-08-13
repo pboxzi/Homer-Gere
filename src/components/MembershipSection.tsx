@@ -13,7 +13,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
   onExploreMembership,
 }) => {
   return (
-    <section id="membership" className="py-24 sm:py-32 bg-[#F3EFE7]">
+    <section id="membership" className="py-24 sm:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
@@ -46,14 +46,14 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
             return (
               <div
                 key={tier.id}
-                className={`relative rounded-[1.5rem] p-8 sm:p-9 transition-all duration-500 flex flex-col justify-between ${
+                className={`relative p-8 sm:p-9 transition-all duration-500 flex flex-col justify-between ${
                   isPopular
-                    ? 'bg-[#111827] text-white shadow-2xl shadow-[#111827]/20 ring-1 ring-[#C9A84C]/30'
-                    : 'bg-[#FAF9F7] hover:bg-white text-[#1C1917] hover:shadow-xl hover:shadow-[#C9A84C]/5 border border-[#E8E5DF]/60'
+                    ? 'bg-[#111827] text-white ring-1 ring-[#C9A84C]/30'
+                    : 'text-[#1C1917]'
                 }`}
               >
                 {isPopular && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#C9A84C] text-white text-[10px] font-medium tracking-widest uppercase px-5 py-1 rounded-full shadow-lg shadow-[#C9A84C]/25">
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-[#C9A84C] text-white text-[10px] font-medium tracking-widest uppercase px-5 py-1 rounded-full">
                     Most Popular
                   </div>
                 )}
@@ -92,7 +92,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
                     onClick={() => onSelectTier(tier)}
                     className={`w-full py-3.5 px-6 rounded-2xl text-xs font-medium transition-all duration-300 transform active:scale-95 focus:outline-none cursor-pointer ${
                       isPopular
-                        ? 'bg-[#C9A84C] hover:bg-[#B8983A] text-white shadow-lg shadow-[#C9A84C]/25'
+                        ? 'bg-[#C9A84C] hover:bg-[#B8983A] text-white'
                         : 'bg-[#111827] hover:bg-[#1F2937] text-white'
                     }`}
                   >

@@ -13,7 +13,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
   onViewAllArticles,
 }) => {
   return (
-    <section id="journal" className="py-24 sm:py-32 bg-[#F3F1ED]">
+    <section id="journal" className="py-24 sm:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-14">
@@ -41,11 +41,11 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
             <article
               key={article.id}
               onClick={() => onSelectArticle(article)}
-              className="group bg-[#FAF9F7] hover:bg-white rounded-[1.5rem] p-4 transition-all duration-500 hover:shadow-xl hover:shadow-[#C9A84C]/5 flex flex-col justify-between cursor-pointer transform hover:-translate-y-1"
+              className="group p-4 transition-all duration-500 flex flex-col justify-between cursor-pointer"
             >
               <div>
                 {/* Image */}
-                <div className="relative h-52 rounded-2xl overflow-hidden mb-5 bg-[#E8E5DF]">
+                <div className="relative h-52 rounded-2xl overflow-hidden mb-5">
                   <img
                     src={article.image}
                     alt={article.title}
@@ -66,7 +66,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
                 </p>
               </div>
 
-              <div className="mt-5 pt-4 border-t border-[#E8E5DF] flex items-center justify-between text-xs text-[#57534E]">
+              <div className="mt-5 pt-4 flex items-center justify-between text-xs text-[#57534E]">
                 <span className="flex items-center gap-1.5">
                   <Calendar className="w-3.5 h-3.5" />
                   {article.date}
