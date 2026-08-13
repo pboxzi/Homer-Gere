@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate, useParams } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { FeaturedProject } from './components/FeaturedProject';
@@ -14,14 +15,20 @@ import { ChatModal } from './components/ChatModal';
 import { DetailModal } from './components/DetailModal';
 import { ModalType, JournalArticle, TimelineMilestone, Experience, MembershipTier, GalleryItem } from './types';
 import { JOURNAL_ARTICLES, TIMELINE_MILESTONES, EXPERIENCES, MEMBERSHIP_TIERS, GALLERY_ITEMS } from './data/content';
+import JourneyPage from './pages/JourneyPage';
 
-export default function App() {
+function HomePage() {
   const [activeSection, setActiveSection] = useState<string>('home');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [chatOpen, setChatOpen] = useState<boolean>(false);
   const [chatMode, setChatMode] = useState<'fan' | 'business'>('fan');
+  const navigate = useNavigate();
 
   const handleNavigate = (sectionId: string) => {
+    if (sectionId === 'journey') {
+      navigate('/journey');
+      return;
+    }
     setActiveSection(sectionId);
     const element = document.getElementById(sectionId);
     if (element) {
@@ -35,9 +42,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 font-sans selection:bg-blue-100 selection:text-blue-700 antialiased">
-      
-      {/* Sticky Header Navigation */}
+    <div className="min-h-screen bg-[#F8F5EF] text-[#111827] font-body antialiased">
       <Navbar
         activeSection={activeSection}
         onNavigate={handleNavigate}
@@ -45,31 +50,24 @@ export default function App() {
         onOpenSignIn={() => setActiveModal({ type: 'signin' })}
       />
 
-      {/* Main Content Sections - Strictly Following Reference Section Order */}
       <main>
-        {/* 1. Hero Section */}
         <Hero
           onExploreJourney={() => handleNavigate('journey')}
           onViewProject={(projectId) => setActiveModal({ type: 'project', projectId })}
           onOpenChat={handleOpenChat}
         />
 
-        {/* 2. Featured Project Section ("The Shards") */}
         <FeaturedProject
           onDiscoverMore={(projectId) => setActiveModal({ type: 'project', projectId })}
         />
 
-        {/* 3. The Journey Section */}
         <JourneyTimeline
           onSelectMilestone={(milestone: TimelineMilestone) =>
             setActiveModal({ type: 'milestone', milestone })
           }
-          onViewFullTimeline={() =>
-            setActiveModal({ type: 'milestone', milestone: TIMELINE_MILESTONES[5] })
-          }
+          onViewFullTimeline={() => navigate('/journey')}
         />
 
-        {/* 4. Latest from the Journal Section */}
         <JournalSection
           onSelectArticle={(article: JournalArticle) =>
             setActiveModal({ type: 'article', article })
@@ -79,7 +77,6 @@ export default function App() {
           }
         />
 
-        {/* 5. Experiences Section */}
         <ExperiencesSection
           onSelectExperience={(experience: Experience) =>
             setActiveModal({ type: 'experience', experience })
@@ -89,7 +86,6 @@ export default function App() {
           }
         />
 
-        {/* 6. Membership Section */}
         <MembershipSection
           onSelectTier={(tier: MembershipTier) =>
             setActiveModal({ type: 'membership', tier })
@@ -99,13 +95,10 @@ export default function App() {
           }
         />
 
-        {/* 7. Chat with Homer In-Page Section */}
         <ChatSection onStartChat={(mode) => handleOpenChat(mode)} />
 
-        {/* 8. Stay Updated Newsletter Bar */}
         <NewsletterBar />
 
-        {/* 9. Quote & Photo Gallery Section */}
         <GallerySection
           onSelectImage={(item: GalleryItem) =>
             setActiveModal({ type: 'gallery', item })
@@ -116,22 +109,30 @@ export default function App() {
         />
       </main>
 
-      {/* Footer */}
       <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />
 
-      {/* Interactive AI Chat Drawer/Modal */}
       <ChatModal
         isOpen={chatOpen}
         initialMode={chatMode}
         onClose={() => setChatOpen(false)}
       />
 
-      {/* Universal Detail Reader & Action Modal */}
       <DetailModal
         modal={activeModal}
         onClose={() => setActiveModal(null)}
         onOpenChat={handleOpenChat}
       />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/journey" element={<JourneyPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }

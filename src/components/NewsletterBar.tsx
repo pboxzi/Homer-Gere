@@ -1,66 +1,58 @@
 import React, { useState } from 'react';
-import { Mail, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Check } from 'lucide-react';
 
 export const NewsletterBar: React.FC = () => {
   const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email.trim()) {
-      setSubscribed(true);
+    if (email) {
+      setSubmitted(true);
       setEmail('');
-      setTimeout(() => setSubscribed(false), 5000);
     }
   };
 
   return (
-    <section className="py-12 bg-white">
+    <section id="newsletter" className="py-20 sm:py-24 bg-[#F3EFE7]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-blue-50/50 rounded-3xl p-6 sm:p-8 flex flex-col lg:flex-row items-center justify-between gap-6">
-          
-          {/* Text & Icon */}
-          <div className="flex items-center gap-4 text-center lg:text-left">
-            <div className="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 hidden sm:flex">
-              <Mail className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-xl font-serif font-bold text-gray-900">
-                Stay Updated
-              </h3>
-              <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
-                Get the latest news, project updates, and exclusive content directly to your inbox.
-              </p>
-            </div>
-          </div>
+        <div className="max-w-2xl mx-auto text-center space-y-6">
+          <span className="text-[11px] font-semibold tracking-[0.2em] text-[#C8A96A] uppercase">
+            Stay Updated
+          </span>
 
-          {/* Form */}
-          <div className="w-full lg:w-auto">
-            {subscribed ? (
-              <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 px-6 py-3 rounded-full text-sm font-semibold">
-                <CheckCircle2 className="w-4 h-4 text-green-600" />
-                Thank you! You are now subscribed to updates.
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-md">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  required
-                  className="w-full px-5 py-3 rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                />
-                <button
-                  type="submit"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-6 py-3 rounded-full transition-all shrink-0 focus:outline-none cursor-pointer"
-                >
-                  Subscribe
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </form>
-            )}
-          </div>
+          <h2 className="text-2xl sm:text-3xl font-editorial font-bold text-[#111827] tracking-tight">
+            Never miss a story.
+          </h2>
+
+          <p className="text-sm text-[#9CA3AF] leading-relaxed">
+            Subscribe for exclusive updates, behind-the-scenes content, and early access to new projects.
+          </p>
+
+          {submitted ? (
+            <div className="flex items-center justify-center gap-2 text-[#C8A96A] font-medium text-sm py-3">
+              <Check className="w-4 h-4" />
+              <span>You're subscribed. Welcome to the journey.</span>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                required
+                className="flex-1 bg-white px-5 py-3.5 rounded-2xl text-sm text-[#111827] placeholder-[#A8A29E] border border-[#ECE8E1] focus:border-[#C8A96A] focus:ring-2 focus:ring-[#C8A96A]/20 outline-none transition-all duration-300"
+              />
+              <button
+                type="submit"
+                className="inline-flex items-center justify-center gap-2 bg-[#C8A96A] hover:bg-[#B89A5A] text-white font-semibold text-sm px-6 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#C8A96A]/25 active:scale-95 focus:outline-none cursor-pointer"
+              >
+                Subscribe
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </section>

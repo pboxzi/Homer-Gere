@@ -13,66 +13,65 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
   onViewAllArticles,
 }) => {
   return (
-    <section id="journal" className="py-16 bg-white">
+    <section id="journal" className="py-24 sm:py-32 bg-[#F3EFE7]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Header Row */}
-        <div className="flex items-center justify-between mb-10">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-14">
           <div>
-            <span className="text-xs font-bold tracking-widest text-gold uppercase font-outfit">
+            <span className="text-[11px] font-semibold tracking-[0.2em] text-[#C8A96A] uppercase">
               Latest from the Journal
             </span>
-            <h2 className="text-3xl sm:text-4xl font-outfit font-extrabold text-gray-900 mt-1">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial font-bold text-[#111827] mt-3 tracking-tight">
               Reflections & Writings
             </h2>
           </div>
 
           <button
             onClick={onViewAllArticles}
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors group focus:outline-none cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-[#6B7280] hover:text-[#C8A96A] transition-colors duration-300 group focus:outline-none cursor-pointer"
           >
             View All Articles
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
           </button>
         </div>
 
-        {/* 4 Article Grid Cards */}
+        {/* Articles Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {JOURNAL_ARTICLES.map((article) => (
             <article
               key={article.id}
               onClick={() => onSelectArticle(article)}
-              className="bg-gray-50/70 hover:bg-white rounded-2xl p-4 transition-all duration-300 hover:shadow-lg flex flex-col justify-between cursor-pointer group transform hover:-translate-y-1"
+              className="group bg-[#F8F5EF] hover:bg-white rounded-[1.5rem] p-4 transition-all duration-500 hover:shadow-xl hover:shadow-[#C8A96A]/5 flex flex-col justify-between cursor-pointer transform hover:-translate-y-1"
             >
               <div>
-                {/* Image Container */}
-                <div className="relative h-48 rounded-xl overflow-hidden mb-4 bg-gray-100">
+                {/* Image */}
+                <div className="relative h-52 rounded-2xl overflow-hidden mb-5 bg-[#ECE8E1]">
                   <img
                     src={article.image}
                     alt={article.title}
                     referrerPolicy="no-referrer"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider text-blue-600 uppercase">
+                  <div className="absolute top-3 left-3 bg-[#F8F5EF]/95 backdrop-blur-md px-3 py-1 rounded-xl text-[10px] font-semibold tracking-wider text-[#C8A96A] uppercase">
                     {article.category}
                   </div>
                 </div>
 
                 {/* Body */}
-                <h3 className="text-base font-serif font-bold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
+                <h3 className="text-base font-editorial font-bold text-[#111827] group-hover:text-[#C8A96A] transition-colors duration-300 line-clamp-2 leading-snug">
                   {article.title}
                 </h3>
-                <p className="mt-1.5 text-xs text-gray-500 line-clamp-2 leading-relaxed">
+                <p className="mt-2 text-xs text-[#9CA3AF] line-clamp-2 leading-relaxed">
                   {article.excerpt}
                 </p>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400">
-                <span className="flex items-center gap-1">
+              <div className="mt-5 pt-4 border-t border-[#ECE8E1] flex items-center justify-between text-xs text-[#A8A29E]">
+                <span className="flex items-center gap-1.5">
                   <Calendar className="w-3.5 h-3.5" />
                   {article.date}
                 </span>
-                <span className="font-semibold text-blue-600 group-hover:translate-x-0.5 transition-transform">
+                <span className="font-semibold text-[#C8A96A] group-hover:translate-x-0.5 transition-transform duration-300">
                   Read &rarr;
                 </span>
               </div>

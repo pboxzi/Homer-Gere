@@ -1,83 +1,93 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,600;0,6..96,700;0,6..96,800&family=Cinzel:wght@600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600;1,700&display=swap');
+
+@theme {
+  --color-ivory: #F8F5EF;
+  --color-sand: #F3EFE7;
+  --color-stone: #ECE8E1;
+  --color-gold: #C8A96A;
+  --color-gold-light: #D4B87A;
+  --color-gold-dark: #B89A5A;
+  --color-blue: #2563EB;
+  --color-emerald: #16A34A;
+  --color-amber: #F59E0B;
+  --color-error: #DC2626;
+}
 
 @layer base {
   body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     color: #111827;
-  }
-  
-  h1, h2, h3, .font-display {
-    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    background-color: #F8F5EF;
   }
 
-  .font-serif {
-    font-family: 'Playfair Display', serif;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', 'Cormorant Garamond', serif;
   }
 
-  .font-cinzel {
-    font-family: 'Cinzel', serif;
+  .font-editorial {
+    font-family: 'Playfair Display', 'Cormorant Garamond', serif;
   }
 
-  .font-bodoni {
-    font-family: 'Bodoni Moda', serif;
+  .font-body {
+    font-family: 'Inter', sans-serif;
   }
 
-  .font-outfit {
-    font-family: 'Outfit', sans-serif;
+  .font-display {
+    font-family: 'Cormorant Garamond', 'Playfair Display', serif;
   }
 }
 
-/* Subtle Gold Text Accents & Utility Classes */
+/* Champagne Gold Utilities */
 .text-gold {
-  color: #C5A059;
+  color: #C8A96A;
 }
 
 .text-gold-light {
-  color: #DFBA67;
+  color: #D4B87A;
 }
 
-.text-gold-gradient {
-  background: linear-gradient(135deg, #D4AF37 0%, #E8D08D 40%, #C5A059 70%, #A67C1E 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.text-gold-subtle-gradient {
-  background: linear-gradient(135deg, #DFBA67 0%, #C5A059 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.bg-gold-accent {
-  background-color: #C5A059;
+.bg-gold {
+  background-color: #C8A96A;
 }
 
 .bg-gold-gradient {
-  background: linear-gradient(135deg, #DFBA67 0%, #C5A059 100%);
+  background: linear-gradient(135deg, #D4B87A 0%, #C8A96A 50%, #B89A5A 100%);
 }
 
 .border-gold {
-  border-color: #C5A059;
+  border-color: #C8A96A;
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
+/* Warm Background Utilities */
+.bg-ivory {
+  background-color: #F8F5EF;
+}
+
+.bg-sand {
+  background-color: #F3EFE7;
+}
+
+.bg-stone {
+  background-color: #ECE8E1;
+}
+
+/* Hide scrollbar */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-/* Hero container fixed 16:9 aspect ratio and entrance animation */
+/* Hero entrance animation */
 @keyframes heroEntrance {
   0% {
     opacity: 0;
-    transform: scale(0.97) translateY(12px);
+    transform: scale(1.04) translateY(16px);
   }
   100% {
     opacity: 1;
@@ -106,13 +116,19 @@
   animation: scrollLine 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 
-#hero-container {
-  width: 100%;
-  animation: heroEntrance 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.animate-hero-entrance {
+  animation: heroEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@media (max-width: 640px) {
-  #hero-container {
-    aspect-ratio: auto;
-  }
+/* Smooth focus ring */
+*:focus-visible {
+  outline: 2px solid #C8A96A;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Selection color */
+::selection {
+  background-color: #C8A96A;
+  color: white;
 }
