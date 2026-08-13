@@ -72,6 +72,49 @@ export interface FAQItem {
   answer: string;
 }
 
+export type MediaCategory =
+  | 'all'
+  | 'interviews'
+  | 'trailers'
+  | 'behind-the-scenes'
+  | 'press'
+  | 'podcasts'
+  | 'promotional'
+  | 'event-coverage';
+
+export interface VideoItem {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  duration: string;
+  date: string;
+  source: string;
+  category: MediaCategory;
+  url: string;
+  featured?: boolean;
+}
+
+export interface PodcastItem {
+  id: string;
+  episodeTitle: string;
+  showName: string;
+  description: string;
+  coverArt: string;
+  date: string;
+  url: string;
+}
+
+export interface PressItem {
+  id: string;
+  headline: string;
+  publisher: string;
+  date: string;
+  summary: string;
+  url: string;
+  image?: string;
+}
+
 export type ModalType =
   | null
   | { type: 'chat'; mode?: 'fan' | 'business' }

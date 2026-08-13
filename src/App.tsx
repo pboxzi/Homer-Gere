@@ -20,6 +20,9 @@ import { JOURNAL_ARTICLES, TIMELINE_MILESTONES, EXPERIENCES, MEMBERSHIP_TIERS, G
 import JourneyPage from './pages/JourneyPage';
 import ProjectsPage from './pages/ProjectsPage';
 import ProjectDetailPage from './pages/project-detail/ProjectDetailPage';
+import { GalleryPage } from './pages/GalleryPage';
+import { JournalPage } from './pages/JournalPage';
+import MediaPage from './pages/MediaPage';
 
 function HomePage() {
   const [activeSection, setActiveSection] = useState<string>('home');
@@ -35,6 +38,14 @@ function HomePage() {
     }
     if (sectionId === 'projects') {
       navigate('/projects');
+      return;
+    }
+    if (sectionId === 'gallery') {
+      navigate('/gallery');
+      return;
+    }
+    if (sectionId === 'journal') {
+      navigate('/journal');
       return;
     }
     setActiveSection(sectionId);
@@ -174,6 +185,9 @@ export default function App() {
         <Route path="/journey" element={<JourneyPage />} />
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/projects/:slug" element={<ProjectDetailPage />} />
+        <Route path="/gallery" element={<GalleryPage />} />
+        <Route path="/journal" element={<JournalPage />} />
+        <Route path="/media" element={<MediaPage />} />
       </Routes>
     </BrowserRouter>
   );

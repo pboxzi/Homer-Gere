@@ -22,6 +22,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   const routerNavigate = useRouterNavigate();
   const isJourneyPage = location.pathname === '/journey';
   const isProjectsPage = location.pathname === '/projects';
+  const isGalleryPage = location.pathname === '/gallery';
+  const isJournalPage = location.pathname === '/journal';
+  const isMediaPage = location.pathname === '/media';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,6 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'home', label: 'Home' },
     { id: 'journey', label: 'Journey' },
     { id: 'projects', label: 'Projects' },
+    { id: 'media', label: 'Media' },
     { id: 'gallery', label: 'Gallery' },
     { id: 'journal', label: 'Journal' },
     { id: 'experiences', label: 'Experiences' },
@@ -49,7 +53,13 @@ export const Navbar: React.FC<NavbarProps> = ({
       routerNavigate('/journey');
     } else if (id === 'projects') {
       routerNavigate('/projects');
-    } else if ((isJourneyPage || isProjectsPage) && id === 'home') {
+    } else if (id === 'media') {
+      routerNavigate('/media');
+    } else if (id === 'gallery') {
+      routerNavigate('/gallery');
+    } else if (id === 'journal') {
+      routerNavigate('/journal');
+    } else if ((isJourneyPage || isProjectsPage || isMediaPage || isGalleryPage || isJournalPage) && id === 'home') {
       routerNavigate('/');
     } else {
       onNavigate(id);
@@ -82,7 +92,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-0.5">
           {navItems.map((item) => {
-            const isActive = item.id === 'journey' ? isJourneyPage : item.id === 'projects' ? isProjectsPage : activeSection === item.id;
+            const isActive = item.id === 'journey' ? isJourneyPage : item.id === 'projects' ? isProjectsPage : item.id === 'gallery' ? isGalleryPage : item.id === 'journal' ? isJournalPage : activeSection === item.id;
             return (
               <button
                 key={item.id}
@@ -146,7 +156,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="lg:hidden bg-[#FAF9F7]/95 backdrop-blur-2xl px-5 pt-4 pb-6 border-t border-[#C9A84C]/10">
           <div className="flex flex-col gap-0.5">
             {navItems.map((item, index) => {
-              const isActive = item.id === 'journey' ? isJourneyPage : item.id === 'projects' ? isProjectsPage : activeSection === item.id;
+            const isActive = item.id === 'journey' ? isJourneyPage : item.id === 'projects' ? isProjectsPage : item.id === 'media' ? isMediaPage : item.id === 'gallery' ? isGalleryPage : item.id === 'journal' ? isJournalPage : activeSection === item.id;
               return (
                 <button
                   key={item.id}

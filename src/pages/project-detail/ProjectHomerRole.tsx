@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
-import { User, Film, FileText } from 'lucide-react';
+import { User, Film, FileText, Quote, Star } from 'lucide-react';
 import { ProjectDetail } from '../../data/projectDetails';
 
 interface ProjectHomerRoleProps {
@@ -28,16 +28,16 @@ export const ProjectHomerRole: React.FC<ProjectHomerRoleProps> = ({ project }) =
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Image */}
           <motion.div
-            className="rounded-[2rem] overflow-hidden"
+            className="rounded-[2rem] overflow-hidden shadow-2xl shadow-[#111827]/10"
             initial={{ opacity: 0, x: -30 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <img
-              src={project.heroImage}
+              src={project.homerRole.image || project.heroImage}
               alt={`${project.homerRole.character} — ${project.title}`}
               referrerPolicy="no-referrer"
               className="w-full aspect-[4/5] object-cover object-top"
@@ -51,46 +51,80 @@ export const ProjectHomerRole: React.FC<ProjectHomerRoleProps> = ({ project }) =
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C] shrink-0">
-                  <User className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-[#71717A] uppercase tracking-wider">Character</h3>
-                  <p className="text-lg text-[#1C1917] font-editorial mt-1">{project.homerRole.character}</p>
-                </div>
+            {/* Character */}
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C] shrink-0">
+                <User className="w-5 h-5" />
               </div>
-
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C] shrink-0">
-                  <Film className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-[#71717A] uppercase tracking-wider">Description</h3>
-                  <p className="text-[#44403C] leading-relaxed mt-1">{project.homerRole.description}</p>
-                </div>
+              <div>
+                <h3 className="text-sm font-medium text-[#71717A] uppercase tracking-wider">Character</h3>
+                <p className="text-xl text-[#1C1917] font-editorial mt-1">{project.homerRole.character}</p>
               </div>
-
-              {project.homerRole.episodes && (
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C] shrink-0">
-                    <FileText className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-[#71717A] uppercase tracking-wider">Episodes</h3>
-                    <p className="text-[#1C1917] mt-1">{project.homerRole.episodes}</p>
-                  </div>
-                </div>
-              )}
-
-              {project.homerRole.notes && (
-                <div className="bg-[#FAF9F7] rounded-2xl p-6 border border-[#E8E5DF]">
-                  <h3 className="text-sm font-medium text-[#C9A84C] uppercase tracking-wider mb-2">Production Notes</h3>
-                  <p className="text-sm text-[#44403C] leading-relaxed">{project.homerRole.notes}</p>
-                </div>
-              )}
             </div>
+
+            {/* Description */}
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C] shrink-0">
+                <Film className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-[#71717A] uppercase tracking-wider">About the Role</h3>
+                <p className="text-[#44403C] leading-[1.8] mt-2">{project.homerRole.description}</p>
+              </div>
+            </div>
+
+            {/* Expanded Description */}
+            {project.homerRole.expandedDescription && (
+              <div className="bg-[#FAF9F7] rounded-2xl p-6 border border-[#E8E5DF]">
+                <h3 className="text-sm font-medium text-[#C9A84C] uppercase tracking-wider mb-3">Character Deep Dive</h3>
+                <div className="space-y-4">
+                  {project.homerRole.expandedDescription.split('\n\n').map((paragraph, idx) => (
+                    <p key={idx} className="text-sm text-[#44403C] leading-[1.8]">
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Episodes */}
+            {project.homerRole.episodes && (
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C] shrink-0">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-[#71717A] uppercase tracking-wider">Episodes</h3>
+                  <p className="text-[#1C1917] mt-1">{project.homerRole.episodes}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Production Notes */}
+            {project.homerRole.notes && (
+              <div className="bg-[#FAF9F7] rounded-2xl p-6 border border-[#E8E5DF]">
+                <h3 className="text-sm font-medium text-[#C9A84C] uppercase tracking-wider mb-2">Production Notes</h3>
+                <p className="text-sm text-[#44403C] leading-relaxed">{project.homerRole.notes}</p>
+              </div>
+            )}
+
+            {/* Quotes */}
+            {project.homerRole.quotes && project.homerRole.quotes.length > 0 && (
+              <div className="space-y-4">
+                {project.homerRole.quotes.map((quote, idx) => (
+                  <div key={idx} className="relative bg-[#111827] rounded-2xl p-6 text-white">
+                    <Quote className="absolute top-4 right-4 w-8 h-8 text-[#C9A84C]/20" />
+                    <p className="text-sm leading-relaxed italic relative z-10">
+                      "{quote}"
+                    </p>
+                    <div className="flex items-center gap-2 mt-4">
+                      <div className="w-1 h-1 rounded-full bg-[#C9A84C]" />
+                      <span className="text-xs text-[#C9A84C] font-medium">Homer Gere</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </motion.div>
         </div>
       </div>

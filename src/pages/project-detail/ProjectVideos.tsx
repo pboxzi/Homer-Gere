@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
-import { Play, ExternalLink } from 'lucide-react';
+import { Play, ExternalLink, Clock } from 'lucide-react';
 import { ProjectDetail } from '../../data/projectDetails';
 
 interface ProjectVideosProps {
@@ -52,17 +52,30 @@ export const ProjectVideos: React.FC<ProjectVideosProps> = ({ project }) => {
 
               {/* Play Button */}
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-16 h-16 rounded-full bg-[#C9A84C] flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-[#C9A84C]/30">
-                  <Play className="w-6 h-6 text-white ml-1" fill="white" />
+                <div className="w-20 h-20 rounded-full bg-[#C9A84C] flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-[#C9A84C]/30">
+                  <Play className="w-8 h-8 text-white ml-1" fill="white" />
                 </div>
               </div>
 
               {/* Info */}
-              <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#111827] via-[#111827]/50 to-transparent">
-                <span className="text-[10px] font-medium text-[#C9A84C] uppercase tracking-wider">
-                  {video.type.replace('-', ' ')}
-                </span>
-                <h3 className="text-lg font-editorial text-white mt-1">{video.title}</h3>
+              <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#111827] via-[#111827]/60 to-transparent">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-[10px] font-medium text-[#C9A84C] uppercase tracking-wider bg-[#C9A84C]/15 px-2.5 py-0.5 rounded-full">
+                    {video.type.replace('-', ' ')}
+                  </span>
+                  {video.duration && (
+                    <span className="inline-flex items-center gap-1 text-xs text-white/50">
+                      <Clock className="w-3 h-3" />
+                      {video.duration}
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-lg font-editorial text-white group-hover:text-[#C9A84C] transition-colors duration-300">
+                  {video.title}
+                </h3>
+                {video.description && (
+                  <p className="text-xs text-white/50 mt-1.5 line-clamp-2">{video.description}</p>
+                )}
               </div>
 
               {/* External Link Icon */}
