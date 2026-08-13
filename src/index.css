@@ -124,6 +124,17 @@
   animation: heroEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Smooth focus ring */
 *:focus-visible {
   outline: 2px solid #C9A84C;

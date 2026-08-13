@@ -3,7 +3,11 @@ import { motion, useInView } from 'motion/react';
 import { Film, Tv, Clock, ArrowRight } from 'lucide-react';
 import { FILMOGRAPHY } from '../../data/content';
 
-export const JourneyFilmography: React.FC = () => {
+interface JourneyFilmographyProps {
+  onItemClick?: (projectId: string) => void;
+}
+
+export const JourneyFilmography: React.FC<JourneyFilmographyProps> = ({ onItemClick }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
@@ -23,10 +27,19 @@ export const JourneyFilmography: React.FC = () => {
   const renderEntry = (entry: typeof FILMOGRAPHY[0], idx: number) => (
     <motion.article
       key={entry.id}
-      className="group flex flex-col sm:flex-row gap-6 sm:gap-8 p-6 sm:p-8 rounded-[1.5rem] bg-[#FAF9F7] hover:bg-white transition-all duration-500 hover:shadow-lg hover:shadow-[#C9A84C]/5 border border-transparent hover:border-[#E8E5DF]/60"
+      className="group flex flex-col sm:flex-row gap-6 sm:gap-8 p-6 sm:p-8 rounded-[1.5rem] bg-[#FAF9F7] hover:bg-white transition-all duration-500 hover:shadow-lg hover:shadow-[#C9A84C]/5 border border-transparent hover:border-[#E8E5DF]/60 cursor-pointer"
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: 0.1 + idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
+      onClick={() => onItemClick?.(entry.id)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onItemClick?.(entry.id);
+        }
+      }}
     >
       {/* Poster */}
       {entry.image && (
@@ -87,9 +100,9 @@ export const JourneyFilmography: React.FC = () => {
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
           <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
-            Filmography & Television
+            The Craft
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#111827] tracking-tight">
             On screen.
           </h2>
         </motion.div>

@@ -6,13 +6,15 @@ import { DetailModal } from '../components/DetailModal';
 import { Footer } from '../components/Footer';
 import { JourneyHero } from './journey/JourneyHero';
 import { JourneyIntro } from './journey/JourneyIntro';
+import { JourneyGlance } from './journey/JourneyGlance';
 import { JourneyTimeline } from './journey/JourneyTimeline';
 import { JourneyHighlights } from './journey/JourneyHighlights';
 import { JourneyFilmography } from './journey/JourneyFilmography';
 import { JourneyBehindTheScenes } from './journey/JourneyBehindTheScenes';
-import { JourneyQuote } from './journey/JourneyQuote';
+import { JourneyPress } from './journey/JourneyPress';
 import { JourneyFAQ } from './journey/JourneyFAQ';
 import { JourneyNext } from './journey/JourneyNext';
+import { JourneyContinueExploring } from './journey/JourneyContinueExploring';
 import { ModalType } from '../types';
 
 export default function JourneyPage() {
@@ -25,6 +27,8 @@ export default function JourneyPage() {
   const handleNavigate = (sectionId: string) => {
     if (sectionId === 'home') {
       navigate('/');
+    } else if (sectionId === 'projects') {
+      navigate('/projects');
     } else {
       const element = document.getElementById(sectionId);
       if (element) {
@@ -36,6 +40,30 @@ export default function JourneyPage() {
   const handleOpenChat = (mode: 'fan' | 'business' = 'fan') => {
     setChatMode(mode);
     setChatOpen(true);
+  };
+
+  const handleHighlightClick = (targetId: string) => {
+    const element = document.getElementById(targetId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleFilmographyClick = (projectId: string) => {
+    setActiveModal({ type: 'project', projectId });
+  };
+
+  const handleBtsImageClick = (imageSrc: string, title: string) => {
+    setActiveModal({
+      type: 'gallery',
+      item: {
+        id: `bts-${title}`,
+        title,
+        caption: title,
+        category: 'Behind the Scenes',
+        image: imageSrc,
+      },
+    });
   };
 
   return (
@@ -50,34 +78,69 @@ export default function JourneyPage() {
       <main>
         {/* 1. Editorial Hero */}
         <JourneyHero
-          onExploreProjects={() => navigate('/')}
-          onViewJournal={() => navigate('/')}
+          onExploreProjects={() => {
+            navigate('/');
+            setTimeout(() => {
+              document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }}
+          onViewJournal={() => {
+            navigate('/');
+            setTimeout(() => {
+              document.getElementById('journal')?.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }}
         />
 
-        {/* 2. Biography */}
+        {/* 2. Meet Homer */}
         <JourneyIntro />
 
-        {/* 3. Career Timeline */}
+        {/* 3. Life At A Glance */}
+        <JourneyGlance />
+
+        {/* 4. Career Timeline */}
         <JourneyTimeline />
 
-        {/* 4. Career Highlights */}
-        <JourneyHighlights />
+        {/* 4b. Career Highlights */}
+        <JourneyHighlights onItemClick={handleHighlightClick} />
 
-        {/* 5. Filmography & Television */}
-        <JourneyFilmography />
+        {/* 5. The Craft */}
+        <JourneyFilmography onItemClick={handleFilmographyClick} />
 
         {/* 6. Behind The Scenes */}
-        <JourneyBehindTheScenes />
+        <JourneyBehindTheScenes onImageClick={handleBtsImageClick} />
 
-        {/* 7. Personal Philosophy */}
-        <JourneyQuote />
+        {/* 7. Recognition & Press */}
+        <JourneyPress />
 
         {/* 8. Frequently Asked Questions */}
         <JourneyFAQ />
 
         {/* 9. Next Chapter */}
         <JourneyNext
-          onExploreProjects={() => navigate('/')}
+          onExploreProjects={() => {
+            navigate('/');
+            setTimeout(() => {
+              document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }}
+          onOpenChat={() => handleOpenChat('fan')}
+        />
+
+        {/* 10. Continue Exploring */}
+        <JourneyContinueExploring
+          onExploreProjects={() => {
+            navigate('/');
+            setTimeout(() => {
+              document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }}
+          onReadJournal={() => {
+            navigate('/');
+            setTimeout(() => {
+              document.getElementById('journal')?.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }}
           onOpenChat={() => handleOpenChat('fan')}
         />
       </main>

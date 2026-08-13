@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import { ArrowRight, Calendar } from 'lucide-react';
-import { IMAGES } from '../../data/images';
+import { SECTION_IMAGES } from '../../data/images';
 
 const HIGHLIGHTS = [
   {
@@ -10,15 +10,17 @@ const HIGHLIGHTS = [
     description:
       'Made his television debut portraying Dylan Reid in HBO\'s Euphoria Season 3. The casting was announced by BBC News in October 2025; the season premiered in May 2026.',
     date: '2026',
-    image: IMAGES.journalOnset,
+    image: SECTION_IMAGES.highlights.euphoriaDebut,
+    targetId: 'journey-timeline',
   },
   {
     id: 'the-shards',
     title: 'The Shards — First Lead Role',
     description:
-      'Cast as Robert Mallory in Ryan Murphy\'s adaptation of Bret Easton Ellis\'s novel, starring alongside Kaia Gerber. His first major leading role, set for release in August 2026.',
+      'Cast as Robert Mallory in Ryan Murphy and Bret Easton Ellis\'s FX/Hulu series, starring alongside Igby Rigney, Kaia Gerber, Hayes Warner, Graham Campbell, Wes Bentley, and Evan Rachel Wood. His first major leading role, premiered August 5, 2026.',
     date: '2025–2026',
-    image: IMAGES.shardsBanner,
+    image: SECTION_IMAGES.highlights.firstLeadRole,
+    targetId: 'journey-filmography',
   },
   {
     id: 'white-lies',
@@ -26,19 +28,25 @@ const HIGHLIGHTS = [
     description:
       'Cast in an upcoming film directed by Oliver Stone, announced in June 2026. Details about the role and release date are forthcoming.',
     date: '2026',
-    image: IMAGES.homerBrightLuxuryEditorial,
+    image: SECTION_IMAGES.highlights.whiteLies,
+    targetId: 'journey-filmography',
   },
   {
     id: 'brown-university',
     title: 'Brown University',
     description:
-      'Studied Cognitive Neuroscience and Visual Arts at Brown University in Providence, Rhode Island, an interdisciplinary education that shaped his approach to performance.',
-    date: '2019',
-    image: IMAGES.homerGqLifestyleStudio,
+      'Studied Cognitive Neuroscience and Visual Arts at Brown University in Providence, Rhode Island. Graduated in 2024.',
+    date: '2019–2024',
+    image: SECTION_IMAGES.highlights.brownUniversity,
+    targetId: 'journey-glance',
   },
 ];
 
-export const JourneyHighlights: React.FC = () => {
+interface JourneyHighlightsProps {
+  onItemClick?: (targetId: string) => void;
+}
+
+export const JourneyHighlights: React.FC<JourneyHighlightsProps> = ({ onItemClick }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
@@ -72,6 +80,15 @@ export const JourneyHighlights: React.FC = () => {
                 duration: 0.7,
                 delay: 0.15 + idx * 0.12,
                 ease: [0.22, 1, 0.36, 1],
+              }}
+              onClick={() => onItemClick?.(item.targetId)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onItemClick?.(item.targetId);
+                }
               }}
             >
               {/* Image */}

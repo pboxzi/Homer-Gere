@@ -14,6 +14,15 @@ import roadChasing from '../assets/images/homer_road_chasing_1786535714161.jpg';
 import gallerySuit from '../assets/images/homer_gallery_suit_1786535723951.jpg';
 import galleryCafe from '../assets/images/homer_gallery_cafe_1786535734949.jpg';
 
+// Real editorial photos from public sources
+import shardsPremiereCast from '../assets/images/real/shards-premiere-cast.jpg';
+import shardsLaunchSkate from '../assets/images/real/shards-launch-skate.jpg';
+import shardsRobertMallory from '../assets/images/real/shards-robert-mallory.jpg';
+import shardsEpisodeScene from '../assets/images/real/shards-episode-scene.jpg';
+import euphoriaEpisodeScene from '../assets/images/real/euphoria-episode-scene.jpg';
+import shardsPremiereCarey from '../assets/images/real/shards-premiere-carey.jpg';
+import cannesRedCarpet from '../assets/images/real/cannes-red-carpet.jpg';
+
 export const IMAGES = {
   heroPortrait,
   heroComposed,
@@ -30,4 +39,63 @@ export const IMAGES = {
   roadChasing,
   gallerySuit,
   galleryCafe,
+  shardsPremiereCast,
+  shardsLaunchSkate,
+  shardsRobertMallory,
+  shardsEpisodeScene,
+  euphoriaEpisodeScene,
+  shardsPremiereCarey,
+  cannesRedCarpet,
+};
+
+// Section-specific image mappings — each image used ONCE per section
+export const SECTION_IMAGES = {
+  hero: {
+    homepage: homerGqLifestyleStudio,
+    journey: homerBrightLuxuryEditorial,
+    projects: shardsPremiereCast,
+  },
+  journal: [
+    journalOnset,
+    journalPortrait,
+    bwInterview,
+    roadChasing,
+  ],
+  gallery: [
+    shardsPremiereCast,
+    shardsRobertMallory,
+    euphoriaEpisodeScene,
+    shardsLaunchSkate,
+    cannesRedCarpet,
+    galleryCafe,
+  ],
+  bts: [
+    shardsPremiereCarey,
+    shardsEpisodeScene,
+    journalOnset,
+    journalPortrait,
+    bwInterview,
+    roadChasing,
+    homerBrightLuxuryEditorial,
+    homerGqLifestyleStudio,
+  ],
+  filmography: {
+    whiteLies: cannesRedCarpet,
+    theShards: shardsPremiereCast,
+    euphoria: euphoriaEpisodeScene,
+    shortFilms: journalPortrait,
+  },
+  highlights: {
+    euphoriaDebut: euphoriaEpisodeScene,
+    firstLeadRole: shardsPremiereCast,
+    whiteLies: cannesRedCarpet,
+    brownUniversity: homerGqLifestyleStudio,
+  },
+  exploreMore: {
+    projects: shardsPremiereCast,
+    journal: journalOnset,
+    gallery: shardsRobertMallory,
+    press: bwInterview,
+    contact: bwInterview,
+  },
 };

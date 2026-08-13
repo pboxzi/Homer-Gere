@@ -49,14 +49,16 @@ export const JourneyIntro: React.FC = () => {
                   Westchester, graduating in 2018. He then enrolled at Brown University in
                   Providence, Rhode Island, where he studied Cognitive Neuroscience and Visual
                   Arts — a combination that would later inform his approach to performance.
+                  He graduated in 2024.
                 </p>
 
                 <p className="text-[#1C1917] text-base sm:text-lg leading-[1.8]">
                   After appearing in several independent short films, Homer made his television
                   debut in 2026 as Dylan Reid in HBO's Euphoria Season 3. He was then cast as
-                  Robert Mallory in Ryan Murphy's adaptation of the Bret Easton Ellis novel
-                  The Shards, marking his first major leading role. He stars alongside Kaia Gerber,
-                  with the series set for release in August 2026. In June 2026, it was announced
+                  Robert Mallory in Ryan Murphy and Bret Easton Ellis's FX/Hulu series
+                  The Shards, marking his first major leading role. He stars alongside Igby Rigney,
+                  Kaia Gerber, Hayes Warner, Graham Campbell, Wes Bentley, and Evan Rachel Wood.
+                  The series premiered August 5, 2026. In June 2026, it was announced
                   that he was cast in an Oliver Stone film.
                 </p>
               </div>

@@ -1,76 +1,80 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import { Camera, ArrowUpRight } from 'lucide-react';
-import { IMAGES } from '../../data/images';
+import { SECTION_IMAGES } from '../../data/images';
 
 const BTS_ITEMS = [
   {
     id: 'bts-premiere',
-    title: 'Euphoria Season 3 Premiere',
-    caption: 'Los Angeles premiere, May 2026',
+    title: 'The Shards Premiere After Party',
+    caption: 'With Carey Lowell at SVA Theatre, July 2026',
     category: 'Events',
-    image: IMAGES.gallerySuit,
+    image: SECTION_IMAGES.bts[0],
     size: 'large' as const,
   },
   {
     id: 'bts-on-set',
-    title: 'On Set',
-    caption: 'Principal photography for The Shards',
-    category: 'Film Set',
-    image: IMAGES.journalOnset,
+    title: 'The Shards — In Character',
+    caption: 'On set during principal photography',
+    category: 'Behind The Scenes',
+    image: SECTION_IMAGES.bts[1],
     size: 'tall' as const,
   },
   {
     id: 'bts-portrait',
-    title: 'Press Day',
-    caption: 'Editorial portrait session',
-    category: 'Portrait',
-    image: IMAGES.journalPortrait,
+    title: 'Euphoria Season 3',
+    caption: 'Between takes on the HBO set',
+    category: 'Film Set',
+    image: SECTION_IMAGES.bts[2],
     size: 'small' as const,
   },
   {
     id: 'bts-bw',
-    title: 'In Character',
-    caption: 'Black and white studio session',
-    category: 'Studio',
-    image: IMAGES.bwInterview,
+    title: 'Press Day Portrait',
+    caption: 'Editorial portrait session',
+    category: 'Portrait',
+    image: SECTION_IMAGES.bts[3],
     size: 'small' as const,
   },
   {
     id: 'bts-editorial',
-    title: 'Editorial Shoot',
-    caption: 'Behind the camera with the creative team',
-    category: 'Editorial',
-    image: IMAGES.homerBrightLuxuryEditorial,
+    title: 'In Conversation',
+    caption: 'Interview session',
+    category: 'Interview',
+    image: SECTION_IMAGES.bts[4],
     size: 'tall' as const,
   },
   {
-    id: 'bts-lifestyle',
-    title: 'Off Duty',
-    caption: 'A quiet moment between projects',
-    category: 'Personal',
-    image: IMAGES.galleryCafe,
-    size: 'small' as const,
-  },
-  {
-    id: 'bts-road',
+    id: 'bts-travel',
     title: 'On the Move',
     caption: 'Traveling between locations',
     category: 'Travel',
-    image: IMAGES.roadChasing,
+    image: SECTION_IMAGES.bts[5],
     size: 'small' as const,
   },
   {
-    id: 'bts-gq',
+    id: 'bts-editorial-shoot',
+    title: 'Editorial Shoot',
+    caption: 'Behind the camera with the creative team',
+    category: 'Editorial',
+    image: SECTION_IMAGES.bts[6],
+    size: 'small' as const,
+  },
+  {
+    id: 'bts-studio',
     title: 'Studio Session',
     caption: 'GQ lifestyle feature shoot',
     category: 'Editorial',
-    image: IMAGES.homerGqLifestyleStudio,
+    image: SECTION_IMAGES.bts[7],
     size: 'wide' as const,
   },
 ];
 
-export const JourneyBehindTheScenes: React.FC = () => {
+interface JourneyBehindTheScenesProps {
+  onImageClick?: (imageSrc: string, title: string) => void;
+}
+
+export const JourneyBehindTheScenes: React.FC<JourneyBehindTheScenesProps> = ({ onImageClick }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
@@ -122,6 +126,15 @@ export const JourneyBehindTheScenes: React.FC = () => {
                 duration: 0.6,
                 delay: 0.1 + idx * 0.07,
                 ease: [0.22, 1, 0.36, 1],
+              }}
+              onClick={() => onImageClick?.(item.image, item.title)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onImageClick?.(item.image, item.title);
+                }
               }}
             >
               {/* Image */}

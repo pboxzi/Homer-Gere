@@ -16,6 +16,7 @@ import { DetailModal } from './components/DetailModal';
 import { ModalType, JournalArticle, TimelineMilestone, Experience, MembershipTier, GalleryItem } from './types';
 import { JOURNAL_ARTICLES, TIMELINE_MILESTONES, EXPERIENCES, MEMBERSHIP_TIERS, GALLERY_ITEMS } from './data/content';
 import JourneyPage from './pages/JourneyPage';
+import ProjectsPage from './pages/ProjectsPage';
 
 function HomePage() {
   const [activeSection, setActiveSection] = useState<string>('home');
@@ -27,6 +28,10 @@ function HomePage() {
   const handleNavigate = (sectionId: string) => {
     if (sectionId === 'journey') {
       navigate('/journey');
+      return;
+    }
+    if (sectionId === 'projects') {
+      navigate('/projects');
       return;
     }
     setActiveSection(sectionId);
@@ -132,6 +137,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/journey" element={<JourneyPage />} />
+        <Route path="/projects" element={<ProjectsPage />} />
       </Routes>
     </BrowserRouter>
   );
