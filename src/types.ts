@@ -107,6 +107,14 @@ export interface ChatMessage {
   sender: 'user' | 'homer';
   text: string;
   timestamp: string;
+  media?: ChatMedia;
+}
+
+export interface ChatMedia {
+  type: 'image' | 'video';
+  url: string;
+  thumbnail?: string;
+  name?: string;
 }
 
 export interface FilmographyEntry {

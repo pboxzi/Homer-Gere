@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
-import { Send, ArrowLeft, Loader2, Phone, Shield, MessageCircle } from 'lucide-react';
-import { ChatMessage } from '../../types';
+import { Send, ArrowLeft, Loader2, Phone, Shield, Image, X, Play } from 'lucide-react';
+import { ChatMessage, ChatMedia } from '../../types';
 import { CHAT_SETTINGS } from '../../data/chatSettings';
 
 interface FanChatProps {
@@ -12,6 +12,8 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
+  const [mediaPreview, setMediaPreview] = useState<ChatMedia | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const settings = CHAT_SETTINGS.fanChat;
 
@@ -32,18 +34,47 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const isImage = file.type.startsWith('image/');
+    const isVideo = file.type.startsWith('video/');
+
+    if (!isImage && !isVideo) return;
+
+    const url = URL.createObjectURL(file);
+    setMediaPreview({
+      type: isImage ? 'image' : 'video',
+      url,
+      name: file.name,
+    });
+
+    e.target.value = '';
+  };
+
+  const removeMediaPreview = () => {
+    if (mediaPreview?.url) {
+      URL.revokeObjectURL(mediaPreview.url);
+    }
+    setMediaPreview(null);
+  };
+
   const handleSend = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!input.trim() || loading) return;
+    if ((!input.trim() && !mediaPreview) || loading) return;
 
     const userText = input.trim();
+    const attachedMedia = mediaPreview ? { ...mediaPreview } : undefined;
     setInput('');
+    setMediaPreview(null);
 
     const userMsg: ChatMessage = {
       id: Date.now().toString(),
       sender: 'user',
-      text: userText,
+      text: userText || (attachedMedia ? `Sent a ${attachedMedia.type}` : ''),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      media: attachedMedia,
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -63,7 +94,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
       });
 
       const data = await response.json();
-      const replyText = data.reply || "Thank you so much for your support! I really appreciate you connecting.";
+      const replyText = data.reply || "Thank you so much for sharing! I really appreciate you connecting.";
 
       const homerMsg: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -150,7 +181,31 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
                         : 'bg-[#F3F1ED] text-[#1C1917] rounded-bl-none'
                     }`}
                   >
-                    {msg.text}
+                    {/* Media Attachment */}
+                    {msg.media && (
+                      <div className="mb-2">
+                        {msg.media.type === 'image' ? (
+                          <img
+                            src={msg.media.url}
+                            alt={msg.media.name || 'Shared image'}
+                            className="rounded-xl max-w-full max-h-48 object-cover"
+                            referrerPolicy="no-referrer"
+                          />
+                        ) : (
+                          <div className="relative rounded-xl overflow-hidden bg-black/10">
+                            <video
+                              src={msg.media.url}
+                              className="max-w-full max-h-48"
+                              controls
+                              preload="metadata"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Text */}
+                    {msg.text && <p>{msg.text}</p>}
                   </div>
                   <span className="text-[10px] text-[#57534E] mt-1 px-1">
                     {msg.timestamp}
@@ -167,6 +222,38 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
 
               <div ref={messagesEndRef} />
             </div>
+
+            {/* Media Preview */}
+            {mediaPreview && (
+              <div className="px-5 py-3 border-t border-[#E8E5DF]/60 bg-[#F3F1ED]/30">
+                <div className="relative inline-block">
+                  {mediaPreview.type === 'image' ? (
+                    <img
+                      src={mediaPreview.url}
+                      alt="Preview"
+                      className="h-20 rounded-lg object-cover"
+                    />
+                  ) : (
+                    <div className="relative h-20 w-32 rounded-lg overflow-hidden bg-black/10">
+                      <video
+                        src={mediaPreview.url}
+                        className="h-full w-full object-cover"
+                        preload="metadata"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Play className="w-6 h-6 text-white/80" />
+                      </div>
+                    </div>
+                  )}
+                  <button
+                    onClick={removeMediaPreview}
+                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#1C1917] text-white flex items-center justify-center cursor-pointer"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Quick Suggestions */}
             <div className="px-5 py-2.5 border-t border-[#E8E5DF]/60 flex items-center gap-2 overflow-x-auto">
@@ -192,6 +279,22 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
 
             {/* Input */}
             <form onSubmit={handleSend} className="p-4 flex items-center gap-2">
+              {/* Media Upload Button */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-10 h-10 rounded-full bg-[#F3F1ED] hover:bg-[#E8E5DF] text-[#57534E] hover:text-[#C9A84C] flex items-center justify-center shrink-0 transition-all cursor-pointer"
+              >
+                <Image className="w-4 h-4" />
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*,video/*"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+
               <input
                 type="text"
                 value={input}
@@ -201,7 +304,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
               />
               <button
                 type="submit"
-                disabled={!input.trim() || loading}
+                disabled={(!input.trim() && !mediaPreview) || loading}
                 className="w-10 h-10 rounded-full bg-[#C9A84C] hover:bg-[#B8983A] disabled:opacity-40 text-white flex items-center justify-center shrink-0 transition-all cursor-pointer"
               >
                 <Send className="w-4 h-4" />

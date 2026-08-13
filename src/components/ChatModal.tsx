@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Send, User, Briefcase, Loader2 } from 'lucide-react';
-import { ChatMessage } from '../types';
+import { X, Send, User, Briefcase, Loader2, Image, Play } from 'lucide-react';
+import { ChatMessage, ChatMedia } from '../types';
 
 interface ChatModalProps {
   isOpen: boolean;
@@ -17,6 +17,8 @@ export const ChatModal: React.FC<ChatModalProps> = ({
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
+  const [mediaPreview, setMediaPreview] = useState<ChatMedia | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -25,7 +27,6 @@ export const ChatModal: React.FC<ChatModalProps> = ({
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
-      // Welcome message from Homer
       const initialGreeting =
         mode === 'business'
           ? "Hello! Thank you for reaching out regarding professional opportunities, collaborations, or media inquiries. How can my team and I assist you today?"
@@ -46,20 +47,49 @@ export const ChatModal: React.FC<ChatModalProps> = ({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading]);
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const isImage = file.type.startsWith('image/');
+    const isVideo = file.type.startsWith('video/');
+
+    if (!isImage && !isVideo) return;
+
+    const url = URL.createObjectURL(file);
+    setMediaPreview({
+      type: isImage ? 'image' : 'video',
+      url,
+      name: file.name,
+    });
+
+    e.target.value = '';
+  };
+
+  const removeMediaPreview = () => {
+    if (mediaPreview?.url) {
+      URL.revokeObjectURL(mediaPreview.url);
+    }
+    setMediaPreview(null);
+  };
+
   if (!isOpen) return null;
 
   const handleSend = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!input.trim() || loading) return;
+    if ((!input.trim() && !mediaPreview) || loading) return;
 
     const userText = input.trim();
+    const attachedMedia = mediaPreview ? { ...mediaPreview } : undefined;
     setInput('');
+    setMediaPreview(null);
 
     const userMsg: ChatMessage = {
       id: Date.now().toString(),
       sender: 'user',
-      text: userText,
+      text: userText || (attachedMedia ? `Sent a ${attachedMedia.type}` : ''),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      media: attachedMedia,
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -182,7 +212,30 @@ export const ChatModal: React.FC<ChatModalProps> = ({
                     : 'bg-white text-[#1C1917] rounded-bl-none'
                 }`}
               >
-                {msg.text}
+                {/* Media Attachment */}
+                {msg.media && (
+                  <div className="mb-2">
+                    {msg.media.type === 'image' ? (
+                      <img
+                        src={msg.media.url}
+                        alt={msg.media.name || 'Shared image'}
+                        className="rounded-xl max-w-full max-h-48 object-cover"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className="relative rounded-xl overflow-hidden bg-black/10">
+                        <video
+                          src={msg.media.url}
+                          className="max-w-full max-h-48"
+                          controls
+                          preload="metadata"
+                        />
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {msg.text && <p>{msg.text}</p>}
               </div>
               <span className="text-[10px] text-[#A8A29E] mt-1 px-1">
                 {msg.timestamp}
@@ -200,6 +253,38 @@ export const ChatModal: React.FC<ChatModalProps> = ({
           <div ref={messagesEndRef} />
         </div>
 
+        {/* Media Preview */}
+        {mediaPreview && (
+          <div className="px-4 py-3 border-t border-[#E8E5DF]/60 bg-[#F5F2EB]/30">
+            <div className="relative inline-block">
+              {mediaPreview.type === 'image' ? (
+                <img
+                  src={mediaPreview.url}
+                  alt="Preview"
+                  className="h-20 rounded-lg object-cover"
+                />
+              ) : (
+                <div className="relative h-20 w-32 rounded-lg overflow-hidden bg-black/10">
+                  <video
+                    src={mediaPreview.url}
+                    className="h-full w-full object-cover"
+                    preload="metadata"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Play className="w-6 h-6 text-white/80" />
+                  </div>
+                </div>
+              )}
+              <button
+                onClick={removeMediaPreview}
+                className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-[#1C1917] text-white flex items-center justify-center cursor-pointer"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Quick Suggestion Prompts */}
         <div className="px-4 py-2 bg-white flex items-center gap-2 overflow-x-auto no-scrollbar">
           {mode === 'fan' ? (
@@ -208,13 +293,13 @@ export const ChatModal: React.FC<ChatModalProps> = ({
                 onClick={() => setInput("Tell me about 'The Shards'!")}
                 className="whitespace-nowrap px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs hover:bg-blue-100 transition-colors focus:outline-none cursor-pointer"
               >
-                🎬 Tell me about 'The Shards'!
+                Tell me about 'The Shards'!
               </button>
               <button
                 onClick={() => setInput("What inspired you to start acting?")}
                 className="whitespace-nowrap px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs hover:bg-blue-100 transition-colors focus:outline-none cursor-pointer"
               >
-                🌟 Acting inspiration?
+                Acting inspiration?
               </button>
             </>
           ) : (
@@ -223,13 +308,13 @@ export const ChatModal: React.FC<ChatModalProps> = ({
                 onClick={() => setInput("I'm inquiring about a media interview opportunity.")}
                 className="whitespace-nowrap px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs hover:bg-blue-100 transition-colors focus:outline-none cursor-pointer"
               >
-                🎙️ Press & Interview inquiry
+                Press & Interview inquiry
               </button>
               <button
                 onClick={() => setInput("I'd like to discuss a film project collaboration.")}
                 className="whitespace-nowrap px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-xs hover:bg-blue-100 transition-colors focus:outline-none cursor-pointer"
               >
-                💼 Brand / Film collaboration
+                Brand / Film collaboration
               </button>
             </>
           )}
@@ -237,6 +322,22 @@ export const ChatModal: React.FC<ChatModalProps> = ({
 
         {/* Input Bar */}
         <form onSubmit={handleSend} className="p-4 bg-white flex items-center gap-2">
+          {/* Media Upload Button */}
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="w-10 h-10 rounded-full bg-[#F5F2EB] hover:bg-[#E8E5DF] text-[#57534E] hover:text-blue-600 flex items-center justify-center shrink-0 transition-all cursor-pointer"
+          >
+            <Image className="w-4 h-4" />
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,video/*"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+
           <input
             type="text"
             value={input}
@@ -250,7 +351,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({
           />
           <button
             type="submit"
-            disabled={!input.trim() || loading}
+            disabled={(!input.trim() && !mediaPreview) || loading}
             className="w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white flex items-center justify-center shrink-0 transition-all focus:outline-none cursor-pointer"
           >
             <Send className="w-4 h-4" />
