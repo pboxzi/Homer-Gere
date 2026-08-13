@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   LayoutDashboard, Globe, FileText, Users, MessageSquare, Image, CreditCard,
-  BarChart3, Settings, LogOut, Menu, X, ChevronDown, ChevronRight, Shield,
+  BarChart3, Settings, LogOut, Menu, X, ChevronDown, ChevronRight, Shield, Search,
 } from 'lucide-react';
 import { AdminSection, ADMIN_SIDEBAR_GROUPS } from '../../data/adminData';
+import { useAdmin, SearchResult } from '../../context/AdminContext';
 
 const SECTION_ICONS: Record<string, React.FC<{ className?: string }>> = {
   overview: LayoutDashboard,
@@ -17,6 +18,14 @@ const SECTION_ICONS: Record<string, React.FC<{ className?: string }>> = {
   'membership-payments': CreditCard, transactions: CreditCard,
   visitors: BarChart3, 'membership-stats': BarChart3, 'experience-stats': BarChart3, 'chat-stats': BarChart3,
   'website-settings': Settings, branding: Settings, 'comm-settings': Settings, 'email-templates': Settings, security: Shield, backups: Settings, integrations: Settings,
+};
+
+const SECTION_MAP: Record<string, AdminSection> = {
+  member: 'members', plan: 'plans', application: 'applications',
+  experience: 'experiences', experienceRequest: 'experience-requests',
+  conversation: 'fan-chat', contactMessage: 'contact-messages',
+  notification: 'admin-notifications', media: 'images',
+  payment: 'membership-payments', page: 'homepage',
 };
 
 interface AdminLayoutProps {
@@ -31,10 +40,36 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   children,
 }) => {
   const navigate = useNavigate();
+  const { globalAdminSearch } = useAdmin();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
     Object.fromEntries(ADMIN_SIDEBAR_GROUPS.filter((g) => g.label).map((g) => [g.label, true]))
   );
+
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const results = globalAdminSearch(searchQuery);
+      setSearchResults(results);
+      setSearchOpen(true);
+    } else {
+      setSearchResults([]);
+      setSearchOpen(false);
+    }
+  }, [searchQuery, globalAdminSearch]);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
 
   const toggleGroup = (label: string) => {
     setExpandedGroups((prev) => ({ ...prev, [label]: !prev[label] }));
@@ -43,6 +78,13 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   const handleNav = (id: AdminSection) => {
     onSectionChange(id);
     setMobileOpen(false);
+  };
+
+  const handleSearchSelect = (result: SearchResult) => {
+    const section = SECTION_MAP[result.type];
+    if (section) onSectionChange(section);
+    setSearchQuery('');
+    setSearchOpen(false);
   };
 
   const SidebarContent = () => (
@@ -185,11 +227,71 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       </AnimatePresence>
 
       <div className="flex-1 lg:ml-60 min-h-screen flex flex-col">
-        <header className="lg:hidden sticky top-0 z-20 bg-[#FAF9F7]/90 backdrop-blur-xl border-b border-[#E8E5DF]/40 px-4 py-3 flex items-center gap-3">
-          <button onClick={() => setMobileOpen(true)} className="w-9 h-9 rounded-xl flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
+        {/* Top bar with search */}
+        <header className="sticky top-0 z-20 bg-[#FAF9F7]/90 backdrop-blur-xl border-b border-[#E8E5DF]/40 px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-4">
+          <button onClick={() => setMobileOpen(true)} className="lg:hidden w-9 h-9 rounded-xl flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
             <Menu className="w-5 h-5" />
           </button>
-          <span className="font-editorial text-sm text-[#1C1917] uppercase tracking-[0.06em]">Admin CMS</span>
+          <span className="lg:hidden font-editorial text-sm text-[#1C1917] uppercase tracking-[0.06em]">Admin CMS</span>
+
+          {/* Global Search */}
+          <div ref={searchRef} className="relative flex-1 max-w-md hidden sm:block">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#57534E]/40" />
+              <input
+                type="text"
+                placeholder="Search members, content, payments..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => searchQuery && setSearchOpen(true)}
+                className="w-full pl-9 pr-4 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] placeholder:text-[#57534E]/40 focus:outline-none focus:border-[#A6852F]/40 transition-colors"
+              />
+            </div>
+            <AnimatePresence>
+              {searchOpen && searchResults.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl border border-[#E8E5DF]/80 shadow-lg overflow-hidden z-50 max-h-80 overflow-y-auto"
+                >
+                  {searchResults.slice(0, 10).map((result) => (
+                    <button
+                      key={`${result.type}-${result.id}`}
+                      onClick={() => handleSearchSelect(result)}
+                      className="w-full flex items-start gap-3 px-4 py-3 hover:bg-[#F3F1ED]/60 transition-colors text-left cursor-pointer border-b border-[#E8E5DF]/20 last:border-0"
+                    >
+                      <div className="w-7 h-7 rounded-lg bg-[#A6852F]/10 flex items-center justify-center shrink-0 mt-0.5">
+                        <Search className="w-3 h-3 text-[#A6852F]" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-[#1C1917] truncate">{result.title}</p>
+                        <p className="text-[10px] text-[#57534E] truncate">{result.description}</p>
+                      </div>
+                      <span className="text-[9px] text-[#57534E]/60 uppercase shrink-0">{result.section}</span>
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+              {searchOpen && searchQuery && searchResults.length === 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -4 }}
+                  className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl border border-[#E8E5DF]/80 shadow-lg p-4 text-center z-50"
+                >
+                  <p className="text-xs text-[#57534E]">No results found</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          <div className="flex-1" />
+
+          <div className="hidden sm:flex items-center gap-2 text-[10px] text-[#57534E]">
+            <div className="w-2 h-2 rounded-full bg-[#16A34A]" />
+            System Online
+          </div>
         </header>
 
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
