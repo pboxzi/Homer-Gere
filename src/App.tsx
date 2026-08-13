@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useParams } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { FeaturedProject } from './components/FeaturedProject';
@@ -23,6 +24,7 @@ import ProjectsPage from './pages/ProjectsPage';
 import ProjectDetailPage from './pages/project-detail/ProjectDetailPage';
 import { GalleryPage } from './pages/GalleryPage';
 import { JournalPage } from './pages/JournalPage';
+import ArticleDetailPage from './pages/journal/ArticleDetailPage';
 import MediaPage from './pages/MediaPage';
 
 function HomePage() {
@@ -180,17 +182,20 @@ function HomePage() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/journey" element={<JourneyPage />} />
-        <Route path="/projects" element={<ProjectsPage />} />
-        <Route path="/projects/:slug" element={<ProjectDetailPage />} />
-        <Route path="/gallery" element={<GalleryPage />} />
-        <Route path="/journal" element={<JournalPage />} />
-        <Route path="/media" element={<MediaPage />} />
-      </Routes>
-    </BrowserRouter>
+    <HelmetProvider>
+      <BrowserRouter>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/journey" element={<JourneyPage />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/projects/:slug" element={<ProjectDetailPage />} />
+          <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/journal" element={<JournalPage />} />
+          <Route path="/journal/:slug" element={<ArticleDetailPage />} />
+          <Route path="/media" element={<MediaPage />} />
+        </Routes>
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }

@@ -5,9 +5,10 @@ import { JournalArticleExtended } from '../../data/journal';
 
 interface JournalTrendingProps {
   articles: JournalArticleExtended[];
+  onArticleClick?: (slug: string) => void;
 }
 
-export const JournalTrending: React.FC<JournalTrendingProps> = ({ articles }) => {
+export const JournalTrending: React.FC<JournalTrendingProps> = ({ articles, onArticleClick }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
@@ -41,6 +42,7 @@ export const JournalTrending: React.FC<JournalTrendingProps> = ({ articles }) =>
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.1 + idx * 0.08 }}
+              onClick={() => onArticleClick?.(article.slug)}
             >
               {/* Thumbnail */}
               <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-[#1C1917]">

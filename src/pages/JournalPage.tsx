@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Navbar } from '../components/Navbar';
 import { JournalHero } from './journal/JournalHero';
 import { JournalFeatured } from './journal/JournalFeatured';
 import { JournalCategories } from './journal/JournalCategories';
@@ -18,13 +19,30 @@ import {
 export const JournalPage: React.FC = () => {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState<JournalCategory>('All');
+  const [activeSection, setActiveSection] = useState<string>('journal');
+  const [chatOpen, setChatOpen] = useState<boolean>(false);
+  const [chatMode, setChatMode] = useState<'fan' | 'business'>('fan');
   const filteredArticles = useMemo(
     () => getArticlesByCategory(activeCategory),
     [activeCategory]
   );
 
+  const handleNavigate = (sectionId: string) => {
+    if (sectionId === 'journey') navigate('/journey');
+    else if (sectionId === 'projects') navigate('/projects');
+    else if (sectionId === 'media') navigate('/media');
+    else if (sectionId === 'home') navigate('/');
+    else navigate('/');
+  };
+
   return (
     <main className="min-h-screen bg-[#FAF9F7]">
+      <Navbar
+        activeSection={activeSection}
+        onNavigate={handleNavigate}
+        onOpenChat={(mode) => { setChatMode(mode || 'fan'); setChatOpen(true); }}
+        onOpenSignIn={() => {}}
+      />
       {/* 1. Hero */}
       <JournalHero onBack={() => navigate('/')} />
 

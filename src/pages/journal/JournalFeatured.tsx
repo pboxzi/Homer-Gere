@@ -5,9 +5,10 @@ import { JournalArticleExtended } from '../../data/journal';
 
 interface JournalFeaturedProps {
   article: JournalArticleExtended;
+  onArticleClick?: (slug: string) => void;
 }
 
-export const JournalFeatured: React.FC<JournalFeaturedProps> = ({ article }) => {
+export const JournalFeatured: React.FC<JournalFeaturedProps> = ({ article, onArticleClick }) => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
@@ -33,6 +34,7 @@ export const JournalFeatured: React.FC<JournalFeaturedProps> = ({ article }) => 
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.15 }}
+          onClick={() => onArticleClick?.(article.slug)}
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
             {/* Image */}

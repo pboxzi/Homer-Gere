@@ -5,15 +5,17 @@ import { JournalArticleExtended } from '../../data/journal';
 
 interface ArticleCardProps {
   article: JournalArticleExtended;
+  onArticleClick?: (slug: string) => void;
 }
 
-const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
+const ArticleCard: React.FC<ArticleCardProps> = ({ article, onArticleClick }) => {
   return (
     <motion.article
-      className="group rounded-[1.5rem] overflow-hidden bg-[#FAF9F7] hover:shadow-2xl hover:shadow-[#C9A84C]/8 transition-all duration-500 hover:-translate-y-1"
+      className="group rounded-[1.5rem] overflow-hidden bg-[#FAF9F7] hover:shadow-2xl hover:shadow-[#C9A84C]/8 transition-all duration-500 hover:-translate-y-1 cursor-pointer"
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
+      onClick={() => onArticleClick?.(article.slug)}
     >
       {/* Image */}
       <div className="relative h-56 sm:h-64 overflow-hidden bg-[#E8E5DF]">
@@ -63,12 +65,14 @@ interface JournalLatestProps {
   articles: JournalArticleExtended[];
   initialCount?: number;
   loadMore?: number;
+  onArticleClick?: (slug: string) => void;
 }
 
 export const JournalLatest: React.FC<JournalLatestProps> = ({
   articles,
   initialCount = 6,
   loadMore = 3,
+  onArticleClick,
 }) => {
   const [visibleCount, setVisibleCount] = React.useState(initialCount);
   const visibleArticles = articles.slice(0, visibleCount);
@@ -79,7 +83,7 @@ export const JournalLatest: React.FC<JournalLatestProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {visibleArticles.map((article, idx) => (
           <div key={article.id} style={{ animationDelay: `${Math.min(idx * 0.05, 0.3)}s` }}>
-            <ArticleCard article={article} />
+            <ArticleCard article={article} onArticleClick={onArticleClick} />
           </div>
         ))}
       </div>

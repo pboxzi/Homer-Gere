@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useInView } from 'motion/react';
+import { Navbar } from '../components/Navbar';
 import { GalleryHero } from './gallery/GalleryHero';
 import { GalleryFeatured } from './gallery/GalleryFeatured';
 import { GalleryCategories } from './gallery/GalleryCategories';
@@ -20,8 +21,26 @@ export const GalleryPage: React.FC = () => {
   const categorySectionRef = useRef<HTMLDivElement>(null);
   const categoryInView = useInView(categorySectionRef, { once: true, margin: '-60px' });
 
+  const [activeSection, setActiveSection] = useState<string>('gallery');
+  const [chatOpen, setChatOpen] = useState<boolean>(false);
+  const [chatMode, setChatMode] = useState<'fan' | 'business'>('fan');
+
+  const handleNavigate = (sectionId: string) => {
+    if (sectionId === 'journey') navigate('/journey');
+    else if (sectionId === 'projects') navigate('/projects');
+    else if (sectionId === 'media') navigate('/media');
+    else if (sectionId === 'home') navigate('/');
+    else navigate('/');
+  };
+
   return (
     <main className="min-h-screen bg-[#FAF9F7]">
+      <Navbar
+        activeSection={activeSection}
+        onNavigate={handleNavigate}
+        onOpenChat={(mode) => { setChatMode(mode || 'fan'); setChatOpen(true); }}
+        onOpenSignIn={() => {}}
+      />
       {/* 1. Hero */}
       <GalleryHero onBack={() => navigate('/')} />
 
