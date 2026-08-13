@@ -8,7 +8,7 @@ export const JourneyQuote: React.FC = () => {
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
   return (
-    <section id="journey-quote" ref={sectionRef} className="py-24 sm:py-32 bg-[#F8F5EF]">
+    <section id="journey-quote" ref={sectionRef} className="py-24 sm:py-32 bg-[#F5F2EB]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
           {/* Portrait */}
@@ -19,7 +19,7 @@ export const JourneyQuote: React.FC = () => {
             transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="relative">
-              <div className="relative w-72 h-96 sm:w-80 sm:h-[420px] rounded-[2rem] overflow-hidden bg-[#ECE8E1]">
+              <div className="relative w-72 h-96 sm:w-80 sm:h-[420px] rounded-[2rem] overflow-hidden bg-[#E4DFD5]">
                 <img
                   src={IMAGES.heroSplitBanner}
                   alt="Homer Gere Portrait"

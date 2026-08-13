@@ -50,7 +50,7 @@ export const JourneyTimeline: React.FC = () => {
     <section
       id="journey-timeline"
       ref={sectionRef}
-      className="py-24 sm:py-32 bg-[#F8F5EF]"
+      className="py-24 sm:py-32 bg-[#F5F2EB]"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
@@ -77,20 +77,20 @@ export const JourneyTimeline: React.FC = () => {
         >
           {/* Scroll Controls */}
           <div className="flex items-center justify-between mb-6">
-            <span className="text-[11px] font-medium text-[#A8A29E] uppercase tracking-wider">
+            <span className="text-[11px] font-medium text-[#8A8580] uppercase tracking-wider">
               Scroll to explore
             </span>
             <div className="flex gap-2">
               <button
                 onClick={() => scrollTimeline('left')}
-                className="w-9 h-9 rounded-xl border border-[#ECE8E1] flex items-center justify-center text-[#9CA3AF] hover:bg-[#C8A96A]/10 hover:text-[#C8A96A] hover:border-[#C8A96A]/30 transition-all duration-300 focus:outline-none cursor-pointer"
+                className="w-9 h-9 rounded-xl border border-[#E4DFD5] flex items-center justify-center text-[#78716C] hover:bg-[#C8A96A]/10 hover:text-[#C8A96A] hover:border-[#C8A96A]/30 transition-all duration-300 focus:outline-none cursor-pointer"
                 aria-label="Scroll left"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={() => scrollTimeline('right')}
-                className="w-9 h-9 rounded-xl border border-[#ECE8E1] flex items-center justify-center text-[#9CA3AF] hover:bg-[#C8A96A]/10 hover:text-[#C8A96A] hover:border-[#C8A96A]/30 transition-all duration-300 focus:outline-none cursor-pointer"
+                className="w-9 h-9 rounded-xl border border-[#E4DFD5] flex items-center justify-center text-[#78716C] hover:bg-[#C8A96A]/10 hover:text-[#C8A96A] hover:border-[#C8A96A]/30 transition-all duration-300 focus:outline-none cursor-pointer"
                 aria-label="Scroll right"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -105,7 +105,7 @@ export const JourneyTimeline: React.FC = () => {
           >
             <div className="relative min-w-max">
               {/* Connecting Line */}
-              <div className="absolute top-6 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#ECE8E1] to-transparent z-0" />
+              <div className="absolute top-6 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#E4DFD5] to-transparent z-0" />
 
               {/* Timeline Nodes */}
               <div className="flex items-start gap-0 relative z-10">
@@ -131,7 +131,7 @@ export const JourneyTimeline: React.FC = () => {
                         className={`relative w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 ${
                           isToday || isSelected
                             ? 'bg-[#C8A96A] text-white shadow-lg shadow-[#C8A96A]/25 scale-110'
-                            : 'bg-[#F3EFE7] text-[#9CA3AF] group-hover:bg-[#C8A96A]/15 group-hover:text-[#C8A96A]'
+                            : 'bg-[#EDE9E0] text-[#78716C] group-hover:bg-[#C8A96A]/15 group-hover:text-[#C8A96A]'
                         }`}
                       >
                         {getMilestoneIcon(item.iconName)}
@@ -142,12 +142,12 @@ export const JourneyTimeline: React.FC = () => {
 
                       <span
                         className={`mt-3 text-xs sm:text-sm font-semibold transition-colors duration-300 leading-tight ${
-                          isSelected ? 'text-[#C8A96A]' : 'text-[#6B7280] group-hover:text-[#111827]'
+                          isSelected ? 'text-[#C8A96A]' : 'text-[#57534E] group-hover:text-[#111827]'
                         }`}
                       >
                         {item.title}
                       </span>
-                      <span className="text-[11px] text-[#A8A29E] font-medium mt-0.5">
+                      <span className="text-[11px] text-[#8A8580] font-medium mt-0.5">
                         {item.year}
                       </span>
                     </motion.button>
@@ -167,7 +167,7 @@ export const JourneyTimeline: React.FC = () => {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="bg-[#F3EFE7]/60 rounded-[1.5rem] p-6 sm:p-8 border border-[#ECE8E1]/60">
+              <div className="bg-[#EDE9E0]/60 rounded-[1.5rem] p-6 sm:p-8 border border-[#E4DFD5]/60">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                   <div className="space-y-3">
                     <div className="flex items-center gap-3 flex-wrap">
@@ -184,7 +184,7 @@ export const JourneyTimeline: React.FC = () => {
                         </span>
                       )}
                     </div>
-                    <p className="text-sm sm:text-base text-[#6B7280] max-w-2xl leading-relaxed">
+                    <p className="text-sm sm:text-base text-[#57534E] max-w-2xl leading-relaxed">
                       {activeMilestone.details}
                     </p>
                   </div>

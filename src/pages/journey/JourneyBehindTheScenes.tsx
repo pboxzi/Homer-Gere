@@ -53,7 +53,7 @@ export const JourneyBehindTheScenes: React.FC = () => {
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
   return (
-    <section id="journey-bts" ref={sectionRef} className="py-24 sm:py-32 bg-[#F3EFE7]">
+    <section id="journey-bts" ref={sectionRef} className="py-24 sm:py-32 bg-[#EDE9E0]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -75,7 +75,7 @@ export const JourneyBehindTheScenes: React.FC = () => {
           {BTS_ITEMS.map((item, idx) => (
             <motion.div
               key={item.id}
-              className={`group relative rounded-[1.25rem] overflow-hidden bg-[#ECE8E1] cursor-pointer ${item.span}`}
+              className={`group relative rounded-[1.25rem] overflow-hidden bg-[#E4DFD5] cursor-pointer ${item.span}`}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
               transition={{

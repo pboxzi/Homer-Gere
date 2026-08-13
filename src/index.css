@@ -3,9 +3,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600;1,700&display=swap');
 
 @theme {
-  --color-ivory: #F8F5EF;
-  --color-sand: #F3EFE7;
-  --color-stone: #ECE8E1;
+  --color-ivory: #F5F2EB;
+  --color-sand: #EDE9E0;
+  --color-stone: #E4DFD5;
   --color-gold: #C8A96A;
   --color-gold-light: #D4B87A;
   --color-gold-dark: #B89A5A;

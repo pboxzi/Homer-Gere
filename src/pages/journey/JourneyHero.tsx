@@ -10,7 +10,7 @@ interface JourneyHeroProps {
 
 export const JourneyHero: React.FC<JourneyHeroProps> = ({ onExploreProjects, onViewJournal }) => {
   return (
-    <section className="relative h-[75vh] min-h-[600px] bg-[#F8F5EF] overflow-hidden pt-20">
+    <section className="relative h-[75vh] min-h-[600px] bg-[#F5F2EB] overflow-hidden pt-20">
       {/* Right Side — Cinematic Portrait */}
       <motion.div
         className="absolute inset-0 z-0"
@@ -25,9 +25,9 @@ export const JourneyHero: React.FC<JourneyHeroProps> = ({ onExploreProjects, onV
           className="w-full h-full object-cover object-top"
         />
         {/* Warm fade into left space */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#F8F5EF] via-[#F8F5EF]/50 to-transparent hidden lg:block" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#F8F5EF] via-[#F8F5EF]/40 to-transparent lg:hidden" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#F8F5EF]/30 via-transparent to-[#F8F5EF]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#F5F2EB] via-[#F5F2EB]/50 to-transparent hidden lg:block" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#F5F2EB] via-[#F5F2EB]/40 to-transparent lg:hidden" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#F5F2EB]/30 via-transparent to-[#F5F2EB]" />
       </motion.div>
 
       {/* Left Side — Editorial Content */}
@@ -53,7 +53,7 @@ export const JourneyHero: React.FC<JourneyHeroProps> = ({ onExploreProjects, onV
           </motion.h1>
 
           <motion.p
-            className="text-base sm:text-lg text-[#6B7280] leading-relaxed max-w-lg"
+            className="text-base sm:text-lg text-[#57534E] leading-relaxed max-w-lg"
             initial={{ opacity: 0, y: 25 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
@@ -78,7 +78,7 @@ export const JourneyHero: React.FC<JourneyHeroProps> = ({ onExploreProjects, onV
 
             <button
               onClick={onViewJournal}
-              className="inline-flex items-center justify-center gap-2 bg-transparent hover:bg-[#F3EFE7] active:scale-95 text-[#111827] font-medium text-sm px-6 py-3.5 rounded-2xl transition-all duration-300 focus:outline-none cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 bg-transparent hover:bg-[#EDE9E0] active:scale-95 text-[#111827] font-medium text-sm px-6 py-3.5 rounded-2xl transition-all duration-300 focus:outline-none cursor-pointer"
             >
               <BookOpen className="w-4 h-4 text-[#C8A96A]" />
               <span>Latest Journal</span>
@@ -99,10 +99,10 @@ export const JourneyHero: React.FC<JourneyHeroProps> = ({ onExploreProjects, onV
           className="group flex flex-col items-center gap-2 focus:outline-none cursor-pointer"
           aria-label="Scroll to continue"
         >
-          <span className="text-[10px] font-semibold text-[#A8A29E] group-hover:text-[#C8A96A] transition-colors uppercase tracking-[0.25em]">
+          <span className="text-[10px] font-semibold text-[#8A8580] group-hover:text-[#C8A96A] transition-colors uppercase tracking-[0.25em]">
             Scroll
           </span>
-          <div className="relative w-[1px] h-8 bg-[#ECE8E1] group-hover:bg-[#C8A96A]/30 transition-colors overflow-hidden rounded-full">
+          <div className="relative w-[1px] h-8 bg-[#E4DFD5] group-hover:bg-[#C8A96A]/30 transition-colors overflow-hidden rounded-full">
             <div className="absolute top-0 left-0 w-full h-1/2 bg-[#C8A96A] rounded-full animate-scroll-line" />
           </div>
         </a>

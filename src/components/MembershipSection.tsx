@@ -25,7 +25,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
               Join the journey. <br className="hidden sm:inline" />
               Be part of more.
             </h2>
-            <p className="text-[#9CA3AF] text-sm sm:text-base mt-5 leading-relaxed">
+            <p className="text-[#78716C] text-sm sm:text-base mt-5 leading-relaxed">
               Become a member and unlock exclusive benefits, early access, and unforgettable experiences directly with Homer.
             </p>
           </div>
@@ -49,7 +49,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
                 className={`relative rounded-[1.5rem] p-8 sm:p-9 transition-all duration-500 flex flex-col justify-between ${
                   isPopular
                     ? 'bg-[#111827] text-white shadow-2xl shadow-[#111827]/20 ring-1 ring-[#C8A96A]/30'
-                    : 'bg-[#F8F5EF] hover:bg-white text-[#111827] hover:shadow-xl hover:shadow-[#C8A96A]/5 border border-[#ECE8E1]/60'
+                    : 'bg-[#F5F2EB] hover:bg-white text-[#111827] hover:shadow-xl hover:shadow-[#C8A96A]/5 border border-[#E4DFD5]/60'
                 }`}
               >
                 {isPopular && (
@@ -60,7 +60,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
 
                 <div>
                   <div className="flex items-center justify-between mb-5">
-                    <span className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${isPopular ? 'text-[#C8A96A]' : 'text-[#A8A29E]'}`}>
+                    <span className={`text-[11px] font-semibold tracking-[0.15em] uppercase ${isPopular ? 'text-[#C8A96A]' : 'text-[#8A8580]'}`}>
                       {tier.name}
                     </span>
                     {tier.id === 'platinum' ? (
@@ -74,14 +74,14 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
                     <span className="text-4xl sm:text-5xl font-editorial font-bold">
                       ${tier.price}
                     </span>
-                    <span className={`text-xs font-medium ${isPopular ? 'text-gray-400' : 'text-[#A8A29E]'}`}>{tier.period}</span>
+                    <span className={`text-xs font-medium ${isPopular ? 'text-gray-400' : 'text-[#8A8580]'}`}>{tier.period}</span>
                   </div>
 
                   <ul className="space-y-4 mb-8">
                     {tier.features.map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-3 text-xs sm:text-sm">
                         <Check className={`w-4 h-4 shrink-0 mt-0.5 ${isPopular ? 'text-[#C8A96A]' : 'text-[#C8A96A]'}`} />
-                        <span className={isPopular ? 'text-gray-300' : 'text-[#6B7280]'}>{feature}</span>
+                        <span className={isPopular ? 'text-gray-300' : 'text-[#57534E]'}>{feature}</span>
                       </li>
                     ))}
                   </ul>

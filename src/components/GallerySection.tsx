@@ -13,7 +13,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
   onViewFullGallery,
 }) => {
   return (
-    <section id="gallery" className="py-24 sm:py-32 bg-[#F8F5EF]">
+    <section id="gallery" className="py-24 sm:py-32 bg-[#F5F2EB]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Quote Block */}
         <div className="max-w-3xl mx-auto text-center mb-20 space-y-5">
@@ -39,7 +39,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
 
           <button
             onClick={onViewFullGallery}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-[#6B7280] hover:text-[#C8A96A] transition-colors duration-300 group focus:outline-none cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-[#57534E] hover:text-[#C8A96A] transition-colors duration-300 group focus:outline-none cursor-pointer"
           >
             View Full Gallery
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -52,7 +52,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
             <div
               key={item.id}
               onClick={() => onSelectImage(item)}
-              className="group relative rounded-[1.5rem] overflow-hidden aspect-square bg-[#ECE8E1] cursor-pointer transition-all duration-500"
+              className="group relative rounded-[1.5rem] overflow-hidden aspect-square bg-[#E4DFD5] cursor-pointer transition-all duration-500"
             >
               <img
                 src={item.image}

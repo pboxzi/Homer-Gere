@@ -25,7 +25,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
   };
 
   return (
-    <section id="experiences" className="py-24 sm:py-32 bg-[#F8F5EF]">
+    <section id="experiences" className="py-24 sm:py-32 bg-[#F5F2EB]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-14">
@@ -40,7 +40,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
 
           <button
             onClick={onViewAllExperiences}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-[#6B7280] hover:text-[#C8A96A] transition-colors duration-300 group focus:outline-none cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-[#57534E] hover:text-[#C8A96A] transition-colors duration-300 group focus:outline-none cursor-pointer"
           >
             View All Experiences
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -53,7 +53,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
             <div
               key={exp.id}
               onClick={() => onSelectExperience(exp)}
-              className="bg-[#F3EFE7]/60 hover:bg-white p-6 rounded-[1.25rem] transition-all duration-500 hover:shadow-xl hover:shadow-[#C8A96A]/5 flex flex-col justify-between cursor-pointer group transform hover:-translate-y-1"
+              className="bg-[#EDE9E0]/60 hover:bg-white p-6 rounded-[1.25rem] transition-all duration-500 hover:shadow-xl hover:shadow-[#C8A96A]/5 flex flex-col justify-between cursor-pointer group transform hover:-translate-y-1"
             >
               <div>
                 <div className="w-11 h-11 rounded-2xl bg-[#C8A96A]/10 flex items-center justify-center mb-5 group-hover:bg-[#C8A96A] group-hover:text-white transition-all duration-500">
@@ -64,12 +64,12 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({
                   {exp.title}
                 </h3>
 
-                <p className="mt-1.5 text-[11px] text-[#9CA3AF] leading-relaxed line-clamp-3">
+                <p className="mt-1.5 text-[11px] text-[#78716C] leading-relaxed line-clamp-3">
                   {exp.description}
                 </p>
               </div>
 
-              <div className="mt-5 pt-4 border-t border-[#ECE8E1] flex items-center justify-between">
+              <div className="mt-5 pt-4 border-t border-[#E4DFD5] flex items-center justify-between">
                 <span className="text-xs font-bold text-[#C8A96A]">
                   {exp.price}
                 </span>

@@ -7,9 +7,9 @@ interface ChatSectionProps {
 
 export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
   return (
-    <section id="chat" className="py-24 sm:py-32 bg-[#F8F5EF]">
+    <section id="chat" className="py-24 sm:py-32 bg-[#F5F2EB]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#F3EFE7] rounded-[2rem] p-8 sm:p-12 lg:p-16">
+        <div className="bg-[#EDE9E0] rounded-[2rem] p-8 sm:p-12 lg:p-16">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left Description */}
             <div className="lg:col-span-5 space-y-5">
@@ -21,7 +21,7 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
                 Let's start a conversation.
               </h2>
 
-              <p className="text-[#9CA3AF] text-sm sm:text-base leading-relaxed">
+              <p className="text-[#78716C] text-sm sm:text-base leading-relaxed">
                 Choose how you'd like to connect with Homer. We'll guide you to the right place.
               </p>
             </div>
@@ -31,7 +31,7 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
               {/* Fan Chat */}
               <div
                 onClick={() => onStartChat('fan')}
-                className="bg-[#F8F5EF] p-7 rounded-[1.5rem] transition-all duration-500 cursor-pointer group flex flex-col justify-between hover:bg-white hover:shadow-xl hover:shadow-[#C8A96A]/5"
+                className="bg-[#F5F2EB] p-7 rounded-[1.5rem] transition-all duration-500 cursor-pointer group flex flex-col justify-between hover:bg-white hover:shadow-xl hover:shadow-[#C8A96A]/5"
               >
                 <div>
                   <div className="w-12 h-12 rounded-2xl bg-[#C8A96A]/10 text-[#C8A96A] flex items-center justify-center mb-5 group-hover:bg-[#C8A96A] group-hover:text-white transition-all duration-500">
@@ -42,7 +42,7 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
                     Fan Chat
                   </h3>
 
-                  <p className="mt-2 text-xs sm:text-sm text-[#9CA3AF] leading-relaxed">
+                  <p className="mt-2 text-xs sm:text-sm text-[#78716C] leading-relaxed">
                     Send a message, ask a question, or share your support directly.
                   </p>
                 </div>
@@ -56,7 +56,7 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
               {/* Business Chat */}
               <div
                 onClick={() => onStartChat('business')}
-                className="bg-[#F8F5EF] p-7 rounded-[1.5rem] transition-all duration-500 cursor-pointer group flex flex-col justify-between hover:bg-white hover:shadow-xl hover:shadow-[#C8A96A]/5"
+                className="bg-[#F5F2EB] p-7 rounded-[1.5rem] transition-all duration-500 cursor-pointer group flex flex-col justify-between hover:bg-white hover:shadow-xl hover:shadow-[#C8A96A]/5"
               >
                 <div>
                   <div className="w-12 h-12 rounded-2xl bg-[#C8A96A]/10 text-[#C8A96A] flex items-center justify-center mb-5 group-hover:bg-[#C8A96A] group-hover:text-white transition-all duration-500">
@@ -67,7 +67,7 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
                     Business Chat
                   </h3>
 
-                  <p className="mt-2 text-xs sm:text-sm text-[#9CA3AF] leading-relaxed">
+                  <p className="mt-2 text-xs sm:text-sm text-[#78716C] leading-relaxed">
                     Media, collaborations, opportunities, and professional inquiries.
                   </p>
                 </div>

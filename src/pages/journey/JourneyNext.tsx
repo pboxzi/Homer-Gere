@@ -13,7 +13,7 @@ export const JourneyNext: React.FC<JourneyNextProps> = ({ onExploreProjects, onO
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
   return (
-    <section id="journey-next" ref={sectionRef} className="py-24 sm:py-32 bg-[#F3EFE7]">
+    <section id="journey-next" ref={sectionRef} className="py-24 sm:py-32 bg-[#EDE9E0]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           className="relative rounded-[2rem] overflow-hidden bg-[#111827] text-white min-h-[480px] flex items-center"

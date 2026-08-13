@@ -14,7 +14,7 @@ export const NewsletterBar: React.FC = () => {
   };
 
   return (
-    <section id="newsletter" className="py-20 sm:py-24 bg-[#F3EFE7]">
+    <section id="newsletter" className="py-20 sm:py-24 bg-[#EDE9E0]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto text-center space-y-6">
           <span className="text-[11px] font-semibold tracking-[0.2em] text-[#C8A96A] uppercase">
@@ -25,7 +25,7 @@ export const NewsletterBar: React.FC = () => {
             Never miss a story.
           </h2>
 
-          <p className="text-sm text-[#9CA3AF] leading-relaxed">
+          <p className="text-sm text-[#78716C] leading-relaxed">
             Subscribe for exclusive updates, behind-the-scenes content, and early access to new projects.
           </p>
 
@@ -42,7 +42,7 @@ export const NewsletterBar: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
-                className="flex-1 bg-white px-5 py-3.5 rounded-2xl text-sm text-[#111827] placeholder-[#A8A29E] border border-[#ECE8E1] focus:border-[#C8A96A] focus:ring-2 focus:ring-[#C8A96A]/20 outline-none transition-all duration-300"
+                className="flex-1 bg-white px-5 py-3.5 rounded-2xl text-sm text-[#111827] placeholder-[#8A8580] border border-[#E4DFD5] focus:border-[#C8A96A] focus:ring-2 focus:ring-[#C8A96A]/20 outline-none transition-all duration-300"
               />
               <button
                 type="submit"

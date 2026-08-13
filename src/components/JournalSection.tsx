@@ -13,7 +13,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
   onViewAllArticles,
 }) => {
   return (
-    <section id="journal" className="py-24 sm:py-32 bg-[#F3EFE7]">
+    <section id="journal" className="py-24 sm:py-32 bg-[#EDE9E0]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-14">
@@ -28,7 +28,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
 
           <button
             onClick={onViewAllArticles}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-[#6B7280] hover:text-[#C8A96A] transition-colors duration-300 group focus:outline-none cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-[#57534E] hover:text-[#C8A96A] transition-colors duration-300 group focus:outline-none cursor-pointer"
           >
             View All Articles
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -41,18 +41,18 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
             <article
               key={article.id}
               onClick={() => onSelectArticle(article)}
-              className="group bg-[#F8F5EF] hover:bg-white rounded-[1.5rem] p-4 transition-all duration-500 hover:shadow-xl hover:shadow-[#C8A96A]/5 flex flex-col justify-between cursor-pointer transform hover:-translate-y-1"
+              className="group bg-[#F5F2EB] hover:bg-white rounded-[1.5rem] p-4 transition-all duration-500 hover:shadow-xl hover:shadow-[#C8A96A]/5 flex flex-col justify-between cursor-pointer transform hover:-translate-y-1"
             >
               <div>
                 {/* Image */}
-                <div className="relative h-52 rounded-2xl overflow-hidden mb-5 bg-[#ECE8E1]">
+                <div className="relative h-52 rounded-2xl overflow-hidden mb-5 bg-[#E4DFD5]">
                   <img
                     src={article.image}
                     alt={article.title}
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
-                  <div className="absolute top-3 left-3 bg-[#F8F5EF]/95 backdrop-blur-md px-3 py-1 rounded-xl text-[10px] font-semibold tracking-wider text-[#C8A96A] uppercase">
+                  <div className="absolute top-3 left-3 bg-[#F5F2EB]/95 backdrop-blur-md px-3 py-1 rounded-xl text-[10px] font-semibold tracking-wider text-[#C8A96A] uppercase">
                     {article.category}
                   </div>
                 </div>
@@ -61,12 +61,12 @@ export const JournalSection: React.FC<JournalSectionProps> = ({
                 <h3 className="text-base font-editorial font-bold text-[#111827] group-hover:text-[#C8A96A] transition-colors duration-300 line-clamp-2 leading-snug">
                   {article.title}
                 </h3>
-                <p className="mt-2 text-xs text-[#9CA3AF] line-clamp-2 leading-relaxed">
+                <p className="mt-2 text-xs text-[#78716C] line-clamp-2 leading-relaxed">
                   {article.excerpt}
                 </p>
               </div>
 
-              <div className="mt-5 pt-4 border-t border-[#ECE8E1] flex items-center justify-between text-xs text-[#A8A29E]">
+              <div className="mt-5 pt-4 border-t border-[#E4DFD5] flex items-center justify-between text-xs text-[#8A8580]">
                 <span className="flex items-center gap-1.5">
                   <Calendar className="w-3.5 h-3.5" />
                   {article.date}

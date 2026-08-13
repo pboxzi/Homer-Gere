@@ -38,7 +38,7 @@ export default function JourneyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F5EF] text-[#111827] font-body antialiased">
+    <div className="min-h-screen bg-[#F5F2EB] text-[#111827] font-body antialiased">
       <Navbar
         activeSection={activeSection}
         onNavigate={handleNavigate}

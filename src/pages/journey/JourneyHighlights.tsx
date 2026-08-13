@@ -43,7 +43,7 @@ export const JourneyHighlights: React.FC = () => {
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
   return (
-    <section id="journey-highlights" ref={sectionRef} className="py-24 sm:py-32 bg-[#F8F5EF]">
+    <section id="journey-highlights" ref={sectionRef} className="py-24 sm:py-32 bg-[#F5F2EB]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -65,7 +65,7 @@ export const JourneyHighlights: React.FC = () => {
           {HIGHLIGHTS.map((item, idx) => (
             <motion.article
               key={item.id}
-              className="group rounded-[1.5rem] overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-[#C8A96A]/5 cursor-pointer hover:-translate-y-1 bg-[#F3EFE7]/60"
+              className="group rounded-[1.5rem] overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-[#C8A96A]/5 cursor-pointer hover:-translate-y-1 bg-[#EDE9E0]/60"
               initial={{ opacity: 0, y: 50 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{
@@ -75,7 +75,7 @@ export const JourneyHighlights: React.FC = () => {
               }}
             >
               {/* Image */}
-              <div className="relative h-72 sm:h-80 overflow-hidden bg-[#ECE8E1]">
+              <div className="relative h-72 sm:h-80 overflow-hidden bg-[#E4DFD5]">
                 <img
                   src={item.image}
                   alt={item.title}
@@ -83,7 +83,7 @@ export const JourneyHighlights: React.FC = () => {
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.2s] ease-out"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute top-5 left-5 bg-[#F8F5EF]/95 backdrop-blur-md px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 text-[10px] font-semibold tracking-wider text-[#6B7280] uppercase shadow-sm">
+                <div className="absolute top-5 left-5 bg-[#F5F2EB]/95 backdrop-blur-md px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 text-[10px] font-semibold tracking-wider text-[#57534E] uppercase shadow-sm">
                   <Calendar className="w-3 h-3 text-[#C8A96A]" />
                   {item.date}
                 </div>
@@ -95,7 +95,7 @@ export const JourneyHighlights: React.FC = () => {
                   {item.title}
                 </h3>
 
-                <p className="text-sm sm:text-base text-[#9CA3AF] leading-relaxed mb-7 group-hover:text-[#6B7280] transition-colors duration-300">
+                <p className="text-sm sm:text-base text-[#78716C] leading-relaxed mb-7 group-hover:text-[#57534E] transition-colors duration-300">
                   {item.description}
                 </p>
 

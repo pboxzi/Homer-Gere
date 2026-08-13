@@ -40,7 +40,7 @@ export const JourneyValues: React.FC = () => {
   const isInView = useInView(sectionRef, { once: true, margin: '-80px' });
 
   return (
-    <section id="journey-values" ref={sectionRef} className="py-24 sm:py-32 bg-[#F3EFE7]">
+    <section id="journey-values" ref={sectionRef} className="py-24 sm:py-32 bg-[#EDE9E0]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -64,7 +64,7 @@ export const JourneyValues: React.FC = () => {
             return (
               <motion.div
                 key={idx}
-                className="bg-[#F8F5EF] hover:bg-white rounded-[1.5rem] p-7 sm:p-8 transition-all duration-500 hover:shadow-xl hover:shadow-[#C8A96A]/5 flex flex-col items-start group cursor-default transform hover:-translate-y-1 border border-transparent hover:border-[#ECE8E1]/60"
+                className="bg-[#F5F2EB] hover:bg-white rounded-[1.5rem] p-7 sm:p-8 transition-all duration-500 hover:shadow-xl hover:shadow-[#C8A96A]/5 flex flex-col items-start group cursor-default transform hover:-translate-y-1 border border-transparent hover:border-[#E4DFD5]/60"
                 initial={{ opacity: 0, y: 40 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{
@@ -81,7 +81,7 @@ export const JourneyValues: React.FC = () => {
                   {value.title}
                 </h3>
 
-                <p className="text-sm text-[#9CA3AF] leading-relaxed group-hover:text-[#6B7280] transition-colors duration-300">
+                <p className="text-sm text-[#78716C] leading-relaxed group-hover:text-[#57534E] transition-colors duration-300">
                   {value.description}
                 </p>
               </motion.div>
