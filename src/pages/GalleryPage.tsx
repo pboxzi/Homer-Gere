@@ -42,7 +42,7 @@ export const GalleryPage: React.FC = () => {
         onOpenSignIn={() => {}}
       />
       {/* 1. Hero */}
-      <GalleryHero onBack={() => navigate('/')} />
+      <GalleryHero />
 
       {/* 2. Featured Collection */}
       <GalleryFeatured

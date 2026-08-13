@@ -1,31 +1,31 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, Film } from 'lucide-react';
-import { SECTION_IMAGES } from '../../data/images';
+import { ArrowRight, Shield, Star, Calendar, Users } from 'lucide-react';
+import { EXPERIENCE_IMAGES } from '../../data/images';
 
-interface ProjectHeroProps {
-  onExploreFilms: () => void;
+interface ExperiencesHeroProps {
+  onRequestExperience: () => void;
 }
 
-export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
+export const ExperiencesHero: React.FC<ExperiencesHeroProps> = ({ onRequestExperience }) => {
   return (
-    <section className="relative h-[75vh] min-h-[600px] bg-[#FAF9F7] overflow-hidden pt-20">
+    <section className="relative h-[85vh] min-h-[700px] bg-[#FAF9F7] overflow-hidden pt-20">
       {/* Background Image */}
       <motion.div
         className="absolute inset-0 z-0"
-        initial={{ scale: 1.06 }}
+        initial={{ scale: 1.08 }}
         animate={{ scale: 1 }}
-        transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 2, ease: [0.22, 1, 0.36, 1] }}
       >
         <img
-          src={SECTION_IMAGES.hero.projects}
-          alt="Homer Gere — Projects"
+          src={EXPERIENCE_IMAGES['brand-collaboration']}
+          alt="Homer Gere — Official Experiences"
           referrerPolicy="no-referrer"
-          className="w-full h-full object-cover object-top"
+          className="w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#FAF9F7] via-[#FAF9F7]/20 to-transparent hidden lg:block" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F7] via-[#FAF9F7]/15 to-transparent lg:hidden" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#FAF9F7]/10 via-transparent to-[#FAF9F7]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#FAF9F7] via-[#FAF9F7]/30 to-transparent hidden lg:block" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F7] via-[#FAF9F7]/20 to-transparent lg:hidden" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#FAF9F7]/15 via-transparent to-[#FAF9F7]" />
       </motion.div>
 
       {/* Content */}
@@ -37,7 +37,7 @@ export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
             <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
-              Film & Television
+              Official Experiences
             </span>
           </motion.div>
 
@@ -47,7 +47,7 @@ export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
           >
-            Projects
+            Experiences
           </motion.h1>
 
           <motion.p
@@ -56,8 +56,8 @@ export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
-            From HBO's Euphoria to Ryan Murphy's The Shards and Oliver Stone's White Lies —
-            a look at Homer's verified acting credits and upcoming productions.
+            Official experiences with Homer Gere can be requested through his management team.
+            Every request is reviewed personally — availability is not guaranteed.
           </motion.p>
 
           <motion.div
@@ -67,12 +67,38 @@ export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
             transition={{ duration: 0.7, delay: 0.65, ease: [0.22, 1, 0.36, 1] }}
           >
             <button
-              onClick={onExploreFilms}
+              onClick={onRequestExperience}
               className="inline-flex items-center justify-center gap-2.5 bg-[#C9A84C] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#C9A84C]/25 focus:outline-none cursor-pointer"
             >
-              <Film className="w-4 h-4" />
-              <span>View Filmography</span>
+              <ArrowRight className="w-4 h-4" />
+              <span>Request an Experience</span>
             </button>
+
+            <div className="inline-flex items-center gap-2 text-sm text-[#57534E]">
+              <Shield className="w-4 h-4 text-[#C9A84C]" />
+              <span>Verified by management</span>
+            </div>
+          </motion.div>
+
+          {/* Stats */}
+          <motion.div
+            className="flex flex-wrap items-center gap-6 sm:gap-8 pt-4"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="flex items-center gap-2">
+              <Star className="w-4 h-4 text-[#C9A84C]" />
+              <span className="text-sm text-[#57534E]">8 Experience Types</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-[#C9A84C]" />
+              <span className="text-sm text-[#57534E]">5–10 Day Response</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-[#C9A84C]" />
+              <span className="text-sm text-[#57534E]">Global Availability</span>
+            </div>
           </motion.div>
         </div>
       </div>
@@ -85,7 +111,7 @@ export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
         transition={{ duration: 0.8, delay: 1.2 }}
       >
         <a
-          href="#featured-project"
+          href="#experiences-grid"
           className="group flex flex-col items-center gap-2 focus:outline-none cursor-pointer"
           aria-label="Scroll to continue"
         >

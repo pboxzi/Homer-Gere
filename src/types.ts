@@ -26,18 +26,72 @@ export interface Experience {
   details: string;
   price: string;
   iconName: string;
-  type: 'meet' | 'video' | 'virtual' | 'memorabilia' | 'vip' | 'custom';
+  type: ExperienceCategory;
+  image?: string;
+  availability?: 'available' | 'limited' | 'unavailable';
+  whatsIncluded?: string[];
+  eligibility?: string[];
+  duration?: string;
+  location?: string;
+  importantNotes?: string[];
+}
+
+export type ExperienceCategory =
+  | 'meet-and-greet'
+  | 'fan-event'
+  | 'charity-appearance'
+  | 'speaking-engagement'
+  | 'brand-collaboration'
+  | 'private-event'
+  | 'virtual-appearance'
+  | 'video-greeting';
+
+export interface ExperienceRequest {
+  experienceType: ExperienceCategory | '';
+  fullName: string;
+  email: string;
+  phone: string;
+  country: string;
+  organization: string;
+  eventDate: string;
+  eventLocation: string;
+  budget: string;
+  purpose: string;
+  additionalDetails: string;
 }
 
 export interface MembershipTier {
   id: string;
   name: string;
+  description: string;
   price: number;
+  currency: string;
   period: string;
+  duration: string;
   badge?: string;
   isPopular?: boolean;
-  features: string[];
+  features: MembershipBenefit[];
   ctaText: string;
+  availability: 'available' | 'waitlist' | 'disabled';
+  requiresApproval: boolean;
+}
+
+export interface MembershipBenefit {
+  label: string;
+  included: boolean;
+}
+
+export interface MembershipFAQItem {
+  id: string;
+  question: string;
+  answer: string;
+}
+
+export interface MembershipStep {
+  id: number;
+  title: string;
+  description: string;
+  icon: string;
 }
 
 export interface GalleryItem {

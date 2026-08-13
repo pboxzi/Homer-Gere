@@ -150,6 +150,25 @@ export const MEDIA_IMAGES = {
   'press-bbc-euphoria': euphoriaEpisodeScene,
 };
 
+// Experience-specific image mappings — each experience gets a unique editorial image
+export const EXPERIENCE_IMAGES: Record<string, string> = {
+  'meet-and-greet': 'https://www.tvinsider.com/wp-content/uploads/2025/07/kaia-gerber-homer-gere-the-shards-300x450.jpg',
+  'fan-event': 'https://assets.vogue.com/photos/6a692e094e8db1ed5e9e4dff/16:9/w_1280,c_limit/FX_Shards_SA_285.JPG',
+  'charity-appearance': 'https://www.tvinsider.com/wp-content/uploads/2026/07/GettyImages-2287310934-scaled.jpg',
+  'speaking-engagement': 'https://www.tvinsider.com/wp-content/uploads/2026/08/homer-gere-the-shards.jpg',
+  'brand-collaboration': 'https://assets.vogue.com/photos/6a70cdc2c9944acffc837ccf/16:9/w_1280,c_limit/VO0926_Cover_logo.jpg',
+  'private-event': 'https://www.tvinsider.com/wp-content/uploads/2025/10/the-shards-cast.jpg',
+  'virtual-appearance': 'https://www.tvinsider.com/wp-content/uploads/2026/06/GettyImages-2152915757-scaled.jpg',
+  'video-greeting': 'https://www.tvinsider.com/wp-content/uploads/2025/07/richard-gere-homer-gere.jpg',
+};
+
+// Membership-specific image mappings
+export const MEMBERSHIP_IMAGES = {
+  hero: homerGqLifestyleStudio,
+  why: homerPurePhotorealisticPortrait,
+  plans: shardsPremiereCast,
+};
+
 // Project-specific image mappings for detail pages
 export const PROJECT_IMAGES = {
   'the-shards': {

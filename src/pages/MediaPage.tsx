@@ -60,7 +60,7 @@ export default function MediaPage() {
 
       <main>
         {/* 1. Hero */}
-        <MediaHero onBack={() => navigate('/')} />
+        <MediaHero />
 
         <SectionDivider />
 

@@ -198,10 +198,10 @@ export const DetailModal: React.FC<DetailModalProps> = ({
                   Included Benefits:
                 </h4>
                 <ul className="space-y-2">
-                  {modal.tier.features.map((feat, idx) => (
+                  {modal.tier.features.filter((f) => f.included).map((feat, idx) => (
                     <li key={idx} className="flex items-center gap-2 text-xs text-[#1C1917]">
                       <Check className="w-4 h-4 text-blue-600 shrink-0" />
-                      <span>{feat}</span>
+                      <span>{feat.label}</span>
                     </li>
                   ))}
                 </ul>

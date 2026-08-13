@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Check, Star, Crown } from 'lucide-react';
+import { ArrowRight, Check, X, Star, Crown } from 'lucide-react';
 import { MEMBERSHIP_TIERS } from '../data/content';
 import { MembershipTier } from '../types';
 
@@ -78,10 +78,10 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({
                   </div>
 
                   <ul className="space-y-4 mb-8">
-                    {tier.features.map((feature, idx) => (
+                    {tier.features.filter((f) => f.included).slice(0, 5).map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-3 text-xs sm:text-sm">
                         <Check className={`w-4 h-4 shrink-0 mt-0.5 ${isPopular ? 'text-[#C9A84C]' : 'text-[#C9A84C]'}`} />
-                        <span className={isPopular ? 'text-[#D6D3D1]' : 'text-[#1C1917]'}>{feature}</span>
+                        <span className={isPopular ? 'text-[#D6D3D1]' : 'text-[#1C1917]'}>{feature.label}</span>
                       </li>
                     ))}
                   </ul>

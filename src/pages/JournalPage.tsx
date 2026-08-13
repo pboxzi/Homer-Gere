@@ -67,7 +67,7 @@ export const JournalPage: React.FC = () => {
 
       <main>
       {/* 1. Hero */}
-      <JournalHero onBack={() => navigate('/')} />
+      <JournalHero />
 
       {/* 2. Featured Story */}
       <JournalFeatured article={FEATURED_ARTICLE} onArticleClick={handleArticleClick} />

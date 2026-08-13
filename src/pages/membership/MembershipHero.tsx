@@ -1,13 +1,14 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { ArrowRight, Film } from 'lucide-react';
-import { SECTION_IMAGES } from '../../data/images';
+import { ArrowRight, BarChart3 } from 'lucide-react';
+import { MEMBERSHIP_IMAGES } from '../../data/images';
 
-interface ProjectHeroProps {
-  onExploreFilms: () => void;
+interface MembershipHeroProps {
+  onBecomeMember: () => void;
+  onComparePlans: () => void;
 }
 
-export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
+export const MembershipHero: React.FC<MembershipHeroProps> = ({ onBecomeMember, onComparePlans }) => {
   return (
     <section className="relative h-[75vh] min-h-[600px] bg-[#FAF9F7] overflow-hidden pt-20">
       {/* Background Image */}
@@ -18,8 +19,8 @@ export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
         transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
       >
         <img
-          src={SECTION_IMAGES.hero.projects}
-          alt="Homer Gere — Projects"
+          src={MEMBERSHIP_IMAGES.hero}
+          alt="Homer Gere — Official Membership"
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover object-top"
         />
@@ -37,7 +38,7 @@ export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
             <span className="text-[11px] font-medium tracking-[0.2em] text-[#C9A84C] uppercase">
-              Film & Television
+              Official Membership
             </span>
           </motion.div>
 
@@ -47,7 +48,7 @@ export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
           >
-            Projects
+            Official Membership
           </motion.h1>
 
           <motion.p
@@ -56,8 +57,8 @@ export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
-            From HBO's Euphoria to Ryan Murphy's The Shards and Oliver Stone's White Lies —
-            a look at Homer's verified acting credits and upcoming productions.
+            Join Homer's official membership program for exclusive updates,
+            priority access, and a direct connection to his career and creative journey.
           </motion.p>
 
           <motion.div
@@ -67,11 +68,19 @@ export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
             transition={{ duration: 0.7, delay: 0.65, ease: [0.22, 1, 0.36, 1] }}
           >
             <button
-              onClick={onExploreFilms}
+              onClick={onBecomeMember}
               className="inline-flex items-center justify-center gap-2.5 bg-[#C9A84C] hover:bg-[#B8983A] active:scale-95 text-white font-medium text-sm px-7 py-3.5 rounded-2xl transition-all duration-300 hover:shadow-lg hover:shadow-[#C9A84C]/25 focus:outline-none cursor-pointer"
             >
-              <Film className="w-4 h-4" />
-              <span>View Filmography</span>
+              <ArrowRight className="w-4 h-4" />
+              <span>Become a Member</span>
+            </button>
+
+            <button
+              onClick={onComparePlans}
+              className="inline-flex items-center justify-center gap-2 bg-transparent hover:bg-[#F3F1ED] active:scale-95 text-[#1C1917] font-medium text-sm px-6 py-3.5 rounded-2xl transition-all duration-300 focus:outline-none cursor-pointer"
+            >
+              <BarChart3 className="w-4 h-4 text-[#C9A84C]" />
+              <span>Compare Plans</span>
             </button>
           </motion.div>
         </div>
@@ -85,7 +94,7 @@ export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
         transition={{ duration: 0.8, delay: 1.2 }}
       >
         <a
-          href="#featured-project"
+          href="#membership-why"
           className="group flex flex-col items-center gap-2 focus:outline-none cursor-pointer"
           aria-label="Scroll to continue"
         >

@@ -26,6 +26,8 @@ import { GalleryPage } from './pages/GalleryPage';
 import { JournalPage } from './pages/JournalPage';
 import ArticleDetailPage from './pages/journal/ArticleDetailPage';
 import MediaPage from './pages/MediaPage';
+import ExperiencesPage from './pages/ExperiencesPage';
+import MembershipPage from './pages/MembershipPage';
 
 function HomePage() {
   const [activeSection, setActiveSection] = useState<string>('home');
@@ -49,6 +51,14 @@ function HomePage() {
     }
     if (sectionId === 'journal') {
       navigate('/journal');
+      return;
+    }
+    if (sectionId === 'experiences') {
+      navigate('/experiences');
+      return;
+    }
+    if (sectionId === 'membership') {
+      navigate('/membership');
       return;
     }
     setActiveSection(sectionId);
@@ -194,6 +204,8 @@ export default function App() {
           <Route path="/journal" element={<JournalPage />} />
           <Route path="/journal/:slug" element={<ArticleDetailPage />} />
           <Route path="/media" element={<MediaPage />} />
+          <Route path="/experiences" element={<ExperiencesPage />} />
+          <Route path="/membership" element={<MembershipPage />} />
         </Routes>
       </BrowserRouter>
     </HelmetProvider>
