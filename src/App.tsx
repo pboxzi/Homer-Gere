@@ -1,5 +1,5 @@
-import React, { Suspense, useState } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import React, { Suspense, useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
@@ -37,16 +37,40 @@ const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 const AdminDashboard = React.lazy(() => import('./pages/admin/AdminDashboard'));
 const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage'));
 
+function RouteLoader({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false), 400);
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative">
+            <div className="w-16 h-16 border-2 border-[#A6852F]/20 rounded-full" />
+            <div className="absolute inset-0 w-16 h-16 border-2 border-[#A6852F] border-t-transparent rounded-full animate-spin" />
+          </div>
+          <div className="text-center">
+            <p className="text-sm font-editorial text-[#1C1917]">Homer Gere</p>
+            <p className="text-[10px] text-[#57534E] mt-1">Loading page...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+}
+
 function HomePage() {
   const [activeSection, setActiveSection] = useState<string>('home');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
-  React.useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleNavigate = (sectionId: string) => {
     if (sectionId === 'journey') { navigate('/journey'); return; }
@@ -66,23 +90,6 @@ function HomePage() {
   const handleOpenChat = () => {
     navigate('/chat');
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="relative">
-            <div className="w-16 h-16 border-2 border-[#A6852F]/20 rounded-full" />
-            <div className="absolute inset-0 w-16 h-16 border-2 border-[#A6852F] border-t-transparent rounded-full animate-spin" />
-          </div>
-          <div className="text-center">
-            <p className="text-sm font-editorial text-[#1C1917]">Homer Gere</p>
-            <p className="text-[10px] text-[#57534E] mt-1">Loading experience...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
@@ -133,7 +140,8 @@ export default function App() {
               </div>
             </div>
           }>
-            <Routes>
+            <RouteLoader>
+              <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/journey" element={<JourneyPage />} />
               <Route path="/projects" element={<ProjectsPage />} />
@@ -160,6 +168,7 @@ export default function App() {
               } />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
+            </RouteLoader>
           </Suspense>
         </BrowserRouter>
       </SiteContentProvider>
