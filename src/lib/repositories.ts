@@ -1514,6 +1514,62 @@ export const businessEnquiriesRepository = {
 };
 
 // ============================================================
+// NEWSLETTER SUBSCRIBERS
+// ============================================================
+
+export const newsletterRepository = {
+  async subscribe(email: string): Promise<{ success: boolean; message: string }> {
+    const client = getSupabaseClient();
+    const trimmed = email.trim().toLowerCase();
+
+    const { data: existing } = await client
+      .from('newsletter_subscribers')
+      .select('id, is_active')
+      .eq('email', trimmed)
+      .single();
+
+    if (existing && existing.is_active) {
+      return { success: true, message: 'You are already subscribed.' };
+    }
+
+    if (existing && !existing.is_active) {
+      const { error } = await client
+        .from('newsletter_subscribers')
+        .update({ is_active: true, subscribed_at: new Date().toISOString(), unsubscribed_at: null })
+        .eq('id', existing.id);
+      if (error) throw error;
+      return { success: true, message: 'Welcome back! Your subscription has been reactivated.' };
+    }
+
+    const { error } = await client
+      .from('newsletter_subscribers')
+      .insert({ email: trimmed, source: 'homepage' });
+    if (error) throw error;
+    return { success: true, message: "You're subscribed. Welcome to the journey." };
+  },
+
+  async unsubscribe(email: string): Promise<{ success: boolean }> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('newsletter_subscribers')
+      .update({ is_active: false, unsubscribed_at: new Date().toISOString() })
+      .eq('email', email.trim().toLowerCase());
+    if (error) throw error;
+    return { success: true };
+  },
+
+  async isActive(email: string): Promise<boolean> {
+    const client = getSupabaseClient();
+    const { data } = await client
+      .from('newsletter_subscribers')
+      .select('is_active')
+      .eq('email', email.trim().toLowerCase())
+      .single();
+    return data?.is_active ?? false;
+  },
+};
+
+// ============================================================
 // MEDIA (Videos, Podcasts, Press)
 // ============================================================
 
