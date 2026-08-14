@@ -284,4 +284,113 @@ export const emailService = {
   async send(to: string, templateName: string, variables?: Record<string, string>) {
     return sendEmail({ to, templateName, variables });
   },
+
+  // --- Phase 4: Membership Request Workflow ---
+  async membershipRequestReceived(to: string, variables: { full_name: string; plan_name: string; request_number: string }) {
+    return sendEmail({
+      to,
+      templateName: 'membership_request_received',
+      variables,
+    });
+  },
+
+  async membershipRequestApproved(to: string, variables: { full_name: string; plan_name: string; amount: string; currency: string; payment_method: string; payment_instructions: string; due_date: string }) {
+    return sendEmail({
+      to,
+      templateName: 'membership_request_approved',
+      variables,
+    });
+  },
+
+  async membershipRequestRejected(to: string, variables: { full_name: string; rejection_reason: string }) {
+    return sendEmail({
+      to,
+      templateName: 'membership_request_rejected',
+      variables,
+    });
+  },
+
+  // --- Phase 4: Payment Workflow ---
+  async paymentInstructionsReady(to: string, variables: { full_name: string; amount: string; currency: string; payment_instructions: string; due_date: string }) {
+    return sendEmail({
+      to,
+      templateName: 'payment_instructions_ready',
+      variables,
+    });
+  },
+
+  async paymentSubmitted(to: string, variables: { full_name: string; amount: string; currency: string; transaction_reference: string }) {
+    return sendEmail({
+      to,
+      templateName: 'payment_submitted',
+      variables,
+    });
+  },
+
+  async paymentApproved(to: string, variables: { full_name: string; plan_name: string; card_number: string; expiry_date: string }) {
+    return sendEmail({
+      to,
+      templateName: 'payment_approved',
+      variables,
+    });
+  },
+
+  // --- Phase 4: Membership Activation ---
+  async membershipActivated(to: string, variables: { full_name: string; plan_name: string; card_number: string; expiry_date: string }) {
+    return sendEmail({
+      to,
+      templateName: 'membership_activated',
+      variables,
+    });
+  },
+
+  async membershipExpiring(to: string, variables: { full_name: string; plan_name: string; expiry_date: string; days_remaining: string }) {
+    return sendEmail({
+      to,
+      templateName: 'membership_expiring',
+      variables,
+    });
+  },
+
+  // --- Phase 4: Experience Workflow ---
+  async experienceApproved(to: string, variables: { full_name: string; experience_type: string; event_date: string }) {
+    return sendEmail({
+      to,
+      templateName: 'experience_approved',
+      variables,
+    });
+  },
+
+  async experienceConfirmed(to: string, variables: { full_name: string; experience_type: string; event_date: string; event_location: string }) {
+    return sendEmail({
+      to,
+      templateName: 'experience_confirmed',
+      variables,
+    });
+  },
+
+  async experiencePaymentRequired(to: string, variables: { full_name: string; experience_type: string; amount: string; currency: string; payment_instructions: string }) {
+    return sendEmail({
+      to,
+      templateName: 'experience_payment_required',
+      variables,
+    });
+  },
+
+  // --- Phase 4: System ---
+  async systemAnnouncement(to: string, variables: { full_name: string; title: string; message: string }) {
+    return sendEmail({
+      to,
+      templateName: 'system_announcement',
+      variables,
+    });
+  },
+
+  async securityAlert(to: string, variables: { full_name: string; message: string }) {
+    return sendEmail({
+      to,
+      templateName: 'security_alert',
+      variables,
+    });
+  },
 };

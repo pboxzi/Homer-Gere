@@ -2789,3 +2789,616 @@ export const homepageCmsRepository = {
     }
   },
 };
+
+// ============================================================
+// PHASE 4: MEMBERSHIP REQUESTS
+// ============================================================
+
+export const membershipRequestsRepository = {
+  async create(request: { user_id?: string | null; full_name: string; email: string; phone?: string | null; country?: string | null; membership_plan_id?: string | null; membership_plan_name: string; duration: string; preferred_payment_method?: string | null; currency?: string; notes?: string | null }): Promise<MembershipRequest> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('membership_requests')
+      .insert(request)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async getAll(): Promise<MembershipRequest[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('membership_requests')
+      .select('*')
+      .order('requested_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getById(id: string): Promise<MembershipRequest | null> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('membership_requests')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async getByUserId(userId: string): Promise<MembershipRequest[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('membership_requests')
+      .select('*')
+      .eq('user_id', userId)
+      .order('requested_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getByStatus(status: string): Promise<MembershipRequest[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('membership_requests')
+      .select('*')
+      .eq('status', status)
+      .order('requested_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async updateStatus(id: string, status: string, adminNotes?: string, approvedBy?: string): Promise<MembershipRequest> {
+    const client = getSupabaseClient();
+    const updates: Record<string, unknown> = { status };
+    if (adminNotes !== undefined) updates.admin_notes = adminNotes;
+    if (status === 'approved_for_payment') {
+      updates.approved_at = new Date().toISOString();
+      updates.approved_by = approvedBy;
+    }
+    if (status === 'rejected') {
+      updates.rejection_reason = adminNotes;
+    }
+    const { data, error } = await client
+      .from('membership_requests')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async approve(id: string, approvedBy: string): Promise<MembershipRequest> {
+    return this.updateStatus(id, 'approved_for_payment', undefined, approvedBy);
+  },
+
+  async reject(id: string, rejectionReason: string): Promise<MembershipRequest> {
+    return this.updateStatus(id, 'rejected', rejectionReason);
+  },
+
+  async search(query: string): Promise<MembershipRequest[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('membership_requests')
+      .select('*')
+      .or(`full_name.ilike.%${query}%,email.ilike.%${query}%,request_number.ilike.%${query}%`)
+      .order('requested_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getStats(): Promise<Record<string, number>> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('membership_requests')
+      .select('status');
+    if (error) throw error;
+    const stats: Record<string, number> = { total: 0 };
+    for (const row of data || []) {
+      stats.total++;
+      stats[row.status] = (stats[row.status] || 0) + 1;
+    }
+    return stats;
+  },
+
+  async delete(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('membership_requests')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+};
+
+// ============================================================
+// PHASE 4: PAYMENT METHODS
+// ============================================================
+
+export const paymentMethodsRepository = {
+  async getAll(): Promise<PaymentMethod[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_methods')
+      .select('*')
+      .order('sort_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getActive(): Promise<PaymentMethod[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_methods')
+      .select('*')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getById(id: string): Promise<PaymentMethod | null> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_methods')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async getByType(type: string): Promise<PaymentMethod[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_methods')
+      .select('*')
+      .eq('type', type)
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async create(method: { name: string; type: string; country?: string | null; currency?: string; account_name?: string | null; account_number?: string | null; bank_name?: string | null; swift_code?: string | null; routing_code?: string | null; mobile_number?: string | null; instructions?: string | null; is_active?: boolean; sort_order?: number }): Promise<PaymentMethod> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_methods')
+      .insert(method)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async update(id: string, updates: Partial<PaymentMethod>): Promise<PaymentMethod> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_methods')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async toggleActive(id: string): Promise<PaymentMethod> {
+    const client = getSupabaseClient();
+    const { data: current } = await client.from('payment_methods').select('is_active').eq('id', id).single();
+    const { data, error } = await client
+      .from('payment_methods')
+      .update({ is_active: !current?.is_active })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async delete(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('payment_methods')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+};
+
+// ============================================================
+// PHASE 4: PAYMENT REQUESTS
+// ============================================================
+
+export const paymentRequestsRepository = {
+  async create(request: { user_id: string; payment_type: string; related_record_id: string; payment_method_id?: string | null; amount: number; currency?: string; due_date?: string | null; admin_notes?: string | null; payment_instructions?: string | null }): Promise<PaymentRequest> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_requests')
+      .insert(request)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async getAll(): Promise<PaymentRequest[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_requests')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getById(id: string): Promise<PaymentRequest | null> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_requests')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async getByUserId(userId: string): Promise<PaymentRequest[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_requests')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getByRelatedRecord(recordId: string, type: string): Promise<PaymentRequest | null> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_requests')
+      .select('*')
+      .eq('related_record_id', recordId)
+      .eq('payment_type', type)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async updateStatus(id: string, status: string, approvedBy?: string): Promise<PaymentRequest> {
+    const client = getSupabaseClient();
+    const updates: Record<string, unknown> = { status };
+    if (status === 'approved') {
+      updates.approved_at = new Date().toISOString();
+      updates.approved_by = approvedBy;
+    }
+    const { data, error } = await client
+      .from('payment_requests')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async sendInstructions(id: string, instructions: string, methodId: string): Promise<PaymentRequest> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_requests')
+      .update({ payment_instructions: instructions, payment_method_id: methodId, status: 'instructions_sent' })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async search(query: string): Promise<PaymentRequest[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_requests')
+      .select('*')
+      .or(`request_number.ilike.%${query}%`)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getStats(): Promise<Record<string, number>> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_requests')
+      .select('status');
+    if (error) throw error;
+    const stats: Record<string, number> = { total: 0 };
+    for (const row of data || []) {
+      stats.total++;
+      stats[row.status] = (stats[row.status] || 0) + 1;
+    }
+    return stats;
+  },
+
+  async delete(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('payment_requests')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+};
+
+// ============================================================
+// PHASE 4: PAYMENT SUBMISSIONS
+// ============================================================
+
+export const paymentSubmissionsRepository = {
+  async create(submission: { payment_request_id: string; user_id: string; transaction_reference: string; amount_paid: number; currency?: string; payment_date: string; proof_url?: string | null; notes?: string | null }): Promise<PaymentSubmission> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_submissions')
+      .insert(submission)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async getAll(): Promise<PaymentSubmission[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_submissions')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getById(id: string): Promise<PaymentSubmission | null> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_submissions')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async getByPaymentRequestId(requestId: string): Promise<PaymentSubmission[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_submissions')
+      .select('*')
+      .eq('payment_request_id', requestId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getByUserId(userId: string): Promise<PaymentSubmission[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_submissions')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async verify(id: string, verifiedBy: string): Promise<PaymentSubmission> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_submissions')
+      .update({ status: 'verified', verified_at: new Date().toISOString(), verified_by: verifiedBy })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async reject(id: string, adminNotes: string): Promise<PaymentSubmission> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_submissions')
+      .update({ status: 'rejected', admin_notes: adminNotes })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async requestMoreInfo(id: string, adminNotes: string): Promise<PaymentSubmission> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_submissions')
+      .update({ status: 'needs_info', admin_notes: adminNotes })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async search(query: string): Promise<PaymentSubmission[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_submissions')
+      .select('*')
+      .or(`submission_number.ilike.%${query}%,transaction_reference.ilike.%${query}%`)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getStats(): Promise<Record<string, number>> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_submissions')
+      .select('status');
+    if (error) throw error;
+    const stats: Record<string, number> = { total: 0 };
+    for (const row of data || []) {
+      stats.total++;
+      stats[row.status] = (stats[row.status] || 0) + 1;
+    }
+    return stats;
+  },
+
+  async delete(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('payment_submissions')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+};
+
+// ============================================================
+// PHASE 4: MEMBERSHIP CARDS
+// ============================================================
+
+export const membershipCardsRepository = {
+  async create(card: { user_id: string; membership_id?: string | null; membership_request_id?: string | null; card_number: string; qr_code_data?: string | null; issue_date?: string; expiry_date?: string | null; card_design?: string }): Promise<MembershipCard> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('membership_cards')
+      .insert(card)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async getAll(): Promise<MembershipCard[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('membership_cards')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getById(id: string): Promise<MembershipCard | null> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('membership_cards')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async getByUserId(userId: string): Promise<MembershipCard[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('membership_cards')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getActiveByUserId(userId: string): Promise<MembershipCard | null> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('membership_cards')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('status', 'active')
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async renew(id: string, newExpiryDate: string): Promise<MembershipCard> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('membership_cards')
+      .update({ expiry_date: newExpiryDate, status: 'active' })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async deactivate(id: string): Promise<MembershipCard> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('membership_cards')
+      .update({ status: 'deactivated' })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async replace(id: string): Promise<{ old: MembershipCard; new: MembershipCard }> {
+    const client = getSupabaseClient();
+    const { data: oldCard } = await client.from('membership_cards').select('*').eq('id', id).single();
+    if (!oldCard) throw new Error('Card not found');
+
+    const newCardNumber = 'HG-' + Date.now().toString(36).toUpperCase();
+    const { data: newCard, error: createError } = await client
+      .from('membership_cards')
+      .insert({
+        user_id: oldCard.user_id,
+        membership_id: oldCard.membership_id,
+        card_number: newCardNumber,
+        qr_code_data: newCardNumber,
+        issue_date: new Date().toISOString().split('T')[0],
+        expiry_date: oldCard.expiry_date,
+        card_design: oldCard.card_design,
+      })
+      .select()
+      .single();
+    if (createError) throw createError;
+
+    await client
+      .from('membership_cards')
+      .update({ status: 'replaced', replaced_by: newCard.id })
+      .eq('id', id);
+
+    return { old: { ...oldCard, status: 'replaced' as const }, new: newCard };
+  },
+
+  async getStats(): Promise<Record<string, number>> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('membership_cards')
+      .select('status');
+    if (error) throw error;
+    const stats: Record<string, number> = { total: 0 };
+    for (const row of data || []) {
+      stats.total++;
+      stats[row.status] = (stats[row.status] || 0) + 1;
+    }
+    return stats;
+  },
+
+  async delete(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('membership_cards')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+};

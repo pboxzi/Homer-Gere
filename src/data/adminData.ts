@@ -7,7 +7,8 @@ export type AdminSection =
   | 'images' | 'videos' | 'documents'
   | 'membership-payments' | 'transactions'
   | 'visitors' | 'membership-stats' | 'experience-stats' | 'chat-stats'
-  | 'website-settings' | 'branding' | 'comm-settings' | 'email-templates' | 'security' | 'backups' | 'integrations';
+  | 'website-settings' | 'branding' | 'comm-settings' | 'email-templates' | 'security' | 'backups' | 'integrations'
+  | 'membership-requests' | 'payment-methods' | 'payment-requests' | 'payment-submissions' | 'membership-cards';
 
 export interface AdminStats {
   totalMembers: number;
@@ -218,6 +219,11 @@ export const ADMIN_SIDEBAR_GROUPS: { label: string; items: { id: AdminSection; l
   { label: 'Payments', items: [
     { id: 'membership-payments', label: 'Membership Payments' },
     { id: 'transactions', label: 'Transactions' },
+    { id: 'membership-requests', label: 'Membership Requests' },
+    { id: 'payment-methods', label: 'Payment Methods' },
+    { id: 'payment-requests', label: 'Payment Requests' },
+    { id: 'payment-submissions', label: 'Payment Submissions' },
+    { id: 'membership-cards', label: 'Membership Cards' },
   ]},
   { label: 'Analytics', items: [
     { id: 'visitors', label: 'Visitors' },

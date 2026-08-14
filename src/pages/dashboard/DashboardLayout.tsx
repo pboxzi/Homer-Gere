@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import {
   LayoutDashboard, User, Crown, MessageSquare, Inbox, Sparkles,
   FileText, Bookmark, Heart, Bell, Settings, Shield, HelpCircle,
-  LogOut, Menu, X, ChevronRight, ArrowLeft,
+  LogOut, Menu, X, ChevronRight, ArrowLeft, CreditCard, DollarSign,
 } from 'lucide-react';
 import { DashboardSection, DASHBOARD_NAV_ITEMS } from '../../data/dashboardData';
 import { useDashboard } from '../../context/DashboardContext';
@@ -12,6 +12,7 @@ import { useDashboard } from '../../context/DashboardContext';
 const ICON_MAP: Record<string, React.FC<{ className?: string }>> = {
   LayoutDashboard, User, Crown, MessageSquare, Inbox, Sparkles,
   FileText, Bookmark, Heart, Bell, Settings, Shield, HelpCircle,
+  CreditCard, DollarSign,
 };
 
 interface DashboardLayoutProps {

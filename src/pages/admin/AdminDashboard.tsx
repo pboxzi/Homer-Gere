@@ -10,6 +10,11 @@ import { AdminMediaLibrary } from './AdminMediaLibrary';
 import { AdminPayments } from './AdminPayments';
 import { AdminAnalytics } from './AdminAnalytics';
 import { AdminSystem } from './AdminSystem';
+import AdminMembershipRequests from './AdminMembershipRequests';
+import AdminPaymentMethods from './AdminPaymentMethods';
+import AdminPaymentRequests from './AdminPaymentRequests';
+import AdminPaymentSubmissions from './AdminPaymentSubmissions';
+import AdminMembershipCards from './AdminMembershipCards';
 import { AdminSection } from '../../data/adminData';
 import { AdminProvider } from '../../context/AdminContext';
 
@@ -37,9 +42,20 @@ export default function AdminDashboard() {
       // Media Library
       case 'images': case 'videos': case 'documents':
         return <AdminMediaLibrary activeSection={activeSection} />;
-      // Payments
+      // Payments (legacy)
       case 'membership-payments': case 'transactions':
         return <AdminPayments activeSection={activeSection} />;
+      // Phase 4: Membership & Payment CMS
+      case 'membership-requests':
+        return <AdminMembershipRequests />;
+      case 'payment-methods':
+        return <AdminPaymentMethods />;
+      case 'payment-requests':
+        return <AdminPaymentRequests />;
+      case 'payment-submissions':
+        return <AdminPaymentSubmissions />;
+      case 'membership-cards':
+        return <AdminMembershipCards />;
       // Analytics
       case 'visitors': case 'membership-stats': case 'experience-stats': case 'chat-stats':
         return <AdminAnalytics activeSection={activeSection} />;
