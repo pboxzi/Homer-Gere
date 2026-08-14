@@ -173,7 +173,7 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
             <motion.div className="rounded-2xl border border-[#F59E0B]/38 bg-[#F59E0B]/8 p-4 shadow-sm shadow-[#F59E0B]/15" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}>
               <p className="text-xs font-medium text-[#F59E0B] mb-1">Active Request</p>
               <p className="text-sm text-[#1C1917]">{activeRequest.membership_plan_name} — {activeRequest.status.replace(/_/g, ' ')}</p>
-              <button onClick={() => navigate('/dashboard')} className="text-xs text-[#A6852F] font-medium mt-2 hover:text-[#8B6F1F] cursor-pointer">View Details →</button>
+              <button onClick={() => onNavigate?.('membership-requests')} className="text-xs text-[#A6852F] font-medium mt-2 hover:text-[#8B6F1F] cursor-pointer">View Details →</button>
             </motion.div>
           )}
 
@@ -321,7 +321,7 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
                       <select value={requestForm.preferredPaymentMethod} onChange={e => setRequestForm(f => ({ ...f, preferredPaymentMethod: e.target.value }))}
                         className="w-full px-3.5 py-2.5 border border-[#E8E5DF]/80 rounded-xl text-sm bg-[#FAF9F7] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F]/50 transition-all cursor-pointer shadow-sm shadow-black/3">
                         <option value="">Select method...</option>
-                        {paymentMethods.map(m => <option key={m.id} value={m.id}>{m.name} ({m.type.replace(/_/g, ' ')})</option>)}
+                        {paymentMethods.map(m => <option key={m.id} value={m.name}>{m.name} ({m.type.replace(/_/g, ' ')})</option>)}
                       </select>
                     </div>
                     <div className="grid grid-cols-2 gap-3">

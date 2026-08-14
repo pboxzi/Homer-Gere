@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Search, ChevronLeft, ChevronRight, Eye, CreditCard, RefreshCw, Ban, Replace, Download } from 'lucide-react';
 import { membershipCardsRepository } from '../../lib/repositories';
+import { notifyService } from '../../lib/notifications';
 import type { MembershipCard } from '../../types/database';
 
 const PAGE_SIZE = 10;
@@ -54,6 +55,9 @@ export default function AdminMembershipCards() {
     setActionLoading(true);
     try {
       await membershipCardsRepository.deactivate(card.id);
+      if (card.user_id) {
+        await notifyService.membershipCardUpdated(card.user_id, { email: '', fullName: 'Member', cardNumber: card.card_number, action: 'Deactivated', reason: 'Card has been deactivated by admin.' });
+      }
       setSuccessMsg(`Card ${card.card_number} deactivated`);
       setShowDetail(false);
       load();
@@ -66,6 +70,9 @@ export default function AdminMembershipCards() {
     setActionLoading(true);
     try {
       const result = await membershipCardsRepository.replace(card.id);
+      if (card.user_id) {
+        await notifyService.membershipCardUpdated(card.user_id, { email: '', fullName: 'Member', cardNumber: card.card_number, action: 'Replaced', reason: `New card: ${result.new.card_number}` });
+      }
       setSuccessMsg(`Card replaced. New card: ${result.new.card_number}`);
       setShowDetail(false);
       load();
@@ -78,6 +85,9 @@ export default function AdminMembershipCards() {
     setActionLoading(true);
     try {
       await membershipCardsRepository.renew(card.id, newExpiry);
+      if (card.user_id) {
+        await notifyService.membershipCardUpdated(card.user_id, { email: '', fullName: 'Member', cardNumber: card.card_number, action: 'Renewed', reason: `New expiry: ${newExpiry}` });
+      }
       setSuccessMsg(`Card ${card.card_number} renewed until ${newExpiry}`);
       setShowDetail(false);
       load();

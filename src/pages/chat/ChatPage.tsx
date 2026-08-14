@@ -20,6 +20,7 @@ export default function ChatPage() {
   const [activeSection] = useState<string>('chat');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [chatType, setChatType] = useState<'fan' | 'business'>(mode === 'business' ? 'business' : 'fan');
   const [submittedData, setSubmittedData] = useState<{
     fullName: string;
     email: string;
@@ -48,6 +49,24 @@ export default function ChatPage() {
     navigate('/chat');
   };
 
+  const handleStartFanChat = useCallback(() => {
+    if (!isAuthenticated) {
+      setChatType('fan');
+      setAuthModalOpen(true);
+      return;
+    }
+    setChatType('fan');
+  }, [isAuthenticated]);
+
+  const handleStartBusinessChat = useCallback(() => {
+    if (!isAuthenticated) {
+      setChatType('business');
+      setAuthModalOpen(true);
+      return;
+    }
+    setChatType('business');
+  }, [isAuthenticated]);
+
   const handleBusinessComplete = useCallback((data: {
     fullName: string;
     email: string;
@@ -64,21 +83,33 @@ export default function ChatPage() {
     navigate('/');
   }, [navigate]);
 
-  const handleStartFanChat = useCallback(() => {
-    if (!isAuthenticated) {
-      setAuthModalOpen(true);
-      return;
+  const renderChat = () => {
+    if (submittedData) {
+      return (
+        <ChatConfirmation
+          chatType="business"
+          method={submittedData.method}
+          formData={submittedData}
+          onClose={handleCloseConfirmation}
+        />
+      );
     }
-    navigate('/dashboard?section=messages');
-  }, [isAuthenticated, navigate]);
 
-  const handleStartBusinessChat = useCallback(() => {
-    if (!isAuthenticated) {
-      setAuthModalOpen(true);
-      return;
+    if (chatType === 'business' && isAuthenticated) {
+      return <BusinessChat onComplete={handleBusinessComplete} />;
     }
-    navigate('/dashboard?section=messages');
-  }, [isAuthenticated, navigate]);
+
+    if (isAuthenticated) {
+      return <FanChat />;
+    }
+
+    return (
+      <ChatLanding
+        onStartFanChat={handleStartFanChat}
+        onStartBusinessChat={handleStartBusinessChat}
+      />
+    );
+  };
 
   return (
     <div className="h-dvh h-screen flex flex-col bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
@@ -91,28 +122,7 @@ export default function ChatPage() {
       />
 
       <div className="flex-1 min-h-0 pt-16 lg:pt-20">
-        {submittedData ? (
-          <ChatConfirmation
-            chatType="business"
-            method={submittedData.method}
-            formData={submittedData}
-            onClose={handleCloseConfirmation}
-          />
-        ) : (mode === 'fan' || mode === 'business') && isAuthenticated ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center space-y-4 px-4">
-              <p className="text-sm text-[#57534E]">Redirecting to your dashboard...</p>
-              <button
-                onClick={() => navigate('/dashboard?section=messages')}
-                className="inline-flex items-center gap-2 bg-[#1C1917] hover:bg-[#292524] text-white font-medium text-sm px-6 py-3 rounded-2xl transition-all duration-300 cursor-pointer"
-              >
-                Go to Dashboard
-              </button>
-            </div>
-          </div>
-        ) : (
-          <ChatLanding onStartFanChat={handleStartFanChat} onStartBusinessChat={handleStartBusinessChat} />
-        )}
+        {renderChat()}
       </div>
 
       <DetailModal

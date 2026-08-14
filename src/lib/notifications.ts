@@ -361,7 +361,7 @@ export const notifyService = {
   async paymentNeedsInfo(userId: string, data: { email: string; fullName: string; paymentType: string; amount: string; currency: string; reason: string }) {
     return notify({
       userId,
-      type: 'payment',
+      type: 'membership',
       title: 'Payment Information Needed',
       message: `Additional information is required for your ${data.paymentType} payment of ${data.amount} ${data.currency}.`,
       link: '/dashboard/payments',

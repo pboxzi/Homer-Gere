@@ -4,6 +4,36 @@ import { membershipCardsRepository } from '../../lib/repositories';
 import { useAuth } from '../../context/AuthContext';
 import type { MembershipCard } from '../../types/database';
 
+function downloadCard(card: MembershipCard) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="380" viewBox="0 0 600 380">
+    <defs>
+      <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#A6852F"/>
+        <stop offset="100%" style="stop-color:#8B6F24"/>
+      </linearGradient>
+    </defs>
+    <rect width="600" height="380" rx="20" fill="url(#bg)"/>
+    <text x="40" y="60" fill="white" font-family="sans-serif" font-size="26" font-weight="bold" letter-spacing="4">HOMER GERE</text>
+    <text x="40" y="85" fill="rgba(255,255,255,0.7)" font-family="sans-serif" font-size="12" letter-spacing="6">CLUB</text>
+    <text x="40" y="200" fill="white" font-family="monospace" font-size="30" letter-spacing="5">${card.card_number}</text>
+    <text x="40" y="290" fill="rgba(255,255,255,0.6)" font-family="sans-serif" font-size="10" letter-spacing="2">ISSUED</text>
+    <text x="40" y="315" fill="white" font-family="sans-serif" font-size="16">${card.issue_date || 'N/A'}</text>
+    <text x="250" y="290" fill="rgba(255,255,255,0.6)" font-family="sans-serif" font-size="10" letter-spacing="2">EXPIRES</text>
+    <text x="250" y="315" fill="white" font-family="sans-serif" font-size="16">${card.expiry_date || 'No Expiry'}</text>
+    <text x="460" y="290" fill="rgba(255,255,255,0.6)" font-family="sans-serif" font-size="10" letter-spacing="2">DESIGN</text>
+    <text x="460" y="315" fill="white" font-family="sans-serif" font-size="16" text-transform="capitalize">${(card.card_design || 'gold').toUpperCase()}</text>
+  </svg>`;
+  const blob = new Blob([svg], { type: 'image/svg+xml' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `homer-gere-card-${card.card_number}.svg`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 export default function DashboardMembershipCard() {
   const { user } = useAuth();
   const [card, setCard] = useState<MembershipCard | null>(null);
@@ -77,7 +107,7 @@ export default function DashboardMembershipCard() {
 
           {/* Actions */}
           <div className="flex gap-3 max-w-md mx-auto">
-            <button className="flex-1 py-2.5 bg-[#A6852F] text-white rounded-lg hover:bg-[#8B6F24] text-sm font-medium flex items-center justify-center gap-2">
+            <button onClick={() => downloadCard(card)} className="flex-1 py-2.5 bg-[#A6852F] text-white rounded-lg hover:bg-[#8B6F24] text-sm font-medium flex items-center justify-center gap-2">
               <Download className="w-4 h-4" /> Download Card
             </button>
           </div>

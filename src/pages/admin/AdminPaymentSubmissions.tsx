@@ -129,6 +129,26 @@ export default function AdminPaymentSubmissions() {
         }
       }
 
+      // Check if this is an experience payment and confirm experience
+      if (paymentReq && paymentReq.payment_type === 'experience' && paymentReq.user_id) {
+        const { experienceRequestsRepository } = await import('../../lib/repositories');
+        const expRequests = await experienceRequestsRepository.getByUserId(paymentReq.user_id);
+        const expRequest = expRequests.find(r => r.id === paymentReq.related_record_id);
+        if (expRequest) {
+          await experienceRequestsRepository.confirmExperience(expRequest.id);
+          const profile = await profilesRepository.getById(paymentReq.user_id);
+          if (profile) {
+            await notifyService.experienceConfirmed(paymentReq.user_id, {
+              email: profile.email,
+              fullName: `${profile.first_name} ${profile.last_name}`.trim(),
+              experienceType: expRequest.experience_type,
+              eventDate: expRequest.event_date || expRequest.preferred_date || 'TBD',
+              eventLocation: expRequest.event_location || 'TBD',
+            });
+          }
+        }
+      }
+
       setSuccessMsg(`Submission ${sub.submission_number} verified and payment approved`);
       setShowDetail(false);
       load();

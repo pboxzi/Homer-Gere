@@ -67,7 +67,7 @@ export default function DashboardPage() {
 
   const renderSection = () => {
     switch (activeSection) {
-      case 'home': return <DashboardHome onOpenChat={handleOpenChat} onRequestExperience={handleRequestExperience} onNavigate={handleSectionChange} />;
+      case 'home': return <DashboardHome onOpenChat={() => handleSectionChange('chat')} onRequestExperience={handleRequestExperience} onNavigate={handleSectionChange} />;
       case 'profile': return <DashboardProfile />;
       case 'membership': return <DashboardMembership onNavigate={handleSectionChange} initialTab={(searchParams.get('tab') as 'overview' | 'plans' | 'history') || 'overview'} />;
       case 'membership-requests': return <DashboardMembershipRequests />;
