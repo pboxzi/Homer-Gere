@@ -241,7 +241,7 @@ export const DashboardChat: React.FC = () => {
                 onKeyDown={(e) => e.key === 'Enter' && !uploading && handleSend()}
                 placeholder="Type your message..."
                 disabled={uploading}
-                className="flex-1 px-4 py-3 rounded-xl bg-white border border-[#A6852F]/45 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 disabled:opacity-50"
+                className="flex-1 min-w-0 px-4 py-3 rounded-xl bg-white border border-[#A6852F]/45 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 disabled:opacity-50"
               />
               <button onClick={handleSend} disabled={uploading || (!newMessage.trim() && !pendingFile)} className="w-11 h-11 rounded-xl bg-[#A6852F] text-white flex items-center justify-center hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/30 transition-colors cursor-pointer disabled:opacity-50">
                 {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
