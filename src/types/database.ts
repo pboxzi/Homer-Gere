@@ -158,6 +158,7 @@ export interface FilmographyEntry {
   description: string | null;
   type: string | null;
   image: string | null;
+  slug: string | null;
   sort_order: number;
   created_at: string;
   updated_at: string;

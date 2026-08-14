@@ -4,6 +4,17 @@ import { Play, Clock, Calendar, ExternalLink, Search } from 'lucide-react';
 import { useSiteContent } from '../../context/SiteContentContext';
 import { MediaCategory } from '../../types';
 
+function getYouTubeThumbnail(url: string): string | null {
+  try {
+    const u = new URL(url);
+    let videoId: string | null = null;
+    if (u.hostname.includes('youtube.com')) videoId = u.searchParams.get('v');
+    else if (u.hostname === 'youtu.be') videoId = u.pathname.slice(1);
+    if (videoId && videoId.length === 11) return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+  } catch {}
+  return null;
+}
+
 interface VideoLibraryProps {
   onWatch: (url: string) => void;
 }
@@ -80,7 +91,9 @@ export const VideoLibrary: React.FC<VideoLibraryProps> = ({ onWatch }) => {
               {/* Thumbnail */}
               <div className="relative aspect-video rounded-2xl overflow-hidden mb-4 bg-[#E8E5DF]">
                 <img 
-                  src={video.thumbnail}
+                  src={video.thumbnail?.match(/[0-9a-f]{8}-[0-9a-f]{4}-/)
+                    ? getYouTubeThumbnail(video.url) || '/placeholder-video.jpg'
+                    : video.thumbnail || getYouTubeThumbnail(video.url) || '/placeholder-video.jpg'}
                   alt={video.title}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

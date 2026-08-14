@@ -26,7 +26,7 @@ export default function LoginPage() {
   React.useEffect(() => {
     if (isAuthenticated && user) {
       const from = (location.state as { from?: string })?.from;
-      if (user.role === 'admin') navigate('/admin');
+      if (user.role === 'admin' || user.role === 'super_admin') navigate('/admin');
       else navigate(from || '/dashboard');
     }
   }, [isAuthenticated, user, navigate, location]);

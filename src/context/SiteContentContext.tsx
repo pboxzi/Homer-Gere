@@ -121,7 +121,7 @@ function mapJournalToFrontend(article: { id: string; title: string; excerpt: str
   };
 }
 
-function mapFilmographyToFrontend(entry: { id: string; title: string; role: string; year: number; status: string; description: string; type: string; image_url?: string }): FilmographyEntry {
+function mapFilmographyToFrontend(entry: { id: string; title: string; role: string; year: number; status: string; description: string; type: string; image?: string | null; slug?: string | null }): FilmographyEntry {
   return {
     id: entry.id,
     title: entry.title,
@@ -130,7 +130,8 @@ function mapFilmographyToFrontend(entry: { id: string; title: string; role: stri
     status: (entry.status as FilmographyEntry['status']) || 'Released',
     description: entry.description,
     type: (entry.type as 'film' | 'television') || 'film',
-    image: entry.image_url || undefined,
+    image: entry.image || undefined,
+    slug: entry.slug || undefined,
   };
 }
 

@@ -161,11 +161,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </div>
                   <div className="py-1">
                     <button
-                      onClick={() => { setUserMenuOpen(false); routerNavigate(user?.role === 'admin' ? '/admin' : '/dashboard'); }}
+                      onClick={() => { setUserMenuOpen(false); routerNavigate((user?.role === 'admin' || user?.role === 'super_admin') ? '/admin' : '/dashboard'); }}
                       className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors"
                     >
-                      {user?.role === 'admin' ? <Shield className="w-3.5 h-3.5" /> : <LayoutDashboard className="w-3.5 h-3.5" />}
-                      {user?.role === 'admin' ? 'Admin Panel' : 'Dashboard'}
+                      {(user?.role === 'admin' || user?.role === 'super_admin') ? <Shield className="w-3.5 h-3.5" /> : <LayoutDashboard className="w-3.5 h-3.5" />}
+                      {(user?.role === 'admin' || user?.role === 'super_admin') ? 'Admin Panel' : 'Dashboard'}
                     </button>
                     <button
                       onClick={() => { signOut(); setUserMenuOpen(false); routerNavigate('/'); }}
@@ -207,11 +207,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </div>
                   <div className="py-1">
                     <button
-                      onClick={() => { setUserMenuOpen(false); routerNavigate(user?.role === 'admin' ? '/admin' : '/dashboard'); }}
+                      onClick={() => { setUserMenuOpen(false); routerNavigate((user?.role === 'admin' || user?.role === 'super_admin') ? '/admin' : '/dashboard'); }}
                       className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors"
                     >
-                      {user?.role === 'admin' ? <Shield className="w-3.5 h-3.5" /> : <LayoutDashboard className="w-3.5 h-3.5" />}
-                      {user?.role === 'admin' ? 'Admin Panel' : 'Dashboard'}
+                      {(user?.role === 'admin' || user?.role === 'super_admin') ? <Shield className="w-3.5 h-3.5" /> : <LayoutDashboard className="w-3.5 h-3.5" />}
+                      {(user?.role === 'admin' || user?.role === 'super_admin') ? 'Admin Panel' : 'Dashboard'}
                     </button>
                     <button
                       onClick={() => { signOut(); setUserMenuOpen(false); routerNavigate('/'); }}

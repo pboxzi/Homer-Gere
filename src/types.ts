@@ -135,6 +135,7 @@ export interface FilmographyEntry {
   description: string;
   type: 'film' | 'television';
   image?: string;
+  slug?: string;
 }
 
 export interface FAQItem {

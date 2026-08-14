@@ -1118,6 +1118,16 @@ export const mediaRepository = {
 // ============================================================
 
 export const notificationsRepository = {
+  async getAll(): Promise<Notification[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('notifications')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
   async getByUserId(userId: string): Promise<Notification[]> {
     const client = getSupabaseClient();
     const { data, error } = await client

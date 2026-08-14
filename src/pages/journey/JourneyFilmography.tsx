@@ -32,13 +32,13 @@ export const JourneyFilmography: React.FC<JourneyFilmographyProps> = ({ onItemCl
       initial={{ opacity: 0, y: 30 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: 0.1 + idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
-      onClick={() => onItemClick?.(entry.id)}
+      onClick={() => onItemClick?.(entry.slug || entry.id)}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          onItemClick?.(entry.id);
+          onItemClick?.(entry.slug || entry.id);
         }
       }}
     >

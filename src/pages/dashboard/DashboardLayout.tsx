@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import {
   LayoutDashboard, User, Crown, MessageSquare, Inbox, Sparkles,
   FileText, Bookmark, Heart, Bell, Settings, Shield, HelpCircle,
-  LogOut, Menu, X, ChevronRight,
+  LogOut, Menu, X, ChevronRight, ArrowLeft,
 } from 'lucide-react';
 import { DashboardSection, DASHBOARD_NAV_ITEMS } from '../../data/dashboardData';
 import { useDashboard } from '../../context/DashboardContext';
@@ -49,6 +49,17 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           <span className="font-medium tracking-[0.35em] text-[#A6852F]/70 uppercase text-[7px] mt-0.5">
             Member Dashboard
           </span>
+        </button>
+      </div>
+
+      {/* Back to Homepage */}
+      <div className="px-3 pt-3">
+        <button
+          onClick={() => navigate('/')}
+          className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-all duration-200 cursor-pointer"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Homepage
         </button>
       </div>
 
@@ -122,6 +133,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <div className="flex-1 lg:ml-64 min-h-screen flex flex-col">
         {/* Mobile Top Bar */}
         <header className="lg:hidden sticky top-0 z-20 bg-[#FAF9F7]/90 backdrop-blur-xl border-b border-[#E8E5DF]/40 px-4 py-3 flex items-center gap-3">
+          <button onClick={() => navigate('/')} className="w-9 h-9 rounded-xl flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer" title="Back to Homepage">
+            <ArrowLeft className="w-5 h-5" />
+          </button>
           <button onClick={() => setMobileOpen(true)} className="w-9 h-9 rounded-xl flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
             <Menu className="w-5 h-5" />
           </button>

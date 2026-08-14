@@ -274,7 +274,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         experienceRequestsRepository.getAll(),
         fanChatRepository.getConversations(),
         businessEnquiriesRepository.getAll(),
-        notificationsRepository.getByUserId('admin'),
+        notificationsRepository.getAll(),
         siteSettingsRepository.getAll(),
         mediaRepository.getVideos(),
         mediaRepository.getPodcasts(),
@@ -460,6 +460,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
             // Notify
             await supabase.from('notifications').insert({
+              user_id: null,
               title: 'Member Approved',
               message: `${app.name} (${app.email}) has been approved as ${app.plan || 'silver'} member.`,
               read: false,
@@ -529,7 +530,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const id = generateId();
     setNotifications((prev) => [{ ...notif, id }, ...prev]);
     supabase.from('notifications').insert({
-      user_id: 'admin',
+      user_id: null,
       type: 'system',
       title: notif.title,
       message: notif.message,
