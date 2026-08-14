@@ -1,285 +1,364 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  Image, Film, FileText, Upload, Trash2, Eye, Download, Search, X, CheckSquare, Square,
-  Folder, Loader2, Check,
+  Image, Film, FileText, Upload, Trash2, Eye, Search, X, CheckSquare, Square,
+  Loader2, Check, Copy, Replace, AlertTriangle, Link, ExternalLink, Grid, List,
 } from 'lucide-react';
 import { type AdminSection } from '../../data/adminData';
-import { useAdmin } from '../../context/AdminContext';
 import { supabase } from '../../lib/supabase';
+import { getSupabaseClient } from '../../lib/repositories';
 
-const TYPE_ICONS = { image: Image, video: Film, document: FileText } as const;
-const TYPE_COLORS: Record<string, string> = { image: '#A6852F', video: '#8B5CF6', document: '#3B82F6' };
+interface MediaAsset {
+  id: string;
+  filename: string;
+  original_filename: string | null;
+  storage_bucket: string;
+  storage_path: string;
+  public_url: string;
+  file_type: string;
+  file_size: number | null;
+  mime_type: string | null;
+  section: string | null;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
 
-const SECTION_LABELS: Record<string, string> = {
-  images: 'Images',
-  videos: 'Videos',
-  documents: 'Documents',
-};
-
-const FOLDERS = [
-  { id: 'gallery', name: 'Gallery' },
-  { id: 'projects', name: 'Projects' },
-  { id: 'press', name: 'Press Kit' },
-  { id: 'events', name: 'Events' },
-  { id: 'misc', name: 'Miscellaneous' },
+const SECTION_OPTIONS = [
+  { value: '', label: 'All Sections' },
+  { value: 'homepage', label: 'Homepage' },
+  { value: 'journey', label: 'Journey' },
+  { value: 'projects', label: 'Projects' },
+  { value: 'gallery', label: 'Gallery' },
+  { value: 'journal', label: 'Journal' },
+  { value: 'media', label: 'Media' },
+  { value: 'experiences', label: 'Experiences' },
+  { value: 'membership', label: 'Membership' },
+  { value: 'profile', label: 'Profile' },
 ];
+
+const BUCKETS: Record<string, string> = {
+  homepage: 'hero-banners',
+  journey: 'gallery',
+  projects: 'projects',
+  gallery: 'gallery',
+  journal: 'journal',
+  media: 'media',
+  experiences: 'gallery',
+  membership: 'hero-banners',
+  profile: 'avatars',
+};
 
 interface Props {
   activeSection: AdminSection;
 }
 
 export const AdminMediaLibrary: React.FC<Props> = ({ activeSection }) => {
-  const { media, addMedia, deleteMedia } = useAdmin();
-
+  const [assets, setAssets] = useState<MediaAsset[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState<'all' | 'image' | 'video' | 'document'>('all');
+  const [filterSection, setFilterSection] = useState('');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'broken' | 'placeholder'>('all');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [previewItem, setPreviewItem] = useState<string | null>(null);
-  const [showFolderModal, setShowFolderModal] = useState(false);
-  const [selectedFolder, setSelectedFolder] = useState('gallery');
-  const [uploadingItems, setUploadingItems] = useState<Map<string, { name: string; progress: number }>>(new Map());
+  const [previewItem, setPreviewItem] = useState<MediaAsset | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [uploading, setUploading] = useState(false);
+  const [uploadSection, setUploadSection] = useState('homepage');
   const [dragOver, setDragOver] = useState(false);
+  const [copied, setCopied] = useState<string | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [replaceItem, setReplaceItem] = useState<MediaAsset | null>(null);
+  const [replaceFile, setReplaceFile] = useState<File | null>(null);
+  const [replaceUploading, setReplaceUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const defaultFilter = useMemo(() => {
-    if (activeSection === 'images') return 'image';
-    if (activeSection === 'videos') return 'video';
-    if (activeSection === 'documents') return 'document';
-    return 'all';
-  }, [activeSection]);
+  // Load assets from site_media table
+  const loadAssets = useCallback(async () => {
+    setLoading(true);
+    try {
+      const client = getSupabaseClient();
+      const { data, error } = await client
+        .from('site_media')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setAssets((data as MediaAsset[]) || []);
+    } catch {
+      setAssets([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    setFilterType(defaultFilter);
-  }, [defaultFilter]);
+    loadAssets();
+  }, [loadAssets]);
 
+  // Filtered assets
   const filtered = useMemo(() => {
-    let items = [...media];
-    if (filterType !== 'all') {
-      items = items.filter((m) => m.type === filterType);
-    }
+    let items = [...assets];
+    if (filterType !== 'all') items = items.filter((m) => m.file_type === filterType);
+    if (filterSection) items = items.filter((m) => m.section === filterSection);
+    if (filterStatus !== 'all') items = items.filter((m) => m.status === filterStatus);
     if (search.trim()) {
       const q = search.toLowerCase();
-      items = items.filter((m) => m.name.toLowerCase().includes(q));
+      items = items.filter((m) =>
+        m.filename.toLowerCase().includes(q) ||
+        m.original_filename?.toLowerCase().includes(q) ||
+        m.section?.toLowerCase().includes(q)
+      );
     }
     return items;
-  }, [media, filterType, search]);
+  }, [assets, filterType, filterSection, filterStatus, search]);
 
-  const toggleSelect = useCallback((id: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }, []);
+  // Upload handler
+  const handleUpload = useCallback(async (files: FileList | File[], section: string) => {
+    setUploading(true);
+    const client = getSupabaseClient();
+    const bucket = BUCKETS[section] || 'media';
 
-  const toggleSelectAll = useCallback(() => {
-    setSelectedIds((prev) => {
-      if (prev.size === filtered.length) return new Set();
-      return new Set(filtered.map((m) => m.id));
-    });
-  }, [filtered]);
+    for (const file of Array.from(files)) {
+      try {
+        const path = `${section}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+        const { data, error: uploadErr } = await client.storage
+          .from(bucket)
+          .upload(path, file, { contentType: file.type, upsert: false });
 
-  const getMediaType = useCallback((fileName: string): 'image' | 'video' | 'document' => {
-    const ext = fileName.toLowerCase().split('.').pop() || '';
-    if (['jpg', 'jpeg', 'png', 'webp'].includes(ext)) return 'image';
-    if (['mp4'].includes(ext)) return 'video';
-    return 'document';
-  }, []);
+        if (uploadErr) throw uploadErr;
 
-  const simulateUpload = useCallback((file: File) => {
-    const id = 'upload_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-    const type = getMediaType(file.name);
-    const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
-    const sizeStr = file.size < 1024 * 1024
-      ? `${(file.size / 1024).toFixed(0)} KB`
-      : `${sizeMB} MB`;
+        const { data: urlData } = client.storage.from(bucket).getPublicUrl(data.path);
+        const fileType = file.type.startsWith('video/') ? 'video'
+          : file.type.startsWith('image/') ? 'image' : 'document';
 
-    setUploadingItems((prev) => new Map(prev).set(id, { name: file.name, progress: 0 }));
+        const { error: dbErr } = await client.from('site_media').insert({
+          filename: file.name,
+          original_filename: file.name,
+          storage_bucket: bucket,
+          storage_path: data.path,
+          public_url: urlData.publicUrl,
+          file_type: fileType,
+          file_size: file.size,
+          mime_type: file.type,
+          section,
+          status: 'active',
+        });
 
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += Math.random() * 25 + 10;
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(interval);
-        setUploadingItems((prev) => new Map(prev).set(id, { name: file.name, progress: 100 }));
-
-        const path = `admin/${Date.now()}_${file.name}`;
-        supabase.storage
-          .from('media')
-          .upload(path, file)
-          .then(({ data, error }) => {
-            if (error) throw error;
-            const { data: urlData } = supabase.storage.from('media').getPublicUrl(data.path);
-            addMedia({
-              name: file.name,
-              type,
-              size: sizeStr,
-              uploadedBy: 'Admin',
-              date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-              url: urlData.publicUrl,
-            });
-          })
-          .catch((err) => {
-            console.error('Upload failed:', err);
-            addMedia({
-              name: file.name,
-              type,
-              size: sizeStr,
-              uploadedBy: 'Admin',
-              date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-              url: '#',
-            });
-          })
-          .finally(() => {
-            setUploadingItems((prev) => {
-              const next = new Map(prev);
-              next.delete(id);
-              return next;
-            });
-          });
-      } else {
-        setUploadingItems((prev) => new Map(prev).set(id, { name: file.name, progress: Math.min(progress, 99) }));
+        if (dbErr) throw dbErr;
+      } catch (err) {
+        console.error('Upload failed:', file.name, err);
       }
-    }, 300);
-  }, [addMedia, getMediaType]);
+    }
 
-  const handleFiles = useCallback((files: FileList | null) => {
-    if (!files) return;
-    Array.from(files).forEach((file) => simulateUpload(file));
-  }, [simulateUpload]);
+    setUploading(false);
+    loadAssets();
+  }, [loadAssets]);
 
+  // Delete handler
+  const handleDelete = useCallback(async (asset: MediaAsset) => {
+    const client = getSupabaseClient();
+    try {
+      await client.storage.from(asset.storage_bucket).remove([asset.storage_path]);
+      await client.from('site_media').delete().eq('id', asset.id);
+      loadAssets();
+    } catch (err) {
+      console.error('Delete failed:', err);
+    }
+    setDeleteConfirm(null);
+  }, [loadAssets]);
+
+  // Bulk delete
+  const handleBulkDelete = useCallback(async () => {
+    const client = getSupabaseClient();
+    for (const id of selectedIds) {
+      const asset = assets.find((a) => a.id === id);
+      if (asset) {
+        try {
+          await client.storage.from(asset.storage_bucket).remove([asset.storage_path]);
+        } catch { /* ignore */ }
+      }
+    }
+    await client.from('site_media').delete().in('id', Array.from(selectedIds));
+    setSelectedIds(new Set());
+    loadAssets();
+  }, [selectedIds, assets, loadAssets]);
+
+  // Replace handler
+  const handleReplace = useCallback(async () => {
+    if (!replaceItem || !replaceFile) return;
+    setReplaceUploading(true);
+    const client = getSupabaseClient();
+    try {
+      // Delete old file
+      await client.storage.from(replaceItem.storage_bucket).remove([replaceItem.storage_path]);
+
+      // Upload new file
+      const path = `${replaceItem.section || 'misc'}/${Date.now()}_${replaceFile.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+      const { data, error: uploadErr } = await client.storage
+        .from(replaceItem.storage_bucket)
+        .upload(path, replaceFile, { contentType: replaceFile.type, upsert: false });
+
+      if (uploadErr) throw uploadErr;
+
+      const { data: urlData } = client.storage.from(replaceItem.storage_bucket).getPublicUrl(data.path);
+
+      // Update DB
+      await client.from('site_media').update({
+        filename: replaceFile.name,
+        original_filename: replaceFile.name,
+        storage_path: data.path,
+        public_url: urlData.publicUrl,
+        file_size: replaceFile.size,
+        mime_type: replaceFile.type,
+        status: 'active',
+        updated_at: new Date().toISOString(),
+      }).eq('id', replaceItem.id);
+
+      setReplaceItem(null);
+      setReplaceFile(null);
+      loadAssets();
+    } catch (err) {
+      console.error('Replace failed:', err);
+    } finally {
+      setReplaceUploading(false);
+    }
+  }, [replaceItem, replaceFile, loadAssets]);
+
+  // Copy URL
+  const handleCopyUrl = useCallback((url: string, id: string) => {
+    navigator.clipboard.writeText(url).catch(() => {});
+    setCopied(id);
+    setTimeout(() => setCopied(null), 2000);
+  }, []);
+
+  // Drag and drop
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setDragOver(false);
-    handleFiles(e.dataTransfer.files);
-  }, [handleFiles]);
+    if (e.dataTransfer.files.length > 0) {
+      handleUpload(e.dataTransfer.files, uploadSection);
+    }
+  }, [handleUpload, uploadSection]);
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setDragOver(true);
-  }, []);
+  // Stats
+  const stats = useMemo(() => ({
+    total: assets.length,
+    images: assets.filter((a) => a.file_type === 'image').length,
+    videos: assets.filter((a) => a.file_type === 'video').length,
+    broken: assets.filter((a) => a.status === 'broken').length,
+  }), [assets]);
 
-  const handleDragLeave = useCallback(() => {
-    setDragOver(false);
-  }, []);
+  const formatSize = (bytes: number | null) => {
+    if (!bytes) return '—';
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
 
-  const handleDelete = useCallback((id: string) => {
-    deleteMedia(id);
+  const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      next.delete(id);
+      if (next.has(id)) next.delete(id); else next.add(id);
       return next;
     });
-  }, [deleteMedia]);
-
-  const handleBulkDelete = useCallback(() => {
-    selectedIds.forEach((id) => deleteMedia(id));
-    setSelectedIds(new Set());
-  }, [selectedIds, deleteMedia]);
-
-  const handleBulkMove = useCallback(() => {
-    setShowFolderModal(false);
-    setSelectedIds(new Set());
-  }, []);
-
-  const previewItemData = useMemo(() => {
-    if (!previewItem) return null;
-    return media.find((m) => m.id === previewItem) || null;
-  }, [previewItem, media]);
-
-  const allSelected = filtered.length > 0 && selectedIds.size === filtered.length;
-  const hasSelection = selectedIds.size > 0;
+  };
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <h1 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight">
-          {SECTION_LABELS[activeSection] || 'Media Library'}
-        </h1>
-        <p className="text-sm text-[#57534E] mt-1">Manage images, videos, and documents for your website.</p>
+        <h1 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight">Media Library</h1>
+        <p className="text-sm text-[#57534E] mt-1">Upload, manage, and track all media assets across the website.</p>
       </motion.div>
 
+      {/* Stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { label: 'Total', value: stats.total, color: '#1C1917' },
+          { label: 'Images', value: stats.images, color: '#A6852F' },
+          { label: 'Videos', value: stats.videos, color: '#8B5CF6' },
+          { label: 'Broken', value: stats.broken, color: '#DC2626' },
+        ].map((s) => (
+          <div key={s.label} className="rounded-xl border border-[#E8E5DF]/60 bg-white px-4 py-3">
+            <p className="text-[10px] text-[#57534E] uppercase tracking-wider">{s.label}</p>
+            <p className="text-lg font-medium mt-0.5" style={{ color: s.color }}>{s.value}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Upload Area */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
         <input
           ref={fileInputRef}
           type="file"
           multiple
-          accept=".jpg,.jpeg,.png,.webp,.mp4,.pdf,.docx"
+          accept="image/jpeg,image/png,image/webp,video/mp4"
           className="hidden"
-          onChange={(e) => handleFiles(e.target.files)}
+          onChange={(e) => { if (e.target.files) handleUpload(e.target.files, uploadSection); if (fileInputRef.current) fileInputRef.current.value = ''; }}
         />
+        <div className="flex items-center gap-3 mb-3">
+          <label className="text-[10px] font-medium text-[#57534E] uppercase tracking-wider">Upload to:</label>
+          <select
+            value={uploadSection}
+            onChange={(e) => setUploadSection(e.target.value)}
+            className="px-2.5 py-1.5 rounded-lg text-xs border border-[#E8E5DF]/60 bg-white text-[#1C1917] focus:outline-none focus:border-[#A6852F]/40"
+          >
+            {SECTION_OPTIONS.filter((s) => s.value).map((s) => (
+              <option key={s.value} value={s.value}>{s.label}</option>
+            ))}
+          </select>
+          {uploading && <Loader2 className="w-4 h-4 text-[#A6852F] animate-spin" />}
+        </div>
         <div
           onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
+          onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+          onDragLeave={() => setDragOver(false)}
           onClick={() => fileInputRef.current?.click()}
-          className={`rounded-2xl border-2 border-dashed p-8 text-center transition-all cursor-pointer ${
-            dragOver
-              ? 'border-[#A6852F] bg-[#A6852F]/5'
-              : 'border-[#E8E5DF] hover:border-[#A6852F]/40 bg-[#F3F1ED]/20 hover:bg-[#F3F1ED]/40'
+          className={`rounded-2xl border-2 border-dashed p-6 text-center transition-all cursor-pointer ${
+            dragOver ? 'border-[#A6852F] bg-[#A6852F]/5' : 'border-[#E8E5DF] hover:border-[#A6852F]/40 bg-[#F3F1ED]/20 hover:bg-[#F3F1ED]/40'
           }`}
         >
-          <Upload className="w-8 h-8 text-[#A6852F]/40 mx-auto mb-3" />
-          <p className="text-sm font-medium text-[#1C1917]">Drag and drop files here</p>
-          <p className="text-xs text-[#57534E] mt-1">
-            or click to browse. Supports JPG, PNG, WebP, MP4, PDF, DOCX.
-          </p>
+          <Upload className="w-7 h-7 text-[#A6852F]/40 mx-auto mb-2" />
+          <p className="text-sm font-medium text-[#1C1917]">Drag & drop files here</p>
+          <p className="text-xs text-[#57534E] mt-1">or click to browse. JPG, PNG, WebP, MP4.</p>
         </div>
       </motion.div>
 
-      <AnimatePresence>
-        {uploadingItems.size > 0 && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="space-y-2 overflow-hidden"
-          >
-            {Array.from(uploadingItems.entries()).map(([id, { name, progress }]) => (
-              <div key={id} className="rounded-xl border border-[#E8E5DF]/60 bg-white px-4 py-3 flex items-center gap-3">
-                <Loader2 className="w-4 h-4 text-[#A6852F] animate-spin shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium text-[#1C1917] truncate">{name}</p>
-                  <div className="mt-1.5 h-1.5 bg-[#E8E5DF]/40 rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full bg-[#A6852F] rounded-full"
-                      initial={{ width: '0%' }}
-                      animate={{ width: `${progress}%` }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  </div>
-                </div>
-                <span className="text-[10px] text-[#57534E] shrink-0">{Math.round(progress)}%</span>
-              </div>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+      {/* Filters */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2 flex-wrap">
-          {(['all', 'image', 'video', 'document'] as const).map((t) => {
-            const count = t === 'all' ? media.length : media.filter((m) => m.type === t).length;
-            return (
-              <button
-                key={t}
-                onClick={() => setFilterType(t)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
-                  filterType === t
-                    ? 'bg-[#A6852F]/10 text-[#A6852F]'
-                    : 'text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917]'
-                }`}
-              >
-                {t === 'all' ? 'All' : t.charAt(0).toUpperCase() + t.slice(1)}s
-                <span className="ml-1 text-[10px] opacity-60">({count})</span>
-              </button>
-            );
-          })}
+          {(['all', 'image', 'video'] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setFilterType(t)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                filterType === t ? 'bg-[#A6852F]/10 text-[#A6852F]' : 'text-[#57534E] hover:bg-[#F3F1ED]'
+              }`}
+            >
+              {t === 'all' ? 'All' : t.charAt(0).toUpperCase() + t.slice(1)}s
+            </button>
+          ))}
+          <select
+            value={filterSection}
+            onChange={(e) => setFilterSection(e.target.value)}
+            className="px-2.5 py-1.5 rounded-lg text-xs border border-[#E8E5DF]/60 bg-white text-[#57534E] focus:outline-none focus:border-[#A6852F]/40"
+          >
+            {SECTION_OPTIONS.map((s) => (
+              <option key={s.value} value={s.value}>{s.label}</option>
+            ))}
+          </select>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value as any)}
+            className="px-2.5 py-1.5 rounded-lg text-xs border border-[#E8E5DF]/60 bg-white text-[#57534E] focus:outline-none focus:border-[#A6852F]/40"
+          >
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="broken">Broken</option>
+            <option value="placeholder">Placeholder</option>
+          </select>
         </div>
-
         <div className="relative">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#57534E]/60" />
           <input
@@ -292,8 +371,9 @@ export const AdminMediaLibrary: React.FC<Props> = ({ activeSection }) => {
         </div>
       </div>
 
+      {/* Bulk actions */}
       <AnimatePresence>
-        {hasSelection && (
+        {selectedIds.size > 0 && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -302,12 +382,6 @@ export const AdminMediaLibrary: React.FC<Props> = ({ activeSection }) => {
           >
             <span className="text-xs font-medium text-[#A6852F]">{selectedIds.size} selected</span>
             <div className="flex-1" />
-            <button
-              onClick={() => setShowFolderModal(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-white border border-[#E8E5DF]/60 text-[#57534E] hover:text-[#1C1917] hover:border-[#A6852F]/20 transition-colors cursor-pointer"
-            >
-              <Folder className="w-3 h-3" /> Move
-            </button>
             <button
               onClick={handleBulkDelete}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-white border border-[#DC2626]/20 text-[#DC2626] hover:bg-[#DC2626]/5 transition-colors cursor-pointer"
@@ -318,27 +392,41 @@ export const AdminMediaLibrary: React.FC<Props> = ({ activeSection }) => {
         )}
       </AnimatePresence>
 
-      {filtered.length > 0 && (
-        <div className="flex items-center gap-2">
-          <button
-            onClick={toggleSelectAll}
-            className="flex items-center gap-1.5 text-xs text-[#57534E] hover:text-[#1C1917] transition-colors cursor-pointer"
-          >
-            {allSelected ? (
-              <CheckSquare className="w-3.5 h-3.5 text-[#A6852F]" />
-            ) : (
-              <Square className="w-3.5 h-3.5" />
-            )}
-            <span>Select all</span>
+      {/* View toggle + select all */}
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => setSelectedIds((prev) => prev.size === filtered.length ? new Set() : new Set(filtered.map((m) => m.id)))}
+          className="flex items-center gap-1.5 text-xs text-[#57534E] hover:text-[#1C1917] cursor-pointer"
+        >
+          {selectedIds.size === filtered.length && filtered.length > 0
+            ? <CheckSquare className="w-3.5 h-3.5 text-[#A6852F]" />
+            : <Square className="w-3.5 h-3.5" />}
+          Select all
+        </button>
+        <div className="flex items-center gap-1 bg-[#F3F1ED] rounded-lg p-0.5">
+          <button onClick={() => setViewMode('grid')} className={`p-1.5 rounded cursor-pointer ${viewMode === 'grid' ? 'bg-white shadow-sm text-[#A6852F]' : 'text-[#57534E]'}`}>
+            <Grid className="w-3.5 h-3.5" />
+          </button>
+          <button onClick={() => setViewMode('list')} className={`p-1.5 rounded cursor-pointer ${viewMode === 'list' ? 'bg-white shadow-sm text-[#A6852F]' : 'text-[#57534E]'}`}>
+            <List className="w-3.5 h-3.5" />
           </button>
         </div>
-      )}
+      </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        <AnimatePresence mode="popLayout">
+      {/* Assets grid/list */}
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-6 h-6 text-[#A6852F] animate-spin" />
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="text-center py-16">
+          <Image className="w-12 h-12 text-[#57534E]/20 mx-auto mb-3" />
+          <p className="text-sm font-medium text-[#1C1917]">No media found</p>
+          <p className="text-xs text-[#57534E] mt-1">{search ? 'Try a different search.' : 'Upload files using the area above.'}</p>
+        </div>
+      ) : viewMode === 'grid' ? (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {filtered.map((item, i) => {
-            const Icon = TYPE_ICONS[item.type];
-            const color = TYPE_COLORS[item.type];
             const isSelected = selectedIds.has(item.id);
             return (
               <motion.div
@@ -347,65 +435,72 @@ export const AdminMediaLibrary: React.FC<Props> = ({ activeSection }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3, delay: i * 0.03 }}
+                transition={{ duration: 0.3, delay: i * 0.02 }}
                 className={`rounded-xl border bg-white overflow-hidden transition-all group ${
-                  isSelected
-                    ? 'border-[#A6852F] shadow-sm shadow-[#A6852F]/10'
-                    : 'border-[#E8E5DF]/80 hover:border-[#A6852F]/20'
+                  isSelected ? 'border-[#A6852F] shadow-sm shadow-[#A6852F]/10' : 'border-[#E8E5DF]/80 hover:border-[#A6852F]/20'
                 }`}
               >
-                <div className="relative h-32 bg-[#F3F1ED]/60 flex items-center justify-center">
-                  <Icon className="w-10 h-10" style={{ color: `${color}40` }} />
+                <div className="relative h-32 bg-[#F3F1ED]/60 overflow-hidden">
+                  {item.file_type === 'image' ? (
+                    <img src={item.public_url} alt={item.filename} referrerPolicy="no-referrer" className="w-full h-full object-cover" loading="lazy"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                  ) : item.file_type === 'video' ? (
+                    <div className="w-full h-full flex items-center justify-center"><Film className="w-10 h-10 text-[#8B5CF6]/40" /></div>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center"><FileText className="w-10 h-10 text-[#3B82F6]/40" /></div>
+                  )}
+
+                  {item.status === 'broken' && (
+                    <div className="absolute top-2 left-2 px-1.5 py-0.5 rounded bg-[#DC2626] text-white text-[9px] font-medium flex items-center gap-1">
+                      <AlertTriangle className="w-2.5 h-2.5" /> BROKEN
+                    </div>
+                  )}
 
                   <button
                     onClick={(e) => { e.stopPropagation(); toggleSelect(item.id); }}
                     className="absolute top-2 left-2 w-5 h-5 rounded flex items-center justify-center bg-white/80 backdrop-blur-sm hover:bg-white transition-colors cursor-pointer"
                   >
-                    {isSelected ? (
-                      <CheckSquare className="w-3.5 h-3.5 text-[#A6852F]" />
-                    ) : (
-                      <Square className="w-3.5 h-3.5 text-[#57534E]/50" />
-                    )}
+                    {isSelected ? <CheckSquare className="w-3.5 h-3.5 text-[#A6852F]" /> : <Square className="w-3.5 h-3.5 text-[#57534E]/50" />}
                   </button>
 
-                  <span
-                    className="absolute top-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-medium text-white/90"
-                    style={{ backgroundColor: color }}
-                  >
-                    {item.type}
+                  <div className="absolute top-2 right-2 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button onClick={() => setPreviewItem(item)} className="w-6 h-6 rounded bg-white/80 backdrop-blur-sm flex items-center justify-center hover:bg-white cursor-pointer" title="Preview">
+                      <Eye className="w-3 h-3 text-[#57534E]" />
+                    </button>
+                    <button onClick={() => handleCopyUrl(item.public_url, item.id)} className="w-6 h-6 rounded bg-white/80 backdrop-blur-sm flex items-center justify-center hover:bg-white cursor-pointer" title="Copy URL">
+                      {copied === item.id ? <Check className="w-3 h-3 text-[#16A34A]" /> : <Copy className="w-3 h-3 text-[#57534E]" />}
+                    </button>
+                  </div>
+
+                  <span className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded text-[9px] font-medium text-white/90 bg-[#A6852F]/80">
+                    {item.file_type}
                   </span>
                 </div>
 
                 <div className="p-3">
-                  <p className="text-xs font-medium text-[#1C1917] truncate">{item.name}</p>
+                  <p className="text-xs font-medium text-[#1C1917] truncate" title={item.filename}>{item.filename}</p>
                   <div className="flex items-center gap-1.5 mt-1">
-                    <span className="text-[10px] text-[#57534E]">{item.size}</span>
+                    <span className="text-[10px] text-[#57534E]">{formatSize(item.file_size)}</span>
                     <span className="text-[10px] text-[#57534E]/40">|</span>
-                    <span className="text-[10px] text-[#57534E]">{item.date}</span>
+                    <span className="text-[10px] text-[#57534E]">{item.section || '—'}</span>
                   </div>
-                  <p className="text-[10px] text-[#57534E]/60 mt-0.5">by {item.uploadedBy}</p>
+                  {item.section && (
+                    <span className="inline-block mt-1 px-1.5 py-0.5 rounded text-[9px] bg-[#F3F1ED] text-[#57534E]">
+                      {item.section}
+                    </span>
+                  )}
 
                   <div className="flex items-center gap-1 mt-2 pt-2 border-t border-[#E8E5DF]/40">
-                    <button
-                      onClick={() => setPreviewItem(item.id)}
-                      className="w-6 h-6 rounded flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"
-                      title="Preview"
-                    >
-                      <Eye className="w-3 h-3" />
+                    <button onClick={() => setPreviewItem(item)} className="flex-1 px-2 py-1 rounded text-[10px] text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer text-center">
+                      Preview
                     </button>
-                    <button
-                      onClick={() => {}}
-                      className="w-6 h-6 rounded flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"
-                      title="Download"
-                    >
-                      <Download className="w-3 h-3" />
+                    <button onClick={() => handleCopyUrl(item.public_url, item.id)} className="flex-1 px-2 py-1 rounded text-[10px] text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer text-center">
+                      {copied === item.id ? 'Copied!' : 'Copy URL'}
                     </button>
-                    <div className="flex-1" />
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      className="w-6 h-6 rounded flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] transition-colors cursor-pointer"
-                      title="Delete"
-                    >
+                    <button onClick={() => { setReplaceItem(item); setReplaceFile(null); }} className="flex-1 px-2 py-1 rounded text-[10px] text-[#A6852F] hover:bg-[#A6852F]/5 transition-colors cursor-pointer text-center">
+                      Replace
+                    </button>
+                    <button onClick={() => setDeleteConfirm(item.id)} className="px-2 py-1 rounded text-[10px] text-[#DC2626] hover:bg-[#DC2626]/5 transition-colors cursor-pointer">
                       <Trash2 className="w-3 h-3" />
                     </button>
                   </div>
@@ -413,80 +508,122 @@ export const AdminMediaLibrary: React.FC<Props> = ({ activeSection }) => {
               </motion.div>
             );
           })}
-        </AnimatePresence>
-      </div>
-
-      {filtered.length === 0 && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-16">
-          <Image className="w-12 h-12 text-[#57534E]/20 mx-auto mb-3" />
-          <p className="text-sm font-medium text-[#1C1917]">No files found</p>
-          <p className="text-xs text-[#57534E] mt-1">
-            {search ? 'Try a different search term.' : 'Upload files using the area above.'}
-          </p>
-        </motion.div>
+        </div>
+      ) : (
+        /* List view */
+        <div className="rounded-xl border border-[#E8E5DF]/60 overflow-hidden">
+          <div className="bg-[#F3F1ED]/60 px-4 py-2 grid grid-cols-12 gap-3 text-[10px] font-medium text-[#57534E] uppercase tracking-wider">
+            <div className="col-span-1" />
+            <div className="col-span-4">File</div>
+            <div className="col-span-2">Section</div>
+            <div className="col-span-1">Type</div>
+            <div className="col-span-1">Size</div>
+            <div className="col-span-1">Status</div>
+            <div className="col-span-2 text-right">Actions</div>
+          </div>
+          {filtered.map((item) => (
+            <div key={item.id} className="px-4 py-2.5 grid grid-cols-12 gap-3 items-center border-t border-[#E8E5DF]/40 hover:bg-[#F3F1ED]/20">
+              <div className="col-span-1">
+                <button onClick={() => toggleSelect(item.id)} className="cursor-pointer">
+                  {selectedIds.has(item.id) ? <CheckSquare className="w-3.5 h-3.5 text-[#A6852F]" /> : <Square className="w-3.5 h-3.5 text-[#57534E]/50" />}
+                </button>
+              </div>
+              <div className="col-span-4 flex items-center gap-2 min-w-0">
+                {item.file_type === 'image' ? (
+                  <img src={item.public_url} alt="" referrerPolicy="no-referrer" className="w-8 h-8 rounded object-cover shrink-0" loading="lazy" />
+                ) : (
+                  <div className="w-8 h-8 rounded bg-[#F3F1ED] flex items-center justify-center shrink-0">
+                    {item.file_type === 'video' ? <Film className="w-4 h-4 text-[#8B5CF6]/40" /> : <FileText className="w-4 h-4 text-[#3B82F6]/40" />}
+                  </div>
+                )}
+                <span className="text-xs text-[#1C1917] truncate">{item.filename}</span>
+              </div>
+              <div className="col-span-2 text-xs text-[#57534E]">{item.section || '—'}</div>
+              <div className="col-span-1 text-xs text-[#57534E] capitalize">{item.file_type}</div>
+              <div className="col-span-1 text-xs text-[#57534E]">{formatSize(item.file_size)}</div>
+              <div className="col-span-1">
+                {item.status === 'broken' ? (
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-[#DC2626]/10 text-[#DC2626]">Broken</span>
+                ) : (
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-[#16A34A]/10 text-[#16A34A]">Active</span>
+                )}
+              </div>
+              <div className="col-span-2 flex items-center justify-end gap-1">
+                <button onClick={() => setPreviewItem(item)} className="p-1 rounded hover:bg-[#F3F1ED] cursor-pointer" title="Preview">
+                  <Eye className="w-3 h-3 text-[#57534E]" />
+                </button>
+                <button onClick={() => handleCopyUrl(item.public_url, item.id)} className="p-1 rounded hover:bg-[#F3F1ED] cursor-pointer" title="Copy URL">
+                  {copied === item.id ? <Check className="w-3 h-3 text-[#16A34A]" /> : <Copy className="w-3 h-3 text-[#57534E]" />}
+                </button>
+                <button onClick={() => { setReplaceItem(item); setReplaceFile(null); }} className="p-1 rounded hover:bg-[#F3F1ED] cursor-pointer" title="Replace">
+                  <Replace className="w-3 h-3 text-[#A6852F]" />
+                </button>
+                <button onClick={() => setDeleteConfirm(item.id)} className="p-1 rounded hover:bg-[#DC2626]/5 cursor-pointer" title="Delete">
+                  <Trash2 className="w-3 h-3 text-[#DC2626]" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
 
+      {/* Preview Modal */}
       <AnimatePresence>
-        {previewItemData && (
+        {previewItem && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
-              onClick={() => setPreviewItem(null)}
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            >
-              <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50" onClick={() => setPreviewItem(null)} />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E5DF]/40">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: `${TYPE_COLORS[previewItemData.type]}15` }}>
-                      {React.createElement(TYPE_ICONS[previewItemData.type], { className: 'w-4 h-4', style: { color: TYPE_COLORS[previewItemData.type] } })}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-[#1C1917] truncate">{previewItemData.name}</p>
-                      <p className="text-[10px] text-[#57534E]">{previewItemData.type} &mdash; {previewItemData.size}</p>
-                    </div>
-                  </div>
-                  <button onClick={() => setPreviewItem(null)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer shrink-0">
+                  <p className="text-sm font-medium text-[#1C1917] truncate">{previewItem.filename}</p>
+                  <button onClick={() => setPreviewItem(null)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] cursor-pointer">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
-
-                <div className="h-64 bg-[#F3F1ED]/60 flex items-center justify-center">
-                  {React.createElement(TYPE_ICONS[previewItemData.type], { className: 'w-16 h-16', style: { color: `${TYPE_COLORS[previewItemData.type]}30` } })}
+                <div className="bg-[#F3F1ED]/60 flex items-center justify-center min-h-[300px] max-h-[400px] overflow-hidden">
+                  {previewItem.file_type === 'image' ? (
+                    <img src={previewItem.public_url} alt={previewItem.filename} referrerPolicy="no-referrer" className="max-w-full max-h-[400px] object-contain" />
+                  ) : (
+                    <div className="py-20 text-center">
+                      {previewItem.file_type === 'video' ? <Film className="w-16 h-16 text-[#8B5CF6]/30 mx-auto" /> : <FileText className="w-16 h-16 text-[#3B82F6]/30 mx-auto" />}
+                      <p className="text-xs text-[#57534E] mt-3">Preview not available for this file type</p>
+                    </div>
+                  )}
                 </div>
-
                 <div className="px-5 py-4 border-t border-[#E8E5DF]/40">
-                  <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                     <div>
                       <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Size</p>
-                      <p className="text-[#1C1917] font-medium mt-0.5">{previewItemData.size}</p>
+                      <p className="text-[#1C1917] font-medium mt-0.5">{formatSize(previewItem.file_size)}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Uploaded</p>
-                      <p className="text-[#1C1917] font-medium mt-0.5">{previewItemData.date}</p>
+                      <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Section</p>
+                      <p className="text-[#1C1917] font-medium mt-0.5 capitalize">{previewItem.section || '—'}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Uploaded By</p>
-                      <p className="text-[#1C1917] font-medium mt-0.5">{previewItemData.uploadedBy}</p>
+                      <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Bucket</p>
+                      <p className="text-[#1C1917] font-medium mt-0.5">{previewItem.storage_bucket}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Type</p>
-                      <p className="text-[#1C1917] font-medium mt-0.5 capitalize">{previewItemData.type}</p>
+                      <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Status</p>
+                      <p className={`font-medium mt-0.5 ${previewItem.status === 'broken' ? 'text-[#DC2626]' : 'text-[#16A34A]'}`}>{previewItem.status}</p>
                     </div>
                   </div>
+                  <div className="mt-3 p-2 rounded-lg bg-[#F3F1ED]/60 break-all">
+                    <p className="text-[10px] text-[#57534E] uppercase tracking-wider mb-1">Public URL</p>
+                    <p className="text-[11px] text-[#1C1917] font-mono">{previewItem.public_url}</p>
+                  </div>
                   <div className="flex items-center gap-2 mt-4">
-                    <button onClick={() => {}} className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-[#A6852F] text-white hover:bg-[#8B6F1F] transition-colors cursor-pointer">
-                      <Download className="w-3 h-3" /> Download
+                    <button onClick={() => handleCopyUrl(previewItem.public_url, previewItem.id)} className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-[#A6852F] text-white hover:bg-[#8F7228] transition-colors cursor-pointer">
+                      {copied === previewItem.id ? <><Check className="w-3 h-3" /> Copied!</> : <><Copy className="w-3 h-3" /> Copy URL</>}
                     </button>
-                    <button onClick={() => { handleDelete(previewItemData.id); setPreviewItem(null); }} className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-[#DC2626]/20 text-[#DC2626] hover:bg-[#DC2626]/5 transition-colors cursor-pointer">
-                      <Trash2 className="w-3 h-3" /> Delete
+                    <a href={previewItem.public_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-[#E8E5DF]/60 text-[#57534E] hover:bg-[#F3F1ED] transition-colors">
+                      <ExternalLink className="w-3 h-3" /> Open
+                    </a>
+                    <button onClick={() => { setReplaceItem(previewItem); setReplaceFile(null); setPreviewItem(null); }} className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-[#A6852F]/20 text-[#A6852F] hover:bg-[#A6852F]/5 transition-colors cursor-pointer">
+                      <Replace className="w-3 h-3" /> Replace
                     </button>
                   </div>
                 </div>
@@ -496,57 +633,83 @@ export const AdminMediaLibrary: React.FC<Props> = ({ activeSection }) => {
         )}
       </AnimatePresence>
 
+      {/* Replace Modal */}
       <AnimatePresence>
-        {showFolderModal && (
+        {replaceItem && (
           <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
-              onClick={() => setShowFolderModal(false)}
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            >
-              <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50" onClick={() => { setReplaceItem(null); setReplaceFile(null); }} />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E5DF]/40">
-                  <div>
-                    <p className="text-sm font-medium text-[#1C1917]">Move to Folder</p>
-                    <p className="text-[10px] text-[#57534E] mt-0.5">{selectedIds.size} item{selectedIds.size !== 1 ? 's' : ''} selected</p>
-                  </div>
-                  <button onClick={() => setShowFolderModal(false)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
+                  <p className="text-sm font-medium text-[#1C1917]">Replace Image</p>
+                  <button onClick={() => { setReplaceItem(null); setReplaceFile(null); }} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] cursor-pointer">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
-
-                <div className="p-4 space-y-1.5 max-h-60 overflow-y-auto">
-                  {FOLDERS.map((folder) => (
-                    <button
-                      key={folder.id}
-                      onClick={() => setSelectedFolder(folder.id)}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs transition-colors cursor-pointer text-left ${
-                        selectedFolder === folder.id
-                          ? 'bg-[#A6852F]/10 text-[#A6852F]'
-                          : 'text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917]'
-                      }`}
-                    >
-                      <Folder className="w-4 h-4 shrink-0" />
-                      <span className="flex-1">{folder.name}</span>
-                      {selectedFolder === folder.id && <Check className="w-3.5 h-3.5 shrink-0" />}
+                <div className="p-5 space-y-4">
+                  <div className="aspect-video rounded-xl overflow-hidden bg-[#F3F1ED]">
+                    <img src={replaceItem.public_url} alt="Current" referrerPolicy="no-referrer" className="w-full h-full object-contain" />
+                  </div>
+                  <div className="rounded-xl border border-dashed border-[#A6852F]/40 p-4 text-center">
+                    {replaceFile ? (
+                      <div className="space-y-2">
+                        <p className="text-xs text-[#1C1917]">{replaceFile.name}</p>
+                        <p className="text-[10px] text-[#57534E]">{(replaceFile.size / 1024).toFixed(0)} KB</p>
+                      </div>
+                    ) : (
+                      <label className="cursor-pointer">
+                        <Upload className="w-6 h-6 text-[#A6852F]/40 mx-auto mb-2" />
+                        <p className="text-xs text-[#57534E]">Click to choose replacement file</p>
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => setReplaceFile(e.target.files?.[0] || null)} />
+                      </label>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => { setReplaceItem(null); setReplaceFile(null); }}
+                      className="flex-1 px-3 py-2 rounded-lg text-xs font-medium border border-[#E8E5DF]/60 text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
+                      Cancel
                     </button>
-                  ))}
+                    <button onClick={handleReplace} disabled={!replaceFile || replaceUploading}
+                      className="flex-1 px-3 py-2 rounded-lg text-xs font-medium bg-[#A6852F] text-white hover:bg-[#8F7228] transition-colors disabled:opacity-50 cursor-pointer inline-flex items-center justify-center gap-1.5">
+                      {replaceUploading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Replace className="w-3 h-3" />}
+                      {replaceUploading ? 'Replacing...' : 'Replace'}
+                    </button>
+                  </div>
                 </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
-                <div className="px-5 py-4 border-t border-[#E8E5DF]/40 flex items-center gap-2">
-                  <button onClick={() => setShowFolderModal(false)} className="flex-1 px-3 py-2 rounded-lg text-xs font-medium border border-[#E8E5DF]/60 text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
+      {/* Delete Confirmation */}
+      <AnimatePresence>
+        {deleteConfirm && (
+          <>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50" onClick={() => setDeleteConfirm(null)} />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-5" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-[#DC2626]/10 flex items-center justify-center">
+                    <Trash2 className="w-5 h-5 text-[#DC2626]" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-[#1C1917]">Delete Media</p>
+                    <p className="text-[11px] text-[#57534E]">This cannot be undone.</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setDeleteConfirm(null)}
+                    className="flex-1 px-3 py-2 rounded-lg text-xs font-medium border border-[#E8E5DF]/60 text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
                     Cancel
                   </button>
-                  <button onClick={handleBulkMove} className="flex-1 px-3 py-2 rounded-lg text-xs font-medium bg-[#A6852F] text-white hover:bg-[#8B6F1F] transition-colors cursor-pointer">
-                    Move Here
+                  <button onClick={() => { const asset = assets.find((a) => a.id === deleteConfirm); if (asset) handleDelete(asset); }}
+                    className="flex-1 px-3 py-2 rounded-lg text-xs font-medium bg-[#DC2626] text-white hover:bg-[#B91C1C] transition-colors cursor-pointer">
+                    Delete
                   </button>
                 </div>
               </div>

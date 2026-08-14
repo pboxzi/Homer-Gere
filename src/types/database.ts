@@ -118,6 +118,7 @@ export interface JourneyEntry {
   details: string | null;
   highlight: boolean;
   icon_name: string | null;
+  image_url: string | null;
   sort_order: number;
   created_at: string;
   updated_at: string;
@@ -138,7 +139,9 @@ export interface JournalArticle {
   views: number;
   seo_title: string | null;
   seo_description: string | null;
+  cover_image: string | null;
   og_image: string | null;
+  author_image: string | null;
   related_slugs: string[];
   featured: boolean;
   trending: boolean;
@@ -217,6 +220,7 @@ export interface Project {
   image: string | null;
   hero_image: string | null;
   poster_image: string | null;
+  logo_image: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -418,6 +422,26 @@ export interface AuditLog {
   created_at: string;
 }
 
+export interface SiteMedia {
+  id: string;
+  filename: string;
+  original_filename: string | null;
+  storage_bucket: string;
+  storage_path: string;
+  public_url: string;
+  file_type: string;
+  file_size: number | null;
+  mime_type: string | null;
+  width: number | null;
+  height: number | null;
+  section: string | null;
+  usage_context: string | null;
+  status: string;
+  uploaded_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 // ============================================================
 // DATABASE TYPE (Supabase generated format)
 // ============================================================
@@ -559,6 +583,11 @@ export interface Database {
         Row: AuditLog;
         Insert: Omit<AuditLog, 'id' | 'created_at'>;
         Update: Partial<Omit<AuditLog, 'id' | 'created_at'>>;
+      };
+      site_media: {
+        Row: SiteMedia;
+        Insert: Omit<SiteMedia, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<SiteMedia, 'id' | 'created_at' | 'updated_at'>>;
       };
     };
     Enums: {
