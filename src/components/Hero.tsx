@@ -41,7 +41,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div id="hero-container" className="relative rounded-[2rem] overflow-hidden bg-[#F3F1ED] min-h-[500px] sm:min-h-[600px] lg:min-h-[720px] w-full flex flex-col justify-between group transition-all duration-300">
           {/* Right Side — Image */}
-          <div className="relative lg:absolute top-0 right-0 w-full lg:w-[55%] h-[280px] sm:h-[380px] lg:h-full shrink-0">
+          <div className="relative lg:absolute top-0 right-0 w-full lg:w-[55%] h-[200px] sm:h-[280px] lg:h-full shrink-0">
             <img src={heroImage || IMAGES.homerGqLifestyleStudio} alt="Homer Gere - Editorial Portrait" referrerPolicy="no-referrer" className="w-full h-full object-cover object-top lg:object-center transition-transform duration-1000 ease-out group-hover:scale-[1.01]" />
             <div className="absolute inset-0 bg-gradient-to-r from-[#FAF9F7] via-[#FAF9F7]/20 to-transparent hidden lg:block pointer-events-none" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F7] via-[#FAF9F7]/20 to-transparent lg:hidden pointer-events-none" />
@@ -85,15 +85,15 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
             </div>
             {/* Statistics */}
             <div className="w-full pt-6 mt-4 sm:mt-6">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2 sm:gap-3">
                 {displayMetrics.map((metric, idx) => (
-                  <div key={idx} className="flex flex-col items-start p-4 transition-all duration-300 rounded-2xl hover:bg-[#F3F1ED]/60">
-                    <div className="flex items-center justify-between w-full mb-2">
-                      <div className="w-8 h-8 rounded-xl bg-[#A6852F]/10 flex items-center justify-center shrink-0">{getMetricIcon(metric.icon)}</div>
-                      <Sparkles className="w-2.5 h-2.5 text-[#A6852F]/40" />
+                  <div key={idx} className="flex flex-col items-start p-3 sm:p-4 transition-all duration-300 rounded-xl sm:rounded-2xl hover:bg-[#F3F1ED]/60">
+                    <div className="flex items-center justify-between w-full mb-1.5 sm:mb-2">
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-[#A6852F]/10 flex items-center justify-center shrink-0">{getMetricIcon(metric.icon)}</div>
+                      <Sparkles className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-[#A6852F]/40" />
                     </div>
-                    <div className="text-lg sm:text-xl font-editorial text-[#1C1917] tracking-tight">{metric.value}</div>
-                    <div className="text-xs text-[#57534E] font-medium tracking-wide mt-0.5 uppercase">{metric.label}</div>
+                    <div className="text-sm sm:text-xl font-editorial text-[#1C1917] tracking-tight">{metric.value}</div>
+                    <div className="text-[10px] sm:text-xs text-[#57534E] font-medium tracking-wide mt-0.5 uppercase">{metric.label}</div>
                   </div>
                 ))}
               </div>
