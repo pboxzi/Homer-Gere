@@ -36,14 +36,14 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
           <div className="relative z-10 p-4 sm:p-10 md:p-14 lg:p-16 lg:pb-12 w-full lg:w-[48%] flex flex-col items-start justify-between h-full space-y-4 lg:space-y-0">
             <div className="flex flex-col items-start gap-3 sm:gap-6 max-w-xl">
               {heroTitle && (
-                <h1 className="text-2xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight leading-tight">
+                <h1 className="text-xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight leading-tight">
                   {heroTitle}
                 </h1>
               )}
               {heroSubtitle && (
-                <p className="text-base sm:text-xl text-[#A6852F] font-medium">{heroSubtitle}</p>
+                <p className="text-sm sm:text-xl text-[#A6852F] font-medium">{heroSubtitle}</p>
               )}
-              <p className="text-xs sm:text-base text-[#57534E] font-normal leading-relaxed max-w-lg">
+              <p className="text-[11px] sm:text-base text-[#57534E] font-normal leading-relaxed max-w-lg">
                 {heroDescription}
               </p>
               <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-0 sm:mt-1">
