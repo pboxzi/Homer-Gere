@@ -47,7 +47,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
             <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F7] via-[#FAF9F7]/20 to-transparent lg:hidden pointer-events-none" />
           </div>
           {/* Left Side — Editorial Content */}
-          <div className="relative z-10 p-6 sm:p-10 md:p-14 lg:p-16 lg:pb-12 w-full lg:w-[48%] flex flex-col items-start justify-between h-full space-y-6 lg:space-y-0">
+          <div className="relative z-10 p-6 sm:p-10 md:p-14 lg:p-16 lg:pt-24 lg:pb-12 w-full lg:w-[48%] flex flex-col items-start justify-between h-full space-y-6 lg:space-y-0">
             <div className="flex flex-col items-start gap-5 sm:gap-6 max-w-xl">
               {heroTitle && (
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight leading-tight">
@@ -85,7 +85,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
             </div>
             {/* Statistics */}
             <div className="w-full pt-6 mt-4 sm:mt-6">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 {displayMetrics.map((metric, idx) => (
                   <div key={idx} className="flex flex-col items-start p-4 transition-all duration-300 rounded-2xl hover:bg-[#F3F1ED]/60">
                     <div className="flex items-center justify-between w-full mb-2">
