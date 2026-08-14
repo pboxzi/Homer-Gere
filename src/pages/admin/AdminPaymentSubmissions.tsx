@@ -90,6 +90,10 @@ export default function AdminPaymentSubmissions() {
             end_date: endDate,
             membership_request_id: memRequest.id,
             auto_renew: false,
+            renewal_date: null,
+            payment_id: null,
+            card_id: null,
+            last_payment_id: null,
           });
 
           // Generate membership card
@@ -137,6 +141,11 @@ export default function AdminPaymentSubmissions() {
     try {
       await paymentSubmissionsRepository.reject(sub.id, adminNotes);
       await paymentRequestsRepository.updateStatus(sub.payment_request_id, 'rejected');
+      await notifyService.paymentRejected(sub.user_id, {
+        email: '',
+        fullName: 'Member',
+        reason: adminNotes || 'Payment could not be verified.',
+      });
       setSuccessMsg(`Submission ${sub.submission_number} rejected`);
       setShowDetail(false);
       setAdminNotes('');
@@ -149,6 +158,14 @@ export default function AdminPaymentSubmissions() {
     setActionLoading(true);
     try {
       await paymentSubmissionsRepository.requestMoreInfo(sub.id, adminNotes);
+      await notifyService.paymentNeedsInfo(sub.user_id, {
+        email: '',
+        fullName: 'Member',
+        paymentType: 'membership',
+        amount: String(sub.amount_paid),
+        currency: sub.currency,
+        reason: adminNotes || 'Additional information required.',
+      });
       setSuccessMsg(`More info requested for ${sub.submission_number}`);
       setShowDetail(false);
       setAdminNotes('');

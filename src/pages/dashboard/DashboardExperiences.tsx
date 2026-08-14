@@ -5,6 +5,7 @@ import { useDashboard } from '../../context/DashboardContext';
 import { useSiteContent } from '../../context/SiteContentContext';
 import { useAuth } from '../../context/AuthContext';
 import { experienceRequestsRepository } from '../../lib/repositories';
+import { notifyService } from '../../lib/notifications';
 import type { Experience } from '../../types';
 
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -95,6 +96,12 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
       setSubmitted(true);
       refreshExperiences();
       logActivity('create', 'experience', `Experience request submitted: ${selectedExp.type}`, { experience_type: selectedExp.type });
+      await notifyService.experienceRequestSubmitted(user.id, {
+        email: profile.email,
+        fullName: `${profile.first_name} ${profile.last_name}`.trim(),
+        experienceType: selectedExp.type,
+        preferredDate: requestForm.preferredDate || 'TBD',
+      });
       setTimeout(() => { setSubmitted(false); setSelectedExp(null); setRequestForm({ preferredDate: '', location: '', guests: '1', specialRequirements: '', notes: '' }); }, 2000);
     } catch (e) { console.error(e); }
     setSubmitting(false);

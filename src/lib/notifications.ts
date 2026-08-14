@@ -272,6 +272,23 @@ export const notifyService = {
   },
 
   // --- Experience Workflow ---
+  async experienceRequestSubmitted(userId: string, data: { email: string; fullName: string; experienceType: string; preferredDate: string }) {
+    return notify({
+      userId,
+      type: 'experience',
+      title: 'Experience Request Submitted',
+      message: `Your ${data.experienceType} request for ${data.preferredDate} has been submitted for review.`,
+      link: '/dashboard/experiences',
+      category: 'experience',
+      emailTo: data.email,
+      emailTemplate: 'experience_request_submitted',
+      emailVariables: { full_name: data.fullName, experience_type: data.experienceType, preferred_date: data.preferredDate },
+      auditModule: 'experience_requests',
+      auditAction: 'create',
+      auditRecordId: userId,
+    });
+  },
+
   async experienceApproved(userId: string, data: { email: string; fullName: string; experienceType: string; eventDate: string }) {
     return notify({
       userId,
@@ -320,6 +337,61 @@ export const notifyService = {
       emailTo: data.email,
       emailTemplate: 'experience_payment_required',
       emailVariables: { full_name: data.fullName, experience_type: data.experienceType, amount: data.amount, currency: data.currency, payment_instructions: data.paymentInstructions },
+    });
+  },
+
+  async experienceRejected(userId: string, data: { email: string; fullName: string; experienceType: string; rejectionReason: string }) {
+    return notify({
+      userId,
+      type: 'experience',
+      title: 'Experience Request Update',
+      message: `Your ${data.experienceType} request has been reviewed. Please check your email for details.`,
+      link: '/dashboard/experiences',
+      category: 'experience',
+      emailTo: data.email,
+      emailTemplate: 'experience_rejected',
+      emailVariables: { full_name: data.fullName, experience_type: data.experienceType, rejection_reason: data.rejectionReason },
+      auditModule: 'experience_requests',
+      auditAction: 'reject',
+      auditRecordId: userId,
+    });
+  },
+
+  // --- Payment Needs Info ---
+  async paymentNeedsInfo(userId: string, data: { email: string; fullName: string; paymentType: string; amount: string; currency: string; reason: string }) {
+    return notify({
+      userId,
+      type: 'payment',
+      title: 'Payment Information Needed',
+      message: `Additional information is required for your ${data.paymentType} payment of ${data.amount} ${data.currency}.`,
+      link: '/dashboard/payments',
+      priority: 'high',
+      category: 'payment',
+      emailTo: data.email,
+      emailTemplate: 'payment_needs_info',
+      emailVariables: { full_name: data.fullName, payment_type: data.paymentType, amount: data.amount, currency: data.currency, reason: data.reason },
+      auditModule: 'payments',
+      auditAction: 'update',
+      auditRecordId: userId,
+    });
+  },
+
+  // --- Membership Card Actions ---
+  async membershipCardUpdated(userId: string, data: { email: string; fullName: string; cardNumber: string; action: string; reason: string }) {
+    return notify({
+      userId,
+      type: 'membership',
+      title: `Membership Card ${data.action}`,
+      message: `Your membership card ${data.cardNumber} has been ${data.action.toLowerCase()}. ${data.reason}`,
+      link: '/dashboard/membership-card',
+      priority: 'high',
+      category: 'membership',
+      emailTo: data.email,
+      emailTemplate: 'membership_card_updated',
+      emailVariables: { full_name: data.fullName, card_number: data.cardNumber, action: data.action, reason: data.reason },
+      auditModule: 'membership_cards',
+      auditAction: 'update',
+      auditRecordId: userId,
     });
   },
 

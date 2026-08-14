@@ -65,6 +65,14 @@ export default function AdminPaymentRequests() {
     setActionLoading(true);
     try {
       await paymentRequestsRepository.sendInstructions(selected.id, instructionsForm.instructions, instructionsForm.methodId);
+      await notifyService.paymentInstructionsSent(selected.user_id, {
+        email: selected.user_id ? '' : '',
+        fullName: 'Member',
+        amount: String(selected.amount),
+        currency: selected.currency,
+        paymentInstructions: instructionsForm.instructions,
+        dueDate: selected.due_date || '',
+      });
       setSuccessMsg('Payment instructions sent');
       setShowInstructionsModal(false);
       load();
@@ -76,6 +84,13 @@ export default function AdminPaymentRequests() {
     setActionLoading(true);
     try {
       await paymentRequestsRepository.updateStatus(req.id, 'approved', 'admin');
+      await notifyService.paymentApproved(req.user_id, {
+        email: '',
+        fullName: 'Member',
+        planName: req.payment_type,
+        cardNumber: '',
+        expiryDate: '',
+      });
       setSuccessMsg(`Payment ${req.request_number} approved`);
       setShowDetail(false);
       load();
@@ -88,6 +103,11 @@ export default function AdminPaymentRequests() {
     setActionLoading(true);
     try {
       await paymentRequestsRepository.updateStatus(req.id, 'rejected');
+      await notifyService.paymentRejected(req.user_id, {
+        email: '',
+        fullName: 'Member',
+        reason: 'Payment could not be verified.',
+      });
       setSuccessMsg(`Payment ${req.request_number} rejected`);
       setShowDetail(false);
       load();

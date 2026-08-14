@@ -56,7 +56,7 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
     }
   }, [user?.id, profile?.country]);
 
-  const handleRequestMembership = (plan: MembershipPlan) => {
+  const handleRequestMembership = (plan: MembershipTier) => {
     setSelectedPlan(plan);
     setSubmitted(false);
     setRequestForm(f => ({ ...f, preferredPaymentMethod: '', notes: '' }));
@@ -197,10 +197,10 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
             const hasActiveRequest = !!activeRequest;
             const tierColor = TIER_COLORS[tier.id] || '#A6852F';
             return (
-              <motion.div key={tier.id} className="rounded-2xl p-5 text-white relative overflow-hidden transition-all duration-500" style={{ background: `linear-gradient(135deg, ${tierColor}F5, ${tierColor}E8 50%, ${tierColor}D9 75%, ${tierColor}E6)`, boxShadow: `0 10px 36px ${tierColor}55, 0 0 50px ${tierColor}25, inset 0 1px 0 rgba(255,255,255,0.15)` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
-                <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-15" style={{ background: `radial-gradient(circle, white, transparent)`, transform: 'translate(25%, -25%)' }} />
-                <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full opacity-15" style={{ background: `radial-gradient(circle, white, transparent)`, transform: 'translate(-25%, 25%)' }} />
-                <div className="absolute top-1/2 left-1/2 w-full h-full opacity-5" style={{ background: `radial-gradient(circle, white, transparent)`, transform: 'translate(-50%, -50%)' }} />
+              <motion.div key={tier.id} className="rounded-2xl p-5 text-white relative overflow-hidden transition-all duration-500" style={{ background: `linear-gradient(135deg, ${tierColor}F5, ${tierColor}E8 50%, ${tierColor}D9 75%, ${tierColor}E6)`, boxShadow: `0 12px 50px ${tierColor}80, 0 0 80px ${tierColor}55, inset 0 1px 0 rgba(255,255,255,0.2)` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
+                <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-25" style={{ background: `radial-gradient(circle, white, transparent)`, transform: 'translate(25%, -25%)' }} />
+                <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full opacity-25" style={{ background: `radial-gradient(circle, white, transparent)`, transform: 'translate(-25%, 25%)' }} />
+                <div className="absolute top-1/2 left-1/2 w-full h-full opacity-10" style={{ background: `radial-gradient(circle, white, transparent)`, transform: 'translate(-50%, -50%)' }} />
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-5">
                     <div className="w-11 h-8 rounded-md border border-white/30 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))' }}>
@@ -273,7 +273,7 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
         {showRequestModal && selectedPlan && (
           <motion.div className="fixed inset-0 z-50 flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => !submitting && setShowRequestModal(false)} />
-            <motion.div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4" initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}>
+            <motion.div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-5 space-y-4" initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}>
               {submitted ? (
                 <div className="text-center py-8">
                   <div className="w-12 h-12 rounded-full bg-[#16A34A]/22 flex items-center justify-center mx-auto mb-3"><Check className="w-6 h-6 text-[#16A34A]" /></div>
@@ -284,26 +284,28 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
               ) : (
                 <>
                   {/* Tier-colored header */}
-                  <div className="relative rounded-2xl p-5 text-white overflow-hidden" style={{ background: `linear-gradient(135deg, ${TIER_COLORS[selectedPlan.id] || '#A6852F'}F5, ${TIER_COLORS[selectedPlan.id] || '#A6852F'}E8 50%, ${TIER_COLORS[selectedPlan.id] || '#A6852F'}D9 75%, ${TIER_COLORS[selectedPlan.id] || '#A6852F'}E6)`, boxShadow: `0 8px 30px ${TIER_COLORS[selectedPlan.id] || '#A6852F'}45` }}>
-                    <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(25%, -25%)' }} />
-                    <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(-25%, 25%)' }} />
+                  <div className="relative rounded-xl p-4 text-white overflow-hidden" style={{ background: `linear-gradient(135deg, ${TIER_COLORS[selectedPlan.id] || '#A6852F'}F5, ${TIER_COLORS[selectedPlan.id] || '#A6852F'}E8 50%, ${TIER_COLORS[selectedPlan.id] || '#A6852F'}D9 75%, ${TIER_COLORS[selectedPlan.id] || '#A6852F'}E6)`, boxShadow: `0 4px 18px ${TIER_COLORS[selectedPlan.id] || '#A6852F'}35` }}>
+                    <div className="absolute top-0 right-0 w-20 h-20 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(25%, -25%)' }} />
+                    <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(-25%, 25%)' }} />
                     <div className="relative z-10">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="w-11 h-8 rounded-md border border-white/30 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))' }}>
-                          <div className="w-6 h-4 rounded-sm bg-white/40" />
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="w-10 h-7 rounded border border-white/30 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))' }}>
+                          <div className="w-5 h-3.5 rounded-sm bg-white/40" />
                         </div>
-                        <button onClick={() => setShowRequestModal(false)} className="w-8 h-8 rounded-lg flex items-center justify-center text-white/80 hover:bg-white/15 cursor-pointer transition-colors"><X className="w-4 h-4" /></button>
+                        <button onClick={() => setShowRequestModal(false)} className="w-7 h-7 rounded-lg flex items-center justify-center text-white/80 hover:bg-white/15 cursor-pointer transition-colors"><X className="w-3.5 h-3.5" /></button>
                       </div>
-                      <p className="text-[11px] uppercase tracking-widest opacity-70 mb-1">Request {selectedPlan.name}</p>
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-3xl font-editorial">${selectedPlan.price}</span>
-                        <span className="text-sm opacity-70">/{selectedPlan.period}</span>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-[10px] uppercase tracking-widest opacity-70 mb-0.5">{selectedPlan.name} Plan</p>
+                          <p className="text-2xl font-editorial">${selectedPlan.price}<span className="text-xs opacity-60">/{selectedPlan.period}</span></p>
+                        </div>
+                        <div className="opacity-80">{TIER_ICONS[selectedPlan.id] || <Crown className="w-5 h-5" />}</div>
                       </div>
                       {selectedPlan.features && selectedPlan.features.length > 0 && (
-                        <ul className="mt-3 space-y-1.5 border-t border-white/20 pt-3">
+                        <ul className="mt-2.5 space-y-1 border-t border-white/20 pt-2.5">
                           {selectedPlan.features.slice(0, 3).map((f, i) => (
-                            <li key={i} className="flex items-center gap-2 text-[11px] text-white/80">
-                              <Check className="w-3 h-3 shrink-0" />
+                            <li key={i} className="flex items-center gap-1.5 text-[10px] text-white/80">
+                              <Check className="w-2.5 h-2.5 shrink-0" />
                               <span>{typeof f === 'string' ? f : (f as any).label || JSON.stringify(f)}</span>
                             </li>
                           ))}
@@ -315,23 +317,23 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
                   {/* Form */}
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-[11px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Payment Method</label>
+                      <label className="block text-[10px] font-bold text-[#57534E] uppercase tracking-wider mb-1.5">Preferred Payment Method</label>
                       <select value={requestForm.preferredPaymentMethod} onChange={e => setRequestForm(f => ({ ...f, preferredPaymentMethod: e.target.value }))}
-                        className="w-full px-3.5 py-2.5 border border-[#E8E5DF]/80 rounded-xl text-sm bg-[#FAF9F7] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all cursor-pointer">
+                        className="w-full px-3.5 py-2.5 border border-[#E8E5DF]/80 rounded-xl text-sm bg-[#FAF9F7] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F]/50 transition-all cursor-pointer shadow-sm shadow-black/3">
                         <option value="">Select method...</option>
                         {paymentMethods.map(m => <option key={m.id} value={m.id}>{m.name} ({m.type.replace(/_/g, ' ')})</option>)}
                       </select>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-[11px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Country</label>
+                        <label className="block text-[10px] font-bold text-[#57534E] uppercase tracking-wider mb-1.5">Country</label>
                         <input value={requestForm.country} onChange={e => setRequestForm(f => ({ ...f, country: e.target.value }))}
-                          className="w-full px-3.5 py-2.5 border border-[#E8E5DF]/80 rounded-xl text-sm bg-[#FAF9F7] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all" placeholder="Your country" />
+                          className="w-full px-3.5 py-2.5 border border-[#E8E5DF]/80 rounded-xl text-sm bg-[#FAF9F7] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F]/50 transition-all shadow-sm shadow-black/3" placeholder="Your country" />
                       </div>
                       <div>
-                        <label className="block text-[11px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Currency</label>
+                        <label className="block text-[10px] font-bold text-[#57534E] uppercase tracking-wider mb-1.5">Currency</label>
                         <select value={requestForm.currency} onChange={e => setRequestForm(f => ({ ...f, currency: e.target.value }))}
-                          className="w-full px-3.5 py-2.5 border border-[#E8E5DF]/80 rounded-xl text-sm bg-[#FAF9F7] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all cursor-pointer">
+                          className="w-full px-3.5 py-2.5 border border-[#E8E5DF]/80 rounded-xl text-sm bg-[#FAF9F7] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F]/50 transition-all cursor-pointer shadow-sm shadow-black/3">
                           <option value="USD">USD ($)</option>
                           <option value="EUR">EUR (€)</option>
                           <option value="GBP">GBP (£)</option>
@@ -342,16 +344,16 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
                       </div>
                     </div>
                     <div>
-                      <label className="block text-[11px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Notes</label>
+                      <label className="block text-[10px] font-bold text-[#57534E] uppercase tracking-wider mb-1.5">Notes</label>
                       <textarea value={requestForm.notes} onChange={e => setRequestForm(f => ({ ...f, notes: e.target.value }))}
-                        className="w-full px-3.5 py-2.5 border border-[#E8E5DF]/80 rounded-xl text-sm bg-[#FAF9F7] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all min-h-[70px] resize-none" placeholder="Any additional notes (optional)..." />
+                        className="w-full px-3.5 py-2.5 border border-[#E8E5DF]/80 rounded-xl text-sm bg-[#FAF9F7] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F]/50 transition-all min-h-[70px] resize-none shadow-sm shadow-black/3" placeholder="Any additional notes (optional)..." />
                     </div>
                   </div>
 
                   {/* Actions */}
                   <div className="flex gap-2.5 pt-1">
                     <button onClick={handleSubmitRequest} disabled={actionLoading || submitting}
-                      className="flex-1 py-3 bg-[#1C1917] hover:bg-[#292524] text-white rounded-xl shadow-lg shadow-[#1C1917]/20 text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-[0.98]">
+                      className="flex-1 py-3 bg-[#A6852F] hover:bg-[#8B6F1F] text-white rounded-xl shadow-md shadow-[#A6852F]/25 text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-[0.98]">
                       <Send className="w-4 h-4" /> {submitting ? 'Submitting...' : 'Submit Request'}
                     </button>
                     <button onClick={() => setShowRequestModal(false)} disabled={submitting} className="px-5 py-3 bg-[#F3F1ED] text-[#57534E] rounded-xl hover:bg-[#E8E5DF] text-sm font-medium disabled:opacity-50 transition-all cursor-pointer">Cancel</button>
