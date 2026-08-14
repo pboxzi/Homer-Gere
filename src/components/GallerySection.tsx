@@ -96,7 +96,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
                 loading="lazy" />
 
               {/* Hover Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/80 via-[#111827]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-6 flex flex-col justify-end text-white">
+              <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/80 via-[#111827]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-4 sm:p-6 flex flex-col justify-end text-white">
                 <span className="text-[10px] font-medium tracking-widest text-[#A6852F] uppercase">
                   {item.category}
                 </span>

@@ -310,7 +310,7 @@ export const DashboardChat: React.FC = () => {
           {loading ? (
             <div className="text-center py-8 text-[#57534E] text-sm">Loading...</div>
           ) : filteredConversations.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/45 p-8 text-center">
+            <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/45 p-5 sm:p-8 text-center">
               <MessageSquare className="w-6 h-6 text-[#57534E]/30 mx-auto mb-2" />
               <p className="text-sm font-medium text-[#1C1917]">{searchQuery ? 'No matching conversations' : 'No conversations yet'}</p>
               <p className="text-xs text-[#57534E] mt-1">{searchQuery ? 'Try a different search term' : 'Start a conversation above'}</p>

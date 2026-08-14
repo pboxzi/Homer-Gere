@@ -60,7 +60,7 @@ export default function DashboardMembershipCard() {
       {loading ? (
         <div className="text-center py-12 text-[#6b7280]">Loading...</div>
       ) : !card ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+        <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-8 text-center">
           <CreditCard className="w-12 h-12 text-gray-300 mx-auto mb-3" />
           <p className="text-[#6b7280]">No active membership card</p>
           <p className="text-sm text-[#6b7280] mt-1">Your card will appear here once your membership is activated</p>
@@ -68,7 +68,7 @@ export default function DashboardMembershipCard() {
       ) : (
         <div className="space-y-6">
           {/* Card Preview */}
-          <div className="bg-gradient-to-br from-[#A6852F] to-[#8B6F24] rounded-2xl p-8 text-white shadow-xl shadow-[#A6852F]/20 max-w-md mx-auto">
+          <div className="bg-gradient-to-br from-[#A6852F] to-[#8B6F24] rounded-2xl p-5 sm:p-8 text-white shadow-xl shadow-[#A6852F]/20 max-w-md mx-auto">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <div className="text-lg font-bold tracking-[0.15em]">HOMER GERE</div>

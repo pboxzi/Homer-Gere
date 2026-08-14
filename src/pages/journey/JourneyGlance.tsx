@@ -19,7 +19,7 @@ export const JourneyGlance: React.FC = () => {
   return (
     <section id="journey-glance" ref={sectionRef} className="py-24 sm:py-32 bg-[#FAF9F7]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-12 lg:gap-20 items-start">
           {/* Left — Portrait */}
           <motion.div
             className="lg:col-span-5"

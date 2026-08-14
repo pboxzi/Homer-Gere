@@ -111,7 +111,7 @@ export default function DashboardDownloads() {
       {loading ? (
         <div className="text-center py-12 text-[#57534E]">Loading...</div>
       ) : filtered.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/30 p-12 text-center">
+        <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/30 p-6 sm:p-12 text-center">
           <Download className="w-8 h-8 text-[#57534E]/30 mx-auto mb-3" />
           <p className="text-sm font-medium text-[#1C1917]">{searchQuery ? 'No matching downloads' : 'No downloads available yet'}</p>
           <p className="text-xs text-[#57534E] mt-1">{searchQuery ? 'Try a different search term' : 'Check back later for new content'}</p>

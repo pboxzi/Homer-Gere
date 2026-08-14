@@ -64,7 +64,7 @@ export const ChatTypeSelector: React.FC<ChatTypeSelectorProps> = ({ onSelect }) 
         </motion.div>
 
         {/* Options */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
           {/* Fan Chat */}
           <motion.button
             onClick={() => onSelect('fan')}

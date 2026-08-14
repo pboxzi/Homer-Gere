@@ -10,7 +10,7 @@ export const JourneyQuote: React.FC = () => {
   return (
     <section id="journey-quote" ref={sectionRef} className="py-24 sm:py-32 bg-[#F3F1ED]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-12 lg:gap-20 items-center">
           {/* Portrait */}
           <motion.div
             className="lg:col-span-5 flex justify-center"

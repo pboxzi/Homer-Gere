@@ -27,7 +27,7 @@ export const GalleryStory: React.FC = () => {
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 items-center">
           {/* Image */}
           <motion.div
             className="rounded-[2rem] overflow-hidden"

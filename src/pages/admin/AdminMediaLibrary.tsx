@@ -567,69 +567,100 @@ export const AdminMediaLibrary: React.FC<Props> = ({ activeSection }) => {
         </div>
       )}
 
-      {/* Preview Modal */}
+      {/* Preview Modal — modern full-screen lightbox */}
       <AnimatePresence>
         {previewItem && (
-          <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50" onClick={() => setPreviewItem(null)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4">
-              <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
-                <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E5DF]/40 shrink-0">
-                  <p className="text-sm font-medium text-[#1C1917] truncate pr-3">{previewItem.filename}</p>
-                  <button onClick={() => setPreviewItem(null)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] shrink-0 cursor-pointer">
-                    <X className="w-4 h-4" />
+          <motion.div
+            key="preview-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 flex flex-col bg-black/80 backdrop-blur-md"
+            onClick={() => setPreviewItem(null)}
+          >
+            {/* Top bar */}
+            <div className="flex items-center justify-between px-4 sm:px-6 py-3 shrink-0" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="px-2 py-0.5 rounded-md bg-white/10 text-white/70 text-[10px] font-medium uppercase tracking-wider shrink-0">
+                  {previewItem.file_type}
+                </span>
+                <p className="text-sm text-white/90 truncate">{previewItem.filename}</p>
+                {previewItem.status === 'broken' && (
+                  <span className="px-2 py-0.5 rounded-md bg-red-500/20 text-red-300 text-[10px] font-medium shrink-0">Broken</span>
+                )}
+              </div>
+              <button
+                onClick={() => setPreviewItem(null)}
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/80 hover:text-white transition-all shrink-0 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Image area */}
+            <div className="flex-1 flex items-center justify-center px-4 sm:px-8 pb-2 min-h-0" onClick={(e) => e.stopPropagation()}>
+              {previewItem.file_type === 'image' ? (
+                <img
+                  src={previewItem.public_url}
+                  alt={previewItem.filename}
+                  referrerPolicy="no-referrer"
+                  className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+                />
+              ) : (
+                <div className="flex flex-col items-center gap-3 text-white/40">
+                  {previewItem.file_type === 'video' ? <Film className="w-20 h-20" /> : <FileText className="w-20 h-20" />}
+                  <p className="text-sm">Preview not available for this file type</p>
+                </div>
+              )}
+            </div>
+
+            {/* Bottom bar */}
+            <div
+              className="shrink-0 px-4 sm:px-6 py-3 bg-black/40 backdrop-blur-sm border-t border-white/10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                {/* Metadata */}
+                <div className="flex items-center gap-4 text-xs text-white/50 min-w-0 flex-1">
+                  <span>{formatSize(previewItem.file_size)}</span>
+                  <span className="w-px h-3 bg-white/20" />
+                  <span className="capitalize">{previewItem.section || '—'}</span>
+                  <span className="w-px h-3 bg-white/20" />
+                  <span className="capitalize">{previewItem.storage_bucket}</span>
+                </div>
+                {/* Actions */}
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={() => handleCopyUrl(previewItem.public_url, previewItem.id)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                  >
+                    {copied === previewItem.id ? <><Check className="w-3.5 h-3.5" /> Copied!</> : <><Copy className="w-3.5 h-3.5" /> Copy URL</>}
+                  </button>
+                  <a
+                    href={previewItem.public_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium bg-white/10 hover:bg-white/20 text-white transition-colors"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" /> Open
+                  </a>
+                  <button
+                    onClick={() => { setReplaceItem(previewItem); setReplaceFile(null); setPreviewItem(null); }}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium bg-[#A6852F] hover:bg-[#8F7228] text-white transition-colors cursor-pointer"
+                  >
+                    <Replace className="w-3.5 h-3.5" /> Replace
+                  </button>
+                  <button
+                    onClick={() => { setDeleteConfirm(previewItem.id); setPreviewItem(null); }}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium bg-red-500/20 hover:bg-red-500/30 text-red-300 transition-colors cursor-pointer"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
-                <div className="bg-[#F3F1ED]/60 flex items-center justify-center min-h-[200px] max-h-[50vh] overflow-hidden shrink-0">
-                  {previewItem.file_type === 'image' ? (
-                    <img src={previewItem.public_url} alt={previewItem.filename} referrerPolicy="no-referrer" className="max-w-full max-h-[50vh] object-contain" />
-                  ) : (
-                    <div className="py-20 text-center">
-                      {previewItem.file_type === 'video' ? <Film className="w-16 h-16 text-[#8B5CF6]/30 mx-auto" /> : <FileText className="w-16 h-16 text-[#3B82F6]/30 mx-auto" />}
-                      <p className="text-xs text-[#57534E] mt-3">Preview not available for this file type</p>
-                    </div>
-                  )}
-                </div>
-                <div className="px-5 py-4 border-t border-[#E8E5DF]/40 overflow-y-auto">
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                    <div>
-                      <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Size</p>
-                      <p className="text-[#1C1917] font-medium mt-0.5">{formatSize(previewItem.file_size)}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Section</p>
-                      <p className="text-[#1C1917] font-medium mt-0.5 capitalize">{previewItem.section || '—'}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Bucket</p>
-                      <p className="text-[#1C1917] font-medium mt-0.5">{previewItem.storage_bucket}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Status</p>
-                      <p className={`font-medium mt-0.5 ${previewItem.status === 'broken' ? 'text-[#DC2626]' : 'text-[#16A34A]'}`}>{previewItem.status}</p>
-                    </div>
-                  </div>
-                  <div className="mt-3 p-2 rounded-lg bg-[#F3F1ED]/60 break-all">
-                    <p className="text-[10px] text-[#57534E] uppercase tracking-wider mb-1">Public URL</p>
-                    <p className="text-[11px] text-[#1C1917] font-mono">{previewItem.public_url}</p>
-                  </div>
-                  <div className="flex items-center gap-2 mt-4">
-                    <button onClick={() => handleCopyUrl(previewItem.public_url, previewItem.id)} className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium bg-[#A6852F] text-white hover:bg-[#8F7228] transition-colors cursor-pointer">
-                      {copied === previewItem.id ? <><Check className="w-3 h-3" /> Copied!</> : <><Copy className="w-3 h-3" /> Copy URL</>}
-                    </button>
-                    <a href={previewItem.public_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-[#E8E5DF]/60 text-[#57534E] hover:bg-[#F3F1ED] transition-colors">
-                      <ExternalLink className="w-3 h-3" /> Open
-                    </a>
-                    <button onClick={() => { setReplaceItem(previewItem); setReplaceFile(null); setPreviewItem(null); }} className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border border-[#A6852F]/20 text-[#A6852F] hover:bg-[#A6852F]/5 transition-colors cursor-pointer">
-                      <Replace className="w-3 h-3" /> Replace
-                    </button>
-                  </div>
-                </div>
               </div>
-            </motion.div>
-          </>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 

@@ -133,7 +133,7 @@ export default function DashboardPayments() {
       {loading ? (
         <div className="text-center py-12 text-[#57534E]">Loading...</div>
       ) : requests.length === 0 ? (
-        <div className="bg-white rounded-xl border border-[#A6852F]/20 p-8 text-center shadow-sm shadow-[#A6852F]/5">
+        <div className="bg-white rounded-xl border border-[#A6852F]/20 p-5 sm:p-8 text-center shadow-sm shadow-[#A6852F]/5">
           <DollarSign className="w-12 h-12 text-gray-300 mx-auto mb-3" />
           <p className="text-[#57534E]">No payment requests</p>
         </div>

@@ -121,7 +121,7 @@ export const DashboardSecurity: React.FC = () => {
         {loadingHistory ? (
           <div className="text-center py-8 text-[#57534E] text-sm">Loading...</div>
         ) : loginHistory.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/45 p-8 text-center">
+          <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/45 p-5 sm:p-8 text-center">
             <Clock className="w-6 h-6 text-[#57534E]/30 mx-auto mb-2" />
             <p className="text-sm text-[#57534E]">No login history yet</p>
           </div>

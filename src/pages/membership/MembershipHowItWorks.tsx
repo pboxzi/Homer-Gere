@@ -37,7 +37,7 @@ export const MembershipHowItWorks: React.FC = () => {
         </motion.div>
 
         {/* Steps */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {MEMBERSHIP_STEPS.map((step, idx) => (
             <motion.div
               key={step.id}

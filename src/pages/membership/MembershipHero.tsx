@@ -10,7 +10,7 @@ interface MembershipHeroProps {
 
 export const MembershipHero: React.FC<MembershipHeroProps> = ({ onBecomeMember, onComparePlans }) => {
   return (
-    <section className="relative h-[75vh] min-h-[450px] sm:min-h-[550px] bg-[#FAF9F7] overflow-hidden pt-20">
+    <section className="relative h-[75vh] min-h-[320px] sm:min-h-[550px] bg-[#FAF9F7] overflow-hidden pt-20">
       {/* Background Image */}
       <motion.div
         className="absolute inset-0 z-0"

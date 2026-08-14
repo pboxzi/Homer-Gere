@@ -82,7 +82,7 @@ export const ExperiencesHero: React.FC<ExperiencesHeroProps> = ({ onRequestExper
 
           {/* Stats */}
           <motion.div
-            className="flex flex-wrap items-center gap-6 sm:gap-8 pt-4"
+            className="flex flex-wrap items-center gap-4 sm:gap-8 pt-4"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}

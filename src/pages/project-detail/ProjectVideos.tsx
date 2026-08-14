@@ -30,7 +30,7 @@ export const ProjectVideos: React.FC<ProjectVideosProps> = ({ project }) => {
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
           {project.videos.map((video, idx) => (
             <motion.a
               key={video.id}

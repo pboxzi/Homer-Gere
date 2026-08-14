@@ -12,7 +12,7 @@ export const FeaturedProject: React.FC<FeaturedProjectProps> = ({ onDiscoverMore
   return (
     <section id="projects" className="py-24 sm:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-[2rem] overflow-hidden min-h-[560px] lg:min-h-[640px]">
+        <div className="relative rounded-[2rem] overflow-hidden min-h-[350px] sm:min-h-[560px] lg:min-h-[640px]">
           <div className="absolute inset-0 z-0">
             <img src={featuredProject.image} alt={featuredProject.title} referrerPolicy="no-referrer" className="w-full h-full object-cover object-top scale-105 hover:scale-100 transition-transform duration-[1.5s]" loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-r from-[#F8F5EF] via-[#F8F5EF]/75 to-transparent" />

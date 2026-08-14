@@ -399,7 +399,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
           {/* 7. PROJECT DETAILS MODAL */}
           {modal.type === 'project' && (
             <div className="space-y-6">
-              <div className="relative h-64 -mx-6 sm:-mx-8 -mt-6 sm:-mt-8 mb-4 overflow-hidden">
+              <div className="relative h-48 sm:h-64 -mx-6 sm:-mx-8 -mt-6 sm:-mt-8 mb-4 overflow-hidden">
                 <img 
                   src={FEATURED_PROJECT.image}
                   alt={FEATURED_PROJECT.title}

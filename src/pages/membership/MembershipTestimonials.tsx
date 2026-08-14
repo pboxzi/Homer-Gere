@@ -49,11 +49,11 @@ export const MembershipTestimonials: React.FC = () => {
           </motion.h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           {TESTIMONIALS.map((testimonial, idx) => (
             <motion.div
               key={testimonial.name}
-              className="relative p-8 rounded-[1.5rem] bg-white border border-[#E8E5DF]/60 hover:border-[#A6852F]/20 transition-colors duration-300"
+              className="relative p-5 sm:p-8 rounded-[1.5rem] bg-white border border-[#E8E5DF]/60 hover:border-[#A6852F]/20 transition-colors duration-300"
               initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 + idx * 0.1, ease: [0.22, 1, 0.36, 1] }}

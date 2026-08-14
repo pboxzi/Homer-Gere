@@ -16,7 +16,7 @@ export const JourneyNext: React.FC<JourneyNextProps> = ({ onExploreProjects, onO
     <section id="journey-next" ref={sectionRef} className="py-24 sm:py-32 bg-[#F3F1ED]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
-          className="relative rounded-[2rem] overflow-hidden bg-[#111827] text-white min-h-[480px] flex items-center"
+          className="relative rounded-[2rem] overflow-hidden bg-[#111827] text-white min-h-[300px] sm:min-h-[480px] flex items-center"
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}

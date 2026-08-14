@@ -29,7 +29,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
     <footer className="pt-20 pb-14">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12 pb-14 border-b border-[#E8E5DF]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 sm:gap-12 pb-14 border-b border-[#E8E5DF]">
           {/* Logo & Info */}
           <div className="lg:col-span-2 space-y-5">
             <div className="flex flex-col">

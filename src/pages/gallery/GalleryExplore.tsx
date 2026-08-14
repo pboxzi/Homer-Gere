@@ -47,7 +47,7 @@ export const GalleryExplore: React.FC<GalleryExploreProps> = ({ onNavigate }) =>
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
           {CARDS.map((card, idx) => (
             <motion.button
               key={card.id}

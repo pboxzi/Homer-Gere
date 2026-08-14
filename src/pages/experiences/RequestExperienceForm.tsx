@@ -154,7 +154,7 @@ export const RequestExperienceForm: React.FC<RequestExperienceFormProps> = ({
       >
         <div className="absolute inset-0 bg-[#1C1917]/60 backdrop-blur-sm" onClick={onClose} />
         <motion.div
-          className="relative w-full max-w-md bg-[#FAF9F7] rounded-[2rem] p-10 text-center shadow-2xl"
+          className="relative w-full max-w-md bg-[#FAF9F7] rounded-[2rem] p-5 sm:p-10 text-center shadow-2xl"
           initial={{ scale: 0.95, opacity: 0, y: 20 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}

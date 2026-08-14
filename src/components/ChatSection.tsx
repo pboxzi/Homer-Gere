@@ -9,7 +9,7 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
   return (
     <section id="chat" className="py-24 sm:py-32">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-10 items-center">
           {/* Left Description */}
           <div className="lg:col-span-5 space-y-5">
             <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
@@ -30,7 +30,7 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
             {/* Fan Chat */}
             <div
               onClick={() => onStartChat('fan')}
-              className="p-7 transition-all duration-500 cursor-pointer group flex flex-col justify-between"
+              className="p-4 sm:p-7 transition-all duration-500 cursor-pointer group flex flex-col justify-between"
             >
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-[#A6852F]/10 text-[#A6852F] flex items-center justify-center mb-5 group-hover:bg-[#A6852F] group-hover:text-white transition-all duration-500">
@@ -55,7 +55,7 @@ export const ChatSection: React.FC<ChatSectionProps> = ({ onStartChat }) => {
             {/* Business Chat */}
             <div
               onClick={() => onStartChat('business')}
-              className="p-7 transition-all duration-500 cursor-pointer group flex flex-col justify-between"
+              className="p-4 sm:p-7 transition-all duration-500 cursor-pointer group flex flex-col justify-between"
             >
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-[#A6852F]/10 text-[#A6852F] flex items-center justify-center mb-5 group-hover:bg-[#A6852F] group-hover:text-white transition-all duration-500">

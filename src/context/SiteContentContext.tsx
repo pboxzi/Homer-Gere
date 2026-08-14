@@ -27,6 +27,7 @@ import {
   MEDIA_PODCASTS,
   MEDIA_PRESS,
 } from '../data/content';
+import { GALLERY_CATEGORIES, type GalleryCategory } from '../data/gallery';
 import {
   journeyRepository,
   journalRepository,
@@ -190,12 +191,31 @@ function mapPlanToFrontend(plan: { id: string; name: string; description?: strin
   };
 }
 
+function normalizeGalleryCategory(raw: string): GalleryCategory {
+  const map: Record<string, GalleryCategory> = {
+    'premiere': 'Premieres',
+    'premieres': 'Premieres',
+    'behind-the-scenes': 'Behind The Scenes',
+    'behind the scenes': 'Behind The Scenes',
+    'portraits': 'Portraits',
+    'portrait': 'Portraits',
+    'events': 'Events',
+    'event': 'Events',
+    'editorial': 'Editorial',
+    'press': 'Press',
+    'personal': 'Personal',
+    'productions': 'Productions',
+    'production': 'Productions',
+  };
+  return map[raw.toLowerCase()] || (raw as GalleryCategory);
+}
+
 function mapGalleryToFrontend(photo: { id: string; alt: string; caption?: string | null; category: string; src: string; date?: string | null; event?: string | null; photographer?: string | null; featured?: boolean; collection_id?: string | null; sort_order?: number }): GalleryItem {
   return {
     id: photo.id,
     title: photo.alt,
     caption: photo.caption || '',
-    category: photo.category,
+    category: normalizeGalleryCategory(photo.category),
     image: photo.src,
     date: photo.date || '',
     event: photo.event || undefined,

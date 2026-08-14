@@ -60,11 +60,11 @@ export const MembershipRequirements: React.FC = () => {
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           {REQUIREMENTS.map((req, idx) => (
             <motion.div
               key={req.title}
-              className="flex items-start gap-5 p-6 rounded-[1.5rem] bg-[#F3F1ED]/60 border border-[#E8E5DF]/40"
+              className="flex items-start gap-5 p-4 sm:p-6 rounded-[1.5rem] bg-[#F3F1ED]/60 border border-[#E8E5DF]/40"
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.3 + idx * 0.08, ease: [0.22, 1, 0.36, 1] }}

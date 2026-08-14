@@ -15,7 +15,7 @@ export const DashboardFavorites: React.FC = () => {
 
       {favorites.length === 0 ? (
         <motion.div
-          className="rounded-2xl border border-dashed border-[#A6852F]/45 bg-[#A6852F]/8 p-12 text-center shadow-sm hover:shadow-md transition-shadow duration-500"
+          className="rounded-2xl border border-dashed border-[#A6852F]/45 bg-[#A6852F]/8 p-6 sm:p-12 text-center shadow-sm hover:shadow-md transition-shadow duration-500"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}

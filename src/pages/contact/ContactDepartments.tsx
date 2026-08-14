@@ -37,7 +37,7 @@ export const ContactDepartments: React.FC = () => {
             return (
               <motion.div
                 key={dept.id}
-                className="group rounded-2xl p-6 hover:bg-[#F3F1ED]/60 transition-all duration-500"
+                className="group rounded-2xl p-4 sm:p-6 hover:bg-[#F3F1ED]/60 transition-all duration-500"
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.1 + index * 0.06, ease: [0.22, 1, 0.36, 1] }}

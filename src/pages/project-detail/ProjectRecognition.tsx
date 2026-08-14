@@ -55,7 +55,7 @@ export const ProjectRecognition: React.FC<ProjectRecognitionProps> = ({ project 
           {project.recognition.map((item, idx) => (
             <motion.div
               key={item.id}
-              className="bg-[#FAF9F7] rounded-[1.5rem] p-8 border border-[#E8E5DF] hover:border-[#A6852F]/30 hover:shadow-lg hover:shadow-[#A6852F]/5 transition-all duration-500 group"
+              className="bg-[#FAF9F7] rounded-[1.5rem] p-5 sm:p-8 border border-[#E8E5DF] hover:border-[#A6852F]/30 hover:shadow-lg hover:shadow-[#A6852F]/5 transition-all duration-500 group"
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.1 + idx * 0.08 }}

@@ -54,7 +54,7 @@ export const ProjectExploreMore: React.FC<ProjectExploreMoreProps> = ({ onNaviga
         </motion.div>
 
         {/* Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           {LINKS.map((link, idx) => (
             <motion.button
               key={link.id}

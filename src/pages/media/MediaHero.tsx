@@ -65,7 +65,7 @@ export const MediaHero: React.FC<MediaHeroProps> = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.65, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="flex items-center gap-6 text-sm text-[#57534E]">
+            <div className="flex items-center gap-4 sm:gap-6 text-sm text-[#57534E]">
               <span className="inline-flex items-center gap-2">
                 <Film className="w-4 h-4 text-[#A6852F]" />
                 12+ Videos

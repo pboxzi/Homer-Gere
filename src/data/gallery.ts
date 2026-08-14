@@ -12,7 +12,8 @@ export type GalleryCategory =
   | 'Premieres'
   | 'Editorial'
   | 'Events'
-  | 'Press';
+  | 'Press'
+  | 'Personal';
 
 export interface GalleryPhoto {
   id: string;
@@ -57,6 +58,7 @@ export const GALLERY_CATEGORIES: GalleryCategory[] = [
   'Editorial',
   'Events',
   'Press',
+  'Personal',
 ];
 
 // ============================================================

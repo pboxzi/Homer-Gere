@@ -66,7 +66,7 @@ export const DashboardRequests: React.FC = () => {
 
       <div className="space-y-3">
         {allRequests.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/45 p-12 text-center">
+          <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/45 p-6 sm:p-12 text-center">
             <Clock className="w-8 h-8 text-[#57534E]/30 mx-auto mb-3" />
             <p className="text-sm font-medium text-[#1C1917]">No requests yet</p>
             <p className="text-xs text-[#57534E] mt-1">Submit a request from the Experiences or Membership pages.</p>

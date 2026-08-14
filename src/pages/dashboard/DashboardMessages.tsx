@@ -170,7 +170,7 @@ export const DashboardMessages: React.FC = () => {
         {loading ? (
           <div className="text-center py-8 text-[#57534E] text-sm">Loading...</div>
         ) : enquiries.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[#A6852F]/45 bg-[#A6852F]/8 p-12 text-center shadow-sm">
+          <div className="rounded-2xl border border-dashed border-[#A6852F]/45 bg-[#A6852F]/8 p-6 sm:p-12 text-center shadow-sm">
             <Inbox className="w-8 h-8 text-[#57534E]/30 mx-auto mb-3" />
             <p className="text-sm font-medium text-[#1C1917]">No messages yet</p>
             <p className="text-xs text-[#57534E] mt-1">Start a new enquiry to begin a conversation.</p>

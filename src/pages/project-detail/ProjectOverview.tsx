@@ -25,7 +25,7 @@ export const ProjectOverview: React.FC<ProjectOverviewProps> = ({ project }) => 
   return (
     <section ref={sectionRef} className="py-24 sm:py-32 bg-[#FAF9F7]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-16">
           {/* Synopsis */}
           <motion.div
             className="lg:col-span-2"
@@ -99,7 +99,7 @@ export const ProjectOverview: React.FC<ProjectOverviewProps> = ({ project }) => 
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="bg-[#F3F1ED] rounded-[1.5rem] p-8 space-y-6 sticky top-24">
+            <div className="bg-[#F3F1ED] rounded-[1.5rem] p-5 sm:p-8 space-y-6 sticky top-24">
               <h3 className="text-lg font-editorial text-[#1C1917]">Details</h3>
               {details.map((detail, idx) => (
                 <div key={idx} className="flex items-start gap-3">

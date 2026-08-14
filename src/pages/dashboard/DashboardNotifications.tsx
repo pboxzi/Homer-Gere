@@ -64,7 +64,7 @@ export const DashboardNotifications: React.FC = () => {
 
       <div className="space-y-2">
         {filtered.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/45 p-12 text-center">
+          <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/45 p-6 sm:p-12 text-center">
             <Bell className="w-8 h-8 text-[#57534E]/30 mx-auto mb-3" />
             <p className="text-sm font-medium text-[#1C1917]">
               {filter === 'unread' ? 'No unread notifications' : filter === 'read' ? 'No read notifications' : "You're all caught up!"}

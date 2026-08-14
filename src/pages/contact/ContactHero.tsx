@@ -9,7 +9,7 @@ export const ContactHero: React.FC = () => {
   return (
     <section
       ref={sectionRef}
-      className="relative h-[65vh] min-h-[500px] flex items-end overflow-hidden bg-[#FAF9F7]"
+      className="relative h-[65vh] min-h-[350px] sm:min-h-[500px] flex items-end overflow-hidden bg-[#FAF9F7]"
     >
       <div className="absolute inset-0">
         <img 

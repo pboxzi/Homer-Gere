@@ -28,7 +28,7 @@ export const ProjectHomerRole: React.FC<ProjectHomerRoleProps> = ({ project }) =
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 items-start">
           {/* Image */}
           <motion.div
             className="rounded-[2rem] overflow-hidden shadow-2xl shadow-[#111827]/10"
@@ -75,7 +75,7 @@ export const ProjectHomerRole: React.FC<ProjectHomerRoleProps> = ({ project }) =
 
             {/* Expanded Description */}
             {project.homerRole.expandedDescription && (
-              <div className="bg-[#FAF9F7] rounded-2xl p-6 border border-[#E8E5DF]">
+              <div className="bg-[#FAF9F7] rounded-2xl p-4 sm:p-6 border border-[#E8E5DF]">
                 <h3 className="text-sm font-medium text-[#A6852F] uppercase tracking-wider mb-3">Character Deep Dive</h3>
                 <div className="space-y-4">
                   {project.homerRole.expandedDescription.split('\n\n').map((paragraph, idx) => (
@@ -102,7 +102,7 @@ export const ProjectHomerRole: React.FC<ProjectHomerRoleProps> = ({ project }) =
 
             {/* Production Notes */}
             {project.homerRole.notes && (
-              <div className="bg-[#FAF9F7] rounded-2xl p-6 border border-[#E8E5DF]">
+              <div className="bg-[#FAF9F7] rounded-2xl p-4 sm:p-6 border border-[#E8E5DF]">
                 <h3 className="text-sm font-medium text-[#A6852F] uppercase tracking-wider mb-2">Production Notes</h3>
                 <p className="text-sm text-[#44403C] leading-relaxed">{project.homerRole.notes}</p>
               </div>
@@ -112,7 +112,7 @@ export const ProjectHomerRole: React.FC<ProjectHomerRoleProps> = ({ project }) =
             {project.homerRole.quotes && project.homerRole.quotes.length > 0 && (
               <div className="space-y-4">
                 {project.homerRole.quotes.map((quote, idx) => (
-                  <div key={idx} className="relative bg-[#111827] rounded-2xl p-6 text-white">
+                  <div key={idx} className="relative bg-[#111827] rounded-2xl p-4 sm:p-6 text-white">
                     <Quote className="absolute top-4 right-4 w-8 h-8 text-[#A6852F]/20" />
                     <p className="text-sm leading-relaxed italic relative z-10">
                       "{quote}"

@@ -37,7 +37,7 @@ export const GalleryFeatured: React.FC<GalleryFeaturedProps> = ({ onViewCollecti
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
             {/* Image */}
-            <div className="relative h-80 lg:h-[480px] overflow-hidden">
+            <div className="relative h-56 sm:h-80 lg:h-[480px] overflow-hidden">
               <img 
                 src={FEATURED_COLLECTION.coverImage}
                 alt={FEATURED_COLLECTION.title}
@@ -48,7 +48,7 @@ export const GalleryFeatured: React.FC<GalleryFeaturedProps> = ({ onViewCollecti
             </div>
 
             {/* Content */}
-            <div className="relative flex flex-col justify-center p-8 sm:p-12 lg:p-16">
+            <div className="relative flex flex-col justify-center p-5 sm:p-12 lg:p-16">
               <div className="space-y-6">
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 rounded-xl bg-[#A6852F]/15 flex items-center justify-center">

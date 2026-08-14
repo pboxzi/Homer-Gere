@@ -67,7 +67,7 @@ export const ChatConfirmation: React.FC<ChatConfirmationProps> = ({
           </p>
 
           {/* Summary Card */}
-          <div className="bg-white rounded-2xl border border-[#E8E5DF]/60 p-6 mb-8 text-left">
+          <div className="bg-white rounded-2xl border border-[#E8E5DF]/60 p-4 sm:p-6 mb-8 text-left">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em]">Name</span>

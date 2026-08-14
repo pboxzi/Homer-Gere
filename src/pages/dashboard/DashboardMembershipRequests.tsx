@@ -46,7 +46,7 @@ export default function DashboardMembershipRequests() {
       {loading ? (
         <div className="text-center py-12 text-[#6b7280]">Loading...</div>
       ) : requests.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+        <div className="bg-white rounded-xl border border-gray-200 p-5 sm:p-8 text-center">
           <CreditCard className="w-12 h-12 text-gray-300 mx-auto mb-3" />
           <p className="text-[#6b7280]">No membership requests yet</p>
           <p className="text-sm text-[#6b7280] mt-1">Visit the Membership page to get started</p>
@@ -58,7 +58,7 @@ export default function DashboardMembershipRequests() {
             const sc = STATUS_CONFIG[activeRequest.status] || STATUS_CONFIG.pending;
             return (
               <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <div className="font-mono text-xs text-[#6b7280]">{activeRequest.request_number}</div>
