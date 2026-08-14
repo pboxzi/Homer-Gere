@@ -179,7 +179,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </div>
           ) : (
-            <button onClick={() => routerNavigate('/auth/sign-in')} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#1C1917] text-white text-xs font-medium hover:bg-[#292524] transition-all cursor-pointer shadow-[0_0_12px_rgba(166,133,47,0.2)] hover:shadow-[0_0_20px_rgba(166,133,47,0.3)]">
+            <button onClick={() => routerNavigate('/auth/sign-in')} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-[#A6852F]/40 bg-[#A6852F]/10 text-[#A6852F] text-xs font-medium hover:bg-[#A6852F]/20 hover:border-[#A6852F]/60 transition-all cursor-pointer shadow-[0_0_12px_rgba(166,133,47,0.15)] hover:shadow-[0_0_20px_rgba(166,133,47,0.25)]">
               <User className="w-3 h-3" />
               Sign In
             </button>
@@ -228,7 +228,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           ) : (
             <button
               onClick={() => routerNavigate('/auth/sign-in')}
-              className="inline-flex items-center gap-1.5 bg-[#1C1917] text-white text-xs font-medium px-3 py-2 rounded-full focus:outline-none cursor-pointer min-h-[44px] shadow-[0_0_12px_rgba(166,133,47,0.2)] hover:shadow-[0_0_20px_rgba(166,133,47,0.3)]"
+              className="inline-flex items-center gap-1.5 border border-[#A6852F]/40 bg-[#A6852F]/10 text-[#A6852F] text-xs font-medium px-3 py-2 rounded-full focus:outline-none cursor-pointer min-h-[44px] shadow-[0_0_12px_rgba(166,133,47,0.15)] hover:shadow-[0_0_20px_rgba(166,133,47,0.25)]"
             >
               <User className="w-3 h-3" />
               Sign In

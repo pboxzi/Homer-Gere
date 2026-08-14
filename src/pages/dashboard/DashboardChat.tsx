@@ -1,15 +1,16 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
-import { MessageSquare, ArrowRight, Phone, Send, Search, Archive } from 'lucide-react';
+import { MessageSquare, ArrowRight, Phone, Send, Search, Archive, Image as ImageIcon, X, Loader2 } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import { useAuth } from '../../context/AuthContext';
-import { fanChatRepository } from '../../lib/repositories';
+import { fanChatRepository, getSupabaseClient } from '../../lib/repositories';
 import type { FanConversation, FanMessage } from '../../types/database';
+
+const WHATSAPP_NUMBER = '1234567890';
 
 export const DashboardChat: React.FC = () => {
   const { user, profile } = useAuth();
   const { membershipPlan, logActivity } = useDashboard();
-  const canOpenWhatsApp = membershipPlan?.name === 'Gold' || membershipPlan?.name === 'Platinum';
   const [conversations, setConversations] = useState<FanConversation[]>([]);
   const [activeConvId, setActiveConvId] = useState<string | null>(null);
   const [messages, setMessages] = useState<FanMessage[]>([]);
@@ -18,7 +19,11 @@ export const DashboardChat: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const loadConversations = useCallback(async () => {
     if (!user?.id) return;
@@ -52,19 +57,65 @@ export const DashboardChat: React.FC = () => {
     c.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const uploadImage = async (file: File): Promise<string | null> => {
+    if (!user?.id) return null;
+    const client = getSupabaseClient();
+    const ext = file.name.split('.').pop() || 'jpg';
+    const path = `${user.id}/${Date.now()}.${ext}`;
+    const { data, error } = await client.storage.from('chat-media').upload(path, file, { contentType: file.type });
+    if (error) { console.error('Upload error:', error); return null; }
+    const { data: urlData } = client.storage.from('chat-media').getPublicUrl(data.path);
+    return urlData?.publicUrl || null;
+  };
+
   const handleSend = async () => {
-    if (!activeConvId || !newMessage.trim() || !user?.id) return;
+    if (!activeConvId || !user?.id) return;
+    const hasText = newMessage.trim().length > 0;
+    const hasImage = pendingFile !== null;
+    if (!hasText && !hasImage) return;
+
+    setUploading(true);
     try {
+      let mediaUrl: string | null = null;
+      let mediaType: string | null = null;
+
+      if (hasImage && pendingFile) {
+        mediaUrl = await uploadImage(pendingFile);
+        if (!mediaUrl) { setError('Failed to upload image.'); setUploading(false); return; }
+        mediaType = pendingFile.type.startsWith('video') ? 'video' : 'image';
+      }
+
       await fanChatRepository.sendMessage({
         conversation_id: activeConvId,
         sender: 'member',
-        text: newMessage.trim(),
-        media_type: null,
-        media_url: null,
+        text: newMessage.trim() || '',
+        media_type: mediaType as any,
+        media_url: mediaUrl,
       });
       setNewMessage('');
+      setPendingFile(null);
+      setPreviewImage(null);
       loadMessages(activeConvId);
     } catch (e) { console.error(e); }
+    setUploading(false);
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
+      setError('Only images and videos are supported.');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setError('File must be under 10MB.');
+      return;
+    }
+    setError(null);
+    setPendingFile(file);
+    const url = URL.createObjectURL(file);
+    setPreviewImage(url);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleStartChat = async () => {
@@ -152,7 +203,13 @@ export const DashboardChat: React.FC = () => {
                 {msg.sender !== 'member' && (
                   <p className="text-[10px] font-medium text-[#A6852F] mb-1">{msg.sender === 'homer' ? 'Homer Gere' : 'System'}</p>
                 )}
-                <p className={`text-sm ${msg.sender === 'member' ? 'text-white' : 'text-[#1C1917]'}`}>{msg.text}</p>
+                {msg.media_url && msg.media_type === 'image' && (
+                  <img src={msg.media_url} alt="Shared image" className="rounded-xl mb-2 max-w-full max-h-64 object-cover cursor-pointer" onClick={() => window.open(msg.media_url!, '_blank')} />
+                )}
+                {msg.media_url && msg.media_type === 'video' && (
+                  <video src={msg.media_url} controls className="rounded-xl mb-2 max-w-full max-h-64" />
+                )}
+                {msg.text && <p className={`text-sm ${msg.sender === 'member' ? 'text-white' : 'text-[#1C1917]'}`}>{msg.text}</p>}
                 <p className={`text-[10px] mt-1 ${msg.sender === 'member' ? 'text-white/50' : 'text-[#57534E]/60'}`}>{new Date(msg.created_at).toLocaleString()}</p>
               </div>
             </motion.div>
@@ -162,17 +219,33 @@ export const DashboardChat: React.FC = () => {
 
         {/* Reply input */}
         {activeConv.status === 'open' && (
-          <div className="flex items-center gap-3">
-            <input
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Type your message..."
-              className="flex-1 px-4 py-3 rounded-xl bg-white border border-[#A6852F]/45 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30"
-            />
-            <button onClick={handleSend} className="w-11 h-11 rounded-xl bg-[#A6852F] text-white flex items-center justify-center hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/30 transition-colors cursor-pointer">
-              <Send className="w-4 h-4" />
-            </button>
+          <div className="space-y-2">
+            {/* Image preview */}
+            {previewImage && (
+              <div className="relative inline-block">
+                <img src={previewImage} alt="Preview" className="h-24 rounded-xl border border-[#E8E5DF]" />
+                <button onClick={() => { setPreviewImage(null); setPendingFile(null); }} className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center cursor-pointer">
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            )}
+            <div className="flex items-center gap-2">
+              <input ref={fileInputRef} type="file" accept="image/*,video/*" onChange={handleFileSelect} className="hidden" />
+              <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="w-11 h-11 rounded-xl border border-[#A6852F]/45 bg-white flex items-center justify-center text-[#A6852F] hover:bg-[#A6852F]/10 transition-colors cursor-pointer disabled:opacity-50">
+                <ImageIcon className="w-4 h-4" />
+              </button>
+              <input
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && !uploading && handleSend()}
+                placeholder="Type your message..."
+                disabled={uploading}
+                className="flex-1 px-4 py-3 rounded-xl bg-white border border-[#A6852F]/45 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 disabled:opacity-50"
+              />
+              <button onClick={handleSend} disabled={uploading || (!newMessage.trim() && !pendingFile)} className="w-11 h-11 rounded-xl bg-[#A6852F] text-white flex items-center justify-center hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/30 transition-colors cursor-pointer disabled:opacity-50">
+                {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -205,19 +278,17 @@ export const DashboardChat: React.FC = () => {
         </motion.div>
       )}
 
-      {/* WhatsApp */}
-      {canOpenWhatsApp && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
-          <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="w-full flex items-center gap-4 p-5 rounded-2xl border border-[#25D366]/53 hover:border-[#25D366]/60 hover:bg-[#25D366]/8 transition-all duration-500 cursor-pointer group shadow-md shadow-[#25D366]/22 hover:shadow-lg hover:shadow-[#25D366]/22">
-            <div className="w-12 h-12 rounded-2xl bg-[#25D366]/22 flex items-center justify-center text-[#25D366] group-hover:bg-[#25D366] group-hover:text-white transition-all duration-500 shadow-sm shadow-[#25D366]/22"><Phone className="w-5 h-5" /></div>
-            <div className="flex-1 text-left">
-              <p className="text-sm font-medium text-[#1C1917] group-hover:text-[#25D366] transition-colors">Open Official WhatsApp</p>
-              <p className="text-xs text-[#57534E]">Available for {membershipPlan?.name || 'Member'} members</p>
-            </div>
-            <ArrowRight className="w-4 h-4 text-[#25D366]/40 group-hover:text-[#25D366] group-hover:translate-x-1 transition-all" />
-          </a>
-        </motion.div>
-      )}
+      {/* WhatsApp - Available for all members */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
+        <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className="w-full flex items-center gap-4 p-5 rounded-2xl border border-[#25D366]/53 hover:border-[#25D366]/60 hover:bg-[#25D366]/8 transition-all duration-500 cursor-pointer group shadow-md shadow-[#25D366]/22 hover:shadow-lg hover:shadow-[#25D366]/22">
+          <div className="w-12 h-12 rounded-2xl bg-[#25D366]/22 flex items-center justify-center text-[#25D366] group-hover:bg-[#25D366] group-hover:text-white transition-all duration-500 shadow-sm shadow-[#25D366]/22"><Phone className="w-5 h-5" /></div>
+          <div className="flex-1 text-left">
+            <p className="text-sm font-medium text-[#1C1917] group-hover:text-[#25D366] transition-colors">Open Official WhatsApp</p>
+            <p className="text-xs text-[#57534E]">Message Homer directly on WhatsApp</p>
+          </div>
+          <ArrowRight className="w-4 h-4 text-[#25D366]/40 group-hover:text-[#25D366] group-hover:translate-x-1 transition-all" />
+        </a>
+      </motion.div>
 
       {/* Search */}
       {conversations.length > 0 && (
