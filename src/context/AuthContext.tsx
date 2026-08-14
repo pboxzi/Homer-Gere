@@ -169,6 +169,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         reviewed_at: null,
         rejection_reason: null,
         notes: null,
+        application_number: null,
+        membership_plan_requested: null,
+        reason_for_joining: null,
+        referral_source: null,
+        device_type: null,
+        browser: null,
+        operating_system: null,
+        preferred_language: 'en',
+        user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+        ip_address: null,
+        city_detected: null,
+        country_detected: null,
+        review_notes: null,
+        status_history: [],
+        assigned_admin: null,
+        approved_at: null,
+        rejected_at: null,
       });
 
       // Send registration received email

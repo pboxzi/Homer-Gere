@@ -471,6 +471,10 @@ export interface AuditLog {
   ip_address: string | null;
   user_agent: string | null;
   created_at: string;
+  // Phase 1 enterprise fields
+  module: string | null;
+  browser: string | null;
+  device: string | null;
 }
 
 export interface SiteMedia {
@@ -491,6 +495,136 @@ export interface SiteMedia {
   uploaded_by: string | null;
   created_at: string;
   updated_at: string;
+  // Phase 1 enterprise fields
+  alt_text: string | null;
+  caption: string | null;
+  folder: string;
+  tags: string[];
+  checksum: string | null;
+  usage_count: number;
+}
+
+// ============================================================
+// PHASE 1: NEW TABLE TYPES
+// ============================================================
+
+export interface Payment {
+  id: string;
+  member_name: string;
+  member_email: string;
+  member_id: string | null;
+  plan: string;
+  amount: number;
+  currency: string;
+  status: PaymentStatus;
+  payment_method: string | null;
+  transaction_id: string | null;
+  description: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface RolePermission {
+  id: string;
+  role: string;
+  permission: string;
+  created_at: string;
+}
+
+// ============================================================
+// PHASE 2: HOMEPAGE CMS TYPES
+// ============================================================
+
+export interface HomepageSection {
+  id: string;
+  section_key: string;
+  title: string | null;
+  subtitle: string | null;
+  description: string | null;
+  enabled: boolean;
+  display_order: number;
+  published: boolean;
+  settings: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  updated_by: string | null;
+}
+
+export interface HomepageHeroSlide {
+  id: string;
+  title: string;
+  subtitle: string | null;
+  description: string | null;
+  image_url: string | null;
+  mobile_image_url: string | null;
+  button_text: string | null;
+  button_link: string | null;
+  secondary_button_text: string | null;
+  secondary_button_link: string | null;
+  display_order: number;
+  active: boolean;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  updated_by: string | null;
+}
+
+export interface HomepageStatistic {
+  id: string;
+  label: string;
+  value: string;
+  icon: string | null;
+  display_order: number;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  updated_by: string | null;
+}
+
+export interface HomepageQuote {
+  id: string;
+  quote: string;
+  author: string;
+  position: string | null;
+  portrait_url: string | null;
+  display_order: number;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  updated_by: string | null;
+}
+
+export interface HomepageFeatured {
+  id: string;
+  section_key: string;
+  reference_id: string;
+  reference_type: string;
+  display_order: number;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  updated_by: string | null;
+}
+
+export interface HomepageCta {
+  id: string;
+  title: string;
+  description: string | null;
+  button_text: string | null;
+  button_link: string | null;
+  background_image_url: string | null;
+  display_order: number;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+  updated_by: string | null;
 }
 
 // ============================================================
@@ -644,6 +778,46 @@ export interface Database {
         Row: SiteMedia;
         Insert: Omit<SiteMedia, 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Omit<SiteMedia, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      payments: {
+        Row: Payment;
+        Insert: Omit<Payment, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<Payment, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      role_permissions: {
+        Row: RolePermission;
+        Insert: Omit<RolePermission, 'id' | 'created_at'>;
+        Update: Partial<Omit<RolePermission, 'id' | 'created_at'>>;
+      };
+      homepage_sections: {
+        Row: HomepageSection;
+        Insert: Omit<HomepageSection, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<HomepageSection, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      homepage_hero_slides: {
+        Row: HomepageHeroSlide;
+        Insert: Omit<HomepageHeroSlide, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<HomepageHeroSlide, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      homepage_statistics: {
+        Row: HomepageStatistic;
+        Insert: Omit<HomepageStatistic, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<HomepageStatistic, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      homepage_quotes: {
+        Row: HomepageQuote;
+        Insert: Omit<HomepageQuote, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<HomepageQuote, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      homepage_featured: {
+        Row: HomepageFeatured;
+        Insert: Omit<HomepageFeatured, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<HomepageFeatured, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      homepage_cta: {
+        Row: HomepageCta;
+        Insert: Omit<HomepageCta, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<HomepageCta, 'id' | 'created_at' | 'updated_at'>>;
       };
     };
     Enums: {

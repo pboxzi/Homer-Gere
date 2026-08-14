@@ -34,6 +34,14 @@ import type {
   EmailTemplate,
   AuditLog,
   ConversationStatus,
+  Payment,
+  RolePermission,
+  HomepageSection,
+  HomepageHeroSlide,
+  HomepageStatistic,
+  HomepageQuote,
+  HomepageFeatured,
+  HomepageCta,
 } from '../types/database';
 
 // ============================================================
@@ -95,6 +103,37 @@ export const profilesRepository = {
 
   async updateRole(id: string, role: Profile['role']): Promise<Profile> {
     return this.update(id, { role });
+  },
+
+  async softDelete(id: string, deletedBy: string): Promise<Profile> {
+    return this.update(id, {
+      deleted_at: new Date().toISOString(),
+      deleted_by: deletedBy,
+      account_status: 'deactivated',
+    });
+  },
+
+  async restore(id: string): Promise<Profile> {
+    return this.update(id, {
+      deleted_at: null,
+      deleted_by: null,
+      account_status: 'active',
+    });
+  },
+
+  async getActive(): Promise<Profile[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('profiles')
+      .select('*')
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async updateCompletion(id: string, completion: number): Promise<Profile> {
+    return this.update(id, { profile_completion: Math.min(100, Math.max(0, completion)) });
   },
 };
 
@@ -189,12 +228,14 @@ export const registrationRepository = {
 
   async approve(id: string, reviewedBy: string): Promise<RegistrationApplication> {
     const client = getSupabaseClient();
+    const now = new Date().toISOString();
     const { data, error } = await client
       .from('registration_applications')
       .update({
         status: 'approved',
         reviewed_by: reviewedBy,
-        reviewed_at: new Date().toISOString(),
+        reviewed_at: now,
+        approved_at: now,
       })
       .eq('id', id)
       .select()
@@ -205,13 +246,15 @@ export const registrationRepository = {
 
   async reject(id: string, reviewedBy: string, reason: string): Promise<RegistrationApplication> {
     const client = getSupabaseClient();
+    const now = new Date().toISOString();
     const { data, error } = await client
       .from('registration_applications')
       .update({
         status: 'rejected',
         reviewed_by: reviewedBy,
         rejection_reason: reason,
-        reviewed_at: new Date().toISOString(),
+        reviewed_at: now,
+        rejected_at: now,
       })
       .eq('id', id)
       .select()
@@ -1239,7 +1282,7 @@ export const notificationsRepository = {
     const client = getSupabaseClient();
     const { error } = await client
       .from('notifications')
-      .update({ read: true })
+      .update({ read: true, read_at: new Date().toISOString() })
       .eq('id', id);
     if (error) throw error;
   },
@@ -1248,7 +1291,7 @@ export const notificationsRepository = {
     const client = getSupabaseClient();
     const { error } = await client
       .from('notifications')
-      .update({ read: true })
+      .update({ read: true, read_at: new Date().toISOString() })
       .eq('user_id', userId)
       .eq('read', false);
     if (error) throw error;
@@ -1265,12 +1308,46 @@ export const notificationsRepository = {
     return data;
   },
 
+  async getByCategory(category: string): Promise<Notification[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('notifications')
+      .select('*')
+      .eq('category', category)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getUnreadByPriority(userId: string, priority: string): Promise<Notification[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('notifications')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('read', false)
+      .eq('priority', priority)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
   async delete(id: string): Promise<void> {
     const client = getSupabaseClient();
     const { error } = await client
       .from('notifications')
       .delete()
       .eq('id', id);
+    if (error) throw error;
+  },
+
+  async deleteExpired(): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('notifications')
+      .delete()
+      .lt('expires_at', new Date().toISOString())
+      .not('expires_at', 'is', null);
     if (error) throw error;
   },
 };
@@ -1473,5 +1550,621 @@ export const auditLogsRepository = {
       .order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
+  },
+
+  async getByModule(moduleName: string): Promise<AuditLog[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('audit_logs')
+      .select('*')
+      .eq('module', moduleName)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+};
+
+// ============================================================
+// PAYMENTS
+// ============================================================
+
+export const paymentsRepository = {
+  async getAll(): Promise<Payment[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payments')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getById(id: string): Promise<Payment | null> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payments')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async getByMemberId(memberId: string): Promise<Payment[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payments')
+      .select('*')
+      .eq('member_id', memberId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async create(payment: Omit<Payment, 'id' | 'created_at' | 'updated_at'>): Promise<Payment> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payments')
+      .insert(payment)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async update(id: string, updates: Partial<Payment>): Promise<Payment> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payments')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async delete(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('payments')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+};
+
+// ============================================================
+// ROLE PERMISSIONS
+// ============================================================
+
+export const rolePermissionsRepository = {
+  async getAll(): Promise<RolePermission[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('role_permissions')
+      .select('*')
+      .order('role');
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getByRole(role: string): Promise<RolePermission[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('role_permissions')
+      .select('*')
+      .eq('role', role);
+    if (error) throw error;
+    return data || [];
+  },
+
+  async create(permission: Omit<RolePermission, 'id' | 'created_at'>): Promise<RolePermission> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('role_permissions')
+      .insert(permission)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async delete(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('role_permissions')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async deleteByRole(role: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('role_permissions')
+      .delete()
+      .eq('role', role);
+    if (error) throw error;
+  },
+
+  async checkPermission(userId: string, permission: string): Promise<boolean> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .rpc('has_permission', { user_id: userId, permission_name: permission });
+    if (error) throw error;
+    return data || false;
+  },
+};
+
+// ============================================================
+// SITE MEDIA (Extended)
+// ============================================================
+
+export const siteMediaRepository = {
+  async getAll(): Promise<import('../types/database').SiteMedia[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('site_media')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getById(id: string): Promise<import('../types/database').SiteMedia | null> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('site_media')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async getByFolder(folder: string): Promise<import('../types/database').SiteMedia[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('site_media')
+      .select('*')
+      .eq('folder', folder)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getByType(fileType: string): Promise<import('../types/database').SiteMedia[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('site_media')
+      .select('*')
+      .eq('file_type', fileType)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async create(media: Omit<import('../types/database').SiteMedia, 'id' | 'created_at' | 'updated_at'>): Promise<import('../types/database').SiteMedia> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('site_media')
+      .insert(media)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async update(id: string, updates: Partial<import('../types/database').SiteMedia>): Promise<import('../types/database').SiteMedia> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('site_media')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async incrementUsage(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client.rpc('increment_usage_count' as never, { media_id: id } as never);
+    if (error) {
+      // Fallback: manual increment
+      const media = await this.getById(id);
+      if (media) {
+        await this.update(id, { usage_count: (media.usage_count || 0) + 1 });
+      }
+    }
+  },
+
+  async delete(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('site_media')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+};
+
+// ============================================================
+// HOMEPAGE CMS
+// ============================================================
+
+export const homepageCmsRepository = {
+  // ----- Sections -----
+  async getSections(): Promise<HomepageSection[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_sections')
+      .select('*')
+      .order('display_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getPublishedSections(): Promise<HomepageSection[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_sections')
+      .select('*')
+      .eq('published', true)
+      .eq('enabled', true)
+      .order('display_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async updateSection(id: string, updates: Partial<HomepageSection>): Promise<HomepageSection> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_sections')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async updateSectionByKey(sectionKey: string, updates: Partial<HomepageSection>): Promise<HomepageSection> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_sections')
+      .update(updates)
+      .eq('section_key', sectionKey)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async reorderSections(sections: { id: string; display_order: number }[]): Promise<void> {
+    const client = getSupabaseClient();
+    const updates = sections.map(({ id, display_order }) =>
+      client.from('homepage_sections').update({ display_order }).eq('id', id)
+    );
+    const results = await Promise.all(updates);
+    for (const { error } of results) {
+      if (error) throw error;
+    }
+  },
+
+  // ----- Hero Slides -----
+  async getHeroSlides(): Promise<HomepageHeroSlide[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_hero_slides')
+      .select('*')
+      .order('display_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getActiveHeroSlides(): Promise<HomepageHeroSlide[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_hero_slides')
+      .select('*')
+      .eq('active', true)
+      .eq('published', true)
+      .order('display_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async createHeroSlide(slide: Omit<HomepageHeroSlide, 'id' | 'created_at' | 'updated_at'>): Promise<HomepageHeroSlide> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_hero_slides')
+      .insert(slide)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async updateHeroSlide(id: string, updates: Partial<HomepageHeroSlide>): Promise<HomepageHeroSlide> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_hero_slides')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async deleteHeroSlide(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('homepage_hero_slides')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async reorderHeroSlides(slides: { id: string; display_order: number }[]): Promise<void> {
+    const client = getSupabaseClient();
+    const updates = slides.map(({ id, display_order }) =>
+      client.from('homepage_hero_slides').update({ display_order }).eq('id', id)
+    );
+    const results = await Promise.all(updates);
+    for (const { error } of results) {
+      if (error) throw error;
+    }
+  },
+
+  // ----- Statistics -----
+  async getStatistics(): Promise<HomepageStatistic[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_statistics')
+      .select('*')
+      .order('display_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getPublishedStatistics(): Promise<HomepageStatistic[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_statistics')
+      .select('*')
+      .eq('published', true)
+      .order('display_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async createStatistic(stat: Omit<HomepageStatistic, 'id' | 'created_at' | 'updated_at'>): Promise<HomepageStatistic> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_statistics')
+      .insert(stat)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async updateStatistic(id: string, updates: Partial<HomepageStatistic>): Promise<HomepageStatistic> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_statistics')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async deleteStatistic(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('homepage_statistics')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async reorderStatistics(stats: { id: string; display_order: number }[]): Promise<void> {
+    const client = getSupabaseClient();
+    const updates = stats.map(({ id, display_order }) =>
+      client.from('homepage_statistics').update({ display_order }).eq('id', id)
+    );
+    const results = await Promise.all(updates);
+    for (const { error } of results) {
+      if (error) throw error;
+    }
+  },
+
+  // ----- Quotes -----
+  async getQuotes(): Promise<HomepageQuote[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_quotes')
+      .select('*')
+      .order('display_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getPublishedQuotes(): Promise<HomepageQuote[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_quotes')
+      .select('*')
+      .eq('published', true)
+      .order('display_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async createQuote(quote: Omit<HomepageQuote, 'id' | 'created_at' | 'updated_at'>): Promise<HomepageQuote> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_quotes')
+      .insert(quote)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async updateQuote(id: string, updates: Partial<HomepageQuote>): Promise<HomepageQuote> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_quotes')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async deleteQuote(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('homepage_quotes')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async reorderQuotes(quotes: { id: string; display_order: number }[]): Promise<void> {
+    const client = getSupabaseClient();
+    const updates = quotes.map(({ id, display_order }) =>
+      client.from('homepage_quotes').update({ display_order }).eq('id', id)
+    );
+    const results = await Promise.all(updates);
+    for (const { error } of results) {
+      if (error) throw error;
+    }
+  },
+
+  // ----- Featured -----
+  async getFeatured(): Promise<HomepageFeatured[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_featured')
+      .select('*')
+      .order('display_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getPublishedFeatured(): Promise<HomepageFeatured[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_featured')
+      .select('*')
+      .eq('published', true)
+      .order('display_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async createFeatured(featured: Omit<HomepageFeatured, 'id' | 'created_at' | 'updated_at'>): Promise<HomepageFeatured> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_featured')
+      .insert(featured)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async updateFeatured(id: string, updates: Partial<HomepageFeatured>): Promise<HomepageFeatured> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_featured')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async deleteFeatured(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('homepage_featured')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  // ----- CTA -----
+  async getCtaSections(): Promise<HomepageCta[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_cta')
+      .select('*')
+      .order('display_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getPublishedCtaSections(): Promise<HomepageCta[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_cta')
+      .select('*')
+      .eq('published', true)
+      .order('display_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async createCta(cta: Omit<HomepageCta, 'id' | 'created_at' | 'updated_at'>): Promise<HomepageCta> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_cta')
+      .insert(cta)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async updateCta(id: string, updates: Partial<HomepageCta>): Promise<HomepageCta> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('homepage_cta')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async deleteCta(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('homepage_cta')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async reorderCta(ctas: { id: string; display_order: number }[]): Promise<void> {
+    const client = getSupabaseClient();
+    const updates = ctas.map(({ id, display_order }) =>
+      client.from('homepage_cta').update({ display_order }).eq('id', id)
+    );
+    const results = await Promise.all(updates);
+    for (const { error } of results) {
+      if (error) throw error;
+    }
   },
 };

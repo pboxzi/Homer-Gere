@@ -529,7 +529,7 @@ const BackupsSection: React.FC = () => {
       try {
         const data = await siteSettingsRepository.getByCategory('backup');
         if (data?.settings) {
-          setForm(data.settings);
+          setForm(data.settings as unknown as typeof backupSettings);
         }
       } catch { /* silent */ }
     };
@@ -538,7 +538,7 @@ const BackupsSection: React.FC = () => {
 
   const handleSave = async () => {
     try {
-      await siteSettingsRepository.upsert('backup', form);
+      await siteSettingsRepository.upsert('backup', form as unknown as Record<string, unknown>);
       updateBackupSettings(form);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
