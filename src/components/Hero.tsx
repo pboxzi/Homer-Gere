@@ -124,15 +124,6 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
             </div>
           </div>
 
-          {/* Scroll indicator — bottom center */}
-          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
-            <a href="#projects" className="group flex flex-col items-center gap-2 focus:outline-none cursor-pointer" aria-label="Scroll to explore">
-              <span className="text-[10px] font-medium text-[#A8A29E] group-hover:text-[#A6852F] transition-colors uppercase tracking-[0.3em]">Scroll</span>
-              <div className="relative w-[1px] h-8 bg-[#D6D3D1] group-hover:bg-[#A6852F]/40 transition-colors overflow-hidden rounded-full">
-                <div className="absolute top-0 left-0 w-full h-1/2 bg-[#A6852F] rounded-full animate-scroll-line" />
-              </div>
-            </a>
-          </div>
         </div>
       </div>
     </section>
