@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Clapperboard, Star, Users, Globe, Sparkles, MessageSquare, ArrowRight } from 'lucide-react';
+import { Play, MessageSquare, ArrowRight } from 'lucide-react';
 import { useSiteContent } from '../context/SiteContentContext';
 import { IMAGES } from '../data/images';
 
@@ -10,7 +10,7 @@ interface HeroProps {
 }
 
 export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onOpenChat }) => {
-  const { metrics, featuredProject, heroSlides, homepageStatistics } = useSiteContent();
+  const { featuredProject, heroSlides } = useSiteContent();
 
   const activeSlide = heroSlides.length > 0 ? heroSlides[0] : null;
   const heroTitle = activeSlide?.title || null;
@@ -21,20 +21,6 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
   const heroButtonLink = activeSlide?.button_link || null;
   const secondaryButtonText = activeSlide?.secondary_button_text || 'Latest Project';
   const secondaryButtonLink = activeSlide?.secondary_button_link || null;
-
-  const displayMetrics = homepageStatistics.length > 0
-    ? homepageStatistics.map(s => ({ label: s.label, value: s.value, icon: s.icon || 'star' }))
-    : metrics;
-
-  const getMetricIcon = (iconName: string) => {
-    switch (iconName) {
-      case 'clapperboard': return <Clapperboard className="w-4 h-4 text-[#A6852F]" />;
-      case 'star': return <Star className="w-4 h-4 text-[#A6852F]" />;
-      case 'globe': return <Globe className="w-4 h-4 text-[#A6852F]" />;
-      case 'users': return <Users className="w-4 h-4 text-[#A6852F]" />;
-      default: return <Star className="w-4 h-4 text-[#A6852F]" />;
-    }
-  };
 
   return (
     <section id="home" className="pt-24 pb-0 overflow-hidden">
@@ -81,21 +67,6 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
                     <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#57534E] group-hover/btn:text-[#A6852F] group-hover/btn:translate-x-0.5 transition-all duration-300" />
                   </button>
                 )}
-              </div>
-            </div>
-            {/* Statistics */}
-            <div className="w-full pt-3 sm:pt-6 mt-2 sm:mt-6">
-              <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                {displayMetrics.map((metric, idx) => (
-                  <div key={idx} className="flex flex-col items-start p-3 sm:p-4 transition-all duration-300 rounded-xl sm:rounded-2xl hover:bg-[#F3F1ED]/60">
-                    <div className="flex items-center justify-between w-full mb-1.5 sm:mb-2">
-                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-[#A6852F]/10 flex items-center justify-center shrink-0">{getMetricIcon(metric.icon)}</div>
-                      <Sparkles className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-[#A6852F]/40" />
-                    </div>
-                    <div className="text-sm sm:text-xl font-editorial text-[#1C1917] tracking-tight">{metric.value}</div>
-                    <div className="text-[10px] sm:text-xs text-[#57534E] font-medium tracking-wide mt-0.5 uppercase">{metric.label}</div>
-                  </div>
-                ))}
               </div>
             </div>
           </div>
