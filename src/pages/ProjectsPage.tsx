@@ -13,7 +13,7 @@ import { ModalType } from '../types';
 
 export default function ProjectsPage() {
   const navigate = useNavigate();
-  const [activeSection] = useState<string>('projects');
+  const activeSection = 'projects';
   const [activeModal, setActiveModal] = useState<ModalType>(null);
 
   const handleNavigate = (sectionId: string) => {

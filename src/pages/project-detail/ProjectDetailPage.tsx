@@ -22,7 +22,7 @@ export default function ProjectDetailPage() {
   const navigate = useNavigate();
   const [project, setProject] = useState<ProjectDetail | undefined>(undefined);
   const [loading, setLoading] = useState(true);
-  const [activeSection] = React.useState<string>('projects');
+  const activeSection = 'projects';
   const [activeModal, setActiveModal] = React.useState<ModalType>(null);
 
   const handleNavigate = (sectionId: string) => {

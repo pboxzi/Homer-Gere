@@ -18,7 +18,7 @@ export default function ArticleDetailPage() {
   const [article, setArticle] = useState<JournalArticleExtended | undefined>(undefined);
   const [relatedArticles, setRelatedArticles] = useState<JournalArticleExtended[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeSection] = React.useState<string>('journal');
+  const activeSection = 'journal';
   const [activeModal, setActiveModal] = React.useState<ModalType>(null);
 
   const handleNavigate = (sectionId: string) => {

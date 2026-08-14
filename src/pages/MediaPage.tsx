@@ -13,7 +13,7 @@ import { PressHighlights } from './media/PressHighlights';
 import { ContinueExploring } from './media/ContinueExploring';
 
 export default function MediaPage() {
-  const [activeSection] = useState<string>('media');
+  const activeSection = 'media';
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const navigate = useNavigate();
 

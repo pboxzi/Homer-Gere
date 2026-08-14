@@ -20,7 +20,7 @@ import { useAuth } from '../context/AuthContext';
 export default function ExperiencesPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const [activeSection] = useState<string>('experiences');
+  const activeSection = 'experiences';
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);

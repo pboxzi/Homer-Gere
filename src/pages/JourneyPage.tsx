@@ -19,7 +19,7 @@ import { ModalType } from '../types';
 
 export default function JourneyPage() {
   const navigate = useNavigate();
-  const [activeSection] = useState<string>('journey');
+  const activeSection = 'journey';
   const [activeModal, setActiveModal] = useState<ModalType>(null);
 
   const handleNavigate = (sectionId: string) => {

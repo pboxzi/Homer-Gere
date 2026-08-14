@@ -103,7 +103,7 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
         preferredDate: requestForm.preferredDate || 'TBD',
       });
       setTimeout(() => { setSubmitted(false); setSelectedExp(null); setRequestForm({ preferredDate: '', location: '', guests: '1', specialRequirements: '', notes: '' }); }, 2000);
-    } catch (e) { console.error(e); }
+    } catch { /* silent */ }
     setSubmitting(false);
   };
 

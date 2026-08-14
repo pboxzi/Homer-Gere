@@ -32,7 +32,7 @@ export const DashboardChat: React.FC = () => {
     try {
       const userConvs = await fanChatRepository.getConversationsByUserId(user.id);
       setConversations(userConvs);
-    } catch (e) { console.error(e); }
+    } catch { /* silent */ }
     setLoading(false);
   }, [user?.id]);
 
@@ -42,7 +42,7 @@ export const DashboardChat: React.FC = () => {
     try {
       const msgs = await fanChatRepository.getMessages(convId);
       setMessages(msgs);
-    } catch (e) { console.error(e); }
+    } catch { /* silent */ }
   }, []);
 
   useEffect(() => {
@@ -97,7 +97,7 @@ export const DashboardChat: React.FC = () => {
       setPendingFile(null);
       setPreviewImage(null);
       loadMessages(activeConvId);
-    } catch (e) { console.error(e); }
+    } catch { /* silent */ }
     setUploading(false);
   };
 
@@ -154,7 +154,7 @@ export const DashboardChat: React.FC = () => {
     try {
       await fanChatRepository.updateConversationStatus(convId, 'closed');
       setConversations((prev) => prev.map((c) => c.id === convId ? { ...c, status: 'closed' } : c));
-    } catch (e) { console.error(e); }
+    } catch { /* silent */ }
   };
 
   const activeConv = conversations.find((c) => c.id === activeConvId);

@@ -24,7 +24,7 @@ export const DashboardMessages: React.FC = () => {
     try {
       const data = await businessEnquiriesRepository.getAll();
       setEnquiries(data.filter((e) => e.user_id === user.id));
-    } catch (e) { console.error(e); }
+    } catch { /* silent */ }
     setLoading(false);
   }, [user?.id]);
 
@@ -34,7 +34,7 @@ export const DashboardMessages: React.FC = () => {
     try {
       const msgs = await businessEnquiriesRepository.getMessages(enqId);
       setMessages(msgs);
-    } catch (e) { console.error(e); }
+    } catch { /* silent */ }
   }, []);
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export const DashboardMessages: React.FC = () => {
       });
       setReplyText('');
       loadMessages(selectedId);
-    } catch (e) { console.error(e); }
+    } catch { /* silent */ }
   };
 
   const handleCreate = async () => {
@@ -76,7 +76,7 @@ export const DashboardMessages: React.FC = () => {
       setNewBody('');
       setShowNew(false);
       logActivity('create', 'business', `Business enquiry created: ${newSubject.trim()}`, { enquiry_id: enq.id });
-    } catch (e) { console.error(e); }
+    } catch { /* silent */ }
   };
 
   const selected = enquiries.find((e) => e.id === selectedId);

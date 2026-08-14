@@ -12,7 +12,7 @@ import { useAuth } from '../../context/AuthContext';
 export default function ChatPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const [activeSection] = useState<string>('chat');
+  const activeSection = 'chat';
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authFeature, setAuthFeature] = useState('Chat with Homer');

@@ -19,7 +19,7 @@ export const JournalPage: React.FC = () => {
   const navigate = useNavigate();
   const { journalArticles } = useSiteContent();
   const [activeCategory, setActiveCategory] = useState<JournalCategory>('All');
-  const [activeSection, setActiveSection] = useState<string>('journal');
+  const activeSection = 'journal';
   const [activeModal, setActiveModal] = useState<ModalType>(null);
 
   const featuredArticle = useMemo(

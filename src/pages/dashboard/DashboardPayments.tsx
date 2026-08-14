@@ -44,7 +44,7 @@ export default function DashboardPayments() {
         paymentMethodsRepository.getActive(),
       ]);
       setRequests(r); setSubmissions(s); setMethods(m);
-    } catch (e) { console.error(e); }
+    } catch { /* silent */ }
     setLoading(false);
   }, [user?.id]);
 
@@ -117,7 +117,7 @@ export default function DashboardPayments() {
       setProofPreview(null);
       logActivity('submit', 'payment', `Payment submitted: ${submitTarget.currency} ${submitTarget.amount}`, { payment_request_id: submitTarget.id });
       load();
-    } catch (e) { console.error(e); }
+    } catch { /* silent */ }
     setActionLoading(false);
   };
 

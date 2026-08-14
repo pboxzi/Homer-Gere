@@ -14,7 +14,7 @@ import { ModalType } from '../types';
 
 export default function ContactPage() {
   const navigate = useNavigate();
-  const [activeSection] = useState<string>('contact');
+  const activeSection = 'contact';
   const [activeModal, setActiveModal] = useState<ModalType>(null);
 
   const handleNavigate = (sectionId: string) => {

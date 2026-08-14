@@ -21,7 +21,7 @@ import { useAuth } from '../context/AuthContext';
 export default function MembershipPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const [activeSection] = useState<string>('membership');
+  const activeSection = 'membership';
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authFeature, setAuthFeature] = useState<string | undefined>();

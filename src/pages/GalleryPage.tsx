@@ -27,7 +27,7 @@ export const GalleryPage: React.FC = () => {
   const categorySectionRef = useRef<HTMLDivElement>(null);
   const categoryInView = useInView(categorySectionRef, { once: true, margin: '-60px' });
 
-  const [activeSection, setActiveSection] = useState<string>('gallery');
+  const activeSection = 'gallery';
 
   const handleNavigate = (sectionId: string) => {
     if (sectionId === 'home') { navigate('/'); return; }
