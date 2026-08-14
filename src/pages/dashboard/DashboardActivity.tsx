@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Clock, User, Crown, DollarSign, Sparkles, MessageSquare, Shield, Settings, Bell, Check } from 'lucide-react';
+import { Clock, User, Crown, DollarSign, Sparkles, MessageSquare, Shield, Settings } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import type { ActivityLog } from '../../types/database';
 
@@ -65,7 +65,7 @@ export default function DashboardActivity() {
       {/* Filter */}
       <div className="flex gap-2 flex-wrap">
         {modules.map((mod) => (
-          <button key={mod} onClick={() => setFilterModule(mod)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${filterModule === mod ? 'bg-[#A6852F] text-white' : 'bg-white border border-[#A6852F]/20 text-[#57534E] hover:bg-[#A6852F]/10'}`}>
+          <button key={mod} onClick={() => setFilterModule(mod)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${filterModule === mod ? 'bg-[#A6852F] text-white shadow-md shadow-[#A6852F]/25' : 'bg-white border border-[#A6852F]/20 text-[#57534E] hover:bg-[#A6852F]/10'}`}>
             {mod === 'all' ? 'All Activity' : MODULE_CONFIG[mod]?.label || mod}
           </button>
         ))}
@@ -81,7 +81,7 @@ export default function DashboardActivity() {
       ) : (
         <div className="relative">
           {/* Timeline line */}
-          <div className="absolute left-5 top-0 bottom-0 w-px bg-[#A6852F]/15" />
+          <div className="absolute left-5 top-0 bottom-0 w-px bg-[#A6852F]/25" />
 
           <div className="space-y-1">
             {filtered.map((log, i) => {
@@ -91,12 +91,12 @@ export default function DashboardActivity() {
               return (
                 <motion.div key={log.id} className="relative flex items-start gap-4 pl-12 py-3" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: 0.05 + i * 0.03 }}>
                   {/* Timeline dot */}
-                  <div className="absolute left-3.5 top-3.5 w-3 h-3 rounded-full border-2 border-white shadow-sm" style={{ backgroundColor: modConfig.color }} />
+                  <div className="absolute left-3.5 top-3.5 w-3.5 h-3.5 rounded-full border-2 border-white shadow-sm shadow-md" style={{ backgroundColor: modConfig.color }} />
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className="text-xs font-medium" style={{ color: actionConfig.color }}>{actionConfig.label}</span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium" style={{ backgroundColor: `${modConfig.color}12`, color: modConfig.color }}>{modConfig.label}</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium" style={{ backgroundColor: `${modConfig.color}18`, color: modConfig.color, boxShadow: `0 0 8px ${modConfig.color}12` }}>{modConfig.label}</span>
                     </div>
                     <p className="text-sm text-[#1C1917]">{log.description}</p>
                     {log.metadata && Object.keys(log.metadata).length > 0 && (

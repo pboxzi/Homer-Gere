@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { Bell, Crown, MessageSquare, Sparkles, BookOpen, Settings as SettingsIcon, Check, Trash2, Filter, Archive, ExternalLink } from 'lucide-react';
+import { Bell, Crown, MessageSquare, Sparkles, BookOpen, Settings as SettingsIcon, Check, Trash2 } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
-import { NotificationType } from '../../data/dashboardData';
+
 
 const TYPE_ICONS: Record<string, React.FC<{ className?: string }>> = {
   membership: Crown,
@@ -56,7 +56,7 @@ export const DashboardNotifications: React.FC = () => {
           { id: 'unread', label: 'Unread', count: unread },
           { id: 'read', label: 'Read', count: notifications.length - unread },
         ].map((tab) => (
-          <button key={tab.id} onClick={() => setFilter(tab.id as typeof filter)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${filter === tab.id ? 'bg-[#A6852F] text-white' : 'bg-white border border-[#A6852F]/20 text-[#57534E] hover:bg-[#A6852F]/10'}`}>
+          <button key={tab.id} onClick={() => setFilter(tab.id as typeof filter)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${filter === tab.id ? 'bg-[#A6852F] text-white shadow-md shadow-[#A6852F]/25' : 'bg-white border border-[#A6852F]/20 text-[#57534E] hover:bg-[#A6852F]/10'}`}>
             {tab.label} ({tab.count})
           </button>
         ))}
@@ -78,7 +78,7 @@ export const DashboardNotifications: React.FC = () => {
             return (
               <motion.div
                 key={n.id}
-                className={`flex items-start gap-4 p-4 rounded-2xl border transition-all duration-500 ${!n.read ? 'border-[#A6852F]/35 bg-[#A6852F]/10 hover:bg-[#A6852F]/15 shadow-sm shadow-[#A6852F]/10 hover:shadow-md hover:shadow-[#A6852F]/15' : 'border-[#A6852F]/15 bg-white hover:border-[#A6852F]/25 shadow-sm hover:shadow-md'}`}
+                className={`flex items-start gap-4 p-4 rounded-2xl border transition-all duration-500 ${!n.read ? 'border-[#A6852F]/35 bg-[#A6852F]/10 hover:bg-[#A6852F]/15 shadow-md shadow-[#A6852F]/15 hover:shadow-lg hover:shadow-[#A6852F]/25' : 'border-[#A6852F]/15 bg-white hover:border-[#A6852F]/25 shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10'}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}

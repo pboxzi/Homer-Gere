@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Crown, Check, X, Shield, Zap, ArrowRight, Calendar, CreditCard, Clock, Star } from 'lucide-react';
+import { Crown, Check, Shield, Zap, ArrowRight, Calendar, CreditCard, Clock, Star } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import { useSiteContent } from '../../context/SiteContentContext';
 import type { DashboardSection } from '../../data/dashboardData';
@@ -66,22 +66,22 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
               </div>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="text-center p-3 rounded-xl shadow-md shadow-[#A6852F]/10" style={{ background: 'linear-gradient(135deg, rgba(166,133,47,0.12), rgba(166,133,47,0.04))' }}>
+              <div className="text-center p-3 rounded-xl border border-[#A6852F]/25 shadow-md shadow-[#A6852F]/10" style={{ background: 'linear-gradient(135deg, rgba(166,133,47,0.15), rgba(166,133,47,0.05))' }}>
                 <Calendar className="w-4 h-4 text-[#A6852F] mx-auto mb-1" />
                 <p className="text-xs font-medium text-[#1C1917]">{membership?.start_date ? new Date(membership.start_date).toLocaleDateString() : '—'}</p>
                 <p className="text-[10px] text-[#57534E]">Start Date</p>
               </div>
-              <div className="text-center p-3 rounded-xl shadow-md shadow-[#8B5CF6]/10" style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.12), rgba(139,92,246,0.04))' }}>
+              <div className="text-center p-3 rounded-xl border border-[#8B5CF6]/25 shadow-md shadow-[#8B5CF6]/10" style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(139,92,246,0.05))' }}>
                 <Clock className="w-4 h-4 text-[#8B5CF6] mx-auto mb-1" />
                 <p className="text-xs font-medium text-[#1C1917]">{membership?.end_date ? new Date(membership.end_date).toLocaleDateString() : '—'}</p>
                 <p className="text-[10px] text-[#57534E]">Expiry Date</p>
               </div>
-              <div className="text-center p-3 rounded-xl shadow-md shadow-[#16A34A]/10" style={{ background: 'linear-gradient(135deg, rgba(22,163,74,0.12), rgba(22,163,74,0.04))' }}>
+              <div className="text-center p-3 rounded-xl border border-[#16A34A]/25 shadow-md shadow-[#16A34A]/10" style={{ background: 'linear-gradient(135deg, rgba(22,163,74,0.15), rgba(22,163,74,0.05))' }}>
                 <CreditCard className="w-4 h-4 text-[#16A34A] mx-auto mb-1" />
                 <p className="text-xs font-medium text-[#1C1917]">{membership?.auto_renew ? 'Auto' : 'Manual'}</p>
                 <p className="text-[10px] text-[#57534E]">Renewal</p>
               </div>
-              <div className="text-center p-3 rounded-xl shadow-md shadow-[#F59E0B]/10" style={{ background: 'linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.04))' }}>
+              <div className="text-center p-3 rounded-xl border border-[#F59E0B]/25 shadow-md shadow-[#F59E0B]/10" style={{ background: 'linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05))' }}>
                 <Star className="w-4 h-4 text-[#F59E0B] mx-auto mb-1" />
                 <p className="text-xs font-medium text-[#1C1917]">{daysUntilExpiry !== null ? `${daysUntilExpiry} days` : '—'}</p>
                 <p className="text-[10px] text-[#57534E]">Until Expiry</p>

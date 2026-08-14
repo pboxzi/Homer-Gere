@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { DollarSign, Clock, CheckCircle, XCircle, Send, ChevronDown, ChevronUp, Upload } from 'lucide-react';
+import { DollarSign, Clock, ChevronDown, ChevronUp, Upload } from 'lucide-react';
 import { paymentRequestsRepository, paymentSubmissionsRepository, paymentMethodsRepository } from '../../lib/repositories';
 import { notifyService } from '../../lib/notifications';
 import { useAuth } from '../../context/AuthContext';
@@ -83,18 +83,18 @@ export default function DashboardPayments() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-[#1a1a1a]">Payments</h1>
-        <p className="text-sm text-[#6b7280] mt-1">View payment requests and submit payment proofs</p>
+        <h1 className="text-2xl font-bold text-[#1C1917]">Payments</h1>
+        <p className="text-sm text-[#57534E] mt-1">View payment requests and submit payment proofs</p>
       </div>
 
-      {successMsg && <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm">{successMsg}</div>}
+      {successMsg && <div className="bg-[#F59E0B]/10 border border-[#F59E0B]/30 text-[#92400E] px-4 py-3 rounded-lg text-sm shadow-sm shadow-[#F59E0B]/10">{successMsg}</div>}
 
       {loading ? (
-        <div className="text-center py-12 text-[#6b7280]">Loading...</div>
+        <div className="text-center py-12 text-[#57534E]">Loading...</div>
       ) : requests.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+        <div className="bg-white rounded-xl border border-[#A6852F]/20 p-8 text-center shadow-sm shadow-[#A6852F]/5">
           <DollarSign className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-[#6b7280]">No payment requests</p>
+          <p className="text-[#57534E]">No payment requests</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -104,31 +104,31 @@ export default function DashboardPayments() {
             const isExpanded = expandedId === req.id;
             const canSubmit = req.status === 'instructions_sent' && !sub;
             return (
-              <div key={req.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <div key={req.id} className="rounded-2xl border bg-white overflow-hidden" style={{ borderColor: '#A6852F30', boxShadow: '0 0 20px rgba(166,133,47,0.08), 0 2px 12px rgba(166,133,47,0.05)' }}>
                 <button onClick={() => setExpandedId(isExpanded ? null : req.id)}
-                  className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50">
+                  className="w-full flex items-center justify-between p-4 text-left hover:bg-[#A6852F]/5">
                   <div className="flex items-center gap-3">
                     <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${sc.bg} ${sc.color}`}>{sc.label}</span>
                     <div>
-                      <div className="font-medium text-[#1a1a1a] text-sm">{req.amount} {req.currency}</div>
-                      <div className="text-xs text-[#6b7280] font-mono">{req.request_number} · {req.payment_type}</div>
+                      <div className="font-medium text-[#1C1917] text-sm">{req.amount} {req.currency}</div>
+                      <div className="text-xs text-[#57534E] font-mono">{req.request_number} · {req.payment_type}</div>
                     </div>
                   </div>
-                  {isExpanded ? <ChevronUp className="w-4 h-4 text-[#6b7280]" /> : <ChevronDown className="w-4 h-4 text-[#6b7280]" />}
+                  {isExpanded ? <ChevronUp className="w-4 h-4 text-[#57534E]" /> : <ChevronDown className="w-4 h-4 text-[#57534E]" />}
                 </button>
 
                 {isExpanded && (
-                  <div className="px-4 pb-4 border-t border-gray-100 pt-3 space-y-3">
+                  <div className="px-4 pb-4 border-t border-[#A6852F]/10 pt-3 space-y-3">
                     <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div><span className="text-[#6b7280]">Type:</span> <span className="font-medium capitalize">{req.payment_type}</span></div>
-                      <div><span className="text-[#6b7280]">Due Date:</span> <span className="font-medium">{req.due_date ? new Date(req.due_date).toLocaleDateString() : '—'}</span></div>
-                      {req.payment_method_id && <div><span className="text-[#6b7280]">Method:</span> <span className="font-medium">{getMethodName(req.payment_method_id)}</span></div>}
+                      <div><span className="text-[#57534E]">Type:</span> <span className="font-medium capitalize">{req.payment_type}</span></div>
+                      <div><span className="text-[#57534E]">Due Date:</span> <span className="font-medium">{req.due_date ? new Date(req.due_date).toLocaleDateString() : '—'}</span></div>
+                      {req.payment_method_id && <div><span className="text-[#57534E]">Method:</span> <span className="font-medium">{getMethodName(req.payment_method_id)}</span></div>}
                     </div>
 
                     {req.payment_instructions && (
-                      <div className="p-3 bg-gray-50 rounded-lg text-sm">
-                        <span className="text-[#6b7280] font-medium">Payment Instructions:</span>
-                        <p className="mt-1 text-[#1a1a1a] whitespace-pre-wrap">{req.payment_instructions}</p>
+                      <div className="p-3 bg-[#F3F1ED]/50 rounded-lg text-sm">
+                        <span className="text-[#57534E] font-medium">Payment Instructions:</span>
+                        <p className="mt-1 text-[#1C1917] whitespace-pre-wrap">{req.payment_instructions}</p>
                       </div>
                     )}
 
@@ -144,7 +144,7 @@ export default function DashboardPayments() {
 
                     {canSubmit && (
                       <button onClick={(e) => { e.stopPropagation(); setSubmitTarget(req); setShowSubmitModal(true); }}
-                        className="w-full py-2 bg-[#A6852F] text-white rounded-lg hover:bg-[#8B6F24] text-sm font-medium flex items-center justify-center gap-2">
+                        className="w-full py-2 bg-[#A6852F] text-white rounded-lg hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/20 text-sm font-medium flex items-center justify-center gap-2">
                         <Upload className="w-4 h-4" /> Submit Payment Proof
                       </button>
                     )}
@@ -160,37 +160,37 @@ export default function DashboardPayments() {
       {showSubmitModal && submitTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setShowSubmitModal(false)}>
           <div className="bg-white rounded-2xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
-            <h2 className="text-lg font-bold text-[#1a1a1a] mb-4">Submit Payment Proof</h2>
+            <h2 className="text-lg font-bold text-[#1C1917] mb-4">Submit Payment Proof</h2>
             <div className="space-y-4">
-              <div className="p-3 bg-gray-50 rounded-lg text-sm">
+              <div className="p-3 bg-[#F3F1ED]/50 rounded-lg text-sm">
                 <div className="font-medium">{submitTarget.amount} {submitTarget.currency}</div>
-                <div className="text-[#6b7280]">Request: {submitTarget.request_number}</div>
+                <div className="text-[#57534E]">Request: {submitTarget.request_number}</div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Transaction Reference *</label>
+                <label className="block text-sm font-medium text-[#1C1917] mb-1">Transaction Reference *</label>
                 <input value={submitForm.transactionReference} onChange={e => setSubmitForm(f => ({ ...f, transactionReference: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" placeholder="e.g. TXN-123456" />
+                  className="w-full px-3 py-2 border border-[#A6852F]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" placeholder="e.g. TXN-123456" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Amount Paid *</label>
+                <label className="block text-sm font-medium text-[#1C1917] mb-1">Amount Paid *</label>
                 <input type="number" value={submitForm.amountPaid} onChange={e => setSubmitForm(f => ({ ...f, amountPaid: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" placeholder="0.00" />
+                  className="w-full px-3 py-2 border border-[#A6852F]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" placeholder="0.00" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Payment Date *</label>
+                <label className="block text-sm font-medium text-[#1C1917] mb-1">Payment Date *</label>
                 <input type="date" value={submitForm.paymentDate} onChange={e => setSubmitForm(f => ({ ...f, paymentDate: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" />
+                  className="w-full px-3 py-2 border border-[#A6852F]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Notes</label>
+                <label className="block text-sm font-medium text-[#1C1917] mb-1">Notes</label>
                 <textarea value={submitForm.notes} onChange={e => setSubmitForm(f => ({ ...f, notes: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F] min-h-[80px]" placeholder="Optional notes..." />
+                  className="w-full px-3 py-2 border border-[#A6852F]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F] min-h-[80px]" placeholder="Optional notes..." />
               </div>
             </div>
             <div className="flex gap-2 mt-6">
               <button onClick={handleSubmitPayment} disabled={actionLoading || !submitForm.transactionReference || !submitForm.amountPaid || !submitForm.paymentDate}
-                className="flex-1 py-2 bg-[#A6852F] text-white rounded-lg hover:bg-[#8B6F24] text-sm font-medium disabled:opacity-50">Submit</button>
-              <button onClick={() => setShowSubmitModal(false)} className="flex-1 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">Cancel</button>
+                className="flex-1 py-2 bg-[#A6852F] text-white rounded-lg hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/20 text-sm font-medium disabled:opacity-50">Submit</button>
+              <button onClick={() => setShowSubmitModal(false)} className="flex-1 py-2 bg-[#F3F1ED] text-[#57534E] rounded-lg hover:bg-[#E8E5DF] text-sm font-medium">Cancel</button>
             </div>
           </div>
         </div>

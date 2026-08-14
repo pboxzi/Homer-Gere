@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { CreditCard, Download, RefreshCw } from 'lucide-react';
+import { CreditCard, Download } from 'lucide-react';
 import { membershipCardsRepository } from '../../lib/repositories';
 import { useAuth } from '../../context/AuthContext';
 import type { MembershipCard } from '../../types/database';

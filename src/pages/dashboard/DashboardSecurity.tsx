@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
-import { Shield, Monitor, Smartphone, Laptop, LogOut, Lock, Eye, EyeOff, Check, Clock, AlertTriangle } from 'lucide-react';
+import { Shield, Monitor, Smartphone, Laptop, Lock, Eye, EyeOff, Check, Clock } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import { supabase } from '../../lib/supabase';
 

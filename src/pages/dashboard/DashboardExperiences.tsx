@@ -104,7 +104,7 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
           { label: 'Approved', count: experienceRequestsList.filter((r) => r.status === 'approved').length, color: '#16A34A' },
           { label: 'Completed', count: experienceRequestsList.filter((r) => r.status === 'completed').length, color: '#57534E' },
         ].map((s, i) => (
-          <motion.div key={s.label} className="rounded-xl p-4 text-center" style={{ backgroundColor: `${s.color}15`, boxShadow: `0 0 25px ${s.color}15, 0 4px 15px ${s.color}10, inset 0 1px 0 ${s.color}08` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
+          <motion.div key={s.label} className="rounded-xl p-4 text-center border" style={{ borderColor: `${s.color}35`, background: `linear-gradient(135deg, ${s.color}18, ${s.color}06)`, boxShadow: `0 0 25px ${s.color}18, 0 4px 15px ${s.color}12` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
             <p className="text-xl font-editorial" style={{ color: s.color }}>{s.count}</p>
             <p className="text-[10px] font-semibold mt-1" style={{ color: s.color }}>{s.label}</p>
           </motion.div>

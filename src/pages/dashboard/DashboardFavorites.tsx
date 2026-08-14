@@ -32,7 +32,7 @@ export const DashboardFavorites: React.FC = () => {
           {favorites.map((f, i) => (
             <motion.div
               key={f.id}
-              className="group relative rounded-2xl overflow-hidden border border-[#A6852F]/20 bg-white shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10 transition-all duration-500"
+              className="group relative rounded-2xl overflow-hidden border border-[#A6852F]/30 bg-white shadow-md shadow-[#A6852F]/8 hover:shadow-lg hover:shadow-[#A6852F]/12 transition-all duration-500"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}
@@ -43,7 +43,7 @@ export const DashboardFavorites: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
               <button
                 onClick={() => toggleFavorite(f)}
-                className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center text-[#DC2626] md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 cursor-pointer hover:bg-white shadow-sm"
+                className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center text-[#DC2626] md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 cursor-pointer hover:bg-white shadow-md shadow-[#DC2626]/10"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>

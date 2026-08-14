@@ -30,7 +30,7 @@ export const DashboardSettings: React.FC = () => {
       {/* Privacy */}
       <motion.div className="space-y-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
         <h3 className="text-sm font-medium text-[#1C1917] flex items-center gap-2"><Shield className="w-4 h-4 text-[#57534E]" /> Privacy</h3>
-        <div className="rounded-2xl border border-[#E8E5DF]/60 bg-white divide-y divide-[#E8E5DF]/40">
+        <div className="rounded-2xl border border-[#A6852F]/20 shadow-md shadow-[#A6852F]/8 bg-white divide-y divide-[#E8E5DF]/40">
           <ToggleRow icon={<Eye className="w-4 h-4" />} label="Profile visibility" subtext={profileVisibility === 'members' ? 'Visible to members only' : 'Visible to everyone'} checked={profileVisibility === 'members'} onChange={(v) => setProfileVisibility(v ? 'members' : 'public')} />
           <ToggleRow icon={<Globe className="w-4 h-4" />} label="Show online status" subtext="Allow others to see when you're online" checked={showOnlineStatus} onChange={setShowOnlineStatus} />
           <ToggleRow icon={<Clock className="w-4 h-4" />} label="Allow message requests" subtext="Receive messages from other members" checked={allowMessageRequests} onChange={setAllowMessageRequests} />
@@ -40,14 +40,14 @@ export const DashboardSettings: React.FC = () => {
       {/* Notifications */}
       <motion.div className="space-y-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
         <h3 className="text-sm font-medium text-[#1C1917] flex items-center gap-2"><Bell className="w-4 h-4 text-[#57534E]" /> Notifications</h3>
-        <div className="rounded-2xl border border-[#E8E5DF]/60 bg-white divide-y divide-[#E8E5DF]/40">
+        <div className="rounded-2xl border border-[#A6852F]/20 shadow-md shadow-[#A6852F]/8 bg-white divide-y divide-[#E8E5DF]/40">
           <ToggleRow icon={<Mail className="w-4 h-4" />} label="Email notifications" subtext="Receive notifications via email" checked={emailNotifications} onChange={setEmailNotifications} />
           <ToggleRow icon={<Bell className="w-4 h-4" />} label="Marketing emails" subtext="Receive updates about new features and events" checked={marketingPreferences} onChange={setMarketingPreferences} />
         </div>
       </motion.div>
 
       <div className="flex items-center gap-3">
-        <button onClick={handleSave} className="inline-flex items-center gap-2 bg-[#1C1917] hover:bg-[#292524] active:scale-95 text-white font-medium text-sm px-6 py-2.5 rounded-2xl transition-all duration-300 cursor-pointer">
+        <button onClick={handleSave} className="inline-flex items-center gap-2 bg-[#A6852F] hover:bg-[#8B6F1F] shadow-lg shadow-[#A6852F]/25 active:scale-95 text-white font-medium text-sm px-6 py-2.5 rounded-2xl transition-all duration-300 cursor-pointer">
           <Save className="w-4 h-4" /> Save Settings
         </button>
         {saved && <span className="text-xs text-[#16A34A] font-medium">Saved!</span>}
@@ -57,7 +57,7 @@ export const DashboardSettings: React.FC = () => {
 };
 
 const ToggleRow: React.FC<{ icon: React.ReactNode; label: string; subtext?: string; checked: boolean; onChange: (v: boolean) => void }> = ({ icon, label, subtext, checked, onChange }) => (
-  <label className="flex items-center gap-3 p-3 rounded-xl bg-white border border-[#A6852F]/20 shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10 transition-all duration-500 cursor-pointer">
+  <label className="flex items-center gap-3 p-3 rounded-xl bg-white border border-[#A6852F]/25 shadow-sm shadow-[#A6852F]/8 hover:shadow-md hover:shadow-[#A6852F]/10 transition-all duration-500 cursor-pointer">
     <div className="text-[#57534E]">{icon}</div>
     <div className="flex-1">
       <span className="text-sm text-[#57534E]">{label}</span>

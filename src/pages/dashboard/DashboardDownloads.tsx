@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
-import { Download, FileText, Image, Film, Music, Search, Filter, Check, ExternalLink } from 'lucide-react';
+import { Download, FileText, Image, Film, Music, Search, Check } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useDashboard } from '../../context/DashboardContext';
 import { downloadItemsRepository, memberDownloadsRepository } from '../../lib/repositories';
@@ -85,7 +85,7 @@ export default function DashboardDownloads() {
           { label: 'Downloaded', value: downloaded.size, color: '#16A34A' },
           { label: 'Available', value: items.filter((i) => !downloaded.has(i.id)).length, color: '#3B82F6' },
         ].map((s, i) => (
-          <motion.div key={s.label} className="rounded-xl p-3 text-center border border-[#A6852F]/10 bg-white shadow-sm" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
+          <motion.div key={s.label} className="rounded-xl p-4 text-center border" style={{ borderColor: `${s.color}35`, background: `linear-gradient(135deg, ${s.color}18, ${s.color}06)`, boxShadow: `0 0 25px ${s.color}18, 0 4px 15px ${s.color}12` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
             <p className="text-lg font-editorial" style={{ color: s.color }}>{s.value}</p>
             <p className="text-[10px] font-medium text-[#57534E]">{s.label}</p>
           </motion.div>
@@ -96,7 +96,7 @@ export default function DashboardDownloads() {
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#57534E]/40" />
-          <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search downloads..." className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[#A6852F]/20 text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30" />
+          <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search downloads..." className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[#A6852F]/30 text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30" />
         </div>
         <div className="flex gap-2 flex-wrap">
           {categories.map((cat) => (
@@ -123,8 +123,8 @@ export default function DashboardDownloads() {
             const CatIcon = catConfig.icon;
             const isDownloaded = downloaded.has(item.id);
             return (
-              <motion.div key={item.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/20 bg-white hover:border-[#A6852F]/35 transition-all duration-300 shadow-sm hover:shadow-md" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}>
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${catConfig.color}12`, color: catConfig.color }}>
+              <motion.div key={item.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/30 bg-white hover:border-[#A6852F]/35 transition-all duration-300 shadow-md shadow-[#A6852F]/8 hover:shadow-lg hover:shadow-[#A6852F]/12" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${catConfig.color}18`, color: catConfig.color, boxShadow: `0 0 12px ${catConfig.color}15` }}>
                   <CatIcon className="w-5 h-5" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -139,7 +139,7 @@ export default function DashboardDownloads() {
                     {item.file_size > 0 && <span className="text-[10px] text-[#57534E]/60">{(item.file_size / 1024 / 1024).toFixed(1)} MB</span>}
                   </div>
                 </div>
-                <button onClick={() => handleDownload(item)} className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${isDownloaded ? 'bg-[#16A34A]/10 text-[#16A34A] hover:bg-[#16A34A]/20' : 'bg-[#A6852F] text-white hover:bg-[#8B6F24]'}`}>
+                <button onClick={() => handleDownload(item)} className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${isDownloaded ? 'bg-[#16A34A]/10 text-[#16A34A] hover:bg-[#16A34A]/20' : 'bg-[#A6852F] text-white hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/20'}`}>
                   <Download className="w-3.5 h-3.5" />
                   {isDownloaded ? 'Downloaded' : 'Download'}
                 </button>

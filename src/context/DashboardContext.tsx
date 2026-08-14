@@ -11,10 +11,8 @@ import {
   paymentMethodsRepository,
   experienceRequestsRepository,
   fanChatRepository,
-  businessEnquiriesRepository,
   notificationsRepository,
   activityLogsRepository,
-  auditLogsRepository,
 } from '../lib/repositories';
 import type {
   Profile, Membership, MembershipRequest, MembershipPlan,
@@ -22,10 +20,7 @@ import type {
   ExperienceRequest, Notification, ActivityLog, ActivityModule,
   FanConversation, FanMessage,
 } from '../types/database';
-import {
-  DEFAULT_MEMBER_PROFILE, DEFAULT_MEMBERSHIP, DASHBOARD_NAV_ITEMS,
-} from '../data/dashboardData';
-import type { DashboardSection, DashboardNotification } from '../data/dashboardData';
+import type { DashboardNotification } from '../data/dashboardData';
 
 // ============================================================
 // Extended types
@@ -320,11 +315,14 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       .channel('dashboard-notifications')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, (payload) => {
         if (payload.eventType === 'INSERT') {
-          setNotifications((prev) => [payload.new as DashboardNotification, ...prev]);
+          const n = payload.new as Notification;
+          setNotifications((prev) => [{ id: n.id, type: (n.type as DashboardNotification['type']) || 'system', title: n.title, message: n.message, date: n.created_at, read: n.read }, ...prev]);
         } else if (payload.eventType === 'UPDATE') {
-          setNotifications((prev) => prev.map((n) => n.id === (payload.new as DashboardNotification).id ? (payload.new as DashboardNotification) : n));
+          const n = payload.new as Notification;
+          setNotifications((prev) => prev.map((item) => item.id === n.id ? { ...item, read: n.read, title: n.title, message: n.message } : item));
         } else if (payload.eventType === 'DELETE') {
-          setNotifications((prev) => prev.filter((n) => n.id !== (payload.old as DashboardNotification).id));
+          const old = payload.old as { id: string };
+          setNotifications((prev) => prev.filter((n) => n.id !== old.id));
         }
       })
       .subscribe();

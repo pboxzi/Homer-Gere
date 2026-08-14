@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import {
-  MessageSquare, Crown, Sparkles, User, Bell, ArrowRight,
-  Calendar, ArrowUpRight, Bookmark, Heart, FileText, Check,
-  AlertCircle, CreditCard, DollarSign, Download, Clock,
+  MessageSquare, Crown, Sparkles, User, Bell,
+  ArrowUpRight, Check,
+  AlertCircle, DollarSign, Clock,
 } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import { DashboardSection } from '../../data/dashboardData';

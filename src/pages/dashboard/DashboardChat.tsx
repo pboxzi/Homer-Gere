@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
-import { MessageSquare, ArrowRight, Phone, Send, Search, Trash2, Archive } from 'lucide-react';
+import { MessageSquare, ArrowRight, Phone, Send, Search, Archive } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import { useAuth } from '../../context/AuthContext';
 import { fanChatRepository } from '../../lib/repositories';
@@ -113,7 +113,7 @@ export const DashboardChat: React.FC = () => {
         </motion.div>
 
         {/* Messages */}
-        <div className="rounded-2xl border border-[#E8E5DF]/60 bg-white p-4 max-h-[500px] overflow-y-auto space-y-4">
+        <div className="rounded-2xl border border-[#A6852F]/20 bg-white p-4 max-h-[500px] overflow-y-auto space-y-4 shadow-md shadow-[#A6852F]/8">
           {messages.length === 0 ? (
             <div className="text-center py-8">
               <MessageSquare className="w-6 h-6 text-[#57534E]/20 mx-auto mb-2" />
@@ -153,9 +153,9 @@ export const DashboardChat: React.FC = () => {
               onChange={(e) => setNewMessage(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Type your message..."
-              className="flex-1 px-4 py-3 rounded-xl bg-white border border-[#E8E5DF]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30"
+              className="flex-1 px-4 py-3 rounded-xl bg-white border border-[#A6852F]/30 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30"
             />
-            <button onClick={handleSend} className="w-11 h-11 rounded-xl bg-[#1C1917] text-white flex items-center justify-center hover:bg-[#292524] transition-colors cursor-pointer">
+            <button onClick={handleSend} className="w-11 h-11 rounded-xl bg-[#A6852F] text-white flex items-center justify-center hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/20 transition-colors cursor-pointer">
               <Send className="w-4 h-4" />
             </button>
           </div>
@@ -174,8 +174,8 @@ export const DashboardChat: React.FC = () => {
 
       {/* New Chat */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-        <button onClick={handleStartChat} className="w-full flex items-center gap-4 p-5 rounded-2xl border border-dashed border-[#A6852F]/30 hover:border-[#A6852F]/60 hover:bg-[#A6852F]/5 transition-all duration-500 cursor-pointer group shadow-sm hover:shadow-md">
-          <div className="w-12 h-12 rounded-2xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] group-hover:bg-[#A6852F] group-hover:text-white transition-all duration-500"><MessageSquare className="w-5 h-5" /></div>
+        <button onClick={handleStartChat} className="w-full flex items-center gap-4 p-5 rounded-2xl border border-dashed border-[#A6852F]/40 hover:border-[#A6852F]/60 hover:bg-[#A6852F]/5 transition-all duration-500 cursor-pointer group shadow-md shadow-[#A6852F]/10 hover:shadow-lg hover:shadow-[#A6852F]/15">
+          <div className="w-12 h-12 rounded-2xl bg-[#A6852F]/15 flex items-center justify-center text-[#A6852F] group-hover:bg-[#A6852F] group-hover:text-white transition-all duration-500 shadow-sm shadow-[#A6852F]/10"><MessageSquare className="w-5 h-5" /></div>
           <div className="flex-1 text-left">
             <p className="text-sm font-medium text-[#1C1917] group-hover:text-[#A6852F] transition-colors">Start a New Conversation</p>
             <p className="text-xs text-[#57534E]">Send a message directly to Homer</p>
@@ -187,8 +187,8 @@ export const DashboardChat: React.FC = () => {
       {/* WhatsApp */}
       {canOpenWhatsApp && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
-          <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="w-full flex items-center gap-4 p-5 rounded-2xl border border-[#25D366]/20 hover:border-[#25D366]/40 hover:bg-[#25D366]/5 transition-all duration-500 cursor-pointer group shadow-sm hover:shadow-md">
-            <div className="w-12 h-12 rounded-2xl bg-[#25D366]/10 flex items-center justify-center text-[#25D366] group-hover:bg-[#25D366] group-hover:text-white transition-all duration-500"><Phone className="w-5 h-5" /></div>
+          <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="w-full flex items-center gap-4 p-5 rounded-2xl border border-[#25D366]/35 hover:border-[#25D366]/40 hover:bg-[#25D366]/5 transition-all duration-500 cursor-pointer group shadow-md shadow-[#25D366]/10 hover:shadow-lg hover:shadow-[#25D366]/15">
+            <div className="w-12 h-12 rounded-2xl bg-[#25D366]/15 flex items-center justify-center text-[#25D366] group-hover:bg-[#25D366] group-hover:text-white transition-all duration-500 shadow-sm shadow-[#25D366]/10"><Phone className="w-5 h-5" /></div>
             <div className="flex-1 text-left">
               <p className="text-sm font-medium text-[#1C1917] group-hover:text-[#25D366] transition-colors">Open Official WhatsApp</p>
               <p className="text-xs text-[#57534E]">Available for {membershipPlan?.name || 'Member'} members</p>
@@ -222,9 +222,9 @@ export const DashboardChat: React.FC = () => {
             </div>
           ) : (
             filteredConversations.map((c) => (
-              <div key={c.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/20 bg-white hover:border-[#A6852F]/35 transition-all duration-500 shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10">
+              <div key={c.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/30 bg-white hover:border-[#A6852F]/35 transition-all duration-500 shadow-md shadow-[#A6852F]/8 hover:shadow-lg hover:shadow-[#A6852F]/12">
                 <button onClick={() => setActiveConvId(c.id)} className="flex-1 flex items-center gap-4 text-left cursor-pointer">
-                  <div className="w-10 h-10 rounded-xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F]"><MessageSquare className="w-4 h-4" /></div>
+                  <div className="w-10 h-10 rounded-xl bg-[#A6852F]/15 flex items-center justify-center text-[#A6852F] shadow-sm shadow-[#A6852F]/10"><MessageSquare className="w-4 h-4" /></div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-[11px] font-medium text-[#1C1917] truncate">{c.participant}</span>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Clock, CheckCircle, XCircle, Hourglass, ChevronDown, ChevronUp, Calendar, FileText } from 'lucide-react';
+import { Clock, CheckCircle, XCircle, Hourglass, ChevronDown, ChevronUp } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 
 const STATUS_CONFIG: Record<string, { label: string; icon: React.FC<{ className?: string }>; color: string; bg: string }> = {
