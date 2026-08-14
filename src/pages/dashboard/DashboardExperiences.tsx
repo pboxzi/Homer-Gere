@@ -104,7 +104,7 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
           { label: 'Approved', count: experienceRequestsList.filter((r) => r.status === 'approved').length, color: '#16A34A' },
           { label: 'Completed', count: experienceRequestsList.filter((r) => r.status === 'completed').length, color: '#57534E' },
         ].map((s, i) => (
-          <motion.div key={s.label} className="rounded-xl p-4 text-center border" style={{ borderColor: `${s.color}35`, background: `linear-gradient(135deg, ${s.color}18, ${s.color}06)`, boxShadow: `0 0 25px ${s.color}18, 0 4px 15px ${s.color}12` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
+          <motion.div key={s.label} className="rounded-xl p-4 text-center border" style={{ borderColor: `${s.color}35`, background: `linear-gradient(135deg, ${s.color}18, ${s.color}06)`, boxShadow: `0 0 25px ${s.color}27, 0 4px 15px ${s.color}1B` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
             <p className="text-xl font-editorial" style={{ color: s.color }}>{s.count}</p>
             <p className="text-[10px] font-semibold mt-1" style={{ color: s.color }}>{s.label}</p>
           </motion.div>
@@ -122,14 +122,14 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
               <motion.div
                 key={exp.id}
                 className={`rounded-2xl border bg-white p-5 transition-all duration-500 ${accessible ? 'hover:scale-[1.01] cursor-pointer' : 'border-[#E8E5DF]/30 opacity-60'}`}
-                style={accessible ? { borderColor: `${color}35`, boxShadow: `0 0 30px ${color}12, 0 8px 25px ${color}10, inset 0 1px 0 ${color}08` } : {}}
+                style={accessible ? { borderColor: `${color}35`, boxShadow: `0 0 30px ${color}1B, 0 8px 25px ${color}18, inset 0 1px 0 ${color}0C` } : {}}
                 onClick={() => accessible && setSelectedExp(exp)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.15 + i * 0.05 }}
               >
                 <div className="flex items-start justify-between mb-3">
-                  <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1" style={{ backgroundColor: `${color}20`, color, boxShadow: `0 0 12px ${color}15` }}>
+                  <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1" style={{ backgroundColor: `${color}20`, color, boxShadow: `0 0 12px ${color}22` }}>
                     {ICON_MAP[exp.iconName] || <Sparkles className="w-3 h-3" />}
                     {exp.title}
                   </span>
@@ -162,15 +162,15 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
             {experienceRequestsList.map((r, i) => {
               const reqColor = r.status === 'approved' ? '#16A34A' : r.status === 'completed' ? '#57534E' : '#F59E0B';
               return (
-                <motion.div key={r.id} className="flex items-center gap-4 p-4 rounded-2xl border bg-white transition-all duration-500" style={{ borderColor: `${reqColor}30`, boxShadow: `0 0 20px ${reqColor}10, 0 4px 15px ${reqColor}08` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 + i * 0.04 }}>
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm" style={{ backgroundColor: `${reqColor}15`, color: reqColor, boxShadow: `0 0 12px ${reqColor}12` }}>
+                <motion.div key={r.id} className="flex items-center gap-4 p-4 rounded-2xl border bg-white transition-all duration-500" style={{ borderColor: `${reqColor}30`, boxShadow: `0 0 20px ${reqColor}18, 0 4px 15px ${reqColor}0C` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 + i * 0.04 }}>
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm" style={{ backgroundColor: `${reqColor}15`, color: reqColor, boxShadow: `0 0 12px ${reqColor}1B` }}>
                     {r.status === 'approved' || r.status === 'completed' ? <Check className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-[#1C1917]">{r.experience_type}</p>
                     <p className="text-[10px] text-[#57534E] mt-0.5">{r.request_number} · {new Date(r.created_at).toLocaleDateString()}</p>
                   </div>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full font-medium capitalize shadow-sm" style={{ backgroundColor: `${reqColor}12`, color: reqColor, boxShadow: `0 0 8px ${reqColor}08` }}>{r.status.replace('_', ' ')}</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full font-medium capitalize shadow-sm" style={{ backgroundColor: `${reqColor}12`, color: reqColor, boxShadow: `0 0 8px ${reqColor}0C` }}>{r.status.replace('_', ' ')}</span>
                 </motion.div>
               );
             })}
@@ -186,7 +186,7 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
             <motion.div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4" initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}>
               {submitted ? (
                 <div className="text-center py-8">
-                  <div className="w-12 h-12 rounded-full bg-[#16A34A]/10 flex items-center justify-center mx-auto mb-3"><Check className="w-6 h-6 text-[#16A34A]" /></div>
+                  <div className="w-12 h-12 rounded-full bg-[#16A34A]/22 flex items-center justify-center mx-auto mb-3"><Check className="w-6 h-6 text-[#16A34A]" /></div>
                   <p className="text-sm font-medium text-[#1C1917]">Request Submitted!</p>
                   <p className="text-xs text-[#57534E] mt-1">We'll review your request shortly.</p>
                 </div>

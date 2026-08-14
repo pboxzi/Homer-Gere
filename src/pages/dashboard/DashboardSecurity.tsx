@@ -76,7 +76,7 @@ export const DashboardSecurity: React.FC = () => {
       </motion.div>
 
       {/* Change Password */}
-      <motion.div className="rounded-2xl border border-[#A6852F]/20 bg-white p-5 shadow-sm" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+      <motion.div className="rounded-2xl border border-[#A6852F]/45 bg-white p-5 shadow-sm" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-medium text-[#1C1917] flex items-center gap-2"><Lock className="w-4 h-4 text-[#57534E]" /> Change Password</h3>
           <button onClick={() => { setShowChangePw(!showChangePw); setPwError(''); }} className="text-xs text-[#A6852F] font-medium hover:text-[#8B6F1F] transition-colors cursor-pointer">{showChangePw ? 'Cancel' : 'Change'}</button>
@@ -100,13 +100,13 @@ export const DashboardSecurity: React.FC = () => {
       </motion.div>
 
       {/* Email Verification */}
-      <motion.div className="rounded-2xl border border-[#A6852F]/20 bg-white p-5 shadow-sm" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
+      <motion.div className="rounded-2xl border border-[#A6852F]/45 bg-white p-5 shadow-sm" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-medium text-[#1C1917] flex items-center gap-2"><Shield className="w-4 h-4 text-[#57534E]" /> Two-Factor Authentication</h3>
             <p className="text-xs text-[#57534E] mt-1">Add an extra layer of security to your account.</p>
           </div>
-          <button className="text-xs font-medium px-3 py-1.5 rounded-xl bg-[#A6852F]/10 text-[#A6852F] hover:bg-[#A6852F]/20 transition-colors cursor-pointer">
+          <button className="text-xs font-medium px-3 py-1.5 rounded-xl bg-[#A6852F]/22 text-[#A6852F] hover:bg-[#A6852F]/30 transition-colors cursor-pointer">
             Enable
           </button>
         </div>
@@ -121,7 +121,7 @@ export const DashboardSecurity: React.FC = () => {
         {loadingHistory ? (
           <div className="text-center py-8 text-[#57534E] text-sm">Loading...</div>
         ) : loginHistory.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/30 p-8 text-center">
+          <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/45 p-8 text-center">
             <Clock className="w-6 h-6 text-[#57534E]/30 mx-auto mb-2" />
             <p className="text-sm text-[#57534E]">No login history yet</p>
           </div>
@@ -131,15 +131,15 @@ export const DashboardSecurity: React.FC = () => {
               const ua = parseUA(login.user_agent);
               const DeviceIcon = getDeviceIcon(login.user_agent);
               return (
-                <motion.div key={login.id} className="flex items-center gap-3 p-3 rounded-xl border border-[#A6852F]/10 bg-white hover:border-[#A6852F]/25 transition-all shadow-sm" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: i * 0.03 }}>
-                  <div className="w-9 h-9 rounded-lg bg-[#16A34A]/10 flex items-center justify-center text-[#16A34A]">
+                <motion.div key={login.id} className="flex items-center gap-3 p-3 rounded-xl border border-[#A6852F]/22 bg-white hover:border-[#A6852F]/38 transition-all shadow-sm" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: i * 0.03 }}>
+                  <div className="w-9 h-9 rounded-lg bg-[#16A34A]/22 flex items-center justify-center text-[#16A34A]">
                     <DeviceIcon className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-[#1C1917]">{ua.device} · {ua.browser}</p>
                     <p className="text-[10px] text-[#57534E]/60">{login.ip_address || 'Unknown IP'} · {new Date(login.created_at).toLocaleString()}</p>
                   </div>
-                  {i === 0 && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#16A34A]/10 text-[#16A34A] font-medium">Latest</span>}
+                  {i === 0 && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#16A34A]/22 text-[#16A34A] font-medium">Latest</span>}
                 </motion.div>
               );
             })}

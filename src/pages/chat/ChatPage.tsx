@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Navbar } from '../../components/Navbar';
 import { DetailModal } from '../../components/DetailModal';
+import { ChatLanding } from './ChatLanding';
 import { FanChat } from './FanChat';
 import { BusinessChat } from './BusinessChat';
 import { ChatConfirmation } from './ChatConfirmation';
@@ -58,6 +59,14 @@ export default function ChatPage() {
     navigate('/');
   }, [navigate]);
 
+  const handleStartFanChat = useCallback(() => {
+    navigate('/chat?mode=fan');
+  }, [navigate]);
+
+  const handleStartBusinessChat = useCallback(() => {
+    navigate('/chat?mode=business');
+  }, [navigate]);
+
   return (
     <div className="h-dvh h-screen flex flex-col bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
       <SEO title="Chat with Homer" />
@@ -78,8 +87,10 @@ export default function ChatPage() {
           />
         ) : mode === 'business' ? (
           <BusinessChat onBack={() => navigate('/')} onComplete={handleBusinessComplete} />
-        ) : (
+        ) : mode === 'fan' ? (
           <FanChat onBack={() => navigate('/')} />
+        ) : (
+          <ChatLanding onStartFanChat={handleStartFanChat} onStartBusinessChat={handleStartBusinessChat} />
         )}
       </div>
 

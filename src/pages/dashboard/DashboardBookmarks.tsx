@@ -15,7 +15,7 @@ export const DashboardBookmarks: React.FC = () => {
 
       {bookmarks.length === 0 ? (
         <motion.div
-          className="rounded-2xl border border-dashed border-[#A6852F]/20 bg-[#A6852F]/5 p-12 text-center shadow-sm hover:shadow-md transition-shadow duration-500"
+          className="rounded-2xl border border-dashed border-[#A6852F]/45 bg-[#A6852F]/8 p-12 text-center shadow-sm hover:shadow-md transition-shadow duration-500"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
@@ -32,7 +32,7 @@ export const DashboardBookmarks: React.FC = () => {
           {bookmarks.map((b, i) => (
             <motion.div
               key={b.id}
-              className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/30 bg-white hover:border-[#A6852F]/35 transition-all duration-500 shadow-md shadow-[#A6852F]/8 hover:shadow-lg hover:shadow-[#A6852F]/12"
+              className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/45 bg-white hover:border-[#A6852F]/55 transition-all duration-500 shadow-md shadow-[#A6852F]/18 hover:shadow-lg hover:shadow-[#A6852F]/18"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}
@@ -48,7 +48,7 @@ export const DashboardBookmarks: React.FC = () => {
                 <p className="text-sm font-medium text-[#1C1917] truncate">{b.title}</p>
                 <p className="text-xs text-[#57534E] mt-0.5 line-clamp-1">{b.excerpt}</p>
               </div>
-              <button onClick={() => toggleBookmark(b)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer shrink-0">
+              <button onClick={() => toggleBookmark(b)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626]/15 transition-colors cursor-pointer shrink-0">
                 <Trash2 className="w-4 h-4" />
               </button>
             </motion.div>

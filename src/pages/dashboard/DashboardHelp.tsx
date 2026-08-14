@@ -55,7 +55,7 @@ export const DashboardHelp: React.FC = () => {
         <h3 className="text-sm font-medium text-[#1C1917] mb-4">Frequently Asked Questions</h3>
         <div className="space-y-2">
           {FAQ_ITEMS.map((faq, i) => (
-            <div key={i} className="rounded-2xl border border-[#A6852F]/30 bg-white overflow-hidden shadow-md shadow-[#A6852F]/8 hover:shadow-lg hover:shadow-[#A6852F]/12 transition-shadow duration-500">
+            <div key={i} className="rounded-2xl border border-[#A6852F]/45 bg-white overflow-hidden shadow-md shadow-[#A6852F]/18 hover:shadow-lg hover:shadow-[#A6852F]/18 transition-shadow duration-500">
               <button onClick={() => setExpandedFaq(expandedFaq === i ? null : i)} className="w-full flex items-center justify-between p-4 text-left cursor-pointer">
                 <span className="text-sm font-medium text-[#1C1917]">{faq.q}</span>
                 {expandedFaq === i ? <ChevronUp className="w-4 h-4 text-[#57534E] shrink-0" /> : <ChevronDown className="w-4 h-4 text-[#57534E] shrink-0" />}
@@ -83,10 +83,10 @@ export const DashboardHelp: React.FC = () => {
 
         <AnimatePresence>
           {showForm && (
-            <motion.div className="rounded-2xl border border-[#A6852F]/25 bg-white p-5 space-y-3 mb-4 shadow-md shadow-[#A6852F]/8 hover:shadow-lg transition-shadow duration-500" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
+            <motion.div className="rounded-2xl border border-[#A6852F]/38 bg-white p-5 space-y-3 mb-4 shadow-md shadow-[#A6852F]/18 hover:shadow-lg transition-shadow duration-500" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
               {submitted ? (
                 <div className="text-center py-6">
-                  <div className="w-10 h-10 rounded-full bg-[#16A34A]/10 flex items-center justify-center mx-auto mb-2"><Send className="w-5 h-5 text-[#16A34A]" /></div>
+                  <div className="w-10 h-10 rounded-full bg-[#16A34A]/22 flex items-center justify-center mx-auto mb-2"><Send className="w-5 h-5 text-[#16A34A]" /></div>
                   <p className="text-sm font-medium text-[#1C1917]">Ticket Submitted!</p>
                   <p className="text-xs text-[#57534E] mt-1">We'll respond within 24 hours.</p>
                 </div>
@@ -100,7 +100,7 @@ export const DashboardHelp: React.FC = () => {
                   </div>
                   <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30" />
                   <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Describe your issue..." rows={4} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 resize-none" />
-                  <button onClick={handleSubmit} className="inline-flex items-center gap-2 bg-[#A6852F] hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/20 text-white text-sm font-medium px-5 py-2.5 rounded-2xl transition-all cursor-pointer">
+                  <button onClick={handleSubmit} className="inline-flex items-center gap-2 bg-[#A6852F] hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/30 text-white text-sm font-medium px-5 py-2.5 rounded-2xl transition-all cursor-pointer">
                     <Send className="w-4 h-4" /> Submit Ticket
                   </button>
                 </>
@@ -116,15 +116,15 @@ export const DashboardHelp: React.FC = () => {
           <h3 className="text-sm font-medium text-[#1C1917] mb-4">Your Tickets</h3>
           <div className="space-y-3">
             {helpTickets.map((ticket, i) => (
-              <motion.div key={ticket.id} className="rounded-2xl border border-[#A6852F]/30 bg-white overflow-hidden shadow-md shadow-[#A6852F]/8 hover:shadow-lg hover:shadow-[#A6852F]/12 transition-shadow duration-500" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}>
+              <motion.div key={ticket.id} className="rounded-2xl border border-[#A6852F]/45 bg-white overflow-hidden shadow-md shadow-[#A6852F]/18 hover:shadow-lg hover:shadow-[#A6852F]/18 transition-shadow duration-500" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}>
                 <button onClick={() => setExpandedTicket(expandedTicket === ticket.id ? null : ticket.id)} className="w-full flex items-center gap-4 p-4 text-left cursor-pointer">
-                  <div className="w-9 h-9 rounded-xl bg-[#A6852F]/15 shadow-sm shadow-[#A6852F]/10 flex items-center justify-center text-[#A6852F] shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-[#A6852F]/22 shadow-sm shadow-[#A6852F]/22 flex items-center justify-center text-[#A6852F] shrink-0">
                     <MessageSquare className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium text-[#1C1917] truncate">{ticket.subject}</p>
-                      <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${ticket.status === 'open' ? 'bg-[#16A34A]/10 text-[#16A34A]' : ticket.status === 'replied' ? 'bg-[#3B82F6]/10 text-[#3B82F6]' : 'bg-[#57534E]/10 text-[#57534E]'}`}>{ticket.status}</span>
+                      <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${ticket.status === 'open' ? 'bg-[#16A34A]/22 text-[#16A34A]' : ticket.status === 'replied' ? 'bg-[#3B82F6]/15 text-[#3B82F6]' : 'bg-[#57534E]/15 text-[#57534E]'}`}>{ticket.status}</span>
                     </div>
                     <p className="text-[10px] text-[#57534E]/60 mt-0.5">{ticket.date} · {HELP_CATEGORIES.find((c) => c.id === ticket.category)?.label}</p>
                   </div>
@@ -138,7 +138,7 @@ export const DashboardHelp: React.FC = () => {
                           <p className="text-sm text-[#57534E]">{ticket.message}</p>
                         </div>
                         {ticket.replies.map((reply) => (
-                          <div key={reply.id} className={`p-3 rounded-xl ${reply.sender === 'member' ? 'bg-[#F3F1ED]/60 ml-4' : 'bg-[#A6852F]/5 mr-4'}`}>
+                          <div key={reply.id} className={`p-3 rounded-xl ${reply.sender === 'member' ? 'bg-[#F3F1ED]/60 ml-4' : 'bg-[#A6852F]/8 mr-4'}`}>
                             <p className="text-[10px] font-medium text-[#A6852F] mb-1">{reply.sender === 'member' ? 'You' : 'Support'}</p>
                             <p className="text-sm text-[#1C1917]">{reply.text}</p>
                             <p className="text-[10px] text-[#57534E]/60 mt-1">{reply.date}</p>
@@ -146,7 +146,7 @@ export const DashboardHelp: React.FC = () => {
                         ))}
                         <div className="flex items-center gap-2 pt-1">
                           <input value={replyText} onChange={(e) => setReplyText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleReply(ticket.id)} placeholder="Reply..." className="flex-1 px-4 py-2.5 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30" />
-                          <button onClick={() => handleReply(ticket.id)} className="w-9 h-9 rounded-xl bg-[#A6852F] hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/20 text-white flex items-center justify-center transition-colors cursor-pointer">
+                          <button onClick={() => handleReply(ticket.id)} className="w-9 h-9 rounded-xl bg-[#A6852F] hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/30 text-white flex items-center justify-center transition-colors cursor-pointer">
                             <Send className="w-3.5 h-3.5" />
                           </button>
                         </div>

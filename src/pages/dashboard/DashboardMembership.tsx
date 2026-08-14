@@ -39,13 +39,13 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
       </motion.div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-[#A6852F]/15 pb-2">
+      <div className="flex gap-2 border-b border-[#A6852F]/22 pb-2">
         {[
           { id: 'overview', label: 'Overview' },
           { id: 'plans', label: 'All Plans' },
           { id: 'history', label: 'History' },
         ].map((tab) => (
-          <button key={tab.id} onClick={() => setActiveTab(tab.id as typeof activeTab)} className={`px-4 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${activeTab === tab.id ? 'bg-[#A6852F] text-white shadow-md shadow-[#A6852F]/25' : 'text-[#57534E] hover:bg-[#A6852F]/10'}`}>
+          <button key={tab.id} onClick={() => setActiveTab(tab.id as typeof activeTab)} className={`px-4 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${activeTab === tab.id ? 'bg-[#A6852F] text-white shadow-md shadow-[#A6852F]/38' : 'text-[#57534E] hover:bg-[#A6852F]/22'}`}>
             {tab.label}
           </button>
         ))}
@@ -55,9 +55,9 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
       {activeTab === 'overview' && (
         <div className="space-y-6">
           {/* Current Membership Status */}
-          <motion.div className="rounded-2xl border border-[#A6852F]/40 bg-gradient-to-br from-[#A6852F]/10 via-[#A6852F]/5 to-transparent p-6 shadow-lg shadow-[#A6852F]/15" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+          <motion.div className="rounded-2xl border border-[#A6852F]/90 bg-gradient-to-br from-[#A6852F]/10 via-[#A6852F]/5 to-transparent p-6 shadow-lg shadow-[#A6852F]/22" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#A6852F]/20 flex items-center justify-center text-[#A6852F] shadow-lg shadow-[#A6852F]/20">
+              <div className="w-12 h-12 rounded-2xl bg-[#A6852F]/20 flex items-center justify-center text-[#A6852F] shadow-lg shadow-[#A6852F]/30">
                 <Crown className="w-6 h-6" />
               </div>
               <div>
@@ -66,22 +66,22 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
               </div>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="text-center p-3 rounded-xl border border-[#A6852F]/25 shadow-md shadow-[#A6852F]/10" style={{ background: 'linear-gradient(135deg, rgba(166,133,47,0.15), rgba(166,133,47,0.05))' }}>
+              <div className="text-center p-3 rounded-xl border border-[#A6852F]/38 shadow-md shadow-[#A6852F]/22" style={{ background: 'linear-gradient(135deg, rgba(166,133,47,0.15), rgba(166,133,47,0.05))' }}>
                 <Calendar className="w-4 h-4 text-[#A6852F] mx-auto mb-1" />
                 <p className="text-xs font-medium text-[#1C1917]">{membership?.start_date ? new Date(membership.start_date).toLocaleDateString() : '—'}</p>
                 <p className="text-[10px] text-[#57534E]">Start Date</p>
               </div>
-              <div className="text-center p-3 rounded-xl border border-[#8B5CF6]/25 shadow-md shadow-[#8B5CF6]/10" style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(139,92,246,0.05))' }}>
+              <div className="text-center p-3 rounded-xl border border-[#8B5CF6]/38 shadow-md shadow-[#8B5CF6]/15" style={{ background: 'linear-gradient(135deg, rgba(139,92,246,0.15), rgba(139,92,246,0.05))' }}>
                 <Clock className="w-4 h-4 text-[#8B5CF6] mx-auto mb-1" />
                 <p className="text-xs font-medium text-[#1C1917]">{membership?.end_date ? new Date(membership.end_date).toLocaleDateString() : '—'}</p>
                 <p className="text-[10px] text-[#57534E]">Expiry Date</p>
               </div>
-              <div className="text-center p-3 rounded-xl border border-[#16A34A]/25 shadow-md shadow-[#16A34A]/10" style={{ background: 'linear-gradient(135deg, rgba(22,163,74,0.15), rgba(22,163,74,0.05))' }}>
+              <div className="text-center p-3 rounded-xl border border-[#16A34A]/38 shadow-md shadow-[#16A34A]/15" style={{ background: 'linear-gradient(135deg, rgba(22,163,74,0.15), rgba(22,163,74,0.05))' }}>
                 <CreditCard className="w-4 h-4 text-[#16A34A] mx-auto mb-1" />
                 <p className="text-xs font-medium text-[#1C1917]">{membership?.auto_renew ? 'Auto' : 'Manual'}</p>
                 <p className="text-[10px] text-[#57534E]">Renewal</p>
               </div>
-              <div className="text-center p-3 rounded-xl border border-[#F59E0B]/25 shadow-md shadow-[#F59E0B]/10" style={{ background: 'linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05))' }}>
+              <div className="text-center p-3 rounded-xl border border-[#F59E0B]/38 shadow-md shadow-[#F59E0B]/15" style={{ background: 'linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05))' }}>
                 <Star className="w-4 h-4 text-[#F59E0B] mx-auto mb-1" />
                 <p className="text-xs font-medium text-[#1C1917]">{daysUntilExpiry !== null ? `${daysUntilExpiry} days` : '—'}</p>
                 <p className="text-[10px] text-[#57534E]">Until Expiry</p>
@@ -108,7 +108,7 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
 
           {/* Active Request */}
           {activeRequest && (
-            <motion.div className="rounded-2xl border border-[#F59E0B]/25 bg-[#F59E0B]/5 p-4 shadow-sm shadow-[#F59E0B]/10" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}>
+            <motion.div className="rounded-2xl border border-[#F59E0B]/38 bg-[#F59E0B]/8 p-4 shadow-sm shadow-[#F59E0B]/15" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}>
               <p className="text-xs font-medium text-[#F59E0B] mb-1">Active Request</p>
               <p className="text-sm text-[#1C1917]">{activeRequest.membership_plan_name} — {activeRequest.status.replace(/_/g, ' ')}</p>
               <button onClick={() => navigate('/dashboard')} className="text-xs text-[#A6852F] font-medium mt-2 hover:text-[#8B6F1F] cursor-pointer">View Details →</button>
@@ -117,10 +117,10 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
 
           {/* Actions */}
           <div className="flex gap-3">
-            <button onClick={() => setActiveTab('plans')} className="flex-1 py-3 bg-[#A6852F] text-white rounded-2xl text-sm font-medium hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#A6852F]/25">
+            <button onClick={() => setActiveTab('plans')} className="flex-1 py-3 bg-[#A6852F] text-white rounded-2xl text-sm font-medium hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#A6852F]/38">
               <Crown className="w-4 h-4" /> {membership?.status === 'active' ? 'Upgrade Plan' : 'Get Membership'}
             </button>
-            <button onClick={() => onNavigate?.('membership-card')} className="px-4 py-3 border border-[#A6852F]/30 rounded-2xl text-sm font-medium text-[#A6852F] hover:bg-[#A6852F]/5 transition-all cursor-pointer shadow-sm shadow-[#A6852F]/10">
+            <button onClick={() => onNavigate?.('membership-card')} className="px-4 py-3 border border-[#A6852F]/45 rounded-2xl text-sm font-medium text-[#A6852F] hover:bg-[#A6852F]/8 transition-all cursor-pointer shadow-sm shadow-[#A6852F]/22">
               View Card
             </button>
           </div>
@@ -134,7 +134,7 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
             const isCurrent = tier.name === membershipPlan?.name;
             const tierColor = TIER_COLORS[tier.id] || '#A6852F';
             return (
-              <motion.div key={tier.id} className="rounded-2xl p-5 text-white relative overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.02]" style={{ background: `linear-gradient(135deg, ${tierColor}, ${tierColor}DD, ${tierColor}AA, ${tierColor}CC)`, boxShadow: `0 10px 40px ${tierColor}45, 0 0 60px ${tierColor}20, inset 0 1px 0 rgba(255,255,255,0.2)` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
+              <motion.div key={tier.id} className="rounded-2xl p-5 text-white relative overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.02]" style={{ background: `linear-gradient(135deg, ${tierColor}, ${tierColor}DD, ${tierColor}AA, ${tierColor}CC)`, boxShadow: `0 10px 40px ${tierColor}68, 0 0 60px ${tierColor}30, inset 0 1px 0 rgba(255,255,255,0.2)` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
                 <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-15" style={{ background: `radial-gradient(circle, white, transparent)`, transform: 'translate(25%, -25%)' }} />
                 <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full opacity-15" style={{ background: `radial-gradient(circle, white, transparent)`, transform: 'translate(-25%, 25%)' }} />
                 <div className="absolute top-1/2 left-1/2 w-full h-full opacity-5" style={{ background: `radial-gradient(circle, white, transparent)`, transform: 'translate(-50%, -50%)' }} />
@@ -176,8 +176,8 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
             </div>
           ) : (
             membershipRequests.map((req, i) => (
-              <motion.div key={req.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/15 bg-white hover:border-[#A6852F]/30 transition-all shadow-sm shadow-[#A6852F]/5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}>
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${req.status === 'membership_active' ? 'bg-[#16A34A]/10 text-[#16A34A] shadow-[#16A34A]/10' : req.status === 'rejected' ? 'bg-[#DC2626]/10 text-[#DC2626] shadow-[#DC2626]/10' : 'bg-[#F59E0B]/10 text-[#F59E0B] shadow-[#F59E0B]/10'}`}>
+              <motion.div key={req.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/22 bg-white hover:border-[#A6852F]/45 transition-all shadow-sm shadow-[#A6852F]/5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shadow-sm ${req.status === 'membership_active' ? 'bg-[#16A34A]/22 text-[#16A34A] shadow-[#16A34A]/15' : req.status === 'rejected' ? 'bg-[#DC2626]/15 text-[#DC2626] shadow-[#DC2626]/15' : 'bg-[#F59E0B]/15 text-[#F59E0B] shadow-[#F59E0B]/15'}`}>
                   <CreditCard className="w-5 h-5" />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -185,7 +185,7 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
                   <p className="text-[10px] text-[#57534E]">{req.request_number} · {req.duration} plan</p>
                   <p className="text-[10px] text-[#57534E]/60">{new Date(req.requested_at).toLocaleDateString()}</p>
                 </div>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium capitalize shadow-sm ${req.status === 'membership_active' ? 'bg-[#16A34A]/10 text-[#16A34A] shadow-[#16A34A]/10' : req.status === 'rejected' ? 'bg-[#DC2626]/10 text-[#DC2626] shadow-[#DC2626]/10' : 'bg-[#F59E0B]/10 text-[#F59E0B] shadow-[#F59E0B]/10'}`}>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium capitalize shadow-sm ${req.status === 'membership_active' ? 'bg-[#16A34A]/22 text-[#16A34A] shadow-[#16A34A]/15' : req.status === 'rejected' ? 'bg-[#DC2626]/15 text-[#DC2626] shadow-[#DC2626]/15' : 'bg-[#F59E0B]/15 text-[#F59E0B] shadow-[#F59E0B]/15'}`}>
                   {req.status.replace(/_/g, ' ')}
                 </span>
               </motion.div>

@@ -7,6 +7,8 @@ import { SectionFadeIn } from '../components/SectionFadeIn';
 import { ExperiencesHero } from './experiences/ExperiencesHero';
 import { HowItWorks } from './experiences/HowItWorks';
 import { FeaturedExperiences } from './experiences/FeaturedExperiences';
+import { ExperiencesBenefits } from './experiences/ExperiencesBenefits';
+import { ExperiencesTestimonials } from './experiences/ExperiencesTestimonials';
 import { ExperienceDetailModal } from './experiences/ExperienceDetailModal';
 import { RequestExperienceForm } from './experiences/RequestExperienceForm';
 import { ExperiencesFAQ } from './experiences/ExperiencesFAQ';
@@ -49,7 +51,9 @@ export default function ExperiencesPage() {
       <main>
         <ExperiencesHero onRequestExperience={handleRequestFromHero} />
         <SectionFadeIn><HowItWorks /></SectionFadeIn>
+        <SectionFadeIn><ExperiencesBenefits /></SectionFadeIn>
         <SectionFadeIn><FeaturedExperiences onSelectExperience={handleSelectExperience} onRequestExperience={handleRequestFromHero} /></SectionFadeIn>
+        <SectionFadeIn><ExperiencesTestimonials /></SectionFadeIn>
         <SectionFadeIn><ExperiencesFAQ /></SectionFadeIn>
         <SectionFadeIn><ExperiencesExplore onExploreMembership={handleExploreMembership} onOpenChat={handleOpenChat} /></SectionFadeIn>
       </main>

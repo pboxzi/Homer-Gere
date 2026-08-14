@@ -9,7 +9,9 @@ import { MembershipWhy } from './membership/MembershipWhy';
 import { MembershipPlans } from './membership/MembershipPlans';
 import { MembershipComparison } from './membership/MembershipComparison';
 import { MembershipHowItWorks } from './membership/MembershipHowItWorks';
+import { MembershipRequirements } from './membership/MembershipRequirements';
 import { MembershipFAQ } from './membership/MembershipFAQ';
+import { MembershipTestimonials } from './membership/MembershipTestimonials';
 import { MembershipCTA } from './membership/MembershipCTA';
 import { SEO } from '../components/SEO';
 import { ModalType } from '../types';
@@ -46,7 +48,9 @@ export default function MembershipPage() {
         <SectionFadeIn><MembershipWhy /></SectionFadeIn>
         <SectionFadeIn><MembershipPlans onSelectTier={handleSelectTier} /></SectionFadeIn>
         <SectionFadeIn><MembershipComparison /></SectionFadeIn>
+        <SectionFadeIn><MembershipRequirements /></SectionFadeIn>
         <SectionFadeIn><MembershipHowItWorks /></SectionFadeIn>
+        <SectionFadeIn><MembershipTestimonials /></SectionFadeIn>
         <SectionFadeIn><MembershipFAQ /></SectionFadeIn>
         <MembershipCTA onBecomeMember={handleBecomeMember} onOpenChat={handleOpenChat} />
       </main>

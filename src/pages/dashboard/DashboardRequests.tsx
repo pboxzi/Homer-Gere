@@ -4,17 +4,17 @@ import { Clock, CheckCircle, XCircle, Hourglass, ChevronDown, ChevronUp } from '
 import { useDashboard } from '../../context/DashboardContext';
 
 const STATUS_CONFIG: Record<string, { label: string; icon: React.FC<{ className?: string }>; color: string; bg: string }> = {
-  pending: { label: 'Pending', icon: Clock, color: '#F59E0B', bg: '#F59E0B10' },
-  under_review: { label: 'Under Review', icon: Hourglass, color: '#3B82F6', bg: '#3B82F610' },
-  approved: { label: 'Approved', icon: CheckCircle, color: '#16A34A', bg: '#16A34A10' },
-  declined: { label: 'Declined', icon: XCircle, color: '#DC2626', bg: '#DC262610' },
-  completed: { label: 'Completed', icon: CheckCircle, color: '#57534E', bg: '#57534E10' },
-  rejected: { label: 'Rejected', icon: XCircle, color: '#DC2626', bg: '#DC262610' },
-  approved_for_payment: { label: 'Approved', icon: CheckCircle, color: '#16A34A', bg: '#16A34A10' },
-  payment_submitted: { label: 'Payment Submitted', icon: Clock, color: '#8B5CF6', bg: '#8B5CF610' },
-  payment_under_review: { label: 'Under Review', icon: Hourglass, color: '#F59E0B', bg: '#F59E0B10' },
-  payment_approved: { label: 'Payment Approved', icon: CheckCircle, color: '#16A34A', bg: '#16A34A10' },
-  membership_active: { label: 'Active', icon: CheckCircle, color: '#16A34A', bg: '#16A34A10' },
+  pending: { label: 'Pending', icon: Clock, color: '#F59E0B', bg: '#F59E0B18' },
+  under_review: { label: 'Under Review', icon: Hourglass, color: '#3B82F6', bg: '#3B82F618' },
+  approved: { label: 'Approved', icon: CheckCircle, color: '#16A34A', bg: '#16A34A18' },
+  declined: { label: 'Declined', icon: XCircle, color: '#DC2626', bg: '#DC262618' },
+  completed: { label: 'Completed', icon: CheckCircle, color: '#57534E', bg: '#57534E18' },
+  rejected: { label: 'Rejected', icon: XCircle, color: '#DC2626', bg: '#DC262618' },
+  approved_for_payment: { label: 'Approved', icon: CheckCircle, color: '#16A34A', bg: '#16A34A18' },
+  payment_submitted: { label: 'Payment Submitted', icon: Clock, color: '#8B5CF6', bg: '#8B5CF618' },
+  payment_under_review: { label: 'Under Review', icon: Hourglass, color: '#F59E0B', bg: '#F59E0B18' },
+  payment_approved: { label: 'Payment Approved', icon: CheckCircle, color: '#16A34A', bg: '#16A34A18' },
+  membership_active: { label: 'Active', icon: CheckCircle, color: '#16A34A', bg: '#16A34A18' },
 };
 
 export const DashboardRequests: React.FC = () => {
@@ -66,19 +66,19 @@ export const DashboardRequests: React.FC = () => {
 
       <div className="space-y-3">
         {allRequests.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/30 p-12 text-center">
+          <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/45 p-12 text-center">
             <Clock className="w-8 h-8 text-[#57534E]/30 mx-auto mb-3" />
             <p className="text-sm font-medium text-[#1C1917]">No requests yet</p>
             <p className="text-xs text-[#57534E] mt-1">Submit a request from the Experiences or Membership pages.</p>
           </div>
         ) : (
           allRequests.map((r, i) => {
-            const status = STATUS_CONFIG[r.status] || { label: r.status, icon: Clock, color: '#57534E', bg: '#57534E10' };
+            const status = STATUS_CONFIG[r.status] || { label: r.status, icon: Clock, color: '#57534E', bg: '#57534E18' };
             const StatusIcon = status.icon;
             const isExpanded = expandedId === r.id;
             return (
               <motion.div key={r.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 + i * 0.05 }}>
-                <button onClick={() => setExpandedId(isExpanded ? null : r.id)} className="w-full flex items-start gap-4 p-5 rounded-2xl border border-[#A6852F]/20 bg-white hover:border-[#A6852F]/35 transition-all duration-500 cursor-pointer text-left shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10">
+                <button onClick={() => setExpandedId(isExpanded ? null : r.id)} className="w-full flex items-start gap-4 p-5 rounded-2xl border border-[#A6852F]/45 bg-white hover:border-[#A6852F]/55 transition-all duration-500 cursor-pointer text-left shadow-sm shadow-[#A6852F]/18 hover:shadow-md hover:shadow-[#A6852F]/22">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: status.bg }}><StatusIcon className="w-5 h-5" /></div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">

@@ -6,6 +6,7 @@ import { Footer } from '../components/Footer';
 import { SectionFadeIn } from '../components/SectionFadeIn';
 import { ContactHero } from './contact/ContactHero';
 import { ContactDepartments } from './contact/ContactDepartments';
+import { ContactOfficeInfo } from './contact/ContactOfficeInfo';
 import { ContactBusinessEnquiry } from './contact/ContactBusinessEnquiry';
 import { ContactFAQ } from './contact/ContactFAQ';
 import { SEO } from '../components/SEO';
@@ -50,6 +51,10 @@ export default function ContactPage() {
 
         <SectionFadeIn>
           <ContactDepartments />
+        </SectionFadeIn>
+
+        <SectionFadeIn>
+          <ContactOfficeInfo />
         </SectionFadeIn>
 
         <SectionFadeIn>

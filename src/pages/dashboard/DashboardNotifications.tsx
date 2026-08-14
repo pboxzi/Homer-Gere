@@ -56,7 +56,7 @@ export const DashboardNotifications: React.FC = () => {
           { id: 'unread', label: 'Unread', count: unread },
           { id: 'read', label: 'Read', count: notifications.length - unread },
         ].map((tab) => (
-          <button key={tab.id} onClick={() => setFilter(tab.id as typeof filter)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${filter === tab.id ? 'bg-[#A6852F] text-white shadow-md shadow-[#A6852F]/25' : 'bg-white border border-[#A6852F]/20 text-[#57534E] hover:bg-[#A6852F]/10'}`}>
+          <button key={tab.id} onClick={() => setFilter(tab.id as typeof filter)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${filter === tab.id ? 'bg-[#A6852F] text-white shadow-md shadow-[#A6852F]/38' : 'bg-white border border-[#A6852F]/45 text-[#57534E] hover:bg-[#A6852F]/22'}`}>
             {tab.label} ({tab.count})
           </button>
         ))}
@@ -64,7 +64,7 @@ export const DashboardNotifications: React.FC = () => {
 
       <div className="space-y-2">
         {filtered.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/30 p-12 text-center">
+          <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/45 p-12 text-center">
             <Bell className="w-8 h-8 text-[#57534E]/30 mx-auto mb-3" />
             <p className="text-sm font-medium text-[#1C1917]">
               {filter === 'unread' ? 'No unread notifications' : filter === 'read' ? 'No read notifications' : "You're all caught up!"}
@@ -78,13 +78,13 @@ export const DashboardNotifications: React.FC = () => {
             return (
               <motion.div
                 key={n.id}
-                className={`flex items-start gap-4 p-4 rounded-2xl border transition-all duration-500 ${!n.read ? 'border-[#A6852F]/35 bg-[#A6852F]/10 hover:bg-[#A6852F]/15 shadow-md shadow-[#A6852F]/15 hover:shadow-lg hover:shadow-[#A6852F]/25' : 'border-[#A6852F]/15 bg-white hover:border-[#A6852F]/25 shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10'}`}
+                className={`flex items-start gap-4 p-4 rounded-2xl border transition-all duration-500 ${!n.read ? 'border-[#A6852F]/53 bg-[#A6852F]/22 hover:bg-[#A6852F]/22 shadow-md shadow-[#A6852F]/22 hover:shadow-lg hover:shadow-[#A6852F]/38' : 'border-[#A6852F]/22 bg-white hover:border-[#A6852F]/38 shadow-sm shadow-[#A6852F]/18 hover:shadow-md hover:shadow-[#A6852F]/22'}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}
               >
                 <button onClick={() => markNotificationRead(n.id)} className="flex items-start gap-4 flex-1 text-left cursor-pointer">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${color}12`, color }}><Icon className="w-4 h-4" /></div>
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${color}1B`, color }}><Icon className="w-4 h-4" /></div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium text-[#1C1917]">{n.title}</p>
@@ -94,7 +94,7 @@ export const DashboardNotifications: React.FC = () => {
                     <p className="text-[10px] text-[#57534E]/60 mt-1">{new Date(n.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                   </div>
                 </button>
-                <button onClick={() => deleteNotification(n.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E]/40 hover:text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer shrink-0 mt-1">
+                <button onClick={() => deleteNotification(n.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E]/40 hover:text-[#DC2626] hover:bg-[#DC2626]/15 transition-colors cursor-pointer shrink-0 mt-1">
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </motion.div>
