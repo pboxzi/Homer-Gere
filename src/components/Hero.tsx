@@ -55,17 +55,8 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
           <div className="absolute inset-0 bg-gradient-to-r from-[#FAF9F7]/95 via-[#FAF9F7]/50 to-transparent pointer-events-none" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F7]/70 via-transparent to-[#FAF9F7]/20 pointer-events-none" />
 
-          {/* Gold accent line — vertical */}
-          <div className="absolute top-8 left-[52%] w-[1px] h-24 bg-gradient-to-b from-[#A6852F] to-transparent pointer-events-none hidden lg:block" />
-
           {/* Content — left aligned, vertically centered */}
           <div className="relative z-10 h-full flex flex-col justify-center p-5 sm:p-12 md:p-16 lg:p-20 lg:pl-16 w-full lg:w-[55%]">
-
-            {/* Overline */}
-            <div className="flex items-center gap-2 mb-4 sm:mb-6">
-              <div className="w-6 sm:w-10 h-[1px] bg-[#A6852F]" />
-              <span className="text-[10px] sm:text-[11px] font-bold text-[#A6852F] uppercase tracking-[0.3em] sm:tracking-[0.35em]">Official Website</span>
-            </div>
 
             {/* Title */}
             {heroTitle ? (
@@ -82,11 +73,6 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
             {heroSubtitle && (
               <p className="text-base sm:text-xl text-[#A6852F] font-medium tracking-wide mb-3 sm:mb-4">{heroSubtitle}</p>
             )}
-
-            {/* Description */}
-            <p className="text-[13px] sm:text-base text-[#57534E] font-normal leading-relaxed max-w-lg mb-5 sm:mb-8">
-              {heroDescription}
-            </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-8 sm:mb-12">
