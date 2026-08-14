@@ -77,14 +77,14 @@ export const DashboardProfile: React.FC = () => {
 const Field: React.FC<{ label: string; value: string; type?: string; onChange: (v: string) => void }> = ({ label, value, type = 'text', onChange }) => (
   <div>
     <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">{label}</label>
-    <input type={type} value={value} onChange={(e) => onChange(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-white border border-[#A6852F]/8 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F]/30 shadow-sm hover:shadow-md transition-all duration-500" />
+    <input type={type} value={value} onChange={(e) => onChange(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-white border border-[#A6852F]/20 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F]/40 shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10 transition-all duration-500" />
   </div>
 );
 
 const SelectField: React.FC<{ label: string; value: string; options: string[]; onChange: (v: string) => void }> = ({ label, value, options, onChange }) => (
   <div>
     <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">{label}</label>
-    <select value={value} onChange={(e) => onChange(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-white border border-[#A6852F]/8 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F]/30 shadow-sm hover:shadow-md transition-all duration-500 appearance-none">
+    <select value={value} onChange={(e) => onChange(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-white border border-[#A6852F]/20 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F]/40 shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10 transition-all duration-500 appearance-none">
       {options.map((o) => <option key={o} value={o}>{o}</option>)}
     </select>
   </div>

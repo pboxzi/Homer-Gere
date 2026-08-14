@@ -628,6 +628,7 @@ interface MenuItem {
   label: string;
   url: string;
   openInNewTab: boolean;
+  hidden?: boolean;
   children: MenuItem[];
 }
 
@@ -672,80 +673,64 @@ const defaultMenus: MenuItem[] = [
 const MenuTreeItem: React.FC<{
   item: MenuItem;
   depth: number;
+  index?: number;
+  totalItems?: number;
   onToggleTab: (id: string) => void;
+  onToggleHidden?: (id: string) => void;
   onRemove: (id: string) => void;
   onUpdate: (id: string, field: 'label' | 'url', value: string) => void;
   onAddChild: (parentId: string) => void;
-}> = ({ item, depth, onToggleTab, onRemove, onUpdate, onAddChild }) => {
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
+}> = ({ item, depth, index = 0, totalItems = 0, onToggleTab, onToggleHidden, onRemove, onUpdate, onAddChild, onMoveUp, onMoveDown }) => {
   const [expanded, setExpanded] = useState(true);
   const hasChildren = item.children.length > 0;
 
   return (
     <div>
       <div
-        className="flex items-center gap-2 py-2 px-3 rounded-xl border border-[#E8E5DF]/40 bg-white hover:border-[#E8E5DF] transition-all group"
+        className={`flex items-center gap-2 py-2 px-3 rounded-xl border border-[#E8E5DF]/40 bg-white hover:border-[#E8E5DF] transition-all group ${item.hidden ? 'opacity-50' : ''}`}
         style={{ marginLeft: `${depth * 20}px` }}
       >
         {hasChildren ? (
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="text-[#57534E] hover:text-[#1C1917] transition-colors cursor-pointer p-0.5"
-          >
+          <button onClick={() => setExpanded(!expanded)} className="text-[#57534E] hover:text-[#1C1917] transition-colors cursor-pointer p-0.5">
             {expanded ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
           </button>
         ) : (
           <span className="w-5" />
         )}
 
-        <input
-          className={`${inputCls} !w-32 !text-xs`}
-          value={item.label}
-          onChange={(e) => onUpdate(item.id, 'label', e.target.value)}
-          placeholder="Label"
-        />
-        <input
-          className={`${inputCls} !text-xs flex-1`}
-          value={item.url}
-          onChange={(e) => onUpdate(item.id, 'url', e.target.value)}
-          placeholder="/path"
-        />
+        <input className={`${inputCls} !w-32 !text-xs`} value={item.label} onChange={(e) => onUpdate(item.id, 'label', e.target.value)} placeholder="Label" />
+        <input className={`${inputCls} !text-xs flex-1`} value={item.url} onChange={(e) => onUpdate(item.id, 'url', e.target.value)} placeholder="/path" />
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] text-[#57534E] whitespace-nowrap">New tab</span>
+          <span className="text-[10px] text-[#57534E] whitespace-nowrap">Tab</span>
           <Toggle on={item.openInNewTab} onToggle={() => onToggleTab(item.id)} />
         </div>
-        <button
-          onClick={() => onAddChild(item.id)}
-          className="text-[#57534E] hover:text-[#A6852F] transition-colors cursor-pointer p-1"
-        >
+        {onToggleHidden && (
+          <button onClick={() => onToggleHidden(item.id)} className={`text-[9px] px-1.5 py-0.5 rounded font-medium cursor-pointer ${item.hidden ? 'text-[#DC2626] bg-[#DC2626]/10' : 'text-[#16A34A] bg-[#16A34A]/10'}`}>
+            {item.hidden ? 'Hidden' : 'Visible'}
+          </button>
+        )}
+        {onMoveUp && index > 0 && (
+          <button onClick={onMoveUp} className="text-[#57534E] hover:text-[#A6852F] transition-colors cursor-pointer p-1 text-[10px] font-bold">↑</button>
+        )}
+        {onMoveDown && index < totalItems - 1 && (
+          <button onClick={onMoveDown} className="text-[#57534E] hover:text-[#A6852F] transition-colors cursor-pointer p-1 text-[10px] font-bold">↓</button>
+        )}
+        <button onClick={() => onAddChild(item.id)} className="text-[#57534E] hover:text-[#A6852F] transition-colors cursor-pointer p-1">
           <Plus className="w-3.5 h-3.5" />
         </button>
-        <button
-          onClick={() => onRemove(item.id)}
-          className="text-[#57534E] hover:text-[#DC2626] transition-colors cursor-pointer p-1"
-        >
+        <button onClick={() => onRemove(item.id)} className="text-[#57534E] hover:text-[#DC2626] transition-colors cursor-pointer p-1">
           <Trash2 className="w-3.5 h-3.5" />
         </button>
       </div>
 
       <AnimatePresence>
         {expanded && hasChildren && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
-          >
-            {item.children.map((child) => (
-              <MenuTreeItem
-                key={child.id}
-                item={child}
-                depth={depth + 1}
-                onToggleTab={onToggleTab}
-                onRemove={onRemove}
-                onUpdate={onUpdate}
-                onAddChild={onAddChild}
-              />
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden">
+            {item.children.map((child, ci) => (
+              <MenuTreeItem key={child.id} item={child} depth={depth + 1} index={ci} totalItems={item.children.length}
+                onToggleTab={onToggleTab} onToggleHidden={onToggleHidden} onRemove={onRemove} onUpdate={onUpdate} onAddChild={onAddChild} />
             ))}
           </motion.div>
         )}
@@ -757,6 +742,7 @@ const MenuTreeItem: React.FC<{
 const MenusSection: React.FC<{ search: string }> = ({ search }) => {
   const [menus, setMenus] = useState<MenuItem[]>(defaultMenus);
   const [saved, setSaved] = useState(false);
+  const [activeMenuTab, setActiveMenuTab] = useState<'navigation' | 'footer' | 'quick'>('navigation');
 
   useEffect(() => {
     siteSettingsRepository.getByCategory('menus').then((data) => {
@@ -769,9 +755,15 @@ const MenusSection: React.FC<{ search: string }> = ({ search }) => {
   const toggleTab = useCallback((targetId: string) => {
     const toggle = (items: MenuItem[]): MenuItem[] =>
       items.map((i) =>
-        i.id === targetId
-          ? { ...i, openInNewTab: !i.openInNewTab }
-          : { ...i, children: toggle(i.children) }
+        i.id === targetId ? { ...i, openInNewTab: !i.openInNewTab } : { ...i, children: toggle(i.children) }
+      );
+    setMenus((p) => toggle(p));
+  }, []);
+
+  const toggleHidden = useCallback((targetId: string) => {
+    const toggle = (items: MenuItem[]): MenuItem[] =>
+      items.map((i) =>
+        i.id === targetId ? { ...i, hidden: !i.hidden } : { ...i, children: toggle(i.children) }
       );
     setMenus((p) => toggle(p));
   }, []);
@@ -794,47 +786,79 @@ const MenusSection: React.FC<{ search: string }> = ({ search }) => {
     const add = (items: MenuItem[]): MenuItem[] =>
       items.map((i) =>
         i.id === parentId
-          ? {
-              ...i,
-              children: [
-                ...i.children,
-                { id: 'm_' + Date.now(), label: 'New Item', url: '/', openInNewTab: false, children: [] },
-              ],
-            }
+          ? { ...i, children: [...i.children, { id: 'm_' + Date.now(), label: 'New Item', url: '/', openInNewTab: false, hidden: false, children: [] }] }
           : { ...i, children: add(i.children) }
       );
     setMenus((p) => add(p));
   }, []);
 
+  const moveItem = useCallback((targetId: string, direction: 'up' | 'down') => {
+    const move = (items: MenuItem[]): MenuItem[] => {
+      const idx = items.findIndex((i) => i.id === targetId);
+      if (idx === -1) return items.map((i) => ({ ...i, children: move(i.children) }));
+      if (direction === 'up' && idx > 0) {
+        const newArr = [...items];
+        [newArr[idx - 1], newArr[idx]] = [newArr[idx], newArr[idx - 1]];
+        return newArr;
+      }
+      if (direction === 'down' && idx < items.length - 1) {
+        const newArr = [...items];
+        [newArr[idx], newArr[idx + 1]] = [newArr[idx + 1], newArr[idx]];
+        return newArr;
+      }
+      return items.map((i) => ({ ...i, children: move(i.children) }));
+    };
+    setMenus((p) => move(p));
+  }, []);
+
   const addTopLevel = () => {
     setMenus((p) => [
       ...p,
-      { id: 'm_' + Date.now(), label: 'New Menu', url: '/', openInNewTab: false, children: [] },
+      { id: 'm_' + Date.now(), label: 'New Menu', url: '/', openInNewTab: false, hidden: false, children: [] },
     ]);
   };
 
+  const menuTabs = [
+    { key: 'navigation' as const, label: 'Navigation' },
+    { key: 'footer' as const, label: 'Footer Links' },
+    { key: 'quick' as const, label: 'Quick Links' },
+  ];
+
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="space-y-6">
+      <div className="flex items-center gap-1 border-b border-[#E8E5DF]/40">
+        {menuTabs.map((tab) => (
+          <button key={tab.key} onClick={() => setActiveMenuTab(tab.key)}
+            className={`px-3 py-2 text-[11px] font-medium transition-colors cursor-pointer border-b-2 ${activeMenuTab === tab.key ? 'text-[#A6852F] border-[#A6852F]' : 'text-[#57534E] border-transparent hover:text-[#1C1917]'}`}>
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-[#1C1917]">Menu Items</h3>
-        <button
-          onClick={addTopLevel}
-          className="text-xs font-medium text-[#A6852F] hover:text-[#8B6F1F] transition-colors cursor-pointer inline-flex items-center gap-1"
-        >
+        <h3 className="text-sm font-medium text-[#1C1917]">
+          {activeMenuTab === 'navigation' ? 'Navigation Menu' : activeMenuTab === 'footer' ? 'Footer Links' : 'Quick Links'}
+        </h3>
+        <button onClick={addTopLevel} className="text-xs font-medium text-[#A6852F] hover:text-[#8B6F1F] transition-colors cursor-pointer inline-flex items-center gap-1">
           <Plus className="w-3.5 h-3.5" /> Add Menu Item
         </button>
       </div>
 
       <div className="space-y-2">
-        {menus.map((item) => (
+        {menus.map((item, index) => (
           <MenuTreeItem
             key={item.id}
             item={item}
             depth={0}
+            index={index}
+            totalItems={menus.length}
             onToggleTab={toggleTab}
+            onToggleHidden={toggleHidden}
             onRemove={removeItem}
             onUpdate={updateField}
             onAddChild={addChild}
+            onMoveUp={() => moveItem(item.id, 'up')}
+            onMoveDown={() => moveItem(item.id, 'down')}
           />
         ))}
       </div>
@@ -870,9 +894,32 @@ const SEOSection: React.FC<{ search: string }> = ({ search }) => {
   const [gaId, setGaId] = useState(seoSettings.googleAnalyticsId);
   const [sitemapEnabled, setSitemapEnabled] = useState(seoSettings.sitemapEnabled);
   const [robotsTxt, setRobotsTxt] = useState(seoSettings.robotsTxt);
+  const [keywords, setKeywords] = useState('');
+  const [canonicalUrl, setCanonicalUrl] = useState('');
+  const [twitterCard, setTwitterCard] = useState('summary_large_image');
+  const [twitterSite, setTwitterSite] = useState('');
+  const [structuredData, setStructuredData] = useState('');
   const [saved, setSaved] = useState(false);
 
-  const handleSave = () => {
+  useEffect(() => {
+    const loadSeo = async () => {
+      try {
+        const { siteSettingsRepository } = await import('../../lib/repositories');
+        const data = await siteSettingsRepository.getByCategory('seo');
+        if (data?.settings) {
+          const s = data.settings as Record<string, unknown>;
+          if (s.keywords) setKeywords(s.keywords as string);
+          if (s.canonical_url) setCanonicalUrl(s.canonical_url as string);
+          if (s.twitter_card) setTwitterCard(s.twitter_card as string);
+          if (s.twitter_site) setTwitterSite(s.twitter_site as string);
+          if (s.structured_data) setStructuredData(s.structured_data as string);
+        }
+      } catch { /* silent */ }
+    };
+    loadSeo();
+  }, []);
+
+  const handleSave = async () => {
     updateSEOSettings({
       metaTitle,
       metaDescription,
@@ -881,6 +928,13 @@ const SEOSection: React.FC<{ search: string }> = ({ search }) => {
       sitemapEnabled,
       robotsTxt,
     });
+    try {
+      const { siteSettingsRepository } = await import('../../lib/repositories');
+      await siteSettingsRepository.upsert('seo', {
+        keywords, canonical_url: canonicalUrl, twitter_card: twitterCard,
+        twitter_site: twitterSite, structured_data: structuredData,
+      });
+    } catch { /* silent */ }
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -894,19 +948,10 @@ const SEOSection: React.FC<{ search: string }> = ({ search }) => {
       {(matchesSearch('meta') || matchesSearch('title')) && (
         <div className={sectionCls}>
           <label className={`${labelCls} block mb-1.5`}>Meta Title</label>
-          <input
-            className={inputCls}
-            value={metaTitle}
-            onChange={(e) => setMetaTitle(e.target.value)}
-            placeholder="Page title for search engines..."
-          />
+          <input className={inputCls} value={metaTitle} onChange={(e) => setMetaTitle(e.target.value)} placeholder="Page title for search engines..." />
           <div className="flex items-center justify-between mt-1.5">
-            <span className="text-[10px] text-[#57534E]">
-              Appears in search results and browser tabs
-            </span>
-            <span className={`text-[10px] font-medium ${metaTitle.length > 60 ? 'text-[#DC2626]' : metaTitle.length > 50 ? 'text-[#F59E0B]' : 'text-[#57534E]'}`}>
-              {metaTitle.length}/60
-            </span>
+            <span className="text-[10px] text-[#57534E]">Appears in search results and browser tabs</span>
+            <span className={`text-[10px] font-medium ${metaTitle.length > 60 ? 'text-[#DC2626]' : metaTitle.length > 50 ? 'text-[#F59E0B]' : 'text-[#57534E]'}`}>{metaTitle.length}/60</span>
           </div>
         </div>
       )}
@@ -915,20 +960,29 @@ const SEOSection: React.FC<{ search: string }> = ({ search }) => {
       {(matchesSearch('meta') || matchesSearch('description')) && (
         <div className={sectionCls}>
           <label className={`${labelCls} block mb-1.5`}>Meta Description</label>
-          <textarea
-            className={`${inputCls} !h-24 resize-none`}
-            value={metaDescription}
-            onChange={(e) => setMetaDescription(e.target.value)}
-            placeholder="Brief description for search engines..."
-          />
+          <textarea className={`${inputCls} !h-24 resize-none`} value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} placeholder="Brief description for search engines..." />
           <div className="flex items-center justify-between mt-1.5">
-            <span className="text-[10px] text-[#57534E]">
-              Shown below the title in search results
-            </span>
-            <span className={`text-[10px] font-medium ${metaDescription.length > 160 ? 'text-[#DC2626]' : metaDescription.length > 140 ? 'text-[#F59E0B]' : 'text-[#57534E]'}`}>
-              {metaDescription.length}/160
-            </span>
+            <span className="text-[10px] text-[#57534E]">Shown below the title in search results</span>
+            <span className={`text-[10px] font-medium ${metaDescription.length > 160 ? 'text-[#DC2626]' : metaDescription.length > 140 ? 'text-[#F59E0B]' : 'text-[#57534E]'}`}>{metaDescription.length}/160</span>
           </div>
+        </div>
+      )}
+
+      {/* Keywords */}
+      {(matchesSearch('keyword') || matchesSearch('tag')) && (
+        <div className={sectionCls}>
+          <label className={`${labelCls} block mb-1.5`}>Keywords</label>
+          <input className={inputCls} value={keywords} onChange={(e) => setKeywords(e.target.value)} placeholder="keyword1, keyword2, keyword3..." />
+          <span className="text-[10px] text-[#57534E] mt-1.5 block">Comma-separated keywords for search engines</span>
+        </div>
+      )}
+
+      {/* Canonical URL */}
+      {matchesSearch('canonical') && (
+        <div className={sectionCls}>
+          <label className={`${labelCls} block mb-1.5`}>Canonical URL</label>
+          <input className={inputCls} value={canonicalUrl} onChange={(e) => setCanonicalUrl(e.target.value)} placeholder="https://homergere.com" />
+          <span className="text-[10px] text-[#57534E] mt-1.5 block">Preferred URL to prevent duplicate content issues</span>
         </div>
       )}
 
@@ -936,15 +990,36 @@ const SEOSection: React.FC<{ search: string }> = ({ search }) => {
       {matchesSearch('og') && (
         <div className={sectionCls}>
           <label className={`${labelCls} block mb-1.5`}>OG Image URL</label>
-          <input
-            className={inputCls}
-            value={ogImage}
-            onChange={(e) => setOgImage(e.target.value)}
-            placeholder="/og-image.jpg"
-          />
-          <span className="text-[10px] text-[#57534E] mt-1.5 block">
-            Image displayed when shared on social media (1200×630 recommended)
-          </span>
+          <input className={inputCls} value={ogImage} onChange={(e) => setOgImage(e.target.value)} placeholder="/og-image.jpg" />
+          <span className="text-[10px] text-[#57534E] mt-1.5 block">Image displayed when shared on social media (1200×630 recommended)</span>
+        </div>
+      )}
+
+      {/* Twitter Card */}
+      {(matchesSearch('twitter') || matchesSearch('card')) && (
+        <div className={sectionCls}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className={`${labelCls} block mb-1.5`}>Twitter Card Type</label>
+              <select className={`${inputCls} cursor-pointer`} value={twitterCard} onChange={(e) => setTwitterCard(e.target.value)}>
+                <option value="summary">Summary (small image)</option>
+                <option value="summary_large_image">Summary Large Image</option>
+              </select>
+            </div>
+            <div>
+              <label className={`${labelCls} block mb-1.5`}>Twitter Site (@handle)</label>
+              <input className={inputCls} value={twitterSite} onChange={(e) => setTwitterSite(e.target.value)} placeholder="@homergere" />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Structured Data */}
+      {matchesSearch('structured') && (
+        <div className={sectionCls}>
+          <label className={`${labelCls} block mb-1.5`}>Structured Data (JSON-LD)</label>
+          <textarea className={`${inputCls} !h-32 resize-none font-mono text-xs`} value={structuredData} onChange={(e) => setStructuredData(e.target.value)} placeholder='{"@context":"https://schema.org","@type":"Person","name":"Homer Gere"}' />
+          <span className="text-[10px] text-[#57534E] mt-1.5 block">JSON-LD structured data for rich search results</span>
         </div>
       )}
 
@@ -952,12 +1027,7 @@ const SEOSection: React.FC<{ search: string }> = ({ search }) => {
       {matchesSearch('analytics') && (
         <div className={sectionCls}>
           <label className={`${labelCls} block mb-1.5`}>Google Analytics ID</label>
-          <input
-            className={inputCls}
-            value={gaId}
-            onChange={(e) => setGaId(e.target.value)}
-            placeholder="G-XXXXXXXXXX"
-          />
+          <input className={inputCls} value={gaId} onChange={(e) => setGaId(e.target.value)} placeholder="G-XXXXXXXXXX" />
         </div>
       )}
 
@@ -967,9 +1037,7 @@ const SEOSection: React.FC<{ search: string }> = ({ search }) => {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-medium text-[#1C1917]">Sitemap</h3>
-              <p className="text-[10px] text-[#57534E] mt-0.5">
-                Auto-generate and submit sitemap to search engines
-              </p>
+              <p className="text-[10px] text-[#57534E] mt-0.5">Auto-generate and submit sitemap to search engines</p>
             </div>
             <Toggle on={sitemapEnabled} onToggle={() => setSitemapEnabled(!sitemapEnabled)} />
           </div>
@@ -980,12 +1048,7 @@ const SEOSection: React.FC<{ search: string }> = ({ search }) => {
       {matchesSearch('robots') && (
         <div className={sectionCls}>
           <label className={`${labelCls} block mb-1.5`}>Robots.txt</label>
-          <textarea
-            className={`${inputCls} !h-32 resize-none font-mono text-xs`}
-            value={robotsTxt}
-            onChange={(e) => setRobotsTxt(e.target.value)}
-            placeholder="User-agent: *&#10;Allow: /&#10;Disallow: /admin/"
-          />
+          <textarea className={`${inputCls} !h-32 resize-none font-mono text-xs`} value={robotsTxt} onChange={(e) => setRobotsTxt(e.target.value)} placeholder="User-agent: *&#10;Allow: /&#10;Disallow: /admin/" />
         </div>
       )}
 

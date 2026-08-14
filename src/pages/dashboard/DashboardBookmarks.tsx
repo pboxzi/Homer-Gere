@@ -32,7 +32,7 @@ export const DashboardBookmarks: React.FC = () => {
           {bookmarks.map((b, i) => (
             <motion.div
               key={b.id}
-              className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/8 bg-white hover:border-[#A6852F]/20 transition-all duration-500 shadow-sm hover:shadow-md"
+              className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/20 bg-white hover:border-[#A6852F]/35 transition-all duration-500 shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}

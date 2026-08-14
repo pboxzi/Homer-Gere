@@ -55,7 +55,7 @@ export const DashboardHelp: React.FC = () => {
         <h3 className="text-sm font-medium text-[#1C1917] mb-4">Frequently Asked Questions</h3>
         <div className="space-y-2">
           {FAQ_ITEMS.map((faq, i) => (
-            <div key={i} className="rounded-2xl border border-[#A6852F]/8 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-500">
+            <div key={i} className="rounded-2xl border border-[#A6852F]/20 bg-white overflow-hidden shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10 transition-shadow duration-500">
               <button onClick={() => setExpandedFaq(expandedFaq === i ? null : i)} className="w-full flex items-center justify-between p-4 text-left cursor-pointer">
                 <span className="text-sm font-medium text-[#1C1917]">{faq.q}</span>
                 {expandedFaq === i ? <ChevronUp className="w-4 h-4 text-[#57534E] shrink-0" /> : <ChevronDown className="w-4 h-4 text-[#57534E] shrink-0" />}
@@ -116,7 +116,7 @@ export const DashboardHelp: React.FC = () => {
           <h3 className="text-sm font-medium text-[#1C1917] mb-4">Your Tickets</h3>
           <div className="space-y-3">
             {helpTickets.map((ticket, i) => (
-              <motion.div key={ticket.id} className="rounded-2xl border border-[#A6852F]/8 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-500" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}>
+              <motion.div key={ticket.id} className="rounded-2xl border border-[#A6852F]/20 bg-white overflow-hidden shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10 transition-shadow duration-500" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}>
                 <button onClick={() => setExpandedTicket(expandedTicket === ticket.id ? null : ticket.id)} className="w-full flex items-center gap-4 p-4 text-left cursor-pointer">
                   <div className="w-9 h-9 rounded-xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] shrink-0">
                     <MessageSquare className="w-4 h-4" />

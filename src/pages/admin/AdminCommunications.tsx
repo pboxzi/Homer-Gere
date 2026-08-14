@@ -757,8 +757,21 @@ const NotificationsSection: React.FC<{
   const [showForm, setShowForm] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newMessage, setNewMessage] = useState('');
+  const [search, setSearch] = useState('');
+  const [filterTab, setFilterTab] = useState<'all' | 'unread' | 'read'>('all');
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const filtered = notifications.filter((n) => {
+    const matchesSearch = search === '' || n.title.toLowerCase().includes(search.toLowerCase()) || n.message.toLowerCase().includes(search.toLowerCase());
+    const matchesFilter = filterTab === 'all' || (filterTab === 'unread' && !n.read) || (filterTab === 'read' && n.read);
+    return matchesSearch && matchesFilter;
+  });
+
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
 
   const handleToggleRead = (id: string) => {
     const n = notifications.find((n) => n.id === id);
@@ -766,25 +779,22 @@ const NotificationsSection: React.FC<{
   };
 
   const handleMarkAllRead = () => {
-    notifications.forEach((n) => {
-      if (!n.read) updateNotification(n.id, { read: true });
-    });
+    notifications.forEach((n) => { if (!n.read) updateNotification(n.id, { read: true }); });
   };
 
   const handleCreateNotification = () => {
     if (!newTitle.trim() || !newMessage.trim()) return;
-    addNotification({
-      title: newTitle.trim(),
-      message: newMessage.trim(),
-      date: 'Just now',
-      read: false,
-    });
+    addNotification({ title: newTitle.trim(), message: newMessage.trim(), date: 'Just now', read: false });
     setNewTitle('');
     setNewMessage('');
     setShowForm(false);
   };
 
-  const today = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const tabs = [
+    { key: 'all' as const, label: 'All', count: notifications.length },
+    { key: 'unread' as const, label: 'Unread', count: unreadCount },
+    { key: 'read' as const, label: 'Read', count: notifications.length - unreadCount },
+  ];
 
   return (
     <div className="space-y-6">
@@ -795,70 +805,45 @@ const NotificationsSection: React.FC<{
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setShowForm(!showForm)}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#A6852F] text-white text-xs font-medium hover:bg-[#8B6F1F] transition-colors cursor-pointer"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              Create Notification
+          <div className="flex items-center gap-2">
+            <button onClick={() => setShowForm(!showForm)} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#A6852F] text-white text-xs font-medium hover:bg-[#8B6F1F] transition-colors cursor-pointer">
+              <Plus className="w-3.5 h-3.5" /> Create Notification
             </button>
             {unreadCount > 0 && (
-              <button
-                onClick={handleMarkAllRead}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#E8E5DF]/60 text-xs text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"
-              >
-                <CheckCheck className="w-3.5 h-3.5" />
-                Mark All Read ({unreadCount})
+              <button onClick={handleMarkAllRead} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#E8E5DF]/60 text-xs text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
+                <CheckCheck className="w-3.5 h-3.5" /> Mark All Read ({unreadCount})
               </button>
             )}
           </div>
-          <span className="text-[10px] text-[#57534E]">{notifications.length} total</span>
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#57534E]" />
+            <input type="text" placeholder="Search notifications..." value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+              className="pl-8 pr-3 py-1.5 rounded-lg text-xs border border-[#E8E5DF]/60 bg-white text-[#1C1917] focus:outline-none focus:border-[#A6852F]/40 w-48" />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1 mb-4 border-b border-[#E8E5DF]/40">
+          {tabs.map((tab) => (
+            <button key={tab.key} onClick={() => { setFilterTab(tab.key); setPage(1); }}
+              className={`px-3 py-2 text-[10px] font-medium uppercase tracking-[0.05em] transition-colors cursor-pointer ${filterTab === tab.key ? 'text-[#A6852F] border-b-2 border-[#A6852F]' : 'text-[#57534E] hover:text-[#1C1917]'}`}>
+              {tab.label} ({tab.count})
+            </button>
+          ))}
         </div>
 
         <AnimatePresence>
           {showForm && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden mb-4"
-            >
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }} className="overflow-hidden mb-4">
               <div className="rounded-xl border border-[#E8E5DF]/80 bg-white p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-medium text-[#1C1917]">New Notification</h3>
-                  <button onClick={() => setShowForm(false)} className="w-6 h-6 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
-                    <X className="w-3.5 h-3.5" />
-                  </button>
+                  <button onClick={() => setShowForm(false)} className="w-6 h-6 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><X className="w-3.5 h-3.5" /></button>
                 </div>
-                <input
-                  type="text"
-                  placeholder="Title"
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  className={inputCls}
-                />
-                <textarea
-                  placeholder="Message"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  rows={3}
-                  className={`${inputCls} resize-none`}
-                />
+                <input type="text" placeholder="Title" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} className={inputCls} />
+                <textarea placeholder="Message" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} rows={3} className={`${inputCls} resize-none`} />
                 <div className="flex justify-end gap-2">
-                  <button
-                    onClick={() => setShowForm(false)}
-                    className="px-3 py-2 rounded-xl border border-[#E8E5DF]/60 text-xs text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleCreateNotification}
-                    className="px-4 py-2 rounded-xl bg-[#A6852F] text-white text-xs font-medium hover:bg-[#8B6F1F] transition-colors cursor-pointer"
-                  >
-                    Create
-                  </button>
+                  <button onClick={() => setShowForm(false)} className="px-3 py-2 rounded-xl border border-[#E8E5DF]/60 text-xs text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">Cancel</button>
+                  <button onClick={handleCreateNotification} className="px-4 py-2 rounded-xl bg-[#A6852F] text-white text-xs font-medium hover:bg-[#8B6F1F] transition-colors cursor-pointer">Create</button>
                 </div>
               </div>
             </motion.div>
@@ -866,49 +851,42 @@ const NotificationsSection: React.FC<{
         </AnimatePresence>
 
         <div className="space-y-2">
-          {notifications.length === 0 ? (
+          {paginated.length === 0 ? (
             <p className="text-sm text-[#57534E] text-center py-8">No notifications.</p>
-          ) : (
-            notifications.map((n) => (
-              <div
-                key={n.id}
-                className={`flex items-start gap-4 p-4 rounded-xl border bg-white transition-all ${
-                  !n.read ? 'border-l-4 border-l-[#A6852F] bg-[#A6852F]/[0.02]' : 'border-[#E8E5DF]/80'
-                }`}
-              >
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                  !n.read ? 'bg-[#A6852F]/10 text-[#A6852F]' : 'bg-[#F3F1ED] text-[#57534E]'
-                }`}>
-                  <Bell className="w-4 h-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-[#1C1917]">{n.title}</p>
-                    {!n.read && <div className="w-2 h-2 rounded-full bg-[#A6852F] shrink-0" />}
-                  </div>
-                  <p className="text-xs text-[#57534E] mt-0.5">{n.message}</p>
-                  <p className="text-[10px] text-[#57534E]/60 mt-1">{n.date}</p>
-                </div>
-                <div className="flex items-center gap-1 shrink-0">
-                  <button
-                    onClick={() => handleToggleRead(n.id)}
-                    title={n.read ? 'Mark as Unread' : 'Mark as Read'}
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"
-                  >
-                    {n.read ? <MailOpen className="w-3.5 h-3.5" /> : <MailCheck className="w-3.5 h-3.5" />}
-                  </button>
-                  <button
-                    onClick={() => deleteNotification(n.id)}
-                    title="Delete"
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] transition-colors cursor-pointer"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+          ) : paginated.map((n) => (
+            <div key={n.id} className={`flex items-start gap-4 p-4 rounded-xl border bg-white transition-all ${!n.read ? 'border-l-4 border-l-[#A6852F] bg-[#A6852F]/[0.02]' : 'border-[#E8E5DF]/80'}`}>
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${!n.read ? 'bg-[#A6852F]/10 text-[#A6852F]' : 'bg-[#F3F1ED] text-[#57534E]'}`}>
+                <Bell className="w-4 h-4" />
               </div>
-            ))
-          )}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium text-[#1C1917]">{n.title}</p>
+                  {!n.read && <div className="w-2 h-2 rounded-full bg-[#A6852F] shrink-0" />}
+                </div>
+                <p className="text-xs text-[#57534E] mt-0.5">{n.message}</p>
+                <p className="text-[10px] text-[#57534E]/60 mt-1">{n.date}</p>
+              </div>
+              <div className="flex items-center gap-1 shrink-0">
+                <button onClick={() => handleToggleRead(n.id)} title={n.read ? 'Mark as Unread' : 'Mark as Read'} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
+                  {n.read ? <MailOpen className="w-3.5 h-3.5" /> : <MailCheck className="w-3.5 h-3.5" />}
+                </button>
+                <button onClick={() => deleteNotification(n.id)} title="Delete" className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] transition-colors cursor-pointer">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between mt-4 px-2">
+            <span className="text-xs text-[#57534E]">{filtered.length} notifications · Page {page}/{totalPages}</span>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
+              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+            </div>
+          </div>
+        )}
       </motion.div>
     </div>
   );

@@ -101,7 +101,7 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
             return (
               <motion.div
                 key={exp.id}
-                className={`rounded-2xl border bg-white p-5 transition-all duration-500 ${accessible ? 'border-[#A6852F]/8 hover:border-[#A6852F]/30 cursor-pointer shadow-sm hover:shadow-md' : 'border-[#E8E5DF]/30 opacity-60'}`}
+                className={`rounded-2xl border bg-white p-5 transition-all duration-500 ${accessible ? 'border-[#A6852F]/20 hover:border-[#A6852F]/40 cursor-pointer shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10' : 'border-[#E8E5DF]/30 opacity-60'}`}
                 onClick={() => accessible && setSelectedExp(exp)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -139,7 +139,7 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
           <h3 className="text-sm font-medium text-[#1C1917] mb-4">Your Requests</h3>
           <div className="space-y-2">
             {experienceRequests.map((r, i) => (
-              <motion.div key={r.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/8 bg-white shadow-sm hover:shadow-md transition-all duration-500" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 + i * 0.04 }}>
+              <motion.div key={r.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/20 bg-white shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10 transition-all duration-500" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 + i * 0.04 }}>
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${r.status === 'approved' ? 'bg-[#16A34A]/10 text-[#16A34A]' : r.status === 'completed' ? 'bg-[#57534E]/10 text-[#57534E]' : 'bg-[#F59E0B]/10 text-[#F59E0B]'}`}>
                   {r.status === 'approved' || r.status === 'completed' ? <Check className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
                 </div>

@@ -49,7 +49,7 @@ export const DashboardRequests: React.FC = () => {
             const isExpanded = expandedId === r.id;
             return (
               <motion.div key={r.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 + i * 0.05 }}>
-                <button onClick={() => setExpandedId(isExpanded ? null : r.id)} className="w-full flex items-start gap-4 p-5 rounded-2xl border border-[#A6852F]/8 bg-white hover:border-[#A6852F]/20 transition-all duration-500 cursor-pointer text-left shadow-sm hover:shadow-md">
+                <button onClick={() => setExpandedId(isExpanded ? null : r.id)} className="w-full flex items-start gap-4 p-5 rounded-2xl border border-[#A6852F]/20 bg-white hover:border-[#A6852F]/35 transition-all duration-500 cursor-pointer text-left shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: status.bg }}><StatusIcon className="w-5 h-5" /></div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">

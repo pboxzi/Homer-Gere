@@ -54,7 +54,7 @@ export const DashboardNotifications: React.FC = () => {
             return (
               <motion.div
                 key={n.id}
-                className={`flex items-start gap-4 p-4 rounded-2xl border transition-all duration-500 ${!n.read ? 'border-[#A6852F]/20 bg-[#A6852F]/5 hover:bg-[#A6852F]/8 shadow-sm hover:shadow-md' : 'border-[#E8E5DF]/60 bg-white hover:border-[#A6852F]/10 shadow-sm hover:shadow-md'}`}
+                className={`flex items-start gap-4 p-4 rounded-2xl border transition-all duration-500 ${!n.read ? 'border-[#A6852F]/35 bg-[#A6852F]/10 hover:bg-[#A6852F]/15 shadow-sm shadow-[#A6852F]/10 hover:shadow-md hover:shadow-[#A6852F]/15' : 'border-[#A6852F]/15 bg-white hover:border-[#A6852F]/25 shadow-sm hover:shadow-md'}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}

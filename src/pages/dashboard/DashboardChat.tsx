@@ -147,7 +147,7 @@ export const DashboardChat: React.FC = () => {
             filteredConversations.map((c) => {
               const thread = messages.find((t) => t.subject.includes('Conversation') || t.lastMessage === c.lastMessage);
               return (
-                <div key={c.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/8 bg-white hover:border-[#A6852F]/20 transition-all duration-500 shadow-sm hover:shadow-md">
+                <div key={c.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/20 bg-white hover:border-[#A6852F]/35 transition-all duration-500 shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10">
                   <button onClick={() => thread && setActiveThread(thread.id)} className="flex-1 flex items-center gap-4 text-left cursor-pointer">
                     <div className="w-10 h-10 rounded-xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F]"><MessageSquare className="w-4 h-4" /></div>
                     <div className="flex-1 min-w-0">

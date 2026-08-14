@@ -26,6 +26,9 @@ const SECTION_MAP: Record<string, AdminSection> = {
   conversation: 'fan-chat', contactMessage: 'contact-messages',
   notification: 'admin-notifications', media: 'images',
   payment: 'membership-payments', page: 'homepage',
+  membershipRequest: 'membership-requests', paymentMethod: 'payment-methods',
+  paymentRequest: 'payment-requests', paymentSubmission: 'payment-submissions',
+  membershipCard: 'membership-cards',
 };
 
 interface AdminLayoutProps {

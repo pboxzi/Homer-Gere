@@ -48,7 +48,7 @@ export const DashboardSettings: React.FC = () => {
 };
 
 const ToggleRow: React.FC<{ icon: React.ReactNode; label: string; subtext?: string; checked: boolean; onChange: (v: boolean) => void }> = ({ icon, label, subtext, checked, onChange }) => (
-  <label className="flex items-center gap-3 p-3 rounded-xl bg-white border border-[#A6852F]/8 shadow-sm hover:shadow-md transition-all duration-500 cursor-pointer">
+  <label className="flex items-center gap-3 p-3 rounded-xl bg-white border border-[#A6852F]/20 shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10 transition-all duration-500 cursor-pointer">
     <div className="text-[#57534E] group-hover:scale-110 transition-transform duration-500">{icon}</div>
     <div className="flex-1">
       <span className="text-sm text-[#57534E]">{label}</span>

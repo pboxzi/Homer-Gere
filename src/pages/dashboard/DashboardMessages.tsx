@@ -144,7 +144,7 @@ export const DashboardMessages: React.FC = () => {
               key={t.id}
               onClick={() => { setSelectedThread(t.id); markThreadRead(t.id); }}
               className={`w-full flex items-center gap-4 p-4 rounded-2xl border text-left transition-all duration-500 cursor-pointer ${
-                !t.read ? 'border-[#A6852F]/20 bg-[#A6852F]/5 shadow-sm hover:shadow-md' : 'border-[#A6852F]/8 bg-white hover:border-[#A6852F]/10 shadow-sm hover:shadow-md'
+                !t.read ? 'border-[#A6852F]/35 bg-[#A6852F]/10 shadow-sm shadow-[#A6852F]/10 hover:shadow-md hover:shadow-[#A6852F]/15' : 'border-[#A6852F]/20 bg-white hover:border-[#A6852F]/35 shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10'
               }`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

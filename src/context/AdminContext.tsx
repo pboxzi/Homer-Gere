@@ -846,8 +846,38 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         results.push({ id: a.id, type: 'application', title: a.name, description: `${a.status}`, section: 'Applications' });
       }
     });
-    return results;
-  }, [members, plans, applications]);
+    experiences.forEach((e) => {
+      if (e.title.toLowerCase().includes(q) || e.type.toLowerCase().includes(q)) {
+        results.push({ id: e.id, type: 'experience', title: e.title, description: `${e.type} — ${e.price}`, section: 'Experiences' });
+      }
+    });
+    experienceRequests.forEach((r) => {
+      if (r.requester?.toLowerCase().includes(q) || r.experience?.toLowerCase().includes(q)) {
+        results.push({ id: r.id, type: 'experienceRequest', title: r.experience, description: `${r.requester} — ${r.status}`, section: 'Experience Requests' });
+      }
+    });
+    conversations.forEach((c) => {
+      if (c.participant?.toLowerCase().includes(q)) {
+        results.push({ id: c.id, type: 'conversation', title: c.participant, description: `${c.type} chat — ${c.status}`, section: 'Fan Chat' });
+      }
+    });
+    contactMessages.forEach((cm) => {
+      if (cm.name?.toLowerCase().includes(q) || cm.email?.toLowerCase().includes(q) || cm.subject?.toLowerCase().includes(q)) {
+        results.push({ id: cm.id, type: 'contactMessage', title: cm.subject || cm.name, description: `${cm.name} — ${cm.department || ''}`, section: 'Contact Messages' });
+      }
+    });
+    notifications.forEach((n) => {
+      if (n.title?.toLowerCase().includes(q) || n.message?.toLowerCase().includes(q)) {
+        results.push({ id: n.id, type: 'notification', title: n.title, description: n.message, section: 'Notifications' });
+      }
+    });
+    media.forEach((m) => {
+      if (m.name?.toLowerCase().includes(q)) {
+        results.push({ id: m.id || String(Math.random()), type: 'media', title: m.name, description: m.type || 'Media', section: 'Media' });
+      }
+    });
+    return results.slice(0, 20);
+  }, [members, plans, applications, experiences, experienceRequests, conversations, contactMessages, notifications, media]);
 
   const value: AdminContextType = useMemo(() => ({
     members, plans, applications, experiences, experienceRequests,
