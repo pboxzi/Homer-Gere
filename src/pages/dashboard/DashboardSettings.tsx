@@ -1,21 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Save, Globe, Clock, Shield, Bell, Mail, Eye } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
+import { useAuth } from '../../context/AuthContext';
+
+const SETTINGS_KEY = 'hg_dashboard_settings';
+
+interface UserSettings {
+  profileVisibility: string;
+  emailNotifications: boolean;
+  marketingPreferences: boolean;
+  showOnlineStatus: boolean;
+  allowMessageRequests: boolean;
+}
+
+function loadSettings(userId: string): UserSettings | null {
+  try {
+    const raw = localStorage.getItem(`${SETTINGS_KEY}_${userId}`);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+}
+
+function saveSettings(userId: string, settings: UserSettings): void {
+  localStorage.setItem(`${SETTINGS_KEY}_${userId}`, JSON.stringify(settings));
+}
 
 export const DashboardSettings: React.FC = () => {
   const { profile, updateProfile } = useDashboard();
-  const [profileVisibility, setProfileVisibility] = useState(profile?.profile_completion !== undefined ? 'members' : 'members');
+  const { user } = useAuth();
+  const [profileVisibility, setProfileVisibility] = useState('members');
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [marketingPreferences, setMarketingPreferences] = useState(true);
   const [showOnlineStatus, setShowOnlineStatus] = useState(true);
   const [allowMessageRequests, setAllowMessageRequests] = useState(true);
   const [saved, setSaved] = useState(false);
 
+  useEffect(() => {
+    if (!user?.id) return;
+    const saved2 = loadSettings(user.id);
+    if (saved2) {
+      setProfileVisibility(saved2.profileVisibility);
+      setEmailNotifications(saved2.emailNotifications);
+      setMarketingPreferences(saved2.marketingPreferences);
+      setShowOnlineStatus(saved2.showOnlineStatus);
+      setAllowMessageRequests(saved2.allowMessageRequests);
+    }
+  }, [user?.id]);
+
   const handleSave = async () => {
-    await updateProfile({
-      profile_completion: profile?.profile_completion || 0,
-    });
+    if (user?.id) {
+      saveSettings(user.id, { profileVisibility, emailNotifications, marketingPreferences, showOnlineStatus, allowMessageRequests });
+    }
+    await updateProfile({ profile_completion: profile?.profile_completion || 0 });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };

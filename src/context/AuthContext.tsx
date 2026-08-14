@@ -36,6 +36,7 @@ interface SignUpData {
   password: string;
   firstName: string;
   lastName: string;
+  country?: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -130,6 +131,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(u);
         setLoading(false);
         if (!u) return { error: 'Account not found or pending approval. Please register and wait for admin approval.' };
+        supabase.from('profiles').update({ last_login: new Date().toISOString() }).eq('id', data.user.id).catch(() => {});
         return {};
       }
       setLoading(false);
@@ -143,7 +145,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = useCallback(async (data: SignUpData): Promise<{ error?: string }> => {
     setLoading(true);
     try {
-      // Step 1: Create registration application (not auth user yet)
+      // Check for existing application
       const existing = await registrationRepository.getByEmail(data.email).catch(() => null);
       if (existing && existing.status === 'pending') {
         setLoading(false);
@@ -154,14 +156,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error: 'An account already exists for this email. Please sign in instead.' };
       }
 
-      // Step 2: Create the registration application
+      // Create Supabase auth user with the password they chose
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          email_confirm: false,
+          data: { first_name: data.firstName, last_name: data.lastName },
+        },
+      });
+
+      if (authError) {
+        setLoading(false);
+        return { error: authError.message };
+      }
+
+      const userId = authData?.user?.id || null;
+
+      // Create the registration application with the auth user's ID
       await registrationRepository.create({
-        user_id: null,
+        user_id: userId,
         first_name: data.firstName,
         last_name: data.lastName,
         email: data.email,
         phone: null,
-        country: null,
+        country: data.country || null,
         date_of_birth: null,
         membership_tier: null,
         status: 'pending',

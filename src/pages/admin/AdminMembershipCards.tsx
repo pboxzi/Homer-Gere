@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Search, ChevronLeft, ChevronRight, Eye, CreditCard, RefreshCw, Ban, Replace, Download } from 'lucide-react';
-import { membershipCardsRepository } from '../../lib/repositories';
+import { membershipCardsRepository, profilesRepository } from '../../lib/repositories';
 import { notifyService } from '../../lib/notifications';
 import type { MembershipCard } from '../../types/database';
 
@@ -50,13 +50,23 @@ export default function AdminMembershipCards() {
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
+  const fetchUserProfile = async (userId: string | null): Promise<{ email: string; fullName: string }> => {
+    if (!userId) return { email: '', fullName: 'Member' };
+    try {
+      const profile = await profilesRepository.getById(userId);
+      if (profile) return { email: profile.email, fullName: `${profile.first_name} ${profile.last_name}`.trim() };
+    } catch { /* use defaults */ }
+    return { email: '', fullName: 'Member' };
+  };
+
   const handleDeactivate = async (card: MembershipCard) => {
     if (!confirm(`Deactivate card ${card.card_number}?`)) return;
     setActionLoading(true);
     try {
       await membershipCardsRepository.deactivate(card.id);
       if (card.user_id) {
-        await notifyService.membershipCardUpdated(card.user_id, { email: '', fullName: 'Member', cardNumber: card.card_number, action: 'Deactivated', reason: 'Card has been deactivated by admin.' });
+        const { email, fullName } = await fetchUserProfile(card.user_id);
+        await notifyService.membershipCardUpdated(card.user_id, { email, fullName, cardNumber: card.card_number, action: 'Deactivated', reason: 'Card has been deactivated by admin.' });
       }
       setSuccessMsg(`Card ${card.card_number} deactivated`);
       setShowDetail(false);
@@ -71,7 +81,8 @@ export default function AdminMembershipCards() {
     try {
       const result = await membershipCardsRepository.replace(card.id);
       if (card.user_id) {
-        await notifyService.membershipCardUpdated(card.user_id, { email: '', fullName: 'Member', cardNumber: card.card_number, action: 'Replaced', reason: `New card: ${result.new.card_number}` });
+        const { email, fullName } = await fetchUserProfile(card.user_id);
+        await notifyService.membershipCardUpdated(card.user_id, { email, fullName, cardNumber: card.card_number, action: 'Replaced', reason: `New card: ${result.new.card_number}` });
       }
       setSuccessMsg(`Card replaced. New card: ${result.new.card_number}`);
       setShowDetail(false);
@@ -86,7 +97,8 @@ export default function AdminMembershipCards() {
     try {
       await membershipCardsRepository.renew(card.id, newExpiry);
       if (card.user_id) {
-        await notifyService.membershipCardUpdated(card.user_id, { email: '', fullName: 'Member', cardNumber: card.card_number, action: 'Renewed', reason: `New expiry: ${newExpiry}` });
+        const { email, fullName } = await fetchUserProfile(card.user_id);
+        await notifyService.membershipCardUpdated(card.user_id, { email, fullName, cardNumber: card.card_number, action: 'Renewed', reason: `New expiry: ${newExpiry}` });
       }
       setSuccessMsg(`Card ${card.card_number} renewed until ${newExpiry}`);
       setShowDetail(false);

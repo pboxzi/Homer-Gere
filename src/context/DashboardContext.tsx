@@ -13,6 +13,7 @@ import {
   fanChatRepository,
   notificationsRepository,
   activityLogsRepository,
+  helpDeskTicketsRepository,
 } from '../lib/repositories';
 import type {
   Profile, Membership, MembershipRequest, MembershipPlan,
@@ -279,6 +280,25 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, [user?.id]);
 
   // ============================================================
+  // Load help tickets from Supabase
+  // ============================================================
+  const loadHelpTickets = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const tickets = await helpDeskTicketsRepository.getByUserId(user.id);
+      setHelpTickets(tickets.map((t) => ({
+        id: t.id,
+        subject: t.subject,
+        message: t.message,
+        category: t.category,
+        date: new Date(t.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        status: t.status as 'open' | 'in_progress' | 'resolved' | 'closed',
+        replies: [],
+      })));
+    } catch { /* silent */ }
+  }, [user?.id]);
+
+  // ============================================================
   // Load all data
   // ============================================================
   const refreshData = useCallback(async () => {
@@ -294,10 +314,11 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         refreshNotifications(),
         refreshActivity(),
         loadConversations(),
+        loadHelpTickets(),
       ]);
     } catch { /* silent */ }
     setLoading(false);
-  }, [user?.id, refreshProfile, loadMembership, loadMembershipRequests, refreshPayments, refreshExperiences, refreshNotifications, refreshActivity, loadConversations]);
+  }, [user?.id, refreshProfile, loadMembership, loadMembershipRequests, refreshPayments, refreshExperiences, refreshNotifications, refreshActivity, loadConversations, loadHelpTickets]);
 
   // Initial load
   useEffect(() => {
@@ -481,19 +502,33 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, [favorites]);
 
   // ============================================================
-  // Help tickets (local state)
+  // Help tickets (persisted to Supabase)
   // ============================================================
-  const addHelpTicket = useCallback((ticket: Omit<HelpTicket, 'id' | 'date' | 'status' | 'replies'>) => {
-    setHelpTickets((prev) => [{
-      ...ticket,
-      id: generateId(),
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      status: 'open',
-      replies: [],
-    }, ...prev]);
-  }, []);
+  const addHelpTicket = useCallback(async (ticket: Omit<HelpTicket, 'id' | 'date' | 'status' | 'replies'>) => {
+    if (!user?.id) return;
+    try {
+      const created = await helpDeskTicketsRepository.create({
+        user_id: user.id,
+        subject: ticket.subject,
+        message: ticket.message,
+        category: ticket.category,
+      });
+      setHelpTickets((prev) => [{
+        id: created.id,
+        subject: created.subject,
+        message: created.message,
+        category: created.category,
+        date: new Date(created.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        status: created.status as 'open' | 'in_progress' | 'resolved' | 'closed',
+        replies: [],
+      }, ...prev]);
+    } catch (e) {
+      console.error('Failed to create help ticket:', e);
+    }
+  }, [user?.id]);
 
-  const replyHelpTicket = useCallback((ticketId: string, text: string) => {
+  const replyHelpTicket = useCallback(async (ticketId: string, text: string) => {
+    // Store replies in local state for now (no replies table yet)
     const reply: HelpReply = {
       id: generateId(),
       sender: 'member',
@@ -503,8 +538,13 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setHelpTickets((prev) => prev.map((t) => t.id === ticketId ? { ...t, replies: [...t.replies, reply] } : t));
   }, []);
 
-  const closeHelpTicket = useCallback((ticketId: string) => {
-    setHelpTickets((prev) => prev.map((t) => t.id === ticketId ? { ...t, status: 'closed' } : t));
+  const closeHelpTicket = useCallback(async (ticketId: string) => {
+    try {
+      await helpDeskTicketsRepository.updateStatus(ticketId, 'closed');
+      setHelpTickets((prev) => prev.map((t) => t.id === ticketId ? { ...t, status: 'closed' } : t));
+    } catch (e) {
+      console.error('Failed to close help ticket:', e);
+    }
   }, []);
 
   // Load bookmarks/favorites from localStorage

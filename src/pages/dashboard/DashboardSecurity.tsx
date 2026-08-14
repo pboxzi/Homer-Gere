@@ -106,9 +106,9 @@ export const DashboardSecurity: React.FC = () => {
             <h3 className="text-sm font-medium text-[#1C1917] flex items-center gap-2"><Shield className="w-4 h-4 text-[#57534E]" /> Two-Factor Authentication</h3>
             <p className="text-xs text-[#57534E] mt-1">Add an extra layer of security to your account.</p>
           </div>
-          <button className="text-xs font-medium px-3 py-1.5 rounded-xl bg-[#A6852F]/22 text-[#A6852F] hover:bg-[#A6852F]/30 transition-colors cursor-pointer">
-            Enable
-          </button>
+          <span className="text-xs font-medium px-3 py-1.5 rounded-xl bg-gray-100 text-gray-500 cursor-not-allowed">
+            Coming Soon
+          </span>
         </div>
       </motion.div>
 

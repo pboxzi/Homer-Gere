@@ -10,10 +10,10 @@ export default function MemberSignIn() {
   const navigate = useNavigate();
   const location = useLocation();
   const { signIn, isAuthenticated, user } = useAuth();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(() => localStorage.getItem('hg_remember_email') || '');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(() => !!localStorage.getItem('hg_remember_email'));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -38,6 +38,11 @@ export default function MemberSignIn() {
       return;
     }
     setLoading(true);
+    if (rememberMe) {
+      localStorage.setItem('hg_remember_email', email.trim());
+    } else {
+      localStorage.removeItem('hg_remember_email');
+    }
     const result = await signIn(email, password);
     if (result.error) {
       setError(result.error);

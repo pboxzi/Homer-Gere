@@ -68,7 +68,7 @@ export default function MemberRegister() {
     setError('');
     if (!validate()) return;
     setLoading(true);
-    const result = await signUp({ email, password, firstName, lastName });
+    const result = await signUp({ email, password, firstName, lastName, country });
     if (result.error) {
       setError(result.error);
       setLoading(false);

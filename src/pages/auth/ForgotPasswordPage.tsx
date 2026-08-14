@@ -20,6 +20,10 @@ export default function ForgotPasswordPage() {
       setError('Please enter your email address.');
       return;
     }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setError('Please enter a valid email address.');
+      return;
+    }
     setLoading(true);
     try {
       await resetPassword(email);

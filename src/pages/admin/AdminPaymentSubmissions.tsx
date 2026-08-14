@@ -161,9 +161,21 @@ export default function AdminPaymentSubmissions() {
     try {
       await paymentSubmissionsRepository.reject(sub.id, adminNotes);
       await paymentRequestsRepository.updateStatus(sub.payment_request_id, 'rejected');
+      // Fetch real user profile for notification
+      let email = '';
+      let fullName = 'Member';
+      if (sub.user_id) {
+        try {
+          const profile = await profilesRepository.getById(sub.user_id);
+          if (profile) {
+            email = profile.email;
+            fullName = `${profile.first_name} ${profile.last_name}`.trim();
+          }
+        } catch { /* use defaults */ }
+      }
       await notifyService.paymentRejected(sub.user_id, {
-        email: '',
-        fullName: 'Member',
+        email,
+        fullName,
         reason: adminNotes || 'Payment could not be verified.',
       });
       setSuccessMsg(`Submission ${sub.submission_number} rejected`);
@@ -178,9 +190,21 @@ export default function AdminPaymentSubmissions() {
     setActionLoading(true);
     try {
       await paymentSubmissionsRepository.requestMoreInfo(sub.id, adminNotes);
+      // Fetch real user profile for notification
+      let email = '';
+      let fullName = 'Member';
+      if (sub.user_id) {
+        try {
+          const profile = await profilesRepository.getById(sub.user_id);
+          if (profile) {
+            email = profile.email;
+            fullName = `${profile.first_name} ${profile.last_name}`.trim();
+          }
+        } catch { /* use defaults */ }
+      }
       await notifyService.paymentNeedsInfo(sub.user_id, {
-        email: '',
-        fullName: 'Member',
+        email,
+        fullName,
         paymentType: 'membership',
         amount: String(sub.amount_paid),
         currency: sub.currency,

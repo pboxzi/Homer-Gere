@@ -436,8 +436,8 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, ...updates } : m)));
     // Persist relevant fields to Supabase
     const dbUpdates: Record<string, unknown> = {};
-    if (updates.membership !== undefined) dbUpdates.membership_tier = updates.membership;
-    if (updates.status !== undefined) dbUpdates.role = updates.status === 'pending' ? 'pending' : 'member';
+    if (updates.membership !== undefined) dbUpdates.membership_tier = updates.membership === 'None' ? null : updates.membership;
+    if (updates.status !== undefined) dbUpdates.account_status = updates.status;
     if (Object.keys(dbUpdates).length > 0) {
       profilesRepository.update(id, dbUpdates as any).catch(() => {});
     }
@@ -543,25 +543,28 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             .eq('email', app.email);
 
           if (updates.status === 'approved') {
-            // Create Supabase Auth user
-            const tempPassword = crypto.randomUUID().slice(0, 12) + 'A1!';
-            const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-              email: app.email,
-              password: tempPassword,
-              email_confirm: true,
-              user_metadata: { first_name: app.name.split(' ')[0], last_name: app.name.split(' ').slice(1).join(' ') },
-            });
+            // Auth user already exists from registration — just create the profile
+            const userId = app.id; // app.id is the registration record ID, but we need the auth user ID
+            // Fetch the registration record to get the user_id (auth user ID)
+            const { data: regRecord } = await supabase
+              .from('registration_applications')
+              .select('user_id, first_name, last_name, email, country')
+              .eq('id', id)
+              .single();
 
-            if (!authError && authData?.user) {
-              // Create profile
+            const authUserId = regRecord?.user_id;
+
+            if (authUserId) {
+              // Auth user exists — create profile
               await supabase.from('profiles').insert({
-                id: authData.user.id,
+                id: authUserId,
                 email: app.email,
-                first_name: app.name.split(' ')[0],
-                last_name: app.name.split(' ').slice(1).join(' ') || '',
+                first_name: regRecord?.first_name || app.name.split(' ')[0],
+                last_name: regRecord?.last_name || app.name.split(' ').slice(1).join(' ') || '',
                 role: 'member',
                 membership_tier: app.plan || 'silver',
                 email_verified: true,
+                country: regRecord?.country || null,
               });
 
               // Create membership
@@ -572,10 +575,44 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 .maybeSingle();
               if (plan) {
                 await supabase.from('memberships').insert({
-                  user_id: authData.user.id,
+                  user_id: authUserId,
                   plan_id: plan.id,
                   status: 'active',
                 });
+              }
+            } else {
+              // Legacy registration without auth user — create one with temp password
+              const tempPassword = crypto.randomUUID().slice(0, 12) + 'A1!';
+              const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+                email: app.email,
+                password: tempPassword,
+                email_confirm: true,
+                user_metadata: { first_name: app.name.split(' ')[0], last_name: app.name.split(' ').slice(1).join(' ') },
+              });
+
+              if (!authError && authData?.user) {
+                await supabase.from('profiles').insert({
+                  id: authData.user.id,
+                  email: app.email,
+                  first_name: app.name.split(' ')[0],
+                  last_name: app.name.split(' ').slice(1).join(' ') || '',
+                  role: 'member',
+                  membership_tier: app.plan || 'silver',
+                  email_verified: true,
+                });
+
+                const { data: plan } = await supabase
+                  .from('membership_plans')
+                  .select('id')
+                  .eq('slug', app.plan || 'silver')
+                  .maybeSingle();
+                if (plan) {
+                  await supabase.from('memberships').insert({
+                    user_id: authData.user.id,
+                    plan_id: plan.id,
+                    status: 'active',
+                  });
+                }
               }
             }
 

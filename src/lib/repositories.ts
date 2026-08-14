@@ -3549,9 +3549,15 @@ export const downloadItemsRepository = {
 
   async incrementDownloadCount(id: string): Promise<void> {
     const client = getSupabaseClient();
+    const { data, error: fetchError } = await client
+      .from('download_items')
+      .select('download_count')
+      .eq('id', id)
+      .single();
+    if (fetchError) throw fetchError;
     const { error } = await client
       .from('download_items')
-      .update({ download_count: (client as any).rpc ? 0 : 0 })
+      .update({ download_count: (data?.download_count || 0) + 1 })
       .eq('id', id);
     if (error) throw error;
   },
@@ -3680,6 +3686,59 @@ export const experienceDocumentsRepository = {
     const { error } = await client
       .from('experience_documents')
       .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+};
+
+// ============================================================
+// HELP DESK TICKETS
+// ============================================================
+
+export const helpDeskTicketsRepository = {
+  async getAll(): Promise<any[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('help_desk_tickets')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getByUserId(userId: string): Promise<any[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('help_desk_tickets')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async create(ticket: { user_id: string; subject: string; message: string; category?: string }): Promise<any> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('help_desk_tickets')
+      .insert({
+        user_id: ticket.user_id,
+        subject: ticket.subject,
+        message: ticket.message,
+        category: ticket.category || 'general',
+        status: 'open',
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async updateStatus(id: string, status: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('help_desk_tickets')
+      .update({ status, updated_at: new Date().toISOString() })
       .eq('id', id);
     if (error) throw error;
   },

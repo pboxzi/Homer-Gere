@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
-import { DollarSign, Clock, ChevronDown, ChevronUp, Upload } from 'lucide-react';
+import { DollarSign, Clock, ChevronDown, ChevronUp, Upload, FileCheck } from 'lucide-react';
 import { paymentRequestsRepository, paymentSubmissionsRepository, paymentMethodsRepository } from '../../lib/repositories';
 import { notifyService } from '../../lib/notifications';
 import { useAuth } from '../../context/AuthContext';
 import { useDashboard } from '../../context/DashboardContext';
+import { supabase } from '../../lib/supabase';
 import type { PaymentRequest, PaymentSubmission, PaymentMethod } from '../../types/database';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
@@ -27,6 +28,9 @@ export default function DashboardPayments() {
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [submitTarget, setSubmitTarget] = useState<PaymentRequest | null>(null);
   const [submitForm, setSubmitForm] = useState({ transactionReference: '', amountPaid: '', paymentDate: '', notes: '' });
+  const [proofFile, setProofFile] = useState<File | null>(null);
+  const [proofPreview, setProofPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
 
@@ -52,10 +56,44 @@ export default function DashboardPayments() {
   const getSubmissionForRequest = (reqId: string) => submissions.find(s => s.payment_request_id === reqId);
   const getMethodName = (methodId: string | null) => methods.find(m => m.id === methodId)?.name || '—';
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      setSuccessMsg('File must be under 10MB');
+      return;
+    }
+    setProofFile(file);
+    const reader = new FileReader();
+    reader.onload = (ev) => setProofPreview(ev.target?.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const uploadProof = async (userId: string): Promise<string | null> => {
+    if (!proofFile) return null;
+    setUploading(true);
+    try {
+      const ext = proofFile.name.split('.').pop() || 'jpg';
+      const path = `payment-proofs/${userId}/${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from('documents')
+        .upload(path, proofFile, { contentType: proofFile.type, upsert: false });
+      if (uploadError) throw uploadError;
+      const { data: urlData } = supabase.storage.from('documents').getPublicUrl(path);
+      return urlData?.publicUrl || null;
+    } catch (e) {
+      console.error('Upload failed:', e);
+      return null;
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSubmitPayment = async () => {
     if (!submitTarget || !user?.id || !submitForm.transactionReference || !submitForm.amountPaid || !submitForm.paymentDate) return;
     setActionLoading(true);
     try {
+      const proofUrl = await uploadProof(user.id);
       await paymentSubmissionsRepository.create({
         payment_request_id: submitTarget.id,
         user_id: user.id,
@@ -63,6 +101,7 @@ export default function DashboardPayments() {
         amount_paid: parseFloat(submitForm.amountPaid),
         currency: submitTarget.currency,
         payment_date: submitForm.paymentDate,
+        proof_url: proofUrl,
         notes: submitForm.notes || null,
       });
       await paymentRequestsRepository.updateStatus(submitTarget.id, 'submitted');
@@ -74,6 +113,8 @@ export default function DashboardPayments() {
       setShowSubmitModal(false);
       setSubmitTarget(null);
       setSubmitForm({ transactionReference: '', amountPaid: '', paymentDate: '', notes: '' });
+      setProofFile(null);
+      setProofPreview(null);
       logActivity('submit', 'payment', `Payment submitted: ${submitTarget.currency} ${submitTarget.amount}`, { payment_request_id: submitTarget.id });
       load();
     } catch (e) { console.error(e); }
@@ -186,10 +227,32 @@ export default function DashboardPayments() {
                 <textarea value={submitForm.notes} onChange={e => setSubmitForm(f => ({ ...f, notes: e.target.value }))}
                   className="w-full px-3 py-2 border border-[#A6852F]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F] min-h-[80px]" placeholder="Optional notes..." />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-[#1C1917] mb-1">Payment Proof (Optional)</label>
+                <div className="border-2 border-dashed border-[#A6852F]/30 rounded-lg p-4 text-center hover:border-[#A6852F]/50 transition-colors">
+                  {proofPreview ? (
+                    <div className="space-y-2">
+                      <FileCheck className="w-8 h-8 text-[#A6852F] mx-auto" />
+                      <p className="text-xs text-[#57534E] truncate max-w-[200px]">{proofFile?.name}</p>
+                      <button type="button" onClick={() => { setProofFile(null); setProofPreview(null); }} className="text-xs text-red-500 hover:text-red-700">Remove</button>
+                    </div>
+                  ) : (
+                    <label className="cursor-pointer block">
+                      <Upload className="w-6 h-6 text-[#A6852F]/50 mx-auto mb-1" />
+                      <p className="text-xs text-[#57534E]">Click to upload receipt or proof</p>
+                      <p className="text-[10px] text-[#57534E]/60 mt-0.5">JPG, PNG, PDF (max 10MB)</p>
+                      <input type="file" className="hidden" accept="image/*,.pdf" onChange={handleFileSelect} />
+                    </label>
+                  )}
+                </div>
+              </div>
             </div>
             <div className="flex gap-2 mt-6">
-              <button onClick={handleSubmitPayment} disabled={actionLoading || !submitForm.transactionReference || !submitForm.amountPaid || !submitForm.paymentDate}
-                className="flex-1 py-2 bg-[#A6852F] text-white rounded-lg hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/20 text-sm font-medium disabled:opacity-50">Submit</button>
+              <button onClick={handleSubmitPayment} disabled={actionLoading || uploading || !submitForm.transactionReference || !submitForm.amountPaid || !submitForm.paymentDate}
+                className="flex-1 py-2 bg-[#A6852F] text-white rounded-lg hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/20 text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2">
+                {(actionLoading || uploading) ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Upload className="w-4 h-4" />}
+                {uploading ? 'Uploading...' : 'Submit'}
+              </button>
               <button onClick={() => setShowSubmitModal(false)} className="flex-1 py-2 bg-[#F3F1ED] text-[#57534E] rounded-lg hover:bg-[#E8E5DF] text-sm font-medium">Cancel</button>
             </div>
           </div>
