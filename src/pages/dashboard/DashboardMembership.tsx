@@ -8,7 +8,8 @@ import { useAuth } from '../../context/AuthContext';
 import { membershipRequestsRepository, paymentMethodsRepository, profilesRepository } from '../../lib/repositories';
 import { notifyService } from '../../lib/notifications';
 import type { DashboardSection } from '../../data/dashboardData';
-import type { MembershipPlan, PaymentMethod, Profile } from '../../types/database';
+import type { PaymentMethod, Profile } from '../../types/database';
+import type { MembershipTier } from '../../types';
 
 const TIER_ICONS: Record<string, React.ReactNode> = {
   silver: <Shield className="w-4 h-4" />,
@@ -31,7 +32,7 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
 
   // Request form state
   const [showRequestModal, setShowRequestModal] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<MembershipPlan | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<MembershipTier | null>(null);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [requestForm, setRequestForm] = useState({ preferredPaymentMethod: '', country: '', currency: 'USD', notes: '' });
   const [submitting, setSubmitting] = useState(false);
@@ -282,64 +283,78 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
                 </div>
               ) : (
                 <>
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-editorial text-[#1C1917]">Request {selectedPlan.name}</h3>
-                    <button onClick={() => setShowRequestModal(false)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] cursor-pointer"><X className="w-4 h-4" /></button>
-                  </div>
-                  <div className="p-3 bg-[#F3F1ED]/50 rounded-lg text-sm">
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium text-[#1C1917]">{selectedPlan.name} Plan</span>
-                      <span className="font-editorial text-lg text-[#A6852F]">${selectedPlan.price}<span className="text-xs opacity-60">/{selectedPlan.period}</span></span>
+                  {/* Tier-colored header */}
+                  <div className="relative rounded-2xl p-5 text-white overflow-hidden" style={{ background: `linear-gradient(135deg, ${TIER_COLORS[selectedPlan.id] || '#A6852F'}F5, ${TIER_COLORS[selectedPlan.id] || '#A6852F'}E8 50%, ${TIER_COLORS[selectedPlan.id] || '#A6852F'}D9 75%, ${TIER_COLORS[selectedPlan.id] || '#A6852F'}E6)`, boxShadow: `0 8px 30px ${TIER_COLORS[selectedPlan.id] || '#A6852F'}45` }}>
+                    <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(25%, -25%)' }} />
+                    <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(-25%, 25%)' }} />
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-11 h-8 rounded-md border border-white/30 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))' }}>
+                          <div className="w-6 h-4 rounded-sm bg-white/40" />
+                        </div>
+                        <button onClick={() => setShowRequestModal(false)} className="w-8 h-8 rounded-lg flex items-center justify-center text-white/80 hover:bg-white/15 cursor-pointer transition-colors"><X className="w-4 h-4" /></button>
+                      </div>
+                      <p className="text-[11px] uppercase tracking-widest opacity-70 mb-1">Request {selectedPlan.name}</p>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-3xl font-editorial">${selectedPlan.price}</span>
+                        <span className="text-sm opacity-70">/{selectedPlan.period}</span>
+                      </div>
+                      {selectedPlan.features && selectedPlan.features.length > 0 && (
+                        <ul className="mt-3 space-y-1.5 border-t border-white/20 pt-3">
+                          {selectedPlan.features.slice(0, 3).map((f, i) => (
+                            <li key={i} className="flex items-center gap-2 text-[11px] text-white/80">
+                              <Check className="w-3 h-3 shrink-0" />
+                              <span>{typeof f === 'string' ? f : (f as any).label || JSON.stringify(f)}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
-                    {selectedPlan.features && selectedPlan.features.length > 0 && (
-                      <ul className="mt-2 space-y-1">
-                        {selectedPlan.features.slice(0, 3).map((f, i) => (
-                          <li key={i} className="flex items-center gap-1.5 text-xs text-[#57534E]">
-                            <Check className="w-3 h-3 text-[#16A34A]" />
-                            <span>{typeof f === 'string' ? f : (f as any).label || JSON.stringify(f)}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-[#1C1917] mb-1">Preferred Payment Method</label>
-                    <select value={requestForm.preferredPaymentMethod} onChange={e => setRequestForm(f => ({ ...f, preferredPaymentMethod: e.target.value }))}
-                      className="w-full px-3 py-2 border border-[#A6852F]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]">
-                      <option value="">Select method...</option>
-                      {paymentMethods.map(m => <option key={m.id} value={m.id}>{m.name} ({m.type.replace(/_/g, ' ')})</option>)}
-                    </select>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
+
+                  {/* Form */}
+                  <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium text-[#1C1917] mb-1">Country</label>
-                      <input value={requestForm.country} onChange={e => setRequestForm(f => ({ ...f, country: e.target.value }))}
-                        className="w-full px-3 py-2 border border-[#A6852F]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" placeholder="Your country" />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-[#1C1917] mb-1">Currency</label>
-                      <select value={requestForm.currency} onChange={e => setRequestForm(f => ({ ...f, currency: e.target.value }))}
-                        className="w-full px-3 py-2 border border-[#A6852F]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]">
-                        <option value="USD">USD ($)</option>
-                        <option value="EUR">EUR (€)</option>
-                        <option value="GBP">GBP (£)</option>
-                        <option value="NGN">NGN (₦)</option>
-                        <option value="GHS">GHS (GH₵)</option>
-                        <option value="KES">KES (KSh)</option>
+                      <label className="block text-[11px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Payment Method</label>
+                      <select value={requestForm.preferredPaymentMethod} onChange={e => setRequestForm(f => ({ ...f, preferredPaymentMethod: e.target.value }))}
+                        className="w-full px-3.5 py-2.5 border border-[#E8E5DF]/80 rounded-xl text-sm bg-[#FAF9F7] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all cursor-pointer">
+                        <option value="">Select method...</option>
+                        {paymentMethods.map(m => <option key={m.id} value={m.id}>{m.name} ({m.type.replace(/_/g, ' ')})</option>)}
                       </select>
                     </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Country</label>
+                        <input value={requestForm.country} onChange={e => setRequestForm(f => ({ ...f, country: e.target.value }))}
+                          className="w-full px-3.5 py-2.5 border border-[#E8E5DF]/80 rounded-xl text-sm bg-[#FAF9F7] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all" placeholder="Your country" />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Currency</label>
+                        <select value={requestForm.currency} onChange={e => setRequestForm(f => ({ ...f, currency: e.target.value }))}
+                          className="w-full px-3.5 py-2.5 border border-[#E8E5DF]/80 rounded-xl text-sm bg-[#FAF9F7] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all cursor-pointer">
+                          <option value="USD">USD ($)</option>
+                          <option value="EUR">EUR (€)</option>
+                          <option value="GBP">GBP (£)</option>
+                          <option value="NGN">NGN (₦)</option>
+                          <option value="GHS">GHS (GH₵)</option>
+                          <option value="KES">KES (KSh)</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Notes</label>
+                      <textarea value={requestForm.notes} onChange={e => setRequestForm(f => ({ ...f, notes: e.target.value }))}
+                        className="w-full px-3.5 py-2.5 border border-[#E8E5DF]/80 rounded-xl text-sm bg-[#FAF9F7] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all min-h-[70px] resize-none" placeholder="Any additional notes (optional)..." />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-[#1C1917] mb-1">Notes</label>
-                    <textarea value={requestForm.notes} onChange={e => setRequestForm(f => ({ ...f, notes: e.target.value }))}
-                      className="w-full px-3 py-2 border border-[#A6852F]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F] min-h-[80px]" placeholder="Any additional notes (optional)..." />
-                  </div>
-                  <div className="flex gap-2 mt-2">
+
+                  {/* Actions */}
+                  <div className="flex gap-2.5 pt-1">
                     <button onClick={handleSubmitRequest} disabled={actionLoading || submitting}
-                      className="flex-1 py-2.5 bg-[#A6852F] text-white rounded-lg hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/20 text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2">
+                      className="flex-1 py-3 bg-[#1C1917] hover:bg-[#292524] text-white rounded-xl shadow-lg shadow-[#1C1917]/20 text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-[0.98]">
                       <Send className="w-4 h-4" /> {submitting ? 'Submitting...' : 'Submit Request'}
                     </button>
-                    <button onClick={() => setShowRequestModal(false)} disabled={submitting} className="flex-1 py-2.5 bg-[#F3F1ED] text-[#57534E] rounded-lg hover:bg-[#E8E5DF] text-sm font-medium disabled:opacity-50">Cancel</button>
+                    <button onClick={() => setShowRequestModal(false)} disabled={submitting} className="px-5 py-3 bg-[#F3F1ED] text-[#57534E] rounded-xl hover:bg-[#E8E5DF] text-sm font-medium disabled:opacity-50 transition-all cursor-pointer">Cancel</button>
                   </div>
                 </>
               )}
