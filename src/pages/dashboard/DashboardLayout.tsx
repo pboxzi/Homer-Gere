@@ -5,6 +5,7 @@ import {
   LayoutDashboard, User, Crown, MessageSquare, Inbox, Sparkles,
   FileText, Bookmark, Heart, Bell, Settings, Shield, HelpCircle,
   LogOut, Menu, X, ChevronRight, ArrowLeft, CreditCard, DollarSign,
+  Download, Clock,
 } from 'lucide-react';
 import { DashboardSection, DASHBOARD_NAV_ITEMS } from '../../data/dashboardData';
 import { useDashboard } from '../../context/DashboardContext';
@@ -12,7 +13,7 @@ import { useDashboard } from '../../context/DashboardContext';
 const ICON_MAP: Record<string, React.FC<{ className?: string }>> = {
   LayoutDashboard, User, Crown, MessageSquare, Inbox, Sparkles,
   FileText, Bookmark, Heart, Bell, Settings, Shield, HelpCircle,
-  CreditCard, DollarSign,
+  CreditCard, DollarSign, Download, Clock,
 };
 
 interface DashboardLayoutProps {
@@ -75,11 +76,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <div className="px-3 py-4 border-t border-[#A6852F]/20 bg-gradient-to-t from-[#A6852F]/8 to-transparent">
         <div className="flex items-center gap-3 px-3 mb-3">
           <div className="w-9 h-9 rounded-xl bg-[#A6852F] flex items-center justify-center text-white text-sm font-bold shadow-md shadow-[#A6852F]/30">
-            {profile.firstName[0]}{profile.lastName[0]}
+            {profile?.first_name?.[0]}{profile?.last_name?.[0]}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-[#1C1917] truncate">{profile.firstName} {profile.lastName}</p>
-            <p className="text-[11px] text-[#57534E] truncate">{profile.email}</p>
+            <p className="text-sm font-semibold text-[#1C1917] truncate">{profile?.first_name} {profile?.last_name}</p>
+            <p className="text-[11px] text-[#57534E] truncate">{profile?.email}</p>
           </div>
         </div>
         <button

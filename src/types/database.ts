@@ -28,6 +28,9 @@ export type PaymentMethodType = 'bank_transfer' | 'mobile_money' | 'cash_deposit
 export type PaymentRequestStatus = 'pending' | 'instructions_sent' | 'submitted' | 'under_review' | 'approved' | 'rejected' | 'expired';
 export type PaymentSubmissionStatus = 'pending' | 'verified' | 'rejected' | 'needs_info';
 export type MembershipCardStatus = 'active' | 'expired' | 'deactivated' | 'replaced';
+export type DownloadCategory = 'membership' | 'experience' | 'invoice' | 'receipt' | 'exclusive' | 'general';
+export type ActivityModule = 'registration' | 'membership' | 'payment' | 'experience' | 'chat' | 'business' | 'profile' | 'security' | 'system';
+export type ExperienceDocumentType = 'info' | 'confirmation' | 'itinerary' | 'receipt' | 'certificate';
 
 // ============================================================
 // TABLE TYPES
@@ -867,6 +870,59 @@ export interface MembershipCard {
 }
 
 // ============================================================
+// PHASE 6: DOWNLOAD, ACTIVITY & EXPERIENCE DOCUMENT TYPES
+// ============================================================
+
+export interface DownloadItem {
+  id: string;
+  title: string;
+  description: string | null;
+  category: DownloadCategory;
+  file_url: string;
+  file_type: string;
+  file_size: number;
+  thumbnail_url: string | null;
+  required_tier: string;
+  is_active: boolean;
+  download_count: number;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+  deleted_by: string | null;
+}
+
+export interface MemberDownload {
+  id: string;
+  user_id: string;
+  download_item_id: string;
+  downloaded_at: string;
+}
+
+export interface ActivityLog {
+  id: string;
+  user_id: string;
+  action: string;
+  module: ActivityModule;
+  description: string;
+  metadata: Record<string, unknown>;
+  ip_address: string | null;
+  user_agent: string | null;
+  created_at: string;
+}
+
+export interface ExperienceDocument {
+  id: string;
+  experience_request_id: string | null;
+  user_id: string;
+  title: string;
+  description: string | null;
+  file_url: string;
+  file_type: string;
+  document_type: ExperienceDocumentType;
+  created_at: string;
+}
+
+// ============================================================
 // DATABASE TYPE (Supabase generated format)
 // ============================================================
 
@@ -1083,6 +1139,26 @@ export interface Database {
         Insert: Omit<MembershipCard, 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Omit<MembershipCard, 'id' | 'created_at' | 'updated_at'>>;
       };
+      download_items: {
+        Row: DownloadItem;
+        Insert: Omit<DownloadItem, 'id' | 'created_at' | 'updated_at' | 'deleted_at' | 'deleted_by'>;
+        Update: Partial<Omit<DownloadItem, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      member_downloads: {
+        Row: MemberDownload;
+        Insert: Omit<MemberDownload, 'id' | 'downloaded_at'>;
+        Update: Partial<Omit<MemberDownload, 'id' | 'downloaded_at'>>;
+      };
+      activity_logs: {
+        Row: ActivityLog;
+        Insert: Omit<ActivityLog, 'id' | 'created_at'>;
+        Update: Partial<Omit<ActivityLog, 'id' | 'created_at'>>;
+      };
+      experience_documents: {
+        Row: ExperienceDocument;
+        Insert: Omit<ExperienceDocument, 'id' | 'created_at'>;
+        Update: Partial<Omit<ExperienceDocument, 'id' | 'created_at'>>;
+      };
     };
     Enums: {
       user_role: UserRole;
@@ -1109,6 +1185,9 @@ export interface Database {
       payment_request_status: PaymentRequestStatus;
       payment_submission_status: PaymentSubmissionStatus;
       membership_card_status: MembershipCardStatus;
+      download_category: DownloadCategory;
+      activity_module: ActivityModule;
+      experience_document_type: ExperienceDocumentType;
     };
   };
 }

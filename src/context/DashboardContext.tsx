@@ -2,31 +2,34 @@ import React, { createContext, useContext, useState, useCallback, useEffect } fr
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import {
-  MemberProfile, MemberMembership, DashboardRequest, DashboardNotification,
-  DashboardConversation, SecuritySession, DEFAULT_MEMBER_PROFILE, DEFAULT_MEMBERSHIP,
+  profilesRepository,
+  membershipsRepository,
+  membershipRequestsRepository,
+  membershipPlansRepository,
+  paymentRequestsRepository,
+  paymentSubmissionsRepository,
+  paymentMethodsRepository,
+  experienceRequestsRepository,
+  fanChatRepository,
+  businessEnquiriesRepository,
+  notificationsRepository,
+  activityLogsRepository,
+  auditLogsRepository,
+} from '../lib/repositories';
+import type {
+  Profile, Membership, MembershipRequest, MembershipPlan,
+  PaymentRequest, PaymentSubmission, PaymentMethod,
+  ExperienceRequest, Notification, ActivityLog,
+  FanConversation, FanMessage,
+} from '../types/database';
+import {
+  DEFAULT_MEMBER_PROFILE, DEFAULT_MEMBERSHIP, DASHBOARD_NAV_ITEMS,
 } from '../data/dashboardData';
+import type { DashboardSection, DashboardNotification } from '../data/dashboardData';
 
 // ============================================================
-// Extended types for new dashboard sections
+// Extended types
 // ============================================================
-
-export interface MessageThread {
-  id: string;
-  subject: string;
-  lastMessage: string;
-  lastDate: string;
-  lastSender: 'member' | 'homer' | 'system';
-  read: boolean;
-  messages: Message[];
-}
-
-export interface Message {
-  id: string;
-  sender: 'member' | 'homer' | 'system';
-  text: string;
-  date: string;
-  read: boolean;
-}
 
 export interface BookmarkedArticle {
   id: string;
@@ -73,47 +76,50 @@ export interface HelpReply {
 // ============================================================
 
 interface DashboardContextType {
-  profile: MemberProfile;
-  membership: MemberMembership;
-  requests: DashboardRequest[];
+  profile: Profile | null;
+  profileLoading: boolean;
+  membership: Membership | null;
+  membershipPlan: MembershipPlan | null;
+  membershipRequests: MembershipRequest[];
+  paymentRequests: PaymentRequest[];
+  paymentSubmissions: PaymentSubmission[];
+  paymentMethods: PaymentMethod[];
+  experienceRequests: ExperienceRequest[];
   notifications: DashboardNotification[];
-  conversations: DashboardConversation[];
-  sessions: SecuritySession[];
-  messages: MessageThread[];
+  activityLogs: ActivityLog[];
+  conversations: FanConversation[];
+  fanMessages: FanMessage[];
   bookmarks: BookmarkedArticle[];
   favorites: FavoritePhoto[];
   helpTickets: HelpTicket[];
   loading: boolean;
 
-  updateProfile: (updates: Partial<MemberProfile>) => void;
-  updateMembership: (updates: Partial<MemberMembership>) => void;
-  addRequest: (request: Omit<DashboardRequest, 'id' | 'date' | 'status'>) => void;
-  updateRequestStatus: (id: string, status: DashboardRequest['status']) => void;
-  withdrawRequest: (id: string) => void;
+  refreshData: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
+  refreshNotifications: () => Promise<void>;
+  refreshPayments: () => Promise<void>;
+  refreshExperiences: () => Promise<void>;
+  refreshActivity: () => Promise<void>;
+
+  updateProfile: (updates: Partial<Profile>) => Promise<void>;
+  changePassword: (currentPw: string, newPw: string) => Promise<{ success: boolean; error?: string }>;
+
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: () => void;
   deleteNotification: (id: string) => void;
-  addConversation: (conversation: Omit<DashboardConversation, 'id' | 'date'>) => void;
-  closeConversation: (id: string) => void;
-  deleteConversation: (id: string) => void;
-  revokeSession: (id: string) => void;
-  revokeAllSessions: () => void;
-  addMessageThread: (subject: string, text: string) => string;
-  addMessage: (threadId: string, text: string) => void;
-  deleteMessageThread: (threadId: string) => void;
-  markThreadRead: (threadId: string) => void;
+
+  addHelpTicket: (ticket: Omit<HelpTicket, 'id' | 'date' | 'status' | 'replies'>) => void;
+  replyHelpTicket: (ticketId: string, text: string) => void;
+  closeHelpTicket: (ticketId: string) => void;
+
   toggleBookmark: (article: Omit<BookmarkedArticle, 'id' | 'bookmarkedAt'>) => void;
   isBookmarked: (articleId: string) => boolean;
   toggleFavorite: (photo: Omit<FavoritePhoto, 'id' | 'favoritedAt'>) => void;
   isFavorited: (photoId: string) => boolean;
-  addHelpTicket: (ticket: Omit<HelpTicket, 'id' | 'date' | 'status' | 'replies'>) => void;
-  replyHelpTicket: (ticketId: string, text: string) => void;
-  closeHelpTicket: (ticketId: string) => void;
-  changePassword: (currentPw: string, newPw: string) => Promise<{ success: boolean; error?: string }>;
-  enable2FA: () => void;
-  disable2FA: () => void;
-  twoFactorEnabled: boolean;
-  refreshData: () => Promise<void>;
+
+  unreadCount: number;
+  pendingCount: number;
+  completedCount: number;
 }
 
 // ============================================================
@@ -122,10 +128,6 @@ interface DashboardContextType {
 
 function generateId() {
   return crypto.randomUUID?.() ?? Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-}
-
-function todayStr() {
-  return new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 // ============================================================
@@ -143,235 +145,244 @@ export const useDashboard = () => {
 export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
 
-  const [profile, setProfile] = useState<MemberProfile>(() => {
-    if (user) {
-      return {
-        ...DEFAULT_MEMBER_PROFILE,
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        email: user.email || '',
-      };
-    }
-    return DEFAULT_MEMBER_PROFILE;
-  });
-  const [membership, setMembership] = useState<MemberMembership>(DEFAULT_MEMBERSHIP);
-  const [requests, setRequests] = useState<DashboardRequest[]>([]);
+  // Core state
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [membership, setMembership] = useState<Membership | null>(null);
+  const [membershipPlan, setMembershipPlan] = useState<MembershipPlan | null>(null);
+  const [membershipRequests, setMembershipRequests] = useState<MembershipRequest[]>([]);
+  const [paymentRequests, setPaymentRequests] = useState<PaymentRequest[]>([]);
+  const [paymentSubmissions, setPaymentSubmissions] = useState<PaymentSubmission[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [experienceRequests, setExperienceRequests] = useState<ExperienceRequest[]>([]);
   const [notifications, setNotifications] = useState<DashboardNotification[]>([]);
-  const [conversations, setConversations] = useState<DashboardConversation[]>([]);
-  const [sessions, setSessions] = useState<SecuritySession[]>([]);
-  const [messages, setMessages] = useState<MessageThread[]>([]);
+  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
+  const [conversations, setConversations] = useState<FanConversation[]>([]);
+  const [fanMessages, setFanMessages] = useState<FanMessage[]>([]);
   const [bookmarks, setBookmarks] = useState<BookmarkedArticle[]>([]);
   const [favorites, setFavorites] = useState<FavoritePhoto[]>([]);
   const [helpTickets, setHelpTickets] = useState<HelpTicket[]>([]);
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
+  // ============================================================
   // Load profile from Supabase
-  useEffect(() => {
-    if (!user) return;
-    let mounted = true;
-    (async () => {
-      try {
-        const { data: profileData } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .maybeSingle();
-        if (mounted && profileData) {
-          setProfile((prev) => ({
-            ...prev,
-            firstName: profileData.first_name || user.firstName || prev.firstName,
-            lastName: profileData.last_name || user.lastName || prev.lastName,
-            email: profileData.email || user.email || prev.email,
-            phone: profileData.phone || prev.phone,
-            memberSince: profileData.created_at || prev.memberSince,
-            lastLogin: profileData.last_login || prev.lastLogin,
-          }));
-        }
-      } catch {
-        // Use defaults from auth user
-      }
-    })();
-    return () => { mounted = false; };
+  // ============================================================
+  const refreshProfile = useCallback(async () => {
+    if (!user?.id) return;
+    setProfileLoading(true);
+    try {
+      const data = await profilesRepository.getById(user.id);
+      if (data) setProfile(data);
+    } catch { /* silent */ }
+    setProfileLoading(false);
   }, [user?.id]);
 
+  // ============================================================
   // Load membership from Supabase
-  useEffect(() => {
-    if (!user) return;
-    let mounted = true;
-    (async () => {
-      try {
-        const { data: membershipData } = await supabase
-          .from('memberships')
-          .select('*, membership_plans(*)')
-          .eq('user_id', user.id)
-          .eq('status', 'active')
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle();
-        if (mounted && membershipData) {
-          const plan = (membershipData as any).membership_plans;
-          setMembership({
-            plan: plan?.name || 'Member',
-            status: 'active',
-            renewalDate: membershipData.current_period_end || '',
-            activationDate: membershipData.created_at,
-            membershipNumber: membershipData.id || '',
-            benefits: plan?.features || [],
-          });
-        }
-      } catch {
-        // Use defaults
+  // ============================================================
+  const loadMembership = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const memberships = await membershipsRepository.getByUserId(user.id);
+      const active = memberships.find((m) => m.status === 'active') || memberships[0] || null;
+      setMembership(active);
+      if (active?.plan_id) {
+        const plan = await membershipPlansRepository.getBySlug(active.plan_id);
+        setMembershipPlan(plan);
       }
-    })();
-    return () => { mounted = false; };
+    } catch { /* silent */ }
   }, [user?.id]);
 
-  // Load notifications from Supabase
-  useEffect(() => {
-    if (!user) return;
-    let mounted = true;
-    (async () => {
-      try {
-        const { data } = await supabase
-          .from('notifications')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(50);
-        if (mounted && data && data.length > 0) {
-          setNotifications(data.map((n) => ({
-            id: n.id,
-            type: (n.type as DashboardNotification['type']) || 'system',
-            title: n.title,
-            message: n.message,
-            date: n.created_at,
-            read: n.read,
-          })));
-        }
-      } catch {
-        // Use empty defaults
-      }
-    })();
-    return () => { mounted = false; };
+  // ============================================================
+  // Load membership requests
+  // ============================================================
+  const loadMembershipRequests = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const requests = await membershipRequestsRepository.getByUserId(user.id);
+      setMembershipRequests(requests);
+    } catch { /* silent */ }
   }, [user?.id]);
 
-  // Profile — persist to Supabase
-  const updateProfile = useCallback((updates: Partial<MemberProfile>) => {
-    setProfile((prev) => ({ ...prev, ...updates }));
-    if (user) {
-      const supabaseUpdates: Record<string, unknown> = {};
-      if (updates.firstName !== undefined) supabaseUpdates.first_name = updates.firstName;
-      if (updates.lastName !== undefined) supabaseUpdates.last_name = updates.lastName;
-      if (updates.phone !== undefined) supabaseUpdates.phone = updates.phone;
-      if (Object.keys(supabaseUpdates).length > 0) {
-        supabase.from('profiles').update(supabaseUpdates).eq('id', user.id).then(() => {});
+  // ============================================================
+  // Load payments
+  // ============================================================
+  const refreshPayments = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const [reqs, subs, meths] = await Promise.all([
+        paymentRequestsRepository.getByUserId(user.id),
+        paymentSubmissionsRepository.getByUserId(user.id),
+        paymentMethodsRepository.getActive(),
+      ]);
+      setPaymentRequests(reqs);
+      setPaymentSubmissions(subs);
+      setPaymentMethods(meths);
+    } catch { /* silent */ }
+  }, [user?.id]);
+
+  // ============================================================
+  // Load experience requests
+  // ============================================================
+  const refreshExperiences = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const reqs = await experienceRequestsRepository.getByUserId(user.id);
+      setExperienceRequests(reqs);
+    } catch { /* silent */ }
+  }, [user?.id]);
+
+  // ============================================================
+  // Load notifications
+  // ============================================================
+  const refreshNotifications = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const data = await notificationsRepository.getByUserId(user.id);
+      setNotifications(data.map((n) => ({
+        id: n.id,
+        type: (n.type as DashboardNotification['type']) || 'system',
+        title: n.title,
+        message: n.message,
+        date: n.created_at,
+        read: n.read,
+      })));
+    } catch { /* silent */ }
+  }, [user?.id]);
+
+  // ============================================================
+  // Load activity logs
+  // ============================================================
+  const refreshActivity = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const logs = await activityLogsRepository.getByUserId(user.id, 50);
+      setActivityLogs(logs);
+    } catch { /* silent */ }
+  }, [user?.id]);
+
+  // ============================================================
+  // Load conversations
+  // ============================================================
+  const loadConversations = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const convs = await fanChatRepository.getConversations(user.id);
+      setConversations(convs);
+      // Load messages for each conversation
+      const allMessages: FanMessage[] = [];
+      for (const conv of convs.slice(0, 5)) {
+        try {
+          const msgs = await fanChatRepository.getMessages(conv.id);
+          allMessages.push(...msgs);
+        } catch { /* skip */ }
       }
+      setFanMessages(allMessages);
+    } catch { /* silent */ }
+  }, [user?.id]);
+
+  // ============================================================
+  // Load all data
+  // ============================================================
+  const refreshData = useCallback(async () => {
+    if (!user?.id) return;
+    setLoading(true);
+    try {
+      await Promise.allSettled([
+        refreshProfile(),
+        loadMembership(),
+        loadMembershipRequests(),
+        refreshPayments(),
+        refreshExperiences(),
+        refreshNotifications(),
+        refreshActivity(),
+        loadConversations(),
+      ]);
+    } catch { /* silent */ }
+    setLoading(false);
+  }, [user?.id, refreshProfile, loadMembership, loadMembershipRequests, refreshPayments, refreshExperiences, refreshNotifications, refreshActivity, loadConversations]);
+
+  // Initial load
+  useEffect(() => {
+    if (user?.id) refreshData();
+  }, [user?.id, refreshData]);
+
+  // ============================================================
+  // Profile update - persist to Supabase
+  // ============================================================
+  const updateProfile = useCallback(async (updates: Partial<Profile>) => {
+    if (!user?.id) return;
+    try {
+      await profilesRepository.update(user.id, updates);
+      setProfile((prev) => prev ? { ...prev, ...updates } : prev);
+      // Log activity
+      await activityLogsRepository.create({
+        user_id: user.id,
+        action: 'update',
+        module: 'profile',
+        description: 'Profile updated',
+        metadata: { fields: Object.keys(updates) },
+      });
+    } catch (err) {
+      console.error('Failed to update profile:', err);
     }
-  }, [user]);
+  }, [user?.id]);
 
-  // Membership
-  const updateMembership = useCallback((updates: Partial<MemberMembership>) => {
-    setMembership((prev) => ({ ...prev, ...updates }));
-  }, []);
+  // ============================================================
+  // Password change
+  // ============================================================
+  const changePassword = useCallback(async (currentPw: string, newPw: string) => {
+    if (!currentPw || !newPw) return { success: false, error: 'Please fill in all fields.' };
+    if (newPw.length < 8) return { success: false, error: 'New password must be at least 8 characters.' };
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPw });
+      if (error) return { success: false, error: error.message };
+      if (user?.id) {
+        await activityLogsRepository.create({
+          user_id: user.id,
+          action: 'update',
+          module: 'security',
+          description: 'Password changed',
+          metadata: {},
+        });
+      }
+      return { success: true };
+    } catch {
+      return { success: false, error: 'Failed to update password.' };
+    }
+  }, [user?.id]);
 
-  // Requests
-  const addRequest = useCallback((req: Omit<DashboardRequest, 'id' | 'date' | 'status'>) => {
-    setRequests((prev) => [{ ...req, id: generateId(), date: todayStr(), status: 'pending' }, ...prev]);
-  }, []);
-
-  const updateRequestStatus = useCallback((id: string, status: DashboardRequest['status']) => {
-    setRequests((prev) => prev.map((r) => r.id === id ? { ...r, status } : r));
-  }, []);
-
-  const withdrawRequest = useCallback((id: string) => {
-    setRequests((prev) => prev.map((r) => r.id === id && r.status === 'pending' ? { ...r, status: 'declined' as const } : r));
-  }, []);
-
+  // ============================================================
   // Notifications
+  // ============================================================
   const markNotificationRead = useCallback((id: string) => {
     setNotifications((prev) => prev.map((n) => n.id === id ? { ...n, read: true } : n));
-    supabase.from('notifications').update({ read: true }).eq('id', id).then(() => {});
+    notificationsRepository.markAsRead(id).catch(() => {});
   }, []);
 
   const markAllNotificationsRead = useCallback(() => {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-    if (user) {
-      supabase.from('notifications').update({ read: true }).eq('user_id', user.id).eq('read', false).then(() => {});
+    if (user?.id) {
+      notificationsRepository.markAllAsRead(user.id).catch(() => {});
     }
-  }, [user]);
+  }, [user?.id]);
 
   const deleteNotification = useCallback((id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
-    supabase.from('notifications').delete().eq('id', id).then(() => {});
+    notificationsRepository.delete(id).catch(() => {});
   }, []);
 
-  // Conversations
-  const addConversation = useCallback((conv: Omit<DashboardConversation, 'id' | 'date'>) => {
-    setConversations((prev) => [{ ...conv, id: generateId(), date: 'Just now' }, ...prev]);
-  }, []);
-
-  const closeConversation = useCallback((id: string) => {
-    setConversations((prev) => prev.map((c) => c.id === id ? { ...c, status: 'closed' } : c));
-  }, []);
-
-  const deleteConversation = useCallback((id: string) => {
-    setConversations((prev) => prev.filter((c) => c.id !== id));
-  }, []);
-
-  // Sessions
-  const revokeSession = useCallback((id: string) => {
-    setSessions((prev) => prev.filter((s) => s.id !== id));
-  }, []);
-
-  const revokeAllSessions = useCallback(() => {
-    setSessions((prev) => prev.filter((s) => s.current));
-  }, []);
-
-  // Messages
-  const addMessageThread = useCallback((subject: string, text: string) => {
-    const threadId = generateId();
-    const now = todayStr();
-    const newMsg: Message = { id: generateId(), sender: 'member', text, date: now, read: true };
-    const thread: MessageThread = {
-      id: threadId,
-      subject,
-      lastMessage: text,
-      lastDate: now,
-      lastSender: 'member',
-      read: true,
-      messages: [newMsg],
-    };
-    setMessages((prev) => [thread, ...prev]);
-    return threadId;
-  }, []);
-
-  const addMessage = useCallback((threadId: string, text: string) => {
-    const now = todayStr();
-    const newMsg: Message = { id: generateId(), sender: 'member', text, date: now, read: true };
-    setMessages((prev) => prev.map((t) => {
-      if (t.id !== threadId) return t;
-      return { ...t, messages: [...t.messages, newMsg], lastMessage: text, lastDate: now, lastSender: 'member' as const };
-    }));
-  }, []);
-
-  const deleteMessageThread = useCallback((threadId: string) => {
-    setMessages((prev) => prev.filter((t) => t.id !== threadId));
-  }, []);
-
-  const markThreadRead = useCallback((threadId: string) => {
-    setMessages((prev) => prev.map((t) => {
-      if (t.id !== threadId) return t;
-      return { ...t, read: true, messages: t.messages.map((m) => ({ ...m, read: true })) };
-    }));
-  }, []);
-
-  // Bookmarks
+  // ============================================================
+  // Bookmarks (local state, persisted to localStorage)
+  // ============================================================
   const toggleBookmark = useCallback((article: Omit<BookmarkedArticle, 'id' | 'bookmarkedAt'>) => {
     setBookmarks((prev) => {
       const exists = prev.find((b) => b.articleId === article.articleId);
-      if (exists) return prev.filter((b) => b.articleId !== article.articleId);
-      return [{ ...article, id: generateId(), bookmarkedAt: todayStr() }, ...prev];
+      const next = exists
+        ? prev.filter((b) => b.articleId !== article.articleId)
+        : [{ ...article, id: generateId(), bookmarkedAt: new Date().toISOString() }, ...prev];
+      localStorage.setItem('hg_bookmarks', JSON.stringify(next));
+      return next;
     });
   }, []);
 
@@ -379,12 +390,17 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return bookmarks.some((b) => b.articleId === articleId);
   }, [bookmarks]);
 
-  // Favorites
+  // ============================================================
+  // Favorites (local state, persisted to localStorage)
+  // ============================================================
   const toggleFavorite = useCallback((photo: Omit<FavoritePhoto, 'id' | 'favoritedAt'>) => {
     setFavorites((prev) => {
       const exists = prev.find((f) => f.photoId === photo.photoId);
-      if (exists) return prev.filter((f) => f.photoId !== photo.photoId);
-      return [{ ...photo, id: generateId(), favoritedAt: todayStr() }, ...prev];
+      const next = exists
+        ? prev.filter((f) => f.photoId !== photo.photoId)
+        : [{ ...photo, id: generateId(), favoritedAt: new Date().toISOString() }, ...prev];
+      localStorage.setItem('hg_favorites', JSON.stringify(next));
+      return next;
     });
   }, []);
 
@@ -392,13 +408,26 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return favorites.some((f) => f.photoId === photoId);
   }, [favorites]);
 
-  // Help
+  // ============================================================
+  // Help tickets (local state)
+  // ============================================================
   const addHelpTicket = useCallback((ticket: Omit<HelpTicket, 'id' | 'date' | 'status' | 'replies'>) => {
-    setHelpTickets((prev) => [{ ...ticket, id: generateId(), date: todayStr(), status: 'open', replies: [] }, ...prev]);
+    setHelpTickets((prev) => [{
+      ...ticket,
+      id: generateId(),
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      status: 'open',
+      replies: [],
+    }, ...prev]);
   }, []);
 
   const replyHelpTicket = useCallback((ticketId: string, text: string) => {
-    const reply: HelpReply = { id: generateId(), sender: 'member', text, date: todayStr() };
+    const reply: HelpReply = {
+      id: generateId(),
+      sender: 'member',
+      text,
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    };
     setHelpTickets((prev) => prev.map((t) => t.id === ticketId ? { ...t, replies: [...t.replies, reply] } : t));
   }, []);
 
@@ -406,86 +435,38 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setHelpTickets((prev) => prev.map((t) => t.id === ticketId ? { ...t, status: 'closed' } : t));
   }, []);
 
-  // Security — uses Supabase Auth
-  const changePassword = useCallback(async (currentPw: string, newPw: string) => {
-    if (!currentPw || !newPw) return { success: false, error: 'Please fill in all fields.' };
-    if (newPw.length < 8) return { success: false, error: 'New password must be at least 8 characters.' };
+  // Load bookmarks/favorites from localStorage
+  useEffect(() => {
     try {
-      const { error } = await supabase.auth.updateUser({ password: newPw });
-      if (error) return { success: false, error: error.message };
-      return { success: true };
-    } catch {
-      return { success: false, error: 'Failed to update password.' };
-    }
+      const bm = localStorage.getItem('hg_bookmarks');
+      if (bm) setBookmarks(JSON.parse(bm));
+      const fv = localStorage.getItem('hg_favorites');
+      if (fv) setFavorites(JSON.parse(fv));
+    } catch { /* silent */ }
   }, []);
 
-  const enable2FA = useCallback(() => { setTwoFactorEnabled(true); }, []);
-  const disable2FA = useCallback(() => { setTwoFactorEnabled(false); }, []);
-
-  const refreshData = useCallback(async () => {
-    if (!user) return;
-    setLoading(true);
-    try {
-      const [profileRes, membershipRes, notifRes] = await Promise.allSettled([
-        supabase.from('profiles').select('*').eq('id', user.id).maybeSingle(),
-        supabase.from('memberships').select('*, membership_plans(*)').eq('user_id', user.id).eq('status', 'active').order('created_at', { ascending: false }).limit(1).maybeSingle(),
-        supabase.from('notifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(50),
-      ]);
-
-      if (profileRes.status === 'fulfilled' && profileRes.value.data) {
-        const p = profileRes.value.data;
-        setProfile((prev) => ({
-          ...prev,
-          firstName: p.first_name || prev.firstName,
-          lastName: p.last_name || prev.lastName,
-          email: p.email || prev.email,
-          phone: p.phone || prev.phone,
-          memberSince: p.created_at || prev.memberSince,
-          lastLogin: p.last_login || prev.lastLogin,
-        }));
-      }
-
-      if (membershipRes.status === 'fulfilled' && membershipRes.value.data) {
-        const m = membershipRes.value.data as any;
-        const plan = m.membership_plans;
-        setMembership({
-          plan: plan?.name || 'Member',
-          status: 'active',
-          renewalDate: m.current_period_end || '',
-          activationDate: m.created_at,
-          membershipNumber: m.id || '',
-          benefits: plan?.features || [],
-        });
-      }
-
-      if (notifRes.status === 'fulfilled' && notifRes.value.data) {
-        setNotifications(notifRes.value.data.map((n) => ({
-          id: n.id,
-          type: (n.type as DashboardNotification['type']) || 'system',
-          title: n.title,
-          message: n.message,
-          date: n.created_at,
-          read: n.read,
-        })));
-      }
-    } catch {
-      // Silent
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
+  // ============================================================
+  // Computed values
+  // ============================================================
+  const unreadCount = notifications.filter((n) => !n.read).length;
+  const pendingCount = experienceRequests.filter((r) => r.status === 'pending').length +
+    membershipRequests.filter((r) => !['rejected', 'membership_active'].includes(r.status)).length;
+  const completedCount = experienceRequests.filter((r) => r.status === 'completed').length +
+    membershipRequests.filter((r) => r.status === 'membership_active').length;
 
   return (
     <DashboardContext.Provider value={{
-      profile, membership, requests, notifications, conversations, sessions,
-      messages, bookmarks, favorites, helpTickets, loading,
-      updateProfile, updateMembership, addRequest, updateRequestStatus, withdrawRequest,
+      profile, profileLoading, membership, membershipPlan, membershipRequests,
+      paymentRequests, paymentSubmissions, paymentMethods,
+      experienceRequests, notifications, activityLogs,
+      conversations, fanMessages, bookmarks, favorites, helpTickets, loading,
+      refreshData, refreshProfile, refreshNotifications, refreshPayments,
+      refreshExperiences, refreshActivity,
+      updateProfile, changePassword,
       markNotificationRead, markAllNotificationsRead, deleteNotification,
-      addConversation, closeConversation, deleteConversation, revokeSession, revokeAllSessions,
-      addMessageThread, addMessage, deleteMessageThread, markThreadRead,
-      toggleBookmark, isBookmarked, toggleFavorite, isFavorited,
       addHelpTicket, replyHelpTicket, closeHelpTicket,
-      changePassword, enable2FA, disable2FA, twoFactorEnabled, refreshData,
+      toggleBookmark, isBookmarked, toggleFavorite, isFavorited,
+      unreadCount, pendingCount, completedCount,
     }}>
       {children}
     </DashboardContext.Provider>

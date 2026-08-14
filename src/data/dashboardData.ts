@@ -11,6 +11,8 @@ export type DashboardSection =
   | 'requests'
   | 'bookmarks'
   | 'favorites'
+  | 'downloads'
+  | 'activity'
   | 'notifications'
   | 'settings'
   | 'security'
@@ -129,6 +131,8 @@ export const DASHBOARD_NAV_ITEMS: { id: DashboardSection; label: string; icon: s
   { id: 'messages', label: 'My Messages', icon: 'Inbox', group: 'main' },
   { id: 'experiences', label: 'Experiences', icon: 'Sparkles', group: 'activity' },
   { id: 'requests', label: 'My Requests', icon: 'FileText', group: 'activity' },
+  { id: 'downloads', label: 'Downloads', icon: 'Download', group: 'activity' },
+  { id: 'activity', label: 'Activity Timeline', icon: 'Clock', group: 'activity' },
   { id: 'bookmarks', label: 'Journal Bookmarks', icon: 'Bookmark', group: 'activity' },
   { id: 'favorites', label: 'Gallery Favorites', icon: 'Heart', group: 'activity' },
   { id: 'notifications', label: 'Notifications', icon: 'Bell', group: 'account' },

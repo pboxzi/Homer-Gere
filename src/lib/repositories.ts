@@ -47,6 +47,10 @@ import type {
   PaymentRequest,
   PaymentSubmission,
   MembershipCard,
+  DownloadItem,
+  MemberDownload,
+  ActivityLog,
+  ExperienceDocument,
 } from '../types/database';
 
 // ============================================================
@@ -3397,6 +3401,228 @@ export const membershipCardsRepository = {
     const client = getSupabaseClient();
     const { error } = await client
       .from('membership_cards')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+};
+
+// ============================================================
+// DOWNLOAD ITEMS
+// ============================================================
+
+export const downloadItemsRepository = {
+  async getAll(): Promise<DownloadItem[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('download_items')
+      .select('*')
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getActive(): Promise<DownloadItem[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('download_items')
+      .select('*')
+      .eq('is_active', true)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getByCategory(category: string): Promise<DownloadItem[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('download_items')
+      .select('*')
+      .eq('category', category)
+      .eq('is_active', true)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getById(id: string): Promise<DownloadItem | null> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('download_items')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async create(item: Omit<DownloadItem, 'id' | 'created_at' | 'updated_at' | 'deleted_at' | 'deleted_by'>): Promise<DownloadItem> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('download_items')
+      .insert(item)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async update(id: string, updates: Partial<DownloadItem>): Promise<DownloadItem> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('download_items')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async softDelete(id: string, deletedBy: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('download_items')
+      .update({ deleted_at: new Date().toISOString(), deleted_by: deletedBy })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async incrementDownloadCount(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('download_items')
+      .update({ download_count: (client as any).rpc ? 0 : 0 })
+      .eq('id', id);
+    if (error) throw error;
+  },
+};
+
+// ============================================================
+// MEMBER DOWNLOADS
+// ============================================================
+
+export const memberDownloadsRepository = {
+  async getByUserId(userId: string): Promise<MemberDownload[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('member_downloads')
+      .select('*')
+      .eq('user_id', userId)
+      .order('downloaded_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async recordDownload(userId: string, downloadItemId: string): Promise<MemberDownload> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('member_downloads')
+      .upsert({ user_id: userId, download_item_id: downloadItemId }, { onConflict: 'user_id,download_item_id' })
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async hasDownloaded(userId: string, downloadItemId: string): Promise<boolean> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('member_downloads')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('download_item_id', downloadItemId)
+      .maybeSingle();
+    if (error) throw error;
+    return !!data;
+  },
+};
+
+// ============================================================
+// ACTIVITY LOGS
+// ============================================================
+
+export const activityLogsRepository = {
+  async getByUserId(userId: string, limit = 50): Promise<ActivityLog[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('activity_logs')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+    if (error) throw error;
+    return data || [];
+  },
+
+  async create(log: Omit<ActivityLog, 'id' | 'created_at'>): Promise<ActivityLog> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('activity_logs')
+      .insert(log)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async getAll(limit = 100): Promise<ActivityLog[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('activity_logs')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(limit);
+    if (error) throw error;
+    return data || [];
+  },
+};
+
+// ============================================================
+// EXPERIENCE DOCUMENTS
+// ============================================================
+
+export const experienceDocumentsRepository = {
+  async getByUserId(userId: string): Promise<ExperienceDocument[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('experience_documents')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getByExperienceRequestId(requestId: string): Promise<ExperienceDocument[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('experience_documents')
+      .select('*')
+      .eq('experience_request_id', requestId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async create(doc: Omit<ExperienceDocument, 'id' | 'created_at'>): Promise<ExperienceDocument> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('experience_documents')
+      .insert(doc)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async delete(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('experience_documents')
       .delete()
       .eq('id', id);
     if (error) throw error;
