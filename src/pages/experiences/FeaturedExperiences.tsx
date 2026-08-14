@@ -67,7 +67,7 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
         </motion.div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {experiences.map((exp, idx) => (
             <motion.div
               key={exp.id}
@@ -96,7 +96,7 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
               )}
 
               {/* Content */}
-              <div className="p-6">
+              <div className="p-5 sm:p-6">
                 <div className="w-11 h-11 rounded-xl bg-[#A6852F]/10 flex items-center justify-center mb-4 group-hover:bg-[#A6852F] group-hover:text-white text-[#A6852F] transition-all duration-500">
                   {getExperienceIcon(exp.iconName)}
                 </div>

@@ -38,7 +38,7 @@ export const JournalFeatured: React.FC<JournalFeaturedProps> = ({ article, onArt
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
             {/* Image */}
-            <div className="relative h-80 lg:h-[480px] overflow-hidden">
+            <div className="relative h-64 sm:h-80 lg:h-[480px] overflow-hidden">
               <img 
                 src={article.image}
                 alt={article.imageAlt}
@@ -54,7 +54,7 @@ export const JournalFeatured: React.FC<JournalFeaturedProps> = ({ article, onArt
             </div>
 
             {/* Content */}
-            <div className="relative flex flex-col justify-center p-8 sm:p-12 lg:p-16">
+            <div className="relative flex flex-col justify-center p-6 sm:p-12 lg:p-16">
               <div className="space-y-6">
                 <h3 className="text-2xl sm:text-3xl lg:text-4xl font-editorial text-white leading-tight">
                   {article.title}

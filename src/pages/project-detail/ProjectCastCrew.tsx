@@ -29,7 +29,7 @@ export const ProjectCastCrew: React.FC<ProjectCastCrewProps> = ({ project }) => 
             Principal Cast
           </h2>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
             {project.cast.map((member, idx) => (
               <motion.div
                 key={member.name}
@@ -133,7 +133,7 @@ export const ProjectCastCrew: React.FC<ProjectCastCrewProps> = ({ project }) => 
               Key Crew
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {project.crew.map((member, idx) => (
                 <motion.div
                   key={member.name}

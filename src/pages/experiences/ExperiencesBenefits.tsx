@@ -70,11 +70,11 @@ export const ExperiencesBenefits: React.FC = () => {
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {BENEFITS.map((benefit, idx) => (
             <motion.div
               key={benefit.title}
-              className="p-6 rounded-[1.5rem] bg-[#F3F1ED]/60 border border-[#E8E5DF]/40 hover:border-[#A6852F]/20 transition-colors duration-300"
+              className="p-5 sm:p-6 rounded-[1.5rem] bg-[#F3F1ED]/60 border border-[#E8E5DF]/40 hover:border-[#A6852F]/20 transition-colors duration-300"
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.3 + idx * 0.08, ease: [0.22, 1, 0.36, 1] }}

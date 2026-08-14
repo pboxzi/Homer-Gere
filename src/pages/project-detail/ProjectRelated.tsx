@@ -35,7 +35,7 @@ export const ProjectRelated: React.FC<ProjectRelatedProps> = ({ project, onNavig
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
           {relatedProjects.map((related, idx) => (
             <motion.button
               key={related.slug}
@@ -57,7 +57,7 @@ export const ProjectRelated: React.FC<ProjectRelatedProps> = ({ project, onNavig
               <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-[#111827]/30 to-transparent" />
 
               {/* Content */}
-              <div className="absolute bottom-0 left-0 right-0 p-8">
+              <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-8">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="px-2.5 py-0.5 bg-[#A6852F]/20 rounded-full text-[#A6852F] text-[10px] font-medium uppercase tracking-wider">
                     {related.type}

@@ -46,7 +46,7 @@ export const ProjectMediaGallery: React.FC<ProjectMediaGalleryProps> = ({ projec
         </motion.div>
 
         {/* Gallery Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
           {project.media.map((item, idx) => (
             <motion.div
               key={item.id}
@@ -63,7 +63,7 @@ export const ProjectMediaGallery: React.FC<ProjectMediaGalleryProps> = ({ projec
                 alt={item.alt}
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
-                style={{ minHeight: idx === 0 ? '400px' : '200px' }}
+                style={{ minHeight: idx === 0 ? '280px' : '200px' }}
                 loading="lazy" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/70 via-[#111827]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 

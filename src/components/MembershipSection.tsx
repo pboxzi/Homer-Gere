@@ -39,14 +39,14 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onNavigate
             View All Plans<ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
           </button>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 items-stretch">
           {membershipTiers.map((tier, i) => {
             const tierColor = TIER_COLORS[tier.name.toLowerCase()] || TIER_COLORS[tier.id] || '#A6852F';
             return (
               <motion.div
                 key={tier.id}
                 onClick={() => onNavigate('membership')}
-                className="rounded-2xl p-6 text-white relative overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] group"
+                className="rounded-2xl p-5 sm:p-6 text-white relative overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] group"
                 style={{
                   background: `linear-gradient(135deg, ${tierColor}F5, ${tierColor}E8 50%, ${tierColor}D9 75%, ${tierColor}E6)`,
                   boxShadow: `0 10px 40px ${tierColor}65, 0 0 60px ${tierColor}40, inset 0 1px 0 rgba(255,255,255,0.15)`,

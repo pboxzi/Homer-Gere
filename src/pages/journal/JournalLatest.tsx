@@ -18,7 +18,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onArticleClick }) =>
       onClick={() => onArticleClick?.(article.slug)}
     >
       {/* Image */}
-      <div className="relative h-56 sm:h-64 overflow-hidden bg-[#E8E5DF]">
+      <div className="relative h-48 sm:h-56 lg:h-64 overflow-hidden bg-[#E8E5DF]">
         <img 
           src={article.image}
           alt={article.imageAlt}
@@ -34,7 +34,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onArticleClick }) =>
       </div>
 
       {/* Content */}
-      <div className="p-6 sm:p-7">
+      <div className="p-5 sm:p-7">
         <h3 className="text-lg sm:text-xl font-editorial text-[#111827] group-hover:text-[#A6852F] transition-colors duration-300 mb-2 leading-snug">
           {article.title}
         </h3>
@@ -80,7 +80,7 @@ export const JournalLatest: React.FC<JournalLatestProps> = ({
 
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
         {visibleArticles.map((article, idx) => (
           <div key={article.id} style={{ animationDelay: `${Math.min(idx * 0.05, 0.3)}s` }}>
             <ArticleCard article={article} onArticleClick={onArticleClick} />

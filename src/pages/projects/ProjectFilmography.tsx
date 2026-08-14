@@ -97,7 +97,7 @@ export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemCl
             {filteredItems.map((entry, idx) => (
               <motion.article
                 key={entry.id}
-                className="group flex flex-col sm:flex-row gap-6 sm:gap-8 p-6 sm:p-8 rounded-[1.5rem] bg-[#F3F1ED]/60 hover:bg-white transition-all duration-500 hover:shadow-lg hover:shadow-[#A6852F]/5 border border-transparent hover:border-[#E8E5DF]/60 cursor-pointer"
+                className="group flex flex-col sm:flex-row gap-4 sm:gap-6 p-6 sm:p-8 rounded-[1.5rem] bg-[#F3F1ED]/60 hover:bg-white transition-all duration-500 hover:shadow-lg hover:shadow-[#A6852F]/5 border border-transparent hover:border-[#E8E5DF]/60 cursor-pointer"
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: idx * 0.08, ease: [0.22, 1, 0.36, 1] }}
@@ -114,7 +114,7 @@ export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemCl
               >
                 {/* Poster */}
                 {entry.image ? (
-                  <div className="w-full sm:w-52 h-72 sm:h-72 rounded-2xl overflow-hidden bg-[#E8E5DF] shrink-0">
+                  <div className="w-full sm:w-52 h-56 sm:h-72 rounded-2xl overflow-hidden bg-[#E8E5DF] shrink-0">
                     <img 
                       src={entry.image}
                       alt={entry.title}
@@ -123,7 +123,7 @@ export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemCl
                       loading="lazy" />
                   </div>
                 ) : (
-                  <div className="w-full sm:w-52 h-72 sm:h-72 rounded-2xl bg-[#E8E5DF] shrink-0 flex items-center justify-center">
+                  <div className="w-full sm:w-52 h-56 sm:h-72 rounded-2xl bg-[#E8E5DF] shrink-0 flex items-center justify-center">
                     <Film className="w-10 h-10 text-[#D6D3CC]" />
                   </div>
                 )}

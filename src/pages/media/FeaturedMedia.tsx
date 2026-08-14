@@ -43,7 +43,7 @@ export const FeaturedMedia: React.FC<FeaturedMediaProps> = ({ onWatch }) => {
           </div>
 
           {/* Content Overlay */}
-          <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-12">
+          <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-12">
             <div className="max-w-2xl space-y-4">
               <div className="flex items-center gap-3 flex-wrap">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A6852F] text-white text-[11px] font-medium tracking-widest uppercase">

@@ -46,7 +46,7 @@ export const MembershipPlans: React.FC<MembershipPlansProps> = ({ onSelectTier }
         </motion.div>
 
         {/* Plans Grid — ATM Card Style */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 items-stretch">
           {membershipTiers.map((tier, idx) => {
             const tierColor = TIER_COLORS[tier.name.toLowerCase()] || TIER_COLORS[tier.id] || '#A6852F';
             const isPopular = tier.isPopular;
@@ -54,7 +54,7 @@ export const MembershipPlans: React.FC<MembershipPlansProps> = ({ onSelectTier }
             return (
               <motion.div
                 key={tier.id}
-                className="rounded-2xl p-6 text-white relative overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] group flex flex-col"
+                className="rounded-2xl p-5 sm:p-6 text-white relative overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] group flex flex-col"
                 style={{
                   background: `linear-gradient(135deg, ${tierColor}F5, ${tierColor}E8 50%, ${tierColor}D9 75%, ${tierColor}E6)`,
                   boxShadow: `0 10px 40px ${tierColor}65, 0 0 60px ${tierColor}40, inset 0 1px 0 rgba(255,255,255,0.15)`,

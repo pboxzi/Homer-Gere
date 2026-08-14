@@ -44,7 +44,7 @@ export const JourneyFilmography: React.FC<JourneyFilmographyProps> = ({ onItemCl
     >
       {/* Poster */}
       {entry.image && (
-        <div className="w-full sm:w-48 h-64 sm:h-64 rounded-2xl overflow-hidden bg-[#E8E5DF] shrink-0">
+        <div className="w-full sm:w-48 h-48 sm:h-64 rounded-2xl overflow-hidden bg-[#E8E5DF] shrink-0">
           <img 
             src={entry.image}
             alt={entry.title}

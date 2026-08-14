@@ -48,7 +48,7 @@ export const PressHighlights: React.FC<PressHighlightsProps> = ({ onReadArticle 
                   <div className="absolute inset-0 bg-gradient-to-r from-[#F3F1ED] to-transparent lg:block hidden" />
                 </div>
               )}
-              <div className="p-8 sm:p-10 lg:p-12 flex flex-col justify-center">
+              <div className="p-6 sm:p-10 lg:p-12 flex flex-col justify-center">
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 text-[10px] text-[#A6852F] font-medium tracking-wide uppercase">
                     <Newspaper className="w-3.5 h-3.5" />

@@ -69,7 +69,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNaviga
           {experiences.slice(0, 2).map((exp) => (
             <div key={exp.id} onClick={handleExperienceClick} className="group relative rounded-[1.5rem] overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-xl hover:shadow-[#A6852F]/10 hover:-translate-y-1">
               {exp.image && (
-                <div className="relative h-72 sm:h-80 overflow-hidden bg-[#E8E5DF]">
+                <div className="relative h-56 sm:h-72 lg:h-80 overflow-hidden bg-[#E8E5DF]">
                   <img src={exp.image} alt={exp.title} referrerPolicy="no-referrer" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out" loading="lazy" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#1C1917]/70 via-[#1C1917]/20 to-transparent" />
                   {exp.availability && (
@@ -77,7 +77,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNaviga
                   )}
                 </div>
               )}
-              <div className="absolute bottom-0 left-0 right-0 p-7">
+              <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7">
                 <div className="w-11 h-11 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center mb-4 text-white">
                   {getExperienceIcon(exp.iconName)}
                 </div>
@@ -95,7 +95,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNaviga
         </div>
 
         {/* Smaller cards grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
           {experiences.slice(2, 6).map((exp) => (
             <div key={exp.id} onClick={handleExperienceClick} className="group relative rounded-[1.5rem] overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-xl hover:shadow-[#A6852F]/10 hover:-translate-y-1">
               {exp.image && (

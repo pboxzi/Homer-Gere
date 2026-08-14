@@ -31,11 +31,11 @@ export const ProjectUpcoming: React.FC = () => {
         </motion.div>
 
         {upcoming.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
             {upcoming.map((item, idx) => (
               <motion.div
                 key={item.id}
-                className="group relative rounded-[1.5rem] overflow-hidden bg-[#111827] text-white min-h-[320px]"
+                className="group relative rounded-[1.5rem] overflow-hidden bg-[#111827] text-white min-h-[260px] sm:min-h-[320px]"
                 initial={{ opacity: 0, y: 40 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.7, delay: 0.15 + idx * 0.12, ease: [0.22, 1, 0.36, 1] }}
@@ -54,7 +54,7 @@ export const ProjectUpcoming: React.FC = () => {
                 )}
 
                 {/* Content */}
-                <div className="relative z-10 p-8 sm:p-10 h-full flex flex-col justify-between">
+                <div className="relative z-10 p-6 sm:p-10 h-full flex flex-col justify-between">
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#A6852F]/15 border border-[#A6852F]/25 text-[#A6852F] text-[11px] font-medium tracking-wider uppercase">

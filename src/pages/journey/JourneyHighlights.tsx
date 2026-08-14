@@ -69,7 +69,7 @@ export const JourneyHighlights: React.FC<JourneyHighlightsProps> = ({ onItemClic
         </motion.div>
 
         {/* Highlights Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
           {HIGHLIGHTS.map((item, idx) => (
             <motion.article
               key={item.id}
@@ -92,7 +92,7 @@ export const JourneyHighlights: React.FC<JourneyHighlightsProps> = ({ onItemClic
               }}
             >
               {/* Image */}
-              <div className="relative h-72 sm:h-80 overflow-hidden bg-[#E8E5DF]">
+              <div className="relative h-56 sm:h-72 lg:h-80 overflow-hidden bg-[#E8E5DF]">
                 <img 
                   src={item.image}
                   alt={item.title}
@@ -107,7 +107,7 @@ export const JourneyHighlights: React.FC<JourneyHighlightsProps> = ({ onItemClic
               </div>
 
               {/* Content */}
-              <div className="p-7 sm:p-9">
+              <div className="p-5 sm:p-7 lg:p-9">
                 <h3 className="text-xl sm:text-2xl font-editorial text-[#1C1917] group-hover:text-[#A6852F] transition-colors duration-300 mb-3">
                   {item.title}
                 </h3>
