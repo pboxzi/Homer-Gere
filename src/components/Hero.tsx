@@ -59,66 +59,66 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
           <div className="absolute top-8 left-[52%] w-[1px] h-24 bg-gradient-to-b from-[#A6852F] to-transparent pointer-events-none hidden lg:block" />
 
           {/* Content — left aligned, vertically centered */}
-          <div className="relative z-10 h-full flex flex-col justify-center p-8 sm:p-12 md:p-16 lg:p-20 lg:pl-16 w-full lg:w-[55%]">
+          <div className="relative z-10 h-full flex flex-col justify-center p-5 sm:p-12 md:p-16 lg:p-20 lg:pl-16 w-full lg:w-[55%]">
 
             {/* Overline */}
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-[1px] bg-[#A6852F]" />
-              <span className="text-[11px] font-bold text-[#A6852F] uppercase tracking-[0.35em]">Official Website</span>
+            <div className="flex items-center gap-2 mb-4 sm:mb-6">
+              <div className="w-6 sm:w-10 h-[1px] bg-[#A6852F]" />
+              <span className="text-[10px] sm:text-[11px] font-bold text-[#A6852F] uppercase tracking-[0.3em] sm:tracking-[0.35em]">Official Website</span>
             </div>
 
             {/* Title */}
             {heroTitle ? (
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-[4.2rem] font-editorial text-[#1C1917] tracking-tight leading-[1.05] mb-5">
+              <h1 className="text-[1.75rem] sm:text-5xl lg:text-6xl xl:text-[4.2rem] font-editorial text-[#1C1917] tracking-tight leading-[1.05] mb-3 sm:mb-5">
                 {heroTitle}
               </h1>
             ) : (
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-[4.2rem] font-editorial text-[#1C1917] tracking-tight leading-[1.05] mb-5">
+              <h1 className="text-[1.75rem] sm:text-5xl lg:text-6xl xl:text-[4.2rem] font-editorial text-[#1C1917] tracking-tight leading-[1.05] mb-3 sm:mb-5">
                 Homer<span className="text-[#A6852F]"> Gere</span>
               </h1>
             )}
 
             {/* Subtitle */}
             {heroSubtitle && (
-              <p className="text-lg sm:text-xl text-[#A6852F] font-medium tracking-wide mb-4">{heroSubtitle}</p>
+              <p className="text-base sm:text-xl text-[#A6852F] font-medium tracking-wide mb-3 sm:mb-4">{heroSubtitle}</p>
             )}
 
             {/* Description */}
-            <p className="text-sm sm:text-base text-[#57534E] font-normal leading-relaxed max-w-lg mb-8">
+            <p className="text-[13px] sm:text-base text-[#57534E] font-normal leading-relaxed max-w-lg mb-5 sm:mb-8">
               {heroDescription}
             </p>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-4 mb-12">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-8 sm:mb-12">
               {heroButtonLink ? (
-                <a href={heroButtonLink} className="inline-flex items-center justify-center gap-2.5 bg-[#A6852F] hover:bg-[#B8983A] active:scale-95 text-white font-semibold text-sm px-8 py-4 rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-[#A6852F]/30 focus:outline-none">
-                  <MessageSquare className="w-4 h-4" /><span>{heroButtonText}</span>
+                <a href={heroButtonLink} className="inline-flex items-center justify-center gap-2 bg-[#A6852F] hover:bg-[#B8983A] active:scale-95 text-white font-semibold text-xs sm:text-sm px-5 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-[#A6852F]/30 focus:outline-none">
+                  <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" /><span>{heroButtonText}</span>
                 </a>
               ) : (
-                <button onClick={onOpenChat} className="inline-flex items-center justify-center gap-2.5 bg-[#A6852F] hover:bg-[#B8983A] active:scale-95 text-white font-semibold text-sm px-8 py-4 rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-[#A6852F]/30 focus:outline-none cursor-pointer">
-                  <MessageSquare className="w-4 h-4" /><span>{heroButtonText}</span>
+                <button onClick={onOpenChat} className="inline-flex items-center justify-center gap-2 bg-[#A6852F] hover:bg-[#B8983A] active:scale-95 text-white font-semibold text-xs sm:text-sm px-5 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-[#A6852F]/30 focus:outline-none cursor-pointer">
+                  <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" /><span>{heroButtonText}</span>
                 </button>
               )}
               {secondaryButtonLink ? (
-                <a href={secondaryButtonLink} className="inline-flex items-center justify-center gap-2.5 bg-[#1C1917]/5 backdrop-blur-sm hover:bg-[#1C1917]/10 active:scale-95 text-[#1C1917] font-medium text-sm px-8 py-4 rounded-xl border border-[#1C1917]/15 transition-all duration-300 focus:outline-none group/btn">
-                  <Play className="w-4 h-4 text-[#A6852F] fill-[#A6852F]" /><span>{secondaryButtonText}</span>
-                  <ArrowRight className="w-4 h-4 text-[#57534E] group-hover/btn:text-[#A6852F] group-hover/btn:translate-x-0.5 transition-all duration-300" />
+                <a href={secondaryButtonLink} className="inline-flex items-center justify-center gap-2 bg-[#1C1917]/5 backdrop-blur-sm hover:bg-[#1C1917]/10 active:scale-95 text-[#1C1917] font-medium text-xs sm:text-sm px-5 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl border border-[#1C1917]/15 transition-all duration-300 focus:outline-none group/btn">
+                  <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#A6852F] fill-[#A6852F]" /><span>{secondaryButtonText}</span>
+                  <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#57534E] group-hover/btn:text-[#A6852F] group-hover/btn:translate-x-0.5 transition-all duration-300" />
                 </a>
               ) : (
-                <button onClick={() => onViewProject?.(featuredProject.id)} className="inline-flex items-center justify-center gap-2.5 bg-[#1C1917]/5 backdrop-blur-sm hover:bg-[#1C1917]/10 active:scale-95 text-[#1C1917] font-medium text-sm px-8 py-4 rounded-xl border border-[#1C1917]/15 transition-all duration-300 focus:outline-none cursor-pointer group/btn">
-                  <Play className="w-4 h-4 text-[#A6852F] fill-[#A6852F]" /><span>{secondaryButtonText}</span>
-                  <ArrowRight className="w-4 h-4 text-[#57534E] group-hover/btn:text-[#A6852F] group-hover/btn:translate-x-0.5 transition-all duration-300" />
+                <button onClick={() => onViewProject?.(featuredProject.id)} className="inline-flex items-center justify-center gap-2 bg-[#1C1917]/5 backdrop-blur-sm hover:bg-[#1C1917]/10 active:scale-95 text-[#1C1917] font-medium text-xs sm:text-sm px-5 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl border border-[#1C1917]/15 transition-all duration-300 focus:outline-none cursor-pointer group/btn">
+                  <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#A6852F] fill-[#A6852F]" /><span>{secondaryButtonText}</span>
+                  <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#57534E] group-hover/btn:text-[#A6852F] group-hover/btn:translate-x-0.5 transition-all duration-300" />
                 </button>
               )}
             </div>
 
             {/* Stats row */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 gap-2 sm:gap-4">
               {displayMetrics.map((metric, idx) => (
-                <div key={idx} className="flex flex-col gap-2 p-4 rounded-xl bg-[#1C1917]/5 backdrop-blur-sm border border-[#1C1917]/10 hover:border-[#A6852F]/40 hover:bg-[#1C1917]/10 transition-all duration-300">
+                <div key={idx} className="flex flex-col gap-1 sm:gap-2 p-3 sm:p-4 rounded-lg sm:rounded-xl bg-[#1C1917]/5 backdrop-blur-sm border border-[#1C1917]/10 hover:border-[#A6852F]/40 hover:bg-[#1C1917]/10 transition-all duration-300">
                   <div className="text-[#A6852F]">{getMetricIcon(metric.icon)}</div>
-                  <div className="text-xl sm:text-2xl font-editorial text-[#1C1917] tracking-tight">{metric.value}</div>
-                  <div className="text-[11px] text-[#57534E] font-medium uppercase tracking-wider">{metric.label}</div>
+                  <div className="text-base sm:text-2xl font-editorial text-[#1C1917] tracking-tight">{metric.value}</div>
+                  <div className="text-[10px] sm:text-[11px] text-[#57534E] font-medium uppercase tracking-wider">{metric.label}</div>
                 </div>
               ))}
             </div>
