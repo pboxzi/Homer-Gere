@@ -972,7 +972,7 @@ export const projectsRepository = {
     };
   },
 
-  async create(project: Omit<Project, 'id' | 'created_at' | 'updated_at' | 'version'>): Promise<Project> {
+  async create(project: { slug: string; title: string; year: number; type: string; status?: string; tagline?: string | null; synopsis?: string | null; expanded_synopsis?: string | null; genre?: string | null; runtime?: string | null; director?: string | null; homer_role_title?: string | null; homer_role_description?: string | null; image?: string | null; hero_image?: string | null; poster_image?: string | null; logo_image?: string | null; is_featured?: boolean; display_order?: number }): Promise<Project> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('projects')
@@ -983,7 +983,7 @@ export const projectsRepository = {
     return data;
   },
 
-  async update(id: string, updates: Partial<Project>): Promise<Project> {
+  async update(id: string, updates: { slug?: string; title?: string; year?: number; type?: string; status?: string; tagline?: string | null; synopsis?: string | null; expanded_synopsis?: string | null; genre?: string | null; runtime?: string | null; director?: string | null; homer_role_title?: string | null; homer_role_description?: string | null; image?: string | null; hero_image?: string | null; poster_image?: string | null; logo_image?: string | null; is_featured?: boolean; display_order?: number }): Promise<Project> {
     const client = getSupabaseClient();
     const current = await this.getById(id);
     const newVersion = (current?.version || 1) + 1;
@@ -1179,7 +1179,7 @@ export const galleryRepository = {
     if (error) throw error;
   },
 
-  async createPhoto(photo: { src: string; alt: string; category: string; caption?: string | null; date?: string | null; event?: string | null; photographer?: string | null; featured?: boolean; collection_id?: string | null; sort_order?: number }): Promise<GalleryPhoto> {
+  async createPhoto(photo: { src: string; alt: string; category: string; caption?: string | null; date?: string | null; event?: string | null; photographer?: string | null; featured?: boolean; collection_id?: string | null; sort_order?: number; status?: string }): Promise<GalleryPhoto> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('gallery_photos')
@@ -1449,7 +1449,7 @@ export const mediaRepository = {
     return data || [];
   },
 
-  async createVideo(video: { title: string; url: string; description?: string | null; thumbnail?: string | null; source?: string | null; category?: string | null; duration?: string | null; date?: string | null; featured?: boolean; sort_order?: number }): Promise<MediaVideo> {
+  async createVideo(video: { title: string; url: string; description?: string | null; thumbnail?: string | null; source?: string | null; category?: string | null; duration?: string | null; date?: string | null; featured?: boolean; sort_order?: number; status?: string }): Promise<MediaVideo> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('media_videos')
@@ -1535,7 +1535,7 @@ export const mediaRepository = {
     }
   },
 
-  async createPodcast(podcast: { episode_title: string; show_name: string; description?: string | null; cover_art?: string | null; date?: string | null; url: string; sort_order?: number }): Promise<MediaPodcast> {
+  async createPodcast(podcast: { episode_title: string; show_name: string; description?: string | null; cover_art?: string | null; date?: string | null; url: string; sort_order?: number; status?: string }): Promise<MediaPodcast> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('media_podcasts')
@@ -1621,7 +1621,7 @@ export const mediaRepository = {
     }
   },
 
-  async createPress(press: { headline: string; publisher: string; date?: string | null; summary?: string | null; url: string; image?: string | null; sort_order?: number }): Promise<MediaPress> {
+  async createPress(press: { headline: string; publisher: string; date?: string | null; summary?: string | null; url: string; image?: string | null; sort_order?: number; status?: string }): Promise<MediaPress> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('media_press')
@@ -2019,7 +2019,7 @@ export const faqRepository = {
 // ============================================================
 
 export const auditLogsRepository = {
-  async create(log: Omit<AuditLog, 'id' | 'created_at'>): Promise<AuditLog> {
+  async create(log: { user_id?: string | null; action: string; table_name: string; record_id?: string | null; old_data?: Record<string, unknown> | null; new_data?: Record<string, unknown> | null; module?: string; browser?: string; device?: string; ip_address?: string; user_agent?: string }): Promise<AuditLog> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('audit_logs')
