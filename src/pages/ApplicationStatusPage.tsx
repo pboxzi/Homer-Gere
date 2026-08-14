@@ -25,8 +25,7 @@ export default function ApplicationStatusPage() {
         return;
       }
       try {
-        const apps = await registrationRepository.getAll();
-        const myApp = apps.find(a => a.email === user.email);
+        const myApp = await registrationRepository.getByEmail(user.email);
         if (myApp) {
           setApplication({
             status: myApp.status,

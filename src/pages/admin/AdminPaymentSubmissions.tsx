@@ -69,83 +69,99 @@ export default function AdminPaymentSubmissions() {
       // Check if this is a membership payment and activate membership
       const paymentReq = paymentRequests.find(r => r.id === sub.payment_request_id);
       if (paymentReq && paymentReq.payment_type === 'membership' && paymentReq.user_id) {
-        // Get membership request
-        const memRequests = await membershipRequestsRepository.getByUserId(paymentReq.user_id);
-        const memRequest = memRequests.find(r => r.id === paymentReq.related_record_id);
+        try {
+          // Get membership request
+          const memRequests = await membershipRequestsRepository.getByUserId(paymentReq.user_id);
+          const memRequest = memRequests.find(r => r.id === paymentReq.related_record_id);
 
-        if (memRequest) {
-          // Get the plan details to calculate duration
-          const plans = await import('../../lib/repositories').then(m => m.membershipPlansRepository.getAll());
-          const plan = plans.find(p => p.id === memRequest.membership_plan_id);
+          if (memRequest) {
+            // Get the plan details to calculate duration
+            const plans = await import('../../lib/repositories').then(m => m.membershipPlansRepository.getAll());
+            const plan = plans.find(p => p.id === memRequest.membership_plan_id);
 
-          // Create membership
-          const startDate = new Date().toISOString().split('T')[0];
-          const endDate = new Date(Date.now() + (plan?.duration || 30) * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            // Create membership
+            const startDate = new Date().toISOString().split('T')[0];
+            const endDate = new Date(Date.now() + (plan?.duration || 30) * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-          const membership = await membershipsRepository.create({
-            user_id: paymentReq.user_id,
-            plan_id: memRequest.membership_plan_id || '',
-            status: 'active',
-            start_date: startDate,
-            end_date: endDate,
-            membership_request_id: memRequest.id,
-            auto_renew: false,
-            renewal_date: null,
-            payment_id: null,
-            card_id: null,
-            last_payment_id: null,
-          });
-
-          // Generate membership card
-          const cardNumber = 'HG-' + Date.now().toString(36).toUpperCase().slice(-8);
-          const card = await membershipCardsRepository.create({
-            user_id: paymentReq.user_id,
-            membership_id: membership.id,
-            membership_request_id: memRequest.id,
-            card_number: cardNumber,
-            qr_code_data: cardNumber,
-            issue_date: startDate,
-            expiry_date: endDate,
-            card_design: memRequest.membership_plan_name?.toLowerCase() || 'gold',
-          });
-
-          // Update membership with card_id
-          await membershipsRepository.update(membership.id, { card_id: card.id });
-
-          // Update membership request status
-          await membershipRequestsRepository.updateStatus(memRequest.id, 'membership_active');
-
-          // Notify member
-          const profile = await profilesRepository.getById(paymentReq.user_id);
-          if (profile) {
-            await notifyService.membershipActivated(paymentReq.user_id, {
-              email: profile.email,
-              fullName: `${profile.first_name} ${profile.last_name}`.trim(),
-              planName: memRequest.membership_plan_name,
-              cardNumber: card.card_number,
-              expiryDate: card.expiry_date || 'No Expiry',
+            const membership = await membershipsRepository.create({
+              user_id: paymentReq.user_id,
+              plan_id: memRequest.membership_plan_id || '',
+              status: 'active',
+              start_date: startDate,
+              end_date: endDate,
+              membership_request_id: memRequest.id,
+              auto_renew: false,
+              renewal_date: null,
+              payment_id: null,
+              card_id: null,
+              last_payment_id: null,
             });
+
+            // Generate membership card
+            const cardNumber = 'HG-' + Date.now().toString(36).toUpperCase().slice(-8);
+            const card = await membershipCardsRepository.create({
+              user_id: paymentReq.user_id,
+              membership_id: membership.id,
+              membership_request_id: memRequest.id,
+              card_number: cardNumber,
+              qr_code_data: cardNumber,
+              issue_date: startDate,
+              expiry_date: endDate,
+              card_design: memRequest.membership_plan_name?.toLowerCase() || 'gold',
+            });
+
+            // Update membership with card_id
+            await membershipsRepository.update(membership.id, { card_id: card.id });
+
+            // Update membership request status
+            await membershipRequestsRepository.updateStatus(memRequest.id, 'membership_active');
+
+            // Notify member
+            const profile = await profilesRepository.getById(paymentReq.user_id);
+            if (profile) {
+              await notifyService.membershipActivated(paymentReq.user_id, {
+                email: profile.email,
+                fullName: `${profile.first_name} ${profile.last_name}`.trim(),
+                planName: memRequest.membership_plan_name,
+                cardNumber: card.card_number,
+                expiryDate: card.expiry_date || 'No Expiry',
+              });
+            }
           }
+        } catch (activationError) {
+          // Rollback: revert payment status if activation fails
+          console.error('Membership activation failed, rolling back payment status:', activationError);
+          await paymentRequestsRepository.updateStatus(sub.payment_request_id, 'submitted', 'admin');
+          await paymentSubmissionsRepository.update(sub.id, { status: 'pending' } as any);
+          setSuccessMsg(`Payment verified but membership activation failed. Payment status reverted for manual review.`);
+          setShowDetail(false);
+          load();
+          setActionLoading(false);
+          return;
         }
       }
 
       // Check if this is an experience payment and confirm experience
       if (paymentReq && paymentReq.payment_type === 'experience' && paymentReq.user_id) {
-        const { experienceRequestsRepository } = await import('../../lib/repositories');
-        const expRequests = await experienceRequestsRepository.getByUserId(paymentReq.user_id);
-        const expRequest = expRequests.find(r => r.id === paymentReq.related_record_id);
-        if (expRequest) {
-          await experienceRequestsRepository.confirmExperience(expRequest.id);
-          const profile = await profilesRepository.getById(paymentReq.user_id);
-          if (profile) {
-            await notifyService.experienceConfirmed(paymentReq.user_id, {
-              email: profile.email,
-              fullName: `${profile.first_name} ${profile.last_name}`.trim(),
-              experienceType: expRequest.experience_type,
-              eventDate: expRequest.event_date || expRequest.preferred_date || 'TBD',
-              eventLocation: expRequest.event_location || 'TBD',
-            });
+        try {
+          const { experienceRequestsRepository } = await import('../../lib/repositories');
+          const expRequests = await experienceRequestsRepository.getByUserId(paymentReq.user_id);
+          const expRequest = expRequests.find(r => r.id === paymentReq.related_record_id);
+          if (expRequest) {
+            await experienceRequestsRepository.confirmExperience(expRequest.id);
+            const profile = await profilesRepository.getById(paymentReq.user_id);
+            if (profile) {
+              await notifyService.experienceConfirmed(paymentReq.user_id, {
+                email: profile.email,
+                fullName: `${profile.first_name} ${profile.last_name}`.trim(),
+                experienceType: expRequest.experience_type,
+                eventDate: expRequest.event_date || expRequest.preferred_date || 'TBD',
+                eventLocation: expRequest.event_location || 'TBD',
+              });
+            }
           }
+        } catch (expError) {
+          console.error('Experience confirmation failed:', expError);
         }
       }
 

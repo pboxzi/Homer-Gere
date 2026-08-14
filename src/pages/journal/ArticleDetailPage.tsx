@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { SEO } from '../../components/SEO';
 import { Navbar } from '../../components/Navbar';
 import { DetailModal } from '../../components/DetailModal';
-import { getArticleBySlug, getRelatedArticles } from '../../data/journal';
+import { getArticleBySlug, getRelatedArticles, type JournalArticleExtended } from '../../data/journal';
+import { journalRepository } from '../../lib/repositories';
 import { ArticleDetailHero } from './article/ArticleDetailHero';
 import { ArticleDetailBody } from './article/ArticleDetailBody';
 import { ArticleDetailRelated } from './article/ArticleDetailRelated';
@@ -14,8 +15,9 @@ import { ModalType } from '../../types';
 export default function ArticleDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const article = slug ? getArticleBySlug(slug) : undefined;
-  const relatedArticles = slug ? getRelatedArticles(slug, 3) : [];
+  const [article, setArticle] = useState<JournalArticleExtended | undefined>(undefined);
+  const [relatedArticles, setRelatedArticles] = useState<JournalArticleExtended[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeSection] = React.useState<string>('journal');
   const [activeModal, setActiveModal] = React.useState<ModalType>(null);
 
@@ -34,7 +36,84 @@ export default function ArticleDetailPage() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    if (!slug) { setLoading(false); return; }
+
+    const loadArticle = async () => {
+      setLoading(true);
+      try {
+        const dbArticle = await journalRepository.getBySlug(slug);
+        if (dbArticle) {
+          // Map Supabase data to JournalArticleExtended format
+          const mapped: JournalArticleExtended = {
+            id: dbArticle.id,
+            slug: dbArticle.slug,
+            title: dbArticle.title,
+            excerpt: dbArticle.excerpt || '',
+            content: dbArticle.content,
+            category: dbArticle.category,
+            author: dbArticle.author,
+            authorRole: '',
+            date: dbArticle.published_date || dbArticle.created_at,
+            publishDate: dbArticle.published_date || dbArticle.created_at,
+            readTime: dbArticle.read_time || '5 min read',
+            wordCount: dbArticle.content.split(/\s+/).length,
+            image: dbArticle.cover_image || '',
+            imageAlt: dbArticle.title,
+            featured: dbArticle.featured,
+            trending: dbArticle.trending,
+            status: dbArticle.status,
+            tags: dbArticle.tags || [],
+            seoTitle: dbArticle.seo_title || dbArticle.title,
+            seoDescription: dbArticle.seo_description || dbArticle.excerpt || '',
+            ogImage: dbArticle.og_image || undefined,
+            relatedSlugs: dbArticle.related_slugs || [],
+          };
+          setArticle(mapped);
+          // Load related articles
+          if (dbArticle.related_slugs?.length) {
+            const related: JournalArticleExtended[] = [];
+            for (const rSlug of dbArticle.related_slugs.slice(0, 3)) {
+              try {
+                const r = await journalRepository.getBySlug(rSlug);
+                if (r) {
+                  related.push({
+                    id: r.id, slug: r.slug, title: r.title, excerpt: r.excerpt || '', content: r.content,
+                    category: r.category, author: r.author, authorRole: '', date: r.published_date || r.created_at,
+                    publishDate: r.published_date || r.created_at, readTime: r.read_time || '5 min read',
+                    wordCount: r.content.split(/\s+/).length, image: r.cover_image || '', imageAlt: r.title,
+                    featured: r.featured, trending: r.trending, status: r.status, tags: r.tags || [],
+                    seoTitle: r.seo_title || r.title, seoDescription: r.seo_description || r.excerpt || '',
+                  });
+                }
+              } catch { /* skip */ }
+            }
+            setRelatedArticles(related);
+          }
+        } else {
+          // Fallback to hardcoded data
+          setArticle(getArticleBySlug(slug));
+          setRelatedArticles(slug ? getRelatedArticles(slug, 3) : []);
+        }
+      } catch {
+        setArticle(getArticleBySlug(slug));
+        setRelatedArticles(slug ? getRelatedArticles(slug, 3) : []);
+      }
+      setLoading(false);
+    };
+
+    loadArticle();
   }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-[#A6852F] border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs text-[#57534E]">Loading article...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!article) {
     return (

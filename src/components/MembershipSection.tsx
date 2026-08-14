@@ -41,7 +41,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onNavigate
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
           {membershipTiers.map((tier, i) => {
-            const tierColor = TIER_COLORS[tier.id] || '#A6852F';
+            const tierColor = TIER_COLORS[tier.name.toLowerCase()] || TIER_COLORS[tier.id] || '#A6852F';
             return (
               <motion.div
                 key={tier.id}
@@ -95,7 +95,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onNavigate
                   <div className="flex items-center justify-between pt-3 border-t border-white/20">
                     <p className="text-[10px] opacity-70">{tier.features.filter((f) => f.included).length} features</p>
                     <div className="flex items-center gap-1 opacity-80">
-                      {TIER_ICONS[tier.id] || <Crown className="w-5 h-5" />}
+                      {TIER_ICONS[tier.name.toLowerCase()] || TIER_ICONS[tier.id] || <Crown className="w-5 h-5" />}
                     </div>
                   </div>
                 </div>

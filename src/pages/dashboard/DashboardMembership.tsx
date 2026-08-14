@@ -195,7 +195,7 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
           {membershipTiers.map((tier, i) => {
             const isCurrent = tier.name === membershipPlan?.name;
             const hasActiveRequest = !!activeRequest;
-            const tierColor = TIER_COLORS[tier.id] || '#A6852F';
+            const tierColor = TIER_COLORS[tier.name.toLowerCase()] || TIER_COLORS[tier.id] || '#A6852F';
             return (
               <motion.div key={tier.id} className="rounded-2xl p-5 text-white relative overflow-hidden transition-all duration-500" style={{ background: `linear-gradient(135deg, ${tierColor}F5, ${tierColor}E8 50%, ${tierColor}D9 75%, ${tierColor}E6)`, boxShadow: `0 12px 50px ${tierColor}80, 0 0 80px ${tierColor}55, inset 0 1px 0 rgba(255,255,255,0.2)` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
                 <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-25" style={{ background: `radial-gradient(circle, white, transparent)`, transform: 'translate(25%, -25%)' }} />
@@ -218,7 +218,7 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
                   <div className="flex items-center justify-between pt-3 border-t border-white/20 mb-4">
                     <p className="text-[10px] opacity-70">{tier.features.filter((f) => f.included).length} features included</p>
                     <div className="flex items-center gap-1 opacity-80">
-                      {TIER_ICONS[tier.id] || <Crown className="w-4 h-4" />}
+                      {TIER_ICONS[tier.name.toLowerCase()] || TIER_ICONS[tier.id] || <Crown className="w-4 h-4" />}
                     </div>
                   </div>
                   {/* Request Membership Button */}
@@ -284,7 +284,7 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
               ) : (
                 <>
                   {/* Tier-colored header */}
-                  <div className="relative rounded-xl p-4 text-white overflow-hidden" style={{ background: `linear-gradient(135deg, ${TIER_COLORS[selectedPlan.id] || '#A6852F'}F5, ${TIER_COLORS[selectedPlan.id] || '#A6852F'}E8 50%, ${TIER_COLORS[selectedPlan.id] || '#A6852F'}D9 75%, ${TIER_COLORS[selectedPlan.id] || '#A6852F'}E6)`, boxShadow: `0 4px 18px ${TIER_COLORS[selectedPlan.id] || '#A6852F'}35` }}>
+                  <div className="relative rounded-xl p-4 text-white overflow-hidden" style={{ background: `linear-gradient(135deg, ${TIER_COLORS[selectedPlan.name.toLowerCase()] || TIER_COLORS[selectedPlan.id] || '#A6852F'}F5, ${TIER_COLORS[selectedPlan.name.toLowerCase()] || TIER_COLORS[selectedPlan.id] || '#A6852F'}E8 50%, ${TIER_COLORS[selectedPlan.name.toLowerCase()] || TIER_COLORS[selectedPlan.id] || '#A6852F'}D9 75%, ${TIER_COLORS[selectedPlan.name.toLowerCase()] || TIER_COLORS[selectedPlan.id] || '#A6852F'}E6)`, boxShadow: `0 4px 18px ${TIER_COLORS[selectedPlan.name.toLowerCase()] || TIER_COLORS[selectedPlan.id] || '#A6852F'}35` }}>
                     <div className="absolute top-0 right-0 w-20 h-20 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(25%, -25%)' }} />
                     <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(-25%, 25%)' }} />
                     <div className="relative z-10">
@@ -299,7 +299,7 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
                           <p className="text-[10px] uppercase tracking-widest opacity-70 mb-0.5">{selectedPlan.name} Plan</p>
                           <p className="text-2xl font-editorial">${selectedPlan.price}<span className="text-xs opacity-60">/{selectedPlan.period}</span></p>
                         </div>
-                        <div className="opacity-80">{TIER_ICONS[selectedPlan.id] || <Crown className="w-5 h-5" />}</div>
+                        <div className="opacity-80">{TIER_ICONS[selectedPlan.name.toLowerCase()] || TIER_ICONS[selectedPlan.id] || <Crown className="w-5 h-5" />}</div>
                       </div>
                       {selectedPlan.features && selectedPlan.features.length > 0 && (
                         <ul className="mt-2.5 space-y-1 border-t border-white/20 pt-2.5">

@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Navbar } from '../../components/Navbar';
 import { DetailModal } from '../../components/DetailModal';
 import { Footer } from '../../components/Footer';
-import { getProjectBySlug } from '../../data/projectDetails';
+import { getProjectBySlug, type ProjectDetail } from '../../data/projectDetails';
+import { projectsRepository } from '../../lib/repositories';
 import { ProjectDetailHero } from './ProjectDetailHero';
 import { ProjectOverview } from './ProjectOverview';
 import { ProjectHomerRole } from './ProjectHomerRole';
@@ -19,7 +20,8 @@ import { ModalType } from '../../types';
 export default function ProjectDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const project = slug ? getProjectBySlug(slug) : undefined;
+  const [project, setProject] = useState<ProjectDetail | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
   const [activeSection] = React.useState<string>('projects');
   const [activeModal, setActiveModal] = React.useState<ModalType>(null);
 
@@ -38,7 +40,65 @@ export default function ProjectDetailPage() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    if (!slug) { setLoading(false); return; }
+
+    const loadProject = async () => {
+      setLoading(true);
+      try {
+        // Try Supabase first
+        const result = await projectsRepository.getWithDetails(slug);
+        if (result?.project) {
+          const p = result.project;
+          // Map Supabase data to ProjectDetail format
+          const mapped: ProjectDetail = {
+            slug: p.slug,
+            title: p.title,
+            year: String(p.year),
+            type: (p.type as ProjectDetail['type']) || 'Film',
+            status: (p.status as ProjectDetail['status']) || 'Announced',
+            tagline: p.tagline || undefined,
+            heroImage: p.hero_image || p.image || '',
+            posterImage: p.poster_image || undefined,
+            synopsis: p.synopsis || '',
+            expandedSynopsis: p.expanded_synopsis || undefined,
+            genre: p.genre || undefined,
+            runtime: p.runtime || undefined,
+            homerRole: {
+              character: p.homer_role_title || 'Cast Member',
+              description: p.homer_role_description || '',
+            },
+            cast: [],
+            crew: p.director ? [{ name: p.director, role: 'Director' }] : [],
+            media: result.media.map(m => ({ src: m.src, alt: m.alt || p.title, type: m.type || 'image' })),
+            videos: result.videos.map(v => ({ url: v.url, title: v.title || '', type: v.type || 'youtube' })),
+            recognition: result.recognition.map(r => ({ title: r.title, category: r.category || '', year: r.year ? String(r.year) : '', result: r.result || '' })),
+            relatedSlugs: [],
+          };
+          setProject(mapped);
+        } else {
+          // Fallback to hardcoded data
+          setProject(getProjectBySlug(slug));
+        }
+      } catch {
+        // Fallback to hardcoded data on error
+        setProject(getProjectBySlug(slug));
+      }
+      setLoading(false);
+    };
+
+    loadProject();
   }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-[#A6852F] border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs text-[#57534E]">Loading project...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!project) {
     return (

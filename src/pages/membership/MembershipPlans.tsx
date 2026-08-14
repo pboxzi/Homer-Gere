@@ -48,7 +48,7 @@ export const MembershipPlans: React.FC<MembershipPlansProps> = ({ onSelectTier }
         {/* Plans Grid — ATM Card Style */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
           {membershipTiers.map((tier, idx) => {
-            const tierColor = TIER_COLORS[tier.id] || '#A6852F';
+            const tierColor = TIER_COLORS[tier.name.toLowerCase()] || TIER_COLORS[tier.id] || '#A6852F';
             const isPopular = tier.isPopular;
 
             return (
@@ -85,7 +85,7 @@ export const MembershipPlans: React.FC<MembershipPlansProps> = ({ onSelectTier }
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-[11px] uppercase tracking-widest opacity-80 font-medium">{tier.name}</p>
                     <div className="opacity-80">
-                      {TIER_ICONS[tier.id] || <Crown className="w-5 h-5" />}
+                      {TIER_ICONS[tier.name.toLowerCase()] || TIER_ICONS[tier.id] || <Crown className="w-5 h-5" />}
                     </div>
                   </div>
 
