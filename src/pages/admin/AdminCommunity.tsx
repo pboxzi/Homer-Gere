@@ -187,7 +187,7 @@ const MemberProfileModal: React.FC<MemberProfileModalProps> = ({ open, memberId,
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                {profile?.role !== 'suspended' ? (
+                {profile?.account_status !== 'suspended' ? (
                   <button onClick={() => memberId && onSuspend(memberId)} className="px-3 py-1.5 rounded-lg text-[10px] font-medium text-[#DC2626] bg-[#DC2626]/10 hover:bg-[#DC2626]/20 transition-colors cursor-pointer">
                     <Ban className="w-3 h-3 inline mr-1" /> Suspend
                   </button>
@@ -242,7 +242,7 @@ const MemberProfileModal: React.FC<MemberProfileModalProps> = ({ open, memberId,
                         </div>
                         <div className="rounded-xl border border-[#E8E5DF]/60 bg-[#F3F1ED]/20 p-4">
                           <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Status</p>
-                          <div className="mt-1"><StatusBadge status={profile?.role === 'suspended' ? 'suspended' : 'active'} /></div>
+                          <div className="mt-1"><StatusBadge status={profile?.account_status === 'suspended' ? 'suspended' : 'active'} /></div>
                         </div>
                         <div className="rounded-xl border border-[#E8E5DF]/60 bg-[#F3F1ED]/20 p-4">
                           <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Phone</p>
@@ -451,7 +451,7 @@ const MembersSection: React.FC = () => {
     updateMember(m.id, { status: newStatus });
     try {
       const client = getSupabaseClient();
-      await client.from('profiles').update({ role: newStatus === 'suspended' ? 'suspended' : 'member' }).eq('id', m.id);
+      await client.from('profiles').update({ account_status: newStatus }).eq('id', m.id);
     } catch { /* optimistic */ }
     showSuccess(`Member ${newStatus === 'suspended' ? 'suspended' : 'reactivated'}`);
   };
