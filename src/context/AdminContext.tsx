@@ -281,9 +281,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         mediaRepository.getPress(),
       ]);
 
-      // Each section only updates if Supabase returned valid data
-      // Otherwise the existing defaults/empty state persists
-      if (profilesRes.status === 'fulfilled' && profilesRes.value.length > 0) {
+      if (profilesRes.status === 'fulfilled') {
         setMembers(profilesRes.value.map((p) => ({
           id: p.id,
           name: `${p.first_name} ${p.last_name}`,
@@ -295,7 +293,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         })));
       }
 
-      if (plansRes.status === 'fulfilled' && plansRes.value.length > 0) {
+      if (plansRes.status === 'fulfilled') {
         setPlans(plansRes.value.map((p) => ({
           id: p.id, name: p.name, price: p.price, period: p.period,
           members: p.members_count, status: p.status as AdminPlan['status'],
@@ -372,7 +370,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         })));
       }
     } catch {
-      // Use empty defaults — admin can still work with local state
+      // Use empty defaults
     } finally {
       setLoading(false);
     }

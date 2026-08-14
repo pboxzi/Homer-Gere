@@ -27,24 +27,16 @@ import {
   MEDIA_PODCASTS,
   MEDIA_PRESS,
 } from '../data/content';
+import {
+  journeyRepository,
+  journalRepository,
+  filmographyRepository,
+  experiencesRepository,
+  membershipPlansRepository,
+  galleryRepository,
+  mediaRepository,
+} from '../lib/repositories';
 import type { MediaVideo as DBMediaVideo, MediaPodcast as DBMediaPodcast, MediaPress as DBMediaPress } from '../types/database';
-
-// ============================================================
-// Image URL validation
-// ============================================================
-
-function isValidImageUrl(url: string | undefined | null): boolean {
-  if (!url || url.trim() === '') return false;
-  // Local paths are always valid
-  if (url.startsWith('/') || url.startsWith('./')) return true;
-  // HTTP(S) URLs are assumed valid
-  if (url.startsWith('http://') || url.startsWith('https://')) return true;
-  return false;
-}
-
-function safeImage(url: string | undefined | null, fallback: string): string {
-  return isValidImageUrl(url) ? url! : fallback;
-}
 
 // ============================================================
 // Context type
@@ -88,7 +80,6 @@ interface SiteContentType {
 
 // ============================================================
 // Mapping helpers: DB types -> Frontend types
-// Only used when Supabase data is available and valid
 // ============================================================
 
 function mapJourneyToMilestone(entry: { id: string; year: number; title: string; description: string; details: string | null; highlight?: boolean; icon_name?: string | null }): TimelineMilestone {
@@ -104,15 +95,13 @@ function mapJourneyToMilestone(entry: { id: string; year: number; title: string;
 }
 
 function mapJournalToFrontend(article: { id: string; title: string; excerpt: string; content: string; category: string; cover_image?: string; slug: string; published_date?: string; reading_time?: string; author?: string; image_alt?: string }): JournalArticle {
-  // Find matching static article for image fallback
-  const staticArticle = JOURNAL_ARTICLES.find((a) => a.slug === article.slug);
   return {
     id: article.id,
     title: article.title,
     excerpt: article.excerpt,
     content: article.content,
     category: article.category,
-    image: safeImage(article.cover_image, staticArticle?.image || ''),
+    image: article.cover_image || '',
     date: article.published_date || '',
     readTime: article.reading_time || '5 min read',
     slug: article.slug,
@@ -122,8 +111,6 @@ function mapJournalToFrontend(article: { id: string; title: string; excerpt: str
 }
 
 function mapFilmographyToFrontend(entry: { id: string; title: string; role: string; year: number; status: string; description: string; type: string; image_url?: string }): FilmographyEntry {
-  // Find matching static filmography for image fallback
-  const staticEntry = FILMOGRAPHY.find((f) => f.title === entry.title);
   return {
     id: entry.id,
     title: entry.title,
@@ -132,13 +119,11 @@ function mapFilmographyToFrontend(entry: { id: string; title: string; role: stri
     status: (entry.status as FilmographyEntry['status']) || 'Released',
     description: entry.description,
     type: (entry.type as 'film' | 'television') || 'film',
-    image: safeImage(entry.image_url, staticEntry?.image || undefined),
+    image: entry.image_url || undefined,
   };
 }
 
 function mapExperienceToFrontend(exp: { id: string; title: string; description: string; type: string; price?: string | null; image?: string | null; availability?: string | null; duration?: string | null; location?: string | null; whats_included?: string[]; eligibility?: string | null; important_notes?: string | null; details?: string | null }): Experience {
-  // Find matching static experience for image fallback
-  const staticExp = EXPERIENCES.find((e) => e.title === exp.title);
   return {
     id: exp.id,
     title: exp.title,
@@ -147,7 +132,7 @@ function mapExperienceToFrontend(exp: { id: string; title: string; description: 
     price: exp.price || 'Price on request',
     iconName: 'Sparkles',
     type: (exp.type as Experience['type']) || 'meet-and-greet',
-    image: safeImage(exp.image, staticExp?.image || ''),
+    image: exp.image || undefined,
     availability: (exp.availability as Experience['availability']) || 'available',
     whatsIncluded: exp.whats_included || [],
     eligibility: typeof exp.eligibility === 'string' ? exp.eligibility.split(';').filter(Boolean) : (exp.eligibility || []),
@@ -176,14 +161,12 @@ function mapPlanToFrontend(plan: { id: string; name: string; description?: strin
 }
 
 function mapGalleryToFrontend(photo: { id: string; alt: string; caption?: string | null; category: string; src: string; date?: string | null; event?: string | null; photographer?: string | null; featured?: boolean; collection_id?: string | null; sort_order?: number }): GalleryItem {
-  // Find matching static gallery item for image fallback
-  const staticItem = GALLERY_ITEMS.find((g) => g.title === photo.alt);
   return {
     id: photo.id,
     title: photo.alt,
     caption: photo.caption || '',
     category: photo.category,
-    image: safeImage(photo.src, staticItem?.image || ''),
+    image: photo.src,
     date: photo.date || '',
     event: photo.event || undefined,
     photographer: photo.photographer || undefined,
@@ -194,13 +177,11 @@ function mapGalleryToFrontend(photo: { id: string; alt: string; caption?: string
 }
 
 function mapVideoToFrontend(v: DBMediaVideo): typeof MEDIA_VIDEOS[number] {
-  // Find matching static video for thumbnail fallback
-  const staticVid = MEDIA_VIDEOS.find((sv) => sv.title === v.title);
   return {
     id: v.id,
     title: v.title,
     description: v.description || '',
-    thumbnail: safeImage(v.thumbnail, staticVid?.thumbnail || ''),
+    thumbnail: v.thumbnail || '',
     duration: v.duration || '',
     date: v.date || '',
     source: v.source || '',
@@ -211,22 +192,18 @@ function mapVideoToFrontend(v: DBMediaVideo): typeof MEDIA_VIDEOS[number] {
 }
 
 function mapPodcastToFrontend(p: DBMediaPodcast): typeof MEDIA_PODCASTS[number] {
-  // Find matching static podcast for cover art fallback
-  const staticPod = MEDIA_PODCASTS.find((sp) => sp.episodeTitle === p.episode_title);
   return {
     id: p.id,
     episodeTitle: p.episode_title,
     showName: p.show_name,
     description: p.description || '',
-    coverArt: safeImage(p.cover_art, staticPod?.coverArt || ''),
+    coverArt: p.cover_art || '',
     date: p.date || '',
     url: p.url,
   };
 }
 
 function mapPressToFrontend(p: DBMediaPress): typeof MEDIA_PRESS[number] {
-  // Find matching static press for image fallback
-  const staticPress = MEDIA_PRESS.find((sp) => sp.headline === p.headline);
   return {
     id: p.id,
     headline: p.headline,
@@ -234,7 +211,7 @@ function mapPressToFrontend(p: DBMediaPress): typeof MEDIA_PRESS[number] {
     date: p.date || '',
     summary: p.summary || '',
     url: p.url,
-    image: safeImage(p.image, staticPress?.image || ''),
+    image: p.image || '',
   };
 }
 
@@ -251,7 +228,6 @@ export const useSiteContent = (): SiteContentType => {
 };
 
 export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Static data is the foundation — always available immediately
   const [metrics] = useState<typeof METRICS>(METRICS);
   const [featuredProject] = useState<typeof FEATURED_PROJECT>(FEATURED_PROJECT);
   const [timelineMilestones, setTimelineMilestones] = useState<TimelineMilestone[]>(TIMELINE_MILESTONES);
@@ -267,93 +243,12 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [mediaVideos, setMediaVideos] = useState<typeof MEDIA_VIDEOS>(MEDIA_VIDEOS);
   const [mediaPodcasts, setMediaPodcasts] = useState<typeof MEDIA_PODCASTS>(MEDIA_PODCASTS);
   const [mediaPress, setMediaPress] = useState<typeof MEDIA_PRESS>(MEDIA_PRESS);
-  // loading starts false — static data is ready immediately
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // One-time Supabase overlay: fetch once, only replace if valid data exists
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      try {
-        // Dynamic import to avoid breaking the app if supabase module has issues
-        const { journeyRepository, journalRepository, filmographyRepository, experiencesRepository, membershipPlansRepository, galleryRepository, mediaRepository } = await import('../lib/repositories');
-
-        const results = await Promise.allSettled([
-          journeyRepository.getAll(),
-          journalRepository.getPublished(),
-          filmographyRepository.getAll(),
-          experiencesRepository.getAll(),
-          membershipPlansRepository.getActive(),
-          galleryRepository.getAllPhotos(),
-          mediaRepository.getVideos(),
-          mediaRepository.getPodcasts(),
-          mediaRepository.getPress(),
-        ]);
-
-        if (cancelled) return;
-
-        const [journeyData, journalData, filmData, expData, planData, galleryData, vidData, podData, pressData] = results;
-
-        // Only replace static data if Supabase returned valid, non-empty arrays
-        if (journeyData.status === 'fulfilled' && journeyData.value.length > 0) {
-          setTimelineMilestones(journeyData.value.map(mapJourneyToMilestone));
-        }
-        if (journalData.status === 'fulfilled' && journalData.value.length > 0) {
-          setJournalArticles(journalData.value.map(mapJournalToFrontend));
-        }
-        if (filmData.status === 'fulfilled' && filmData.value.length > 0) {
-          setFilmography(filmData.value.map(mapFilmographyToFrontend));
-        }
-        if (expData.status === 'fulfilled' && expData.value.length > 0) {
-          setExperiences(expData.value.map(mapExperienceToFrontend));
-        }
-        if (planData.status === 'fulfilled' && planData.value.length > 0) {
-          setMembershipTiers(planData.value.map(mapPlanToFrontend));
-        }
-        if (galleryData.status === 'fulfilled' && galleryData.value.length > 0) {
-          setGalleryItems(galleryData.value.map(mapGalleryToFrontend));
-        }
-        if (vidData.status === 'fulfilled' && vidData.value.length > 0) {
-          setMediaVideos(vidData.value.map(mapVideoToFrontend));
-        }
-        if (podData.status === 'fulfilled' && podData.value.length > 0) {
-          setMediaPodcasts(podData.value.map(mapPodcastToFrontend));
-        }
-        if (pressData.status === 'fulfilled' && pressData.value.length > 0) {
-          setMediaPress(pressData.value.map(mapPressToFrontend));
-        }
-      } catch {
-        // Silent fail — static data is already displayed
-      }
-    })();
-
-    return () => { cancelled = true; };
-  }, []);
-
-  // Update functions (used by admin CMS to push changes)
-  const updateMetrics = useCallback(() => {}, []);
-  const updateFeaturedProject = useCallback(() => {}, []);
-  const updateTimelineMilestones = useCallback((value: TimelineMilestone[]) => setTimelineMilestones(value), []);
-  const updateJournalArticles = useCallback((value: JournalArticle[]) => setJournalArticles(value), []);
-  const updateExperiences = useCallback((value: Experience[]) => setExperiences(value), []);
-  const updateMembershipTiers = useCallback((value: MembershipTier[]) => setMembershipTiers(value), []);
-  const updateGalleryItems = useCallback((value: GalleryItem[]) => setGalleryItems(value), []);
-  const updateFooterLinks = useCallback(() => {}, []);
-  const updateFilmography = useCallback((value: FilmographyEntry[]) => setFilmography(value), []);
-  const updateMembershipSteps = useCallback(() => {}, []);
-  const updateExperiencesFAQ = useCallback(() => {}, []);
-  const updateMembershipFAQ = useCallback(() => {}, []);
-  const updateMediaVideos = useCallback(() => {}, []);
-  const updateMediaPodcasts = useCallback(() => {}, []);
-  const updateMediaPress = useCallback(() => {}, []);
-
-  // Manual refresh — re-fetches from Supabase
-  const refreshData = useCallback(async () => {
+  const loadData = useCallback(async () => {
+    setLoading(true);
     try {
-      const { journeyRepository, journalRepository, filmographyRepository, experiencesRepository, membershipPlansRepository, galleryRepository, mediaRepository } = await import('../lib/repositories');
-
-      const results = await Promise.allSettled([
+      const [journeyData, journalData, filmData, expData, planData, galleryData, vidData, podData, pressData] = await Promise.allSettled([
         journeyRepository.getAll(),
         journalRepository.getPublished(),
         filmographyRepository.getAll(),
@@ -364,8 +259,6 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
         mediaRepository.getPodcasts(),
         mediaRepository.getPress(),
       ]);
-
-      const [journeyData, journalData, filmData, expData, planData, galleryData, vidData, podData, pressData] = results;
 
       if (journeyData.status === 'fulfilled' && journeyData.value.length > 0) {
         setTimelineMilestones(journeyData.value.map(mapJourneyToMilestone));
@@ -395,9 +288,32 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setMediaPress(pressData.value.map(mapPressToFrontend));
       }
     } catch {
-      // Silent fail — existing data persists
+      // Silent fail — use static defaults
+    } finally {
+      setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  // Update functions
+  const updateMetrics = useCallback(() => {}, []);
+  const updateFeaturedProject = useCallback(() => {}, []);
+  const updateTimelineMilestones = useCallback((value: TimelineMilestone[]) => setTimelineMilestones(value), []);
+  const updateJournalArticles = useCallback((value: JournalArticle[]) => setJournalArticles(value), []);
+  const updateExperiences = useCallback((value: Experience[]) => setExperiences(value), []);
+  const updateMembershipTiers = useCallback((value: MembershipTier[]) => setMembershipTiers(value), []);
+  const updateGalleryItems = useCallback((value: GalleryItem[]) => setGalleryItems(value), []);
+  const updateFooterLinks = useCallback(() => {}, []);
+  const updateFilmography = useCallback((value: FilmographyEntry[]) => setFilmography(value), []);
+  const updateMembershipSteps = useCallback(() => {}, []);
+  const updateExperiencesFAQ = useCallback(() => {}, []);
+  const updateMembershipFAQ = useCallback(() => {}, []);
+  const updateMediaVideos = useCallback(() => {}, []);
+  const updateMediaPodcasts = useCallback(() => {}, []);
+  const updateMediaPress = useCallback(() => {}, []);
 
   const value: SiteContentType = useMemo(() => ({
     metrics,
@@ -431,7 +347,7 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     updateMediaVideos,
     updateMediaPodcasts,
     updateMediaPress,
-    refreshData,
+    refreshData: loadData,
   }), [
     metrics, featuredProject, timelineMilestones, journalArticles, experiences,
     membershipTiers, galleryItems, footerLinks, filmography, membershipSteps,
@@ -439,7 +355,7 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     updateMetrics, updateFeaturedProject, updateTimelineMilestones, updateJournalArticles,
     updateExperiences, updateMembershipTiers, updateGalleryItems, updateFooterLinks,
     updateFilmography, updateMembershipSteps, updateExperiencesFAQ, updateMembershipFAQ,
-    updateMediaVideos, updateMediaPodcasts, updateMediaPress, refreshData,
+    updateMediaVideos, updateMediaPodcasts, updateMediaPress, loadData,
   ]);
 
   return (
