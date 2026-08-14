@@ -35,8 +35,19 @@ import {
   membershipPlansRepository,
   galleryRepository,
   mediaRepository,
+  homepageCmsRepository,
 } from '../lib/repositories';
-import type { MediaVideo as DBMediaVideo, MediaPodcast as DBMediaPodcast, MediaPress as DBMediaPress } from '../types/database';
+import type {
+  MediaVideo as DBMediaVideo,
+  MediaPodcast as DBMediaPodcast,
+  MediaPress as DBMediaPress,
+  HomepageSection,
+  HomepageHeroSlide,
+  HomepageStatistic,
+  HomepageQuote,
+  HomepageFeatured,
+  HomepageCta,
+} from '../types/database';
 
 // ============================================================
 // Context type
@@ -59,6 +70,13 @@ interface SiteContentType {
   mediaPodcasts: typeof MEDIA_PODCASTS;
   mediaPress: typeof MEDIA_PRESS;
   loading: boolean;
+  // Phase 2: CMS-driven homepage data
+  homepageSections: HomepageSection[];
+  heroSlides: HomepageHeroSlide[];
+  homepageStatistics: HomepageStatistic[];
+  homepageQuotes: HomepageQuote[];
+  homepageFeatured: HomepageFeatured[];
+  homepageCta: HomepageCta[];
 
   updateMetrics: (metrics: typeof METRICS) => void;
   updateFeaturedProject: (project: typeof FEATURED_PROJECT) => void;
@@ -256,11 +274,18 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const [mediaPodcasts, setMediaPodcasts] = useState<typeof MEDIA_PODCASTS>(MEDIA_PODCASTS);
   const [mediaPress, setMediaPress] = useState<typeof MEDIA_PRESS>(MEDIA_PRESS);
   const [loading, setLoading] = useState(true);
+  // Phase 2: CMS state
+  const [homepageSections, setHomepageSections] = useState<HomepageSection[]>([]);
+  const [heroSlides, setHeroSlides] = useState<HomepageHeroSlide[]>([]);
+  const [homepageStatistics, setHomepageStatistics] = useState<HomepageStatistic[]>([]);
+  const [homepageQuotes, setHomepageQuotes] = useState<HomepageQuote[]>([]);
+  const [homepageFeatured, setHomepageFeatured] = useState<HomepageFeatured[]>([]);
+  const [homepageCta, setHomepageCta] = useState<HomepageCta[]>([]);
 
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [journeyData, journalData, filmData, expData, planData, galleryData, vidData, podData, pressData] = await Promise.allSettled([
+      const [journeyData, journalData, filmData, expData, planData, galleryData, vidData, podData, pressData, heroData, statsData, quotesData, featuredData, ctaData, sectionsData] = await Promise.allSettled([
         journeyRepository.getAll(),
         journalRepository.getPublished(),
         filmographyRepository.getAll(),
@@ -270,6 +295,12 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
         mediaRepository.getVideos(),
         mediaRepository.getPodcasts(),
         mediaRepository.getPress(),
+        homepageCmsRepository.getActiveHeroSlides(),
+        homepageCmsRepository.getPublishedStatistics(),
+        homepageCmsRepository.getPublishedQuotes(),
+        homepageCmsRepository.getPublishedFeatured(),
+        homepageCmsRepository.getPublishedCtaSections(),
+        homepageCmsRepository.getPublishedSections(),
       ]);
 
       if (journeyData.status === 'fulfilled' && journeyData.value.length > 0) {
@@ -298,6 +329,25 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }
       if (pressData.status === 'fulfilled' && pressData.value.length > 0) {
         setMediaPress(pressData.value.map(mapPressToFrontend));
+      }
+      // Phase 2: CMS data (graceful fallback - only update if data exists)
+      if (heroData.status === 'fulfilled' && heroData.value.length > 0) {
+        setHeroSlides(heroData.value);
+      }
+      if (statsData.status === 'fulfilled' && statsData.value.length > 0) {
+        setHomepageStatistics(statsData.value);
+      }
+      if (quotesData.status === 'fulfilled' && quotesData.value.length > 0) {
+        setHomepageQuotes(quotesData.value);
+      }
+      if (featuredData.status === 'fulfilled') {
+        setHomepageFeatured(featuredData.value);
+      }
+      if (ctaData.status === 'fulfilled' && ctaData.value.length > 0) {
+        setHomepageCta(ctaData.value);
+      }
+      if (sectionsData.status === 'fulfilled') {
+        setHomepageSections(sectionsData.value);
       }
     } catch {
       // Silent fail — use static defaults
@@ -344,6 +394,12 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     mediaPodcasts,
     mediaPress,
     loading,
+    homepageSections,
+    heroSlides,
+    homepageStatistics,
+    homepageQuotes,
+    homepageFeatured,
+    homepageCta,
     updateMetrics,
     updateFeaturedProject,
     updateTimelineMilestones,
@@ -364,6 +420,8 @@ export const SiteContentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     metrics, featuredProject, timelineMilestones, journalArticles, experiences,
     membershipTiers, galleryItems, footerLinks, filmography, membershipSteps,
     experiencesFAQ, membershipFAQ, mediaVideos, mediaPodcasts, mediaPress, loading,
+    homepageSections, heroSlides, homepageStatistics, homepageQuotes,
+    homepageFeatured, homepageCta,
     updateMetrics, updateFeaturedProject, updateTimelineMilestones, updateJournalArticles,
     updateExperiences, updateMembershipTiers, updateGalleryItems, updateFooterLinks,
     updateFilmography, updateMembershipSteps, updateExperiencesFAQ, updateMembershipFAQ,

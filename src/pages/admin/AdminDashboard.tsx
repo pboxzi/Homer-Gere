@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AdminLayout } from './AdminLayout';
 import { AdminOverview } from './AdminOverview';
+import { AdminHomepage } from './AdminHomepage';
 import { AdminWebsite } from './AdminWebsite';
 import { AdminContent } from './AdminContent';
 import { AdminCommunity } from './AdminCommunity';
@@ -18,8 +19,11 @@ export default function AdminDashboard() {
   const renderSection = () => {
     switch (activeSection) {
       case 'overview': return <AdminOverview onNavigate={setActiveSection} />;
+      // Homepage CMS
+      case 'homepage':
+        return <AdminHomepage activeSection={activeSection} onNavigateToSection={setActiveSection} />;
       // Website
-      case 'homepage': case 'navigation': case 'footer': case 'menus': case 'seo':
+      case 'navigation': case 'footer': case 'menus': case 'seo':
         return <AdminWebsite activeSection={activeSection} />;
       // Content
       case 'journey': case 'projects': case 'gallery': case 'media-content': case 'journal': case 'faqs':

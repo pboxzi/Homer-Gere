@@ -12,7 +12,13 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
   onSelectImage,
   onNavigate,
 }) => {
-  const { galleryItems } = useSiteContent();
+  const { galleryItems, homepageQuotes } = useSiteContent();
+
+  // Phase 2: Use CMS quote if available, fallback to hardcoded
+  const activeQuote = homepageQuotes.length > 0 ? homepageQuotes[0] : null;
+  const quoteText = activeQuote?.quote || 'Every role teaches me something new about the world and about myself.';
+  const quoteAuthor = activeQuote?.author || 'Homer Gere';
+  const quotePosition = activeQuote?.position || 'Actor & Storyteller';
 
   return (
     <section id="gallery" className="py-28 sm:py-36">
@@ -32,7 +38,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
 
             {/* Quote text */}
             <blockquote className="relative text-3xl sm:text-4xl md:text-5xl font-editorial italic text-[#1C1917] leading-[1.4] tracking-wide max-w-3xl mx-auto">
-              Every role teaches me something new about the world and about myself.
+              {quoteText}
             </blockquote>
 
             {/* Gold divider */}
@@ -45,10 +51,10 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
             {/* Attribution */}
             <div className="space-y-1">
               <div className="font-editorial italic text-lg sm:text-xl text-[#A6852F] tracking-[0.2em] uppercase">
-                Homer Gere
+                {quoteAuthor}
               </div>
               <div className="text-[11px] text-[#78716C] tracking-[0.15em] uppercase">
-                Actor & Storyteller
+                {quotePosition}
               </div>
             </div>
           </div>
