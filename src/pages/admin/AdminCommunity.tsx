@@ -128,19 +128,20 @@ const MemberProfileModal: React.FC<MemberProfileModalProps> = ({ open, memberId,
         ]);
 
         if (profileRes.status === 'fulfilled' && profileRes.value) {
-          setProfile(profileRes.value);
+          setProfile((profileRes.value as any).data || profileRes.value);
         }
         if (membershipRes.status === 'fulfilled' && membershipRes.value) {
-          setMembership(membershipRes.value);
-          if (membershipRes.value.plan_id) {
+          const mData = (membershipRes.value as any).data || membershipRes.value;
+          setMembership(mData);
+          if (mData?.plan_id) {
             const planRes = await membershipPlansRepository.getAll();
-            const found = planRes.find((p: any) => p.id === membershipRes.value.plan_id);
+            const found = planRes.find((p: any) => p.id === mData.plan_id);
             if (found) setPlan(found);
           }
         }
-        if (paymentsRes.status === 'fulfilled') setPaymentHistory(paymentsRes.value || []);
-        if (expRes.status === 'fulfilled') setExperienceRequests(expRes.value || []);
-        if (auditRes.status === 'fulfilled') setAuditLogs(auditRes.value || []);
+        if (paymentsRes.status === 'fulfilled') setPaymentHistory(((paymentsRes.value as any)?.data) || []);
+        if (expRes.status === 'fulfilled') setExperienceRequests(((expRes.value as any)?.data) || []);
+        if (auditRes.status === 'fulfilled') setAuditLogs(((auditRes.value as any)?.data) || []);
       } catch { /* silent */ }
       setLoading(false);
     };

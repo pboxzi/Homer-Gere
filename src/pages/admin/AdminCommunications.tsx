@@ -1,22 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  MessageSquare,
-  Building2,
-  Mail,
-  Bell,
-  Search,
-  Eye,
-  Trash2,
-  Archive,
-  ArrowLeft,
-  Send,
-  CheckCheck,
-  MailOpen,
-  MailCheck,
-  Plus,
-  X,
-  Forward,
+  MessageSquare, Building2, Mail, Bell, Search, Eye, Trash2, Archive,
+  ArrowLeft, Send, CheckCheck, MailOpen, MailCheck, Plus, X, Forward,
+  ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import type { AdminSection, AdminConversation, AdminContactMessage, AdminNotification } from '../../data/adminData';

@@ -97,9 +97,9 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
         client.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(8),
       ]);
 
-      const totalMediaCount = mediaRes.status === 'fulfilled' ? (mediaRes.value?.length || 0) : 0;
+      const totalMediaCount = mediaRes.status === 'fulfilled' ? (((mediaRes.value as any)?.data)?.length || 0) : 0;
       const mediaBytes = mediaRes.status === 'fulfilled'
-        ? (mediaRes.value || []).reduce((sum: number, m: { file_size: number | null }) => sum + (m.file_size || 0), 0)
+        ? (((mediaRes.value as any)?.data) || []).reduce((sum: number, m: { file_size: number | null }) => sum + (m.file_size || 0), 0)
         : 0;
 
       setLiveStats({
@@ -116,7 +116,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
       });
 
       if (auditRes.status === 'fulfilled') {
-        setRecentAuditLogs((auditRes.value as AuditLogEntry[]) || []);
+        setRecentAuditLogs(((auditRes.value as any)?.data || []) as AuditLogEntry[]);
       }
     } catch {
       /* silent */

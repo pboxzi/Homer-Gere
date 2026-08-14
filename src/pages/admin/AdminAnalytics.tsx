@@ -1,23 +1,9 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import {
-  Users,
-  Eye,
-  TrendingUp,
-  Clock,
-  UserCheck,
-  DollarSign,
-  BarChart3,
-  Sparkles,
-  CheckCircle,
-  AlertCircle,
-  MessageSquare,
-  Heart,
-  Briefcase,
-  Timer,
-  ThumbsUp,
-  ArrowUpRight,
-  ArrowDownRight,
+  Users, Eye, TrendingUp, Clock, UserCheck, DollarSign, BarChart3, Sparkles,
+  CheckCircle, AlertCircle, MessageSquare, Heart, Briefcase, Timer, ThumbsUp,
+  ArrowUpRight, ArrowDownRight, Crown, Film, FileText, Image,
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import type { AdminSection } from '../../data/adminData';
