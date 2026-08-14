@@ -86,26 +86,6 @@ export const MembershipHero: React.FC<MembershipHeroProps> = ({ onBecomeMember, 
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 1.2 }}
-      >
-        <a
-          href="#membership-why"
-          className="group flex flex-col items-center gap-2 focus:outline-none cursor-pointer"
-          aria-label="Scroll to continue"
-        >
-          <span className="text-[11px] font-medium text-[#57534E] group-hover:text-[#A6852F] transition-colors uppercase tracking-[0.25em]">
-            Scroll
-          </span>
-          <div className="relative w-[1px] h-8 bg-[#E8E5DF] group-hover:bg-[#A6852F]/30 transition-colors overflow-hidden rounded-full">
-            <div className="absolute top-0 left-0 w-full h-1/2 bg-[#A6852F] rounded-full animate-scroll-line" />
-          </div>
-        </a>
-      </motion.div>
     </section>
   );
 };
