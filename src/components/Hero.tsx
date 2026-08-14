@@ -56,7 +56,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
           <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F7]/70 via-transparent to-[#FAF9F7]/20 pointer-events-none" />
 
           {/* Content — left aligned, vertically centered */}
-          <div className="relative z-10 h-full flex flex-col justify-center p-5 sm:p-12 md:p-16 lg:p-20 lg:pl-16 w-full lg:w-[55%]">
+          <div className="relative z-10 h-full flex flex-col justify-end p-5 sm:p-12 md:p-16 lg:p-20 lg:pl-16 w-full lg:w-[55%]">
 
             {/* Title */}
             {heroTitle ? (
@@ -75,7 +75,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
             )}
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-8 sm:mb-12">
+            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
               {heroButtonLink ? (
                 <a href={heroButtonLink} className="inline-flex items-center justify-center gap-2 bg-[#A6852F] hover:bg-[#B8983A] active:scale-95 text-white font-semibold text-xs sm:text-sm px-5 sm:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-[#A6852F]/30 focus:outline-none">
                   <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" /><span>{heroButtonText}</span>
