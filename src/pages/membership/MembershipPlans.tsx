@@ -1,11 +1,23 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
-import { Check, X, Star, Crown } from 'lucide-react';
+import { Check, X, Crown, Shield, Zap } from 'lucide-react';
 import { useSiteContent } from '../../context/SiteContentContext';
 
 interface MembershipPlansProps {
   onSelectTier: (tierId: string) => void;
 }
+
+const TIER_ICONS: Record<string, React.ReactNode> = {
+  silver: <Shield className="w-5 h-5" />,
+  gold: <Crown className="w-5 h-5" />,
+  platinum: <Zap className="w-5 h-5" />,
+};
+
+const TIER_COLORS: Record<string, string> = {
+  silver: '#9CA3AF',
+  gold: '#A6852F',
+  platinum: '#8B5CF6',
+};
 
 export const MembershipPlans: React.FC<MembershipPlansProps> = ({ onSelectTier }) => {
   const { membershipTiers } = useSiteContent();
@@ -33,91 +45,80 @@ export const MembershipPlans: React.FC<MembershipPlansProps> = ({ onSelectTier }
           </p>
         </motion.div>
 
-        {/* Plans Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+        {/* Plans Grid — ATM Card Style */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
           {membershipTiers.map((tier, idx) => {
+            const tierColor = TIER_COLORS[tier.id] || '#A6852F';
             const isPopular = tier.isPopular;
 
             return (
               <motion.div
                 key={tier.id}
-                className={`relative rounded-[1.5rem] overflow-hidden transition-all duration-500 flex flex-col ${
-                  isPopular
-                    ? 'bg-[#A6852F]/8 ring-1 ring-[#A6852F]/30 shadow-xl shadow-[#A6852F]/5'
-                    : 'bg-white border border-[#E8E5DF]/60'
-                }`}
-                initial={{ opacity: 0, y: 40 }}
+                className="rounded-2xl p-6 text-white relative overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] group flex flex-col"
+                style={{
+                  background: `linear-gradient(135deg, ${tierColor}, ${tierColor}DD, ${tierColor}AA, ${tierColor}CC)`,
+                  boxShadow: `0 10px 40px ${tierColor}68, 0 0 60px ${tierColor}30, inset 0 1px 0 rgba(255,255,255,0.2)`,
+                }}
+                initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.15 + idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.5, delay: 0.15 + idx * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                onClick={() => onSelectTier(tier.id)}
               >
-                {/* Badge */}
-                {isPopular && tier.badge && (
-                  <div className="bg-[#A6852F] text-white text-[10px] font-medium tracking-widest uppercase text-center py-2">
-                    {tier.badge}
-                  </div>
-                )}
+                {/* Decorative circles */}
+                <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(25%, -25%)' }} />
+                <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(-25%, 25%)' }} />
+                <div className="absolute top-1/2 left-1/2 w-full h-full opacity-5" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(-50%, -50%)' }} />
 
-                <div className="p-8 sm:p-9 flex flex-col flex-1">
-                  {/* Header */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      {tier.id === 'platinum' ? (
-                        <Crown className="w-5 h-5 text-[#A6852F]" />
-                      ) : (
-                        <Star className={`w-5 h-5 ${isPopular ? 'text-[#A6852F] fill-[#A6852F]' : 'text-[#D1D5DB]'}`} />
-                      )}
-                      <span className={`text-[11px] font-medium tracking-[0.15em] uppercase ${
-                        isPopular ? 'text-[#A6852F]' : 'text-[#57534E]'
-                      }`}>
-                        {tier.name}
-                      </span>
+                <div className="relative z-10 flex flex-col flex-1">
+                  {/* Card top: chip + badges */}
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="w-11 h-8 rounded-md border border-white/30 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))' }}>
+                      <div className="w-6 h-4 rounded-sm bg-white/40" />
                     </div>
-                    {tier.requiresApproval && (
-                      <span className="text-[9px] font-medium text-[#F59E0B] bg-[#F59E0B]/10 px-2 py-0.5 rounded-full">
-                        Approval Required
-                      </span>
-                    )}
+                    <div className="flex items-center gap-1.5">
+                      {isPopular && tier.badge && <span className="text-[9px] px-2.5 py-1 rounded-full bg-white/25 font-bold backdrop-blur-sm border border-white/20">{tier.badge}</span>}
+                      {tier.requiresApproval && <span className="text-[9px] px-2.5 py-1 rounded-full bg-white/25 font-bold backdrop-blur-sm border border-white/20">Approval Required</span>}
+                    </div>
+                  </div>
+
+                  {/* Tier Name + Icon */}
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[11px] uppercase tracking-widest opacity-80 font-medium">{tier.name}</p>
+                    <div className="opacity-80">
+                      {TIER_ICONS[tier.id] || <Crown className="w-5 h-5" />}
+                    </div>
                   </div>
 
                   {/* Description */}
-                  <p className="text-sm text-[#57534E] leading-relaxed mb-6">
-                    {tier.description}
-                  </p>
+                  <p className="text-[11px] text-white/70 leading-relaxed mb-4">{tier.description}</p>
 
                   {/* Price */}
-                  <div className="flex items-baseline gap-1 mb-8">
-                    <span className="text-[13px] text-[#57534E]">{tier.currency === 'USD' ? '$' : tier.currency}</span>
-                    <span className="text-4xl sm:text-5xl font-editorial text-[#1C1917]">{tier.price}</span>
-                    <span className="text-xs text-[#57534E] font-medium">{tier.period}</span>
+                  <div className="mb-5">
+                    <p className="text-3xl font-editorial">${tier.price}<span className="text-sm font-normal opacity-70">/{tier.period}</span></p>
                   </div>
 
                   {/* Features */}
-                  <ul className="space-y-3.5 mb-8 flex-1">
+                  <ul className="space-y-2 mb-5 flex-1">
                     {tier.features.map((feature, fIdx) => (
-                      <li key={fIdx} className="flex items-start gap-3">
+                      <li key={fIdx} className="flex items-start gap-2 text-[11px]">
                         {feature.included ? (
-                          <Check className="w-4 h-4 text-[#16A34A] mt-0.5 shrink-0" />
+                          <Check className="w-3.5 h-3.5 shrink-0 mt-0.5 text-white/80" />
                         ) : (
-                          <X className="w-4 h-4 text-[#D1D5DB] mt-0.5 shrink-0" />
+                          <X className="w-3.5 h-3.5 shrink-0 mt-0.5 text-white/30" />
                         )}
-                        <span className={`text-sm ${feature.included ? 'text-[#1C1917]' : 'text-[#A8A29E]'}`}>
+                        <span className={feature.included ? 'text-white/80' : 'text-white/35'}>
                           {feature.label}
                         </span>
                       </li>
                     ))}
                   </ul>
 
-                  {/* CTA */}
-                  <button
-                    onClick={() => onSelectTier(tier.id)}
-                    className={`w-full py-3.5 px-6 rounded-2xl text-xs font-medium transition-all duration-300 active:scale-[0.98] focus:outline-none cursor-pointer ${
-                      isPopular
-                        ? 'bg-[#A6852F] hover:bg-[#B8983A] text-white'
-                        : 'bg-[#1C1917] hover:bg-[#292524] text-white'
-                    }`}
-                  >
-                    {tier.ctaText}
-                  </button>
+                  {/* Footer */}
+                  <div className="pt-3 border-t border-white/20">
+                    <span className="w-full py-3 px-6 rounded-xl text-xs font-medium transition-all duration-300 block text-center bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/20 cursor-pointer active:scale-[0.98]">
+                      {tier.ctaText}
+                    </span>
+                  </div>
                 </div>
               </motion.div>
             );
