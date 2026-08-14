@@ -285,15 +285,28 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     if (!user?.id) return;
     try {
       const tickets = await helpDeskTicketsRepository.getByUserId(user.id);
-      setHelpTickets(tickets.map((t) => ({
-        id: t.id,
-        subject: t.subject,
-        message: t.message,
-        category: t.category,
-        date: new Date(t.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        status: t.status as 'open' | 'in_progress' | 'resolved' | 'closed' | 'replied',
-        replies: [],
-      })));
+      const ticketsWithReplies = await Promise.all(tickets.map(async (t) => {
+        let replies: HelpReply[] = [];
+        try {
+          const dbReplies = await helpDeskTicketsRepository.getReplies(t.id);
+          replies = dbReplies.map((r) => ({
+            id: r.id,
+            sender: r.sender as 'member' | 'admin',
+            text: r.text,
+            date: new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          }));
+        } catch { /* silent */ }
+        return {
+          id: t.id,
+          subject: t.subject,
+          message: t.message,
+          category: t.category,
+          date: new Date(t.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          status: t.status as 'open' | 'in_progress' | 'resolved' | 'closed' | 'replied',
+          replies,
+        };
+      }));
+      setHelpTickets(ticketsWithReplies);
     } catch { /* silent */ }
   }, [user?.id]);
 
@@ -393,9 +406,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         ip_address: null,
         user_agent: navigator.userAgent,
       });
-    } catch (err) {
-      console.error('Failed to update profile:', err);
-    }
+    } catch { /* silent */ }
   }, [user?.id]);
 
   // ============================================================
@@ -521,29 +532,27 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         status: created.status as 'open' | 'in_progress' | 'resolved' | 'closed',
         replies: [],
       }, ...prev]);
-    } catch (e) {
-      console.error('Failed to create help ticket:', e);
-    }
+    } catch { /* silent */ }
   }, [user?.id]);
 
   const replyHelpTicket = useCallback(async (ticketId: string, text: string) => {
-    // Store replies in local state for now (no replies table yet)
-    const reply: HelpReply = {
-      id: generateId(),
-      sender: 'member',
-      text,
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-    };
-    setHelpTickets((prev) => prev.map((t) => t.id === ticketId ? { ...t, replies: [...t.replies, reply] } : t));
+    try {
+      const saved = await helpDeskTicketsRepository.addReply(ticketId, 'member', text);
+      const reply: HelpReply = {
+        id: saved.id,
+        sender: 'member',
+        text,
+        date: new Date(saved.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      };
+      setHelpTickets((prev) => prev.map((t) => t.id === ticketId ? { ...t, replies: [...t.replies, reply] } : t));
+    } catch { /* silent */ }
   }, []);
 
   const closeHelpTicket = useCallback(async (ticketId: string) => {
     try {
       await helpDeskTicketsRepository.updateStatus(ticketId, 'closed');
       setHelpTickets((prev) => prev.map((t) => t.id === ticketId ? { ...t, status: 'closed' } : t));
-    } catch (e) {
-      console.error('Failed to close help ticket:', e);
-    }
+    } catch { /* silent */ }
   }, []);
 
   // Load bookmarks/favorites from localStorage

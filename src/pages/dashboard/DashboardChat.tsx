@@ -4,9 +4,9 @@ import { MessageSquare, ArrowRight, Phone, Send, Search, Archive, Image as Image
 import { useDashboard } from '../../context/DashboardContext';
 import { useAuth } from '../../context/AuthContext';
 import { fanChatRepository, getSupabaseClient } from '../../lib/repositories';
-import type { FanConversation, FanMessage } from '../../types/database';
+import type { FanConversation, FanMessage, MediaType } from '../../types/database';
 
-const WHATSAPP_NUMBER = '1234567890';
+const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '1234567890';
 
 export const DashboardChat: React.FC = () => {
   const { user, profile } = useAuth();
@@ -90,7 +90,7 @@ export const DashboardChat: React.FC = () => {
         conversation_id: activeConvId,
         sender: 'member',
         text: newMessage.trim() || '',
-        media_type: mediaType as any,
+        media_type: mediaType as MediaType,
         media_url: mediaUrl,
       });
       setNewMessage('');

@@ -94,7 +94,7 @@ export const DashboardHelp: React.FC = () => {
                 <>
                   <div>
                     <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">Category</label>
-                    <select value={category} onChange={(e) => setCategory(e.target.value as any)} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 appearance-none">
+                    <select value={category} onChange={(e) => setCategory(e.target.value as typeof HELP_CATEGORIES[number]['id'])} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 appearance-none">
                       {HELP_CATEGORIES.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
                     </select>
                   </div>

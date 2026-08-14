@@ -160,7 +160,7 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
                   {(Array.isArray(membershipPlan.features) ? membershipPlan.features : []).map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-2.5 text-xs">
                       <Check className="w-3.5 h-3.5 text-[#16A34A] mt-0.5 shrink-0" />
-                      <span className="text-[#1C1917]">{typeof feature === 'string' ? feature : (feature as any).label || JSON.stringify(feature)}</span>
+                      <span className="text-[#1C1917]">{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -306,7 +306,7 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
                           {selectedPlan.features.slice(0, 3).map((f, i) => (
                             <li key={i} className="flex items-center gap-1.5 text-[10px] text-white/80">
                               <Check className="w-2.5 h-2.5 shrink-0" />
-                              <span>{typeof f === 'string' ? f : (f as any).label || JSON.stringify(f)}</span>
+                              <span>{f.label}</span>
                             </li>
                           ))}
                         </ul>

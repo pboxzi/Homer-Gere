@@ -933,6 +933,14 @@ export interface HelpDeskTicket {
   updated_at: string;
 }
 
+export interface HelpDeskTicketReply {
+  id: string;
+  ticket_id: string;
+  sender: string;
+  text: string;
+  created_at: string;
+}
+
 // ============================================================
 // DATABASE TYPE (Supabase generated format)
 // ============================================================

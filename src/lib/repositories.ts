@@ -52,6 +52,7 @@ import type {
   ActivityLog,
   ExperienceDocument,
   HelpDeskTicket,
+  HelpDeskTicketReply,
 } from '../types/database';
 
 // ============================================================
@@ -3753,5 +3754,27 @@ export const helpDeskTicketsRepository = {
       .update({ status, updated_at: new Date().toISOString() })
       .eq('id', id);
     if (error) throw error;
+  },
+
+  async getReplies(ticketId: string): Promise<HelpDeskTicketReply[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('help_ticket_replies')
+      .select('*')
+      .eq('ticket_id', ticketId)
+      .order('created_at', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async addReply(ticketId: string, sender: string, text: string): Promise<HelpDeskTicketReply> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('help_ticket_replies')
+      .insert({ ticket_id: ticketId, sender, text })
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
   },
 };
