@@ -47,7 +47,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
               src={heroImage || IMAGES.homerGqLifestyleStudio}
               alt="Homer Gere — Cinematic Editorial"
               referrerPolicy="no-referrer"
-              className="w-full h-full object-cover object-center transition-transform duration-[1500ms] ease-out group-hover:scale-[1.02]"
+              className="w-full h-full object-cover object-top lg:object-center transition-transform duration-[1500ms] ease-out group-hover:scale-[1.02]"
             />
             {/* Multi-layer gradient overlay for depth */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#FAF9F7] via-[#FAF9F7]/70 to-transparent sm:via-[#FAF9F7]/40 pointer-events-none" />
