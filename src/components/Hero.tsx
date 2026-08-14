@@ -44,7 +44,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
           {/* Background Image — Full Cinematic */}
           <div className="absolute inset-0">
             <img
-              src={heroImage || IMAGES.heroSplitBanner}
+              src={heroImage || IMAGES.heroPortrait}
               alt="Homer Gere — Cinematic Editorial"
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover object-center transition-transform duration-[1500ms] ease-out group-hover:scale-[1.02]"
