@@ -382,6 +382,26 @@ const MembersSection: React.FC = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [profileMemberId, setProfileMemberId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+
+  const formatDate = (dateStr: string) => {
+    if (!dateStr || dateStr === 'Just now') return dateStr;
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      const now = new Date();
+      const diffMs = now.getTime() - d.getTime();
+      const diffMin = Math.floor(diffMs / 60000);
+      const diffHr = Math.floor(diffMs / 3600000);
+      const diffDay = Math.floor(diffMs / 86400000);
+      if (diffMin < 1) return 'Just now';
+      if (diffMin < 60) return `${diffMin}m ago`;
+      if (diffHr < 24) return `${diffHr}h ago`;
+      if (diffDay < 7) return `${diffDay}d ago`;
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    } catch {
+      return dateStr;
+    }
+  };
   const [successMsg, setSuccessMsg] = useState('');
 
   const [newMember, setNewMember] = useState({ name: '', email: '', membership: 'Silver', status: 'active' as MemberStatus });
@@ -515,73 +535,101 @@ const MembersSection: React.FC = () => {
         </select>
       </div>
 
-      <div className="rounded-xl border border-[#A6852F]/10 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div className="rounded-2xl border border-[#E8E5DF]/50 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
         <div className="hidden md:block overflow-x-auto">
-          <div className="grid grid-cols-[1fr_120px_100px_100px_80px_120px] gap-4 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
-            <span>Member</span><span>Membership</span><span>Status</span><span>Joined</span><span>Last Active</span><span>Actions</span>
-          </div>
-          {paginated.map((m) => (
-            <div key={m.id} className="grid grid-cols-[1fr_120px_100px_100px_80px_120px] gap-4 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
-              {editingId === m.id ? (
-                <>
-                  <div className="space-y-1">
-                    <input value={editData.name} onChange={(e) => setEditData({ ...editData, name: e.target.value })} className="w-full px-2 py-1 rounded-lg border border-[#E8E5DF]/60 bg-white text-xs text-[#1C1917] focus:outline-none focus:border-[#A6852F]/40" />
-                    <input value={editData.email} onChange={(e) => setEditData({ ...editData, email: e.target.value })} className="w-full px-2 py-1 rounded-lg border border-[#E8E5DF]/60 bg-white text-[10px] text-[#57534E] focus:outline-none focus:border-[#A6852F]/40" />
-                  </div>
-                  <select value={editData.membership} onChange={(e) => setEditData({ ...editData, membership: e.target.value })} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 bg-white text-xs text-[#57534E] focus:outline-none focus:border-[#A6852F]/40 cursor-pointer"><option value="None">None</option><option value="Silver">Silver</option><option value="Gold">Gold</option><option value="Platinum">Platinum</option></select>
-                  <select value={editData.status} onChange={(e) => setEditData({ ...editData, status: e.target.value as MemberStatus })} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 bg-white text-xs text-[#57534E] focus:outline-none focus:border-[#A6852F]/40 cursor-pointer"><option value="active">Active</option><option value="pending">Pending</option><option value="suspended">Suspended</option></select>
-                  <span className="text-xs text-[#57534E]">{m.joinDate}</span>
-                  <span className="text-[10px] text-[#57534E]">{m.lastActive}</span>
-                  <div className="flex items-center gap-1">
-                    <button onClick={handleSaveEdit} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#16A34A] hover:bg-[#16A34A]/10 transition-colors cursor-pointer"><CheckCircle className="w-3.5 h-3.5" /></button>
-                    <button onClick={() => setEditingId(null)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><X className="w-3.5 h-3.5" /></button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div><p className="text-sm text-[#1C1917]">{m.name}</p><p className="text-[10px] text-[#57534E]">{m.email}</p></div>
-                  <span className="text-xs text-[#57534E]">{m.membership}</span>
-                  <StatusBadge status={m.status} />
-                  <span className="text-xs text-[#57534E]">{m.joinDate}</span>
-                  <span className="text-[10px] text-[#57534E]">{m.lastActive}</span>
-                  <div className="flex items-center gap-1">
-                    <button onClick={() => setProfileMemberId(m.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors cursor-pointer" title="View Profile"><Eye className="w-3.5 h-3.5" /></button>
-                    <button onClick={() => handleStartEdit(m)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors cursor-pointer" title="Edit"><Edit className="w-3.5 h-3.5" /></button>
-                    <button onClick={() => handleToggleSuspend(m)} className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${m.status === 'active' ? 'text-[#DC2626] hover:bg-[#DC2626]/10' : 'text-[#16A34A] hover:bg-[#16A34A]/10'}`} title={m.status === 'active' ? 'Suspend' : 'Reactivate'}>{m.status === 'active' ? <Ban className="w-3.5 h-3.5" /> : <RotateCcw className="w-3.5 h-3.5" />}</button>
-                    <button onClick={() => setDeleteId(m.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer" title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>
-                  </div>
-                </>
-              )}
-            </div>
-          ))}
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-[#E8E5DF]/40">
+                <th className="text-left px-5 py-3.5 text-[10px] font-semibold text-[#57534E] uppercase tracking-wider">Member</th>
+                <th className="text-left px-5 py-3.5 text-[10px] font-semibold text-[#57534E] uppercase tracking-wider">Status</th>
+                <th className="text-left px-5 py-3.5 text-[10px] font-semibold text-[#57534E] uppercase tracking-wider">Joined</th>
+                <th className="text-right px-5 py-3.5 text-[10px] font-semibold text-[#57534E] uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginated.map((m) => (
+                <tr key={m.id} className="border-b border-[#E8E5DF]/20 last:border-0 hover:bg-[#F3F1ED]/20 transition-colors">
+                  {editingId === m.id ? (
+                    <>
+                      <td className="px-5 py-3.5">
+                        <input value={editData.name} onChange={(e) => setEditData({ ...editData, name: e.target.value })} className="w-full px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F]/40 mb-1" />
+                        <input value={editData.email} onChange={(e) => setEditData({ ...editData, email: e.target.value })} className="w-full px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 bg-white text-[11px] text-[#57534E] focus:outline-none focus:border-[#A6852F]/40" />
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <select value={editData.status} onChange={(e) => setEditData({ ...editData, status: e.target.value as MemberStatus })} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 bg-white text-xs text-[#57534E] focus:outline-none focus:border-[#A6852F]/40 cursor-pointer"><option value="active">Active</option><option value="pending">Pending</option><option value="suspended">Suspended</option></select>
+                      </td>
+                      <td className="px-5 py-3.5 text-xs text-[#57534E]">{formatDate(m.joinDate)}</td>
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center justify-end gap-1">
+                          <button onClick={handleSaveEdit} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#16A34A] hover:bg-[#16A34A]/10 transition-colors cursor-pointer"><CheckCircle className="w-4 h-4" /></button>
+                          <button onClick={() => setEditingId(null)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><X className="w-4 h-4" /></button>
+                        </div>
+                      </td>
+                    </>
+                  ) : (
+                    <>
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-full bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] text-sm font-medium shrink-0">
+                            {m.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-[#1C1917]">{m.name}</p>
+                            <p className="text-[11px] text-[#57534E]">{m.email}</p>
+                            {m.membership !== 'None' && <span className="inline-block mt-0.5 text-[10px] font-medium text-[#A6852F] bg-[#A6852F]/8 px-2 py-0.5 rounded-full">{m.membership}</span>}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3.5"><StatusBadge status={m.status} /></td>
+                      <td className="px-5 py-3.5 text-xs text-[#57534E]">{formatDate(m.joinDate)}</td>
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center justify-end gap-1">
+                          <button onClick={() => setProfileMemberId(m.id)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors cursor-pointer" title="View Profile"><Eye className="w-4 h-4" /></button>
+                          <button onClick={() => handleStartEdit(m)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors cursor-pointer" title="Edit"><Edit className="w-4 h-4" /></button>
+                          <button onClick={() => handleToggleSuspend(m)} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${m.status === 'active' ? 'text-[#DC2626] hover:bg-[#DC2626]/10' : 'text-[#16A34A] hover:bg-[#16A34A]/10'}`} title={m.status === 'active' ? 'Suspend' : 'Reactivate'}>{m.status === 'active' ? <Ban className="w-4 h-4" /> : <RotateCcw className="w-4 h-4" />}</button>
+                          <button onClick={() => setDeleteId(m.id)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer" title="Delete"><Trash2 className="w-4 h-4" /></button>
+                        </div>
+                      </td>
+                    </>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
         <div className="md:hidden divide-y divide-[#E8E5DF]/20">
           {paginated.map((m) => (
             <div key={m.id} className="p-4 space-y-3">
               <div className="flex items-start justify-between">
-                <div><p className="text-sm font-medium text-[#1C1917]">{m.name}</p><p className="text-[11px] text-[#57534E]">{m.email}</p></div>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] text-sm font-medium shrink-0">
+                    {m.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-[#1C1917]">{m.name}</p>
+                    <p className="text-[11px] text-[#57534E]">{m.email}</p>
+                    {m.membership !== 'None' && <span className="inline-block mt-0.5 text-[10px] font-medium text-[#A6852F] bg-[#A6852F]/8 px-2 py-0.5 rounded-full">{m.membership}</span>}
+                  </div>
+                </div>
                 <StatusBadge status={m.status} />
               </div>
-              <div className="flex items-center gap-3 text-[11px] text-[#57534E]">
-                <span>{m.membership}</span><span className="text-[#E8E5DF]">·</span><span>{m.joinDate}</span>
-              </div>
-              <div className="flex items-center gap-1 pt-1 border-t border-[#E8E5DF]/20">
-                <button onClick={() => setProfileMemberId(m.id)} className="flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><Eye className="w-3.5 h-3.5" /> Profile</button>
-                <button onClick={() => handleStartEdit(m)} className="flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><Edit className="w-3.5 h-3.5" /> Edit</button>
-                <button onClick={() => handleToggleSuspend(m)} className={`py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 text-xs transition-colors cursor-pointer ${m.status === 'active' ? 'text-[#DC2626] hover:bg-[#DC2626]/10' : 'text-[#16A34A] hover:bg-[#16A34A]/10'}`}>{m.status === 'active' ? <Ban className="w-3.5 h-3.5" /> : <RotateCcw className="w-3.5 h-3.5" />}</button>
-                <button onClick={() => setDeleteId(m.id)} className="py-1.5 px-3 rounded-lg flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
+              <div className="flex items-center gap-1 pt-2 border-t border-[#E8E5DF]/20">
+                <button onClick={() => setProfileMemberId(m.id)} className="flex-1 py-2 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><Eye className="w-3.5 h-3.5" /> Profile</button>
+                <button onClick={() => handleStartEdit(m)} className="flex-1 py-2 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><Edit className="w-3.5 h-3.5" /> Edit</button>
+                <button onClick={() => handleToggleSuspend(m)} className={`py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 text-xs transition-colors cursor-pointer ${m.status === 'active' ? 'text-[#DC2626] hover:bg-[#DC2626]/10' : 'text-[#16A34A] hover:bg-[#16A34A]/10'}`}>{m.status === 'active' ? <Ban className="w-3.5 h-3.5" /> : <RotateCcw className="w-3.5 h-3.5" />}</button>
+                <button onClick={() => setDeleteId(m.id)} className="py-2 px-3 rounded-lg flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
               </div>
             </div>
           ))}
         </div>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-5 py-3 border-t border-[#E8E5DF]/40">
+          <div className="flex items-center justify-between px-5 py-3.5 border-t border-[#E8E5DF]/40">
             <span className="text-xs text-[#57534E]">{filtered.length} members · Page {page}/{totalPages}</span>
             <div className="flex items-center gap-2">
-              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
-              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
+              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
             </div>
           </div>
         )}
