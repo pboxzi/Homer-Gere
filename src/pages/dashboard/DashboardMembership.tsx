@@ -18,11 +18,11 @@ const TIER_COLORS: Record<string, string> = {
   platinum: '#8B5CF6',
 };
 
-export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSection) => void }> = ({ onNavigate }) => {
+export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSection) => void; initialTab?: 'overview' | 'plans' | 'history' }> = ({ onNavigate, initialTab }) => {
   const navigate = useNavigate();
   const { membership, membershipPlan, membershipRequests } = useDashboard();
   const { membershipTiers } = useSiteContent();
-  const [activeTab, setActiveTab] = useState<'overview' | 'plans' | 'history'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'plans' | 'history'>(initialTab || 'overview');
 
   const activeRequest = membershipRequests.find((r) => !['rejected', 'membership_active'].includes(r.status));
   const pastRequests = membershipRequests.filter((r) => r.status === 'rejected' || r.status === 'membership_active');

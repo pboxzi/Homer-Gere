@@ -4,9 +4,10 @@ import { useSiteContent } from '../context/SiteContentContext';
 
 interface ExperiencesSectionProps {
   onNavigate: (sectionId: string) => void;
+  onRequestExperience?: () => void;
 }
 
-export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNavigate }) => {
+export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNavigate, onRequestExperience }) => {
   const { experiences } = useSiteContent();
 
   const getExperienceIcon = (iconName: string) => {
@@ -34,6 +35,22 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNaviga
     }
   };
 
+  const handleExperienceClick = () => {
+    if (onRequestExperience) {
+      onRequestExperience();
+    } else {
+      onNavigate('experiences');
+    }
+  };
+
+  const handleRequestExperience = () => {
+    if (onRequestExperience) {
+      onRequestExperience();
+    } else {
+      onNavigate('experiences');
+    }
+  };
+
   return (
     <section id="experiences" className="py-28 sm:py-36">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -42,7 +59,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNaviga
             <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">Experiences</span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight hover-underline">Connect & Collaborate</h2>
           </div>
-          <button onClick={() => onNavigate('experiences')} className="inline-flex items-center gap-1.5 text-sm font-medium text-[#57534E] hover:text-[#A6852F] transition-colors duration-300 group focus:outline-none cursor-pointer">
+          <button onClick={handleExperienceClick} className="inline-flex items-center gap-1.5 text-sm font-medium text-[#57534E] hover:text-[#A6852F] transition-colors duration-300 group focus:outline-none cursor-pointer">
             View All Experiences<ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
           </button>
         </div>
@@ -50,7 +67,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNaviga
         {/* Featured large card */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
           {experiences.slice(0, 2).map((exp) => (
-            <div key={exp.id} onClick={() => onNavigate('experiences')} className="group relative rounded-[1.5rem] overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-xl hover:shadow-[#A6852F]/10 hover:-translate-y-1">
+            <div key={exp.id} onClick={handleExperienceClick} className="group relative rounded-[1.5rem] overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-xl hover:shadow-[#A6852F]/10 hover:-translate-y-1">
               {exp.image && (
                 <div className="relative h-72 sm:h-80 overflow-hidden bg-[#E8E5DF]">
                   <img src={exp.image} alt={exp.title} referrerPolicy="no-referrer" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out" loading="lazy" />
@@ -80,7 +97,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNaviga
         {/* Smaller cards grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {experiences.slice(2, 6).map((exp) => (
-            <div key={exp.id} onClick={() => onNavigate('experiences')} className="group relative rounded-[1.5rem] overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-xl hover:shadow-[#A6852F]/10 hover:-translate-y-1">
+            <div key={exp.id} onClick={handleExperienceClick} className="group relative rounded-[1.5rem] overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-xl hover:shadow-[#A6852F]/10 hover:-translate-y-1">
               {exp.image && (
                 <div className="relative h-44 overflow-hidden bg-[#E8E5DF]">
                   <img src={exp.image} alt={exp.title} referrerPolicy="no-referrer" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out" loading="lazy" />
@@ -107,7 +124,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNaviga
 
         {/* CTA */}
         <div className="text-center mt-12">
-          <button onClick={() => onNavigate('experiences')} className="inline-flex items-center gap-2.5 bg-[#A6852F] hover:bg-[#8B7226] text-white font-medium text-sm px-8 py-4 rounded-2xl transition-all duration-300 active:scale-95 hover:shadow-lg hover:shadow-[#A6852F]/25 focus:outline-none cursor-pointer">
+          <button onClick={handleRequestExperience} className="inline-flex items-center gap-2.5 bg-[#A6852F] hover:bg-[#8B7226] text-white font-medium text-sm px-8 py-4 rounded-2xl transition-all duration-300 active:scale-95 hover:shadow-lg hover:shadow-[#A6852F]/25 focus:outline-none cursor-pointer">
             Request an Experience<ArrowRight className="w-4 h-4" />
           </button>
         </div>

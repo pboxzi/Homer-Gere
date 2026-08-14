@@ -11,7 +11,6 @@ import { FeaturedExperiences } from './experiences/FeaturedExperiences';
 import { ExperiencesBenefits } from './experiences/ExperiencesBenefits';
 import { ExperiencesTestimonials } from './experiences/ExperiencesTestimonials';
 import { ExperienceDetailModal } from './experiences/ExperienceDetailModal';
-import { RequestExperienceForm } from './experiences/RequestExperienceForm';
 import { ExperiencesFAQ } from './experiences/ExperiencesFAQ';
 import { ExperiencesExplore } from './experiences/ExperiencesExplore';
 import { SEO } from '../components/SEO';
@@ -25,8 +24,6 @@ export default function ExperiencesPage() {
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
   const [showDetailModal, setShowDetailModal] = useState<boolean>(false);
-  const [showRequestForm, setShowRequestForm] = useState<boolean>(false);
-  const [preselectedForRequest, setPreselectedForRequest] = useState<Experience | null>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const handleNavigate = (sectionId: string) => {
@@ -45,22 +42,12 @@ export default function ExperiencesPage() {
   const handleOpenChat = () => { navigate('/chat'); };
   const handleSelectExperience = (experience: Experience) => { setSelectedExperience(experience); setShowDetailModal(true); };
 
-  const handleRequestExperience = (experience?: Experience) => {
+  const handleRequestExperience = () => {
     if (!isAuthenticated) {
       setAuthModalOpen(true);
       return;
     }
-    setShowDetailModal(false);
-    setPreselectedForRequest(experience || null);
-    setShowRequestForm(true);
-  };
-
-  const handleRequestFromHero = () => {
-    if (!isAuthenticated) {
-      setAuthModalOpen(true);
-      return;
-    }
-    setShowRequestForm(true);
+    navigate('/dashboard?section=experiences');
   };
 
   const handleExploreMembership = () => { navigate('/membership'); };
@@ -70,10 +57,10 @@ export default function ExperiencesPage() {
       <SEO title="Experiences" />
       <Navbar activeSection={activeSection} onNavigate={handleNavigate} onOpenChat={handleOpenChat} onOpenSignIn={() => setActiveModal({ type: 'signin' })} />
       <main>
-        <ExperiencesHero onRequestExperience={handleRequestFromHero} />
+        <ExperiencesHero onRequestExperience={handleRequestExperience} />
         <SectionFadeIn><HowItWorks /></SectionFadeIn>
         <SectionFadeIn><ExperiencesBenefits /></SectionFadeIn>
-        <SectionFadeIn><FeaturedExperiences onSelectExperience={handleSelectExperience} onRequestExperience={handleRequestFromHero} /></SectionFadeIn>
+        <SectionFadeIn><FeaturedExperiences onSelectExperience={handleSelectExperience} onRequestExperience={handleRequestExperience} /></SectionFadeIn>
         <SectionFadeIn><ExperiencesTestimonials /></SectionFadeIn>
         <SectionFadeIn><ExperiencesFAQ /></SectionFadeIn>
         <SectionFadeIn><ExperiencesExplore onExploreMembership={handleExploreMembership} onOpenChat={handleOpenChat} /></SectionFadeIn>
@@ -81,7 +68,6 @@ export default function ExperiencesPage() {
       <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />
       <DetailModal modal={activeModal} onClose={() => setActiveModal(null)} onOpenChat={handleOpenChat} />
       <ExperienceDetailModal experience={selectedExperience} onClose={() => { setShowDetailModal(false); setSelectedExperience(null); }} onRequestExperience={handleRequestExperience} />
-      {showRequestForm && <RequestExperienceForm preselectedExperience={preselectedForRequest} onClose={() => { setShowRequestForm(false); setPreselectedForRequest(null); }} />}
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} feature="Request an Experience" />
     </div>
   );

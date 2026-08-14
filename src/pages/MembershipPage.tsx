@@ -43,7 +43,7 @@ export default function MembershipPage() {
 
   const handleBecomeMember = () => {
     if (isAuthenticated) {
-      navigate('/dashboard');
+      navigate('/dashboard?section=membership&tab=plans');
     } else {
       setAuthFeature('Become a Member');
       setAuthModalOpen(true);
@@ -54,7 +54,7 @@ export default function MembershipPage() {
 
   const handleSelectTier = (tierId: string) => {
     if (isAuthenticated) {
-      navigate('/dashboard');
+      navigate('/dashboard?section=membership&tab=plans');
     } else {
       setAuthFeature('Apply for Membership');
       setAuthModalOpen(true);

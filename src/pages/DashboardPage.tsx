@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { DashboardLayout } from './dashboard/DashboardLayout';
 import { DashboardHome } from './dashboard/DashboardHome';
@@ -23,30 +23,53 @@ import DashboardActivity from './dashboard/DashboardActivity';
 import { SEO } from '../components/SEO';
 import { DashboardSection } from '../data/dashboardData';
 
+const VALID_SECTIONS: DashboardSection[] = [
+  'home', 'profile', 'membership', 'membership-requests', 'payments',
+  'membership-card', 'chat', 'messages', 'experiences', 'requests',
+  'downloads', 'activity', 'bookmarks', 'favorites', 'notifications',
+  'settings', 'security', 'help',
+];
+
 export default function DashboardPage() {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState<DashboardSection>('home');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialSection = (searchParams.get('section') as DashboardSection) || 'home';
+  const [activeSection, setActiveSection] = useState<DashboardSection>(
+    VALID_SECTIONS.includes(initialSection) ? initialSection : 'home'
+  );
   const [openRequestForm, setOpenRequestForm] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated) navigate('/login');
+    if (!isAuthenticated) navigate('/auth/sign-in');
   }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
+    const s = searchParams.get('section') as DashboardSection;
+    if (s && VALID_SECTIONS.includes(s) && s !== activeSection) {
+      setActiveSection(s);
+    }
+  }, [searchParams]);
+
+  const handleSectionChange = (section: DashboardSection) => {
+    setActiveSection(section);
+    setSearchParams({ section }, { replace: true });
+  };
 
   const handleOpenChat = () => {
     navigate('/chat');
   };
 
   const handleRequestExperience = () => {
-    setActiveSection('experiences');
+    handleSectionChange('experiences');
     setOpenRequestForm(true);
   };
 
   const renderSection = () => {
     switch (activeSection) {
-      case 'home': return <DashboardHome onOpenChat={handleOpenChat} onRequestExperience={handleRequestExperience} onNavigate={(section) => setActiveSection(section)} />;
+      case 'home': return <DashboardHome onOpenChat={handleOpenChat} onRequestExperience={handleRequestExperience} onNavigate={handleSectionChange} />;
       case 'profile': return <DashboardProfile />;
-      case 'membership': return <DashboardMembership onNavigate={(section) => setActiveSection(section)} />;
+      case 'membership': return <DashboardMembership onNavigate={handleSectionChange} initialTab={(searchParams.get('tab') as 'overview' | 'plans' | 'history') || 'overview'} />;
       case 'membership-requests': return <DashboardMembershipRequests />;
       case 'payments': return <DashboardPayments />;
       case 'membership-card': return <DashboardMembershipCard />;
@@ -62,12 +85,12 @@ export default function DashboardPage() {
       case 'settings': return <DashboardSettings />;
       case 'security': return <DashboardSecurity />;
       case 'help': return <DashboardHelp />;
-      default: return <DashboardHome onOpenChat={handleOpenChat} onRequestExperience={handleRequestExperience} onNavigate={(section) => setActiveSection(section)} />;
+      default: return <DashboardHome onOpenChat={handleOpenChat} onRequestExperience={handleRequestExperience} onNavigate={handleSectionChange} />;
     }
   };
 
   return (
-    <DashboardLayout activeSection={activeSection} onSectionChange={setActiveSection}>
+    <DashboardLayout activeSection={activeSection} onSectionChange={handleSectionChange}>
       <SEO title="Dashboard" />
       {renderSection()}
     </DashboardLayout>

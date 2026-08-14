@@ -12,12 +12,13 @@ import { NewsletterBar } from './components/NewsletterBar';
 import { GallerySection } from './components/GallerySection';
 import { Footer } from './components/Footer';
 import { DetailModal } from './components/DetailModal';
+import { AuthModal } from './components/AuthModal';
 import { SectionFadeIn } from './components/SectionFadeIn';
 import { ScrollToTop } from './components/ScrollToTop';
 import { ModalType, JournalArticle, TimelineMilestone, GalleryItem } from './types';
 import { DashboardProvider } from './context/DashboardContext';
 import { SiteContentProvider } from './context/SiteContentContext';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 const JourneyPage = React.lazy(() => import('./pages/JourneyPage'));
@@ -76,7 +77,10 @@ function RouteLoader({ children }: { children: React.ReactNode }) {
 function HomePage() {
   const [activeSection, setActiveSection] = useState<string>('home');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authFeature, setAuthFeature] = useState<string | undefined>();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   const handleNavigate = (sectionId: string) => {
     if (sectionId === 'journey') { navigate('/journey'); return; }
@@ -97,6 +101,15 @@ function HomePage() {
     navigate('/chat');
   };
 
+  const handleRequestExperience = () => {
+    if (isAuthenticated) {
+      navigate('/dashboard?section=experiences');
+    } else {
+      setAuthFeature('Request an Experience');
+      setAuthModalOpen(true);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
       <Navbar activeSection={activeSection} onNavigate={handleNavigate} onOpenChat={handleOpenChat} onOpenSignIn={() => setActiveModal({ type: 'signin' })} />
@@ -110,7 +123,7 @@ function HomePage() {
 
         <SectionFadeIn><JournalSection onSelectArticle={(article: JournalArticle) => setActiveModal({ type: 'article', article })} onNavigate={handleNavigate} /></SectionFadeIn>
 
-        <SectionFadeIn><ExperiencesSection onNavigate={handleNavigate} /></SectionFadeIn>
+        <SectionFadeIn><ExperiencesSection onNavigate={handleNavigate} onRequestExperience={handleRequestExperience} /></SectionFadeIn>
 
         <SectionFadeIn><MembershipSection onNavigate={handleNavigate} /></SectionFadeIn>
 
@@ -121,6 +134,7 @@ function HomePage() {
 
       <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />
       <DetailModal modal={activeModal} onClose={() => setActiveModal(null)} onOpenChat={handleOpenChat} />
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} feature={authFeature} />
     </div>
   );
 }

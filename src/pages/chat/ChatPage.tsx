@@ -69,7 +69,7 @@ export default function ChatPage() {
       setAuthModalOpen(true);
       return;
     }
-    navigate('/dashboard');
+    navigate('/dashboard?section=messages');
   }, [isAuthenticated, navigate]);
 
   const handleStartBusinessChat = useCallback(() => {
@@ -77,7 +77,7 @@ export default function ChatPage() {
       setAuthModalOpen(true);
       return;
     }
-    navigate('/dashboard');
+    navigate('/dashboard?section=messages');
   }, [isAuthenticated, navigate]);
 
   return (
@@ -103,7 +103,7 @@ export default function ChatPage() {
             <div className="text-center space-y-4 px-4">
               <p className="text-sm text-[#57534E]">Redirecting to your dashboard...</p>
               <button
-                onClick={() => navigate('/dashboard')}
+                onClick={() => navigate('/dashboard?section=messages')}
                 className="inline-flex items-center gap-2 bg-[#1C1917] hover:bg-[#292524] text-white font-medium text-sm px-6 py-3 rounded-2xl transition-all duration-300 cursor-pointer"
               >
                 Go to Dashboard
