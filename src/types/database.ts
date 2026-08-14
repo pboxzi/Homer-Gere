@@ -922,6 +922,17 @@ export interface ExperienceDocument {
   created_at: string;
 }
 
+export interface HelpDeskTicket {
+  id: string;
+  user_id: string;
+  subject: string;
+  message: string;
+  category: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
 // ============================================================
 // DATABASE TYPE (Supabase generated format)
 // ============================================================

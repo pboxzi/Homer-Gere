@@ -51,6 +51,7 @@ import type {
   MemberDownload,
   ActivityLog,
   ExperienceDocument,
+  HelpDeskTicket,
 } from '../types/database';
 
 // ============================================================

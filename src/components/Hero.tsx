@@ -47,11 +47,11 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
               src={heroImage || IMAGES.heroPortraitNew}
               alt="Homer Gere — Cinematic Editorial"
               referrerPolicy="no-referrer"
-              className="w-full h-full object-cover object-center transition-transform duration-[1500ms] ease-out group-hover:scale-[1.02]"
+              className="w-full h-full object-cover object-top transition-transform duration-[1500ms] ease-out group-hover:scale-[1.02]"
             />
             {/* Multi-layer gradient overlay for depth */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#FAF9F7] via-[#FAF9F7]/70 to-transparent sm:via-[#FAF9F7]/40 pointer-events-none" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F7]/80 via-transparent to-[#FAF9F7]/30 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#FAF9F7]/90 via-[#FAF9F7]/30 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F7]/50 via-transparent to-transparent pointer-events-none" />
             {/* Subtle grain texture */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
           </div>
