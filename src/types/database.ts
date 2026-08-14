@@ -155,6 +155,17 @@ export interface JourneyEntry {
   sort_order: number;
   created_at: string;
   updated_at: string;
+  // Phase 3 CMS fields
+  status: string;
+  deleted_at: string | null;
+  deleted_by: string | null;
+  created_by: string | null;
+  seo_title: string | null;
+  seo_description: string | null;
+  seo_keywords: string | null;
+  og_image: string | null;
+  canonical_url: string | null;
+  version: number;
 }
 
 export interface JournalArticle {
@@ -180,6 +191,14 @@ export interface JournalArticle {
   trending: boolean;
   created_at: string;
   updated_at: string;
+  // Phase 3 CMS fields
+  deleted_at: string | null;
+  deleted_by: string | null;
+  created_by: string | null;
+  seo_keywords: string | null;
+  canonical_url: string | null;
+  version: number;
+  scheduled_at: string | null;
 }
 
 export interface FilmographyEntry {
@@ -195,6 +214,16 @@ export interface FilmographyEntry {
   sort_order: number;
   created_at: string;
   updated_at: string;
+  // Phase 3 CMS fields
+  deleted_at: string | null;
+  deleted_by: string | null;
+  created_by: string | null;
+  seo_title: string | null;
+  seo_description: string | null;
+  seo_keywords: string | null;
+  og_image: string | null;
+  canonical_url: string | null;
+  version: number;
 }
 
 export interface Experience {
@@ -215,6 +244,14 @@ export interface Experience {
   sort_order: number;
   created_at: string;
   updated_at: string;
+  // Phase 3 CMS fields
+  status: string;
+  deleted_at: string | null;
+  deleted_by: string | null;
+  created_by: string | null;
+  seo_title: string | null;
+  seo_description: string | null;
+  version: number;
 }
 
 export interface ExperienceRequest {
@@ -257,6 +294,18 @@ export interface Project {
   logo_image: string | null;
   created_at: string;
   updated_at: string;
+  // Phase 3 CMS fields
+  deleted_at: string | null;
+  deleted_by: string | null;
+  created_by: string | null;
+  seo_title: string | null;
+  seo_description: string | null;
+  seo_keywords: string | null;
+  og_image: string | null;
+  canonical_url: string | null;
+  version: number;
+  is_featured: boolean;
+  display_order: number;
 }
 
 export interface ProjectMedia {
@@ -268,6 +317,9 @@ export interface ProjectMedia {
   type: MediaType;
   sort_order: number;
   created_at: string;
+  // Phase 3 CMS fields
+  deleted_at: string | null;
+  created_by: string | null;
 }
 
 export interface ProjectVideo {
@@ -281,6 +333,9 @@ export interface ProjectVideo {
   description: string | null;
   sort_order: number;
   created_at: string;
+  // Phase 3 CMS fields
+  deleted_at: string | null;
+  created_by: string | null;
 }
 
 export interface ProjectRecognition {
@@ -293,6 +348,9 @@ export interface ProjectRecognition {
   year: number | null;
   url: string | null;
   created_at: string;
+  // Phase 3 CMS fields
+  deleted_at: string | null;
+  created_by: string | null;
 }
 
 export interface GalleryCollection {
@@ -304,6 +362,12 @@ export interface GalleryCollection {
   photo_count: number;
   created_at: string;
   updated_at: string;
+  // Phase 3 CMS fields
+  status: string;
+  deleted_at: string | null;
+  deleted_by: string | null;
+  created_by: string | null;
+  sort_order: number;
 }
 
 export interface GalleryPhoto {
@@ -320,6 +384,14 @@ export interface GalleryPhoto {
   sort_order: number;
   created_at: string;
   updated_at: string;
+  // Phase 3 CMS fields
+  status: string;
+  deleted_at: string | null;
+  deleted_by: string | null;
+  created_by: string | null;
+  seo_title: string | null;
+  seo_description: string | null;
+  version: number;
 }
 
 export interface FanConversation {
@@ -384,6 +456,17 @@ export interface MediaVideo {
   sort_order: number;
   created_at: string;
   updated_at: string;
+  // Phase 3 CMS fields
+  status: string;
+  deleted_at: string | null;
+  deleted_by: string | null;
+  created_by: string | null;
+  seo_title: string | null;
+  seo_description: string | null;
+  seo_keywords: string | null;
+  og_image: string | null;
+  canonical_url: string | null;
+  version: number;
 }
 
 export interface MediaPodcast {
@@ -397,6 +480,17 @@ export interface MediaPodcast {
   sort_order: number;
   created_at: string;
   updated_at: string;
+  // Phase 3 CMS fields
+  status: string;
+  deleted_at: string | null;
+  deleted_by: string | null;
+  created_by: string | null;
+  seo_title: string | null;
+  seo_description: string | null;
+  seo_keywords: string | null;
+  og_image: string | null;
+  canonical_url: string | null;
+  version: number;
 }
 
 export interface MediaPress {
@@ -410,6 +504,17 @@ export interface MediaPress {
   sort_order: number;
   created_at: string;
   updated_at: string;
+  // Phase 3 CMS fields
+  status: string;
+  deleted_at: string | null;
+  deleted_by: string | null;
+  created_by: string | null;
+  seo_title: string | null;
+  seo_description: string | null;
+  seo_keywords: string | null;
+  og_image: string | null;
+  canonical_url: string | null;
+  version: number;
 }
 
 export interface Notification {
@@ -458,6 +563,11 @@ export interface Faq {
   published: boolean;
   created_at: string;
   updated_at: string;
+  // Phase 3 CMS fields
+  deleted_at: string | null;
+  deleted_by: string | null;
+  created_by: string | null;
+  version: number;
 }
 
 export interface AuditLog {
@@ -661,22 +771,22 @@ export interface Database {
       };
       journey_entries: {
         Row: JourneyEntry;
-        Insert: Omit<JourneyEntry, 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<JourneyEntry, 'id' | 'created_at' | 'updated_at' | 'version' | 'deleted_at' | 'deleted_by' | 'created_by' | 'seo_title' | 'seo_description' | 'seo_keywords' | 'og_image' | 'canonical_url'>;
         Update: Partial<Omit<JourneyEntry, 'id' | 'created_at' | 'updated_at'>>;
       };
       journal_articles: {
         Row: JournalArticle;
-        Insert: Omit<JournalArticle, 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<JournalArticle, 'id' | 'created_at' | 'updated_at' | 'version' | 'deleted_at' | 'deleted_by' | 'created_by' | 'seo_keywords' | 'canonical_url' | 'scheduled_at'>;
         Update: Partial<Omit<JournalArticle, 'id' | 'created_at' | 'updated_at'>>;
       };
       filmography_entries: {
         Row: FilmographyEntry;
-        Insert: Omit<FilmographyEntry, 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<FilmographyEntry, 'id' | 'created_at' | 'updated_at' | 'version' | 'deleted_at' | 'deleted_by' | 'created_by' | 'seo_title' | 'seo_description' | 'seo_keywords' | 'og_image' | 'canonical_url'>;
         Update: Partial<Omit<FilmographyEntry, 'id' | 'created_at' | 'updated_at'>>;
       };
       experiences: {
         Row: Experience;
-        Insert: Omit<Experience, 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<Experience, 'id' | 'created_at' | 'updated_at' | 'version' | 'deleted_at' | 'deleted_by' | 'created_by' | 'seo_title' | 'seo_description'>;
         Update: Partial<Omit<Experience, 'id' | 'created_at' | 'updated_at'>>;
       };
       experience_requests: {
@@ -686,32 +796,32 @@ export interface Database {
       };
       projects: {
         Row: Project;
-        Insert: Omit<Project, 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<Project, 'id' | 'created_at' | 'updated_at' | 'version' | 'deleted_at' | 'deleted_by' | 'created_by' | 'seo_title' | 'seo_description' | 'seo_keywords' | 'og_image' | 'canonical_url'>;
         Update: Partial<Omit<Project, 'id' | 'created_at' | 'updated_at'>>;
       };
       project_media: {
         Row: ProjectMedia;
-        Insert: Omit<ProjectMedia, 'id' | 'created_at'>;
+        Insert: Omit<ProjectMedia, 'id' | 'created_at' | 'deleted_at' | 'created_by'>;
         Update: Partial<Omit<ProjectMedia, 'id' | 'created_at'>>;
       };
       project_videos: {
         Row: ProjectVideo;
-        Insert: Omit<ProjectVideo, 'id' | 'created_at'>;
+        Insert: Omit<ProjectVideo, 'id' | 'created_at' | 'deleted_at' | 'created_by'>;
         Update: Partial<Omit<ProjectVideo, 'id' | 'created_at'>>;
       };
       project_recognition: {
         Row: ProjectRecognition;
-        Insert: Omit<ProjectRecognition, 'id' | 'created_at'>;
+        Insert: Omit<ProjectRecognition, 'id' | 'created_at' | 'deleted_at' | 'created_by'>;
         Update: Partial<Omit<ProjectRecognition, 'id' | 'created_at'>>;
       };
       gallery_collections: {
         Row: GalleryCollection;
-        Insert: Omit<GalleryCollection, 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<GalleryCollection, 'id' | 'created_at' | 'updated_at' | 'deleted_at' | 'deleted_by' | 'created_by'>;
         Update: Partial<Omit<GalleryCollection, 'id' | 'created_at' | 'updated_at'>>;
       };
       gallery_photos: {
         Row: GalleryPhoto;
-        Insert: Omit<GalleryPhoto, 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<GalleryPhoto, 'id' | 'created_at' | 'updated_at' | 'version' | 'deleted_at' | 'deleted_by' | 'created_by' | 'seo_title' | 'seo_description'>;
         Update: Partial<Omit<GalleryPhoto, 'id' | 'created_at' | 'updated_at'>>;
       };
       fan_conversations: {
@@ -736,17 +846,17 @@ export interface Database {
       };
       media_videos: {
         Row: MediaVideo;
-        Insert: Omit<MediaVideo, 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<MediaVideo, 'id' | 'created_at' | 'updated_at' | 'version' | 'deleted_at' | 'deleted_by' | 'created_by' | 'seo_title' | 'seo_description' | 'seo_keywords' | 'og_image' | 'canonical_url'>;
         Update: Partial<Omit<MediaVideo, 'id' | 'created_at' | 'updated_at'>>;
       };
       media_podcasts: {
         Row: MediaPodcast;
-        Insert: Omit<MediaPodcast, 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<MediaPodcast, 'id' | 'created_at' | 'updated_at' | 'version' | 'deleted_at' | 'deleted_by' | 'created_by' | 'seo_title' | 'seo_description' | 'seo_keywords' | 'og_image' | 'canonical_url'>;
         Update: Partial<Omit<MediaPodcast, 'id' | 'created_at' | 'updated_at'>>;
       };
       media_press: {
         Row: MediaPress;
-        Insert: Omit<MediaPress, 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<MediaPress, 'id' | 'created_at' | 'updated_at' | 'version' | 'deleted_at' | 'deleted_by' | 'created_by' | 'seo_title' | 'seo_description' | 'seo_keywords' | 'og_image' | 'canonical_url'>;
         Update: Partial<Omit<MediaPress, 'id' | 'created_at' | 'updated_at'>>;
       };
       notifications: {
@@ -766,7 +876,7 @@ export interface Database {
       };
       faqs: {
         Row: Faq;
-        Insert: Omit<Faq, 'id' | 'created_at' | 'updated_at'>;
+        Insert: Omit<Faq, 'id' | 'created_at' | 'updated_at' | 'version' | 'deleted_at' | 'deleted_by' | 'created_by'>;
         Update: Partial<Omit<Faq, 'id' | 'created_at' | 'updated_at'>>;
       };
       audit_logs: {

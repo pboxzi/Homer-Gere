@@ -400,6 +400,7 @@ export const journeyRepository = {
     const { data, error } = await client
       .from('journey_entries')
       .select('*')
+      .is('deleted_at', null)
       .order('sort_order', { ascending: true });
     if (error) throw error;
     return data || [];
@@ -416,11 +417,11 @@ export const journeyRepository = {
     return data;
   },
 
-  async create(entry: Omit<JourneyEntry, 'id' | 'created_at' | 'updated_at'>): Promise<JourneyEntry> {
+  async create(entry: { title: string; description: string; year: number; sort_order?: number; highlight?: boolean; details?: string | null; icon_name?: string | null; image_url?: string | null; status?: string; slug?: string }): Promise<JourneyEntry> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('journey_entries')
-      .insert(entry)
+      .insert({ ...entry, version: 1 })
       .select()
       .single();
     if (error) throw error;
@@ -429,9 +430,11 @@ export const journeyRepository = {
 
   async update(id: string, updates: Partial<JourneyEntry>): Promise<JourneyEntry> {
     const client = getSupabaseClient();
+    const current = await this.getById(id);
+    const newVersion = (current?.version || 1) + 1;
     const { data, error } = await client
       .from('journey_entries')
-      .update(updates)
+      .update({ ...updates, version: newVersion })
       .eq('id', id)
       .select()
       .single();
@@ -447,6 +450,58 @@ export const journeyRepository = {
       .eq('id', id);
     if (error) throw error;
   },
+
+  async softDelete(id: string, deletedBy?: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('journey_entries')
+      .update({ deleted_at: new Date().toISOString(), deleted_by: deletedBy || null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async restore(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('journey_entries')
+      .update({ deleted_at: null, deleted_by: null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async getDeleted(): Promise<JourneyEntry[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('journey_entries')
+      .select('*')
+      .not('deleted_at', 'is', null)
+      .order('deleted_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async search(query: string): Promise<JourneyEntry[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('journey_entries')
+      .select('*')
+      .is('deleted_at', null)
+      .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
+      .order('sort_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async reorder(items: { id: string; sort_order: number }[]): Promise<void> {
+    const client = getSupabaseClient();
+    const updates = items.map(({ id, sort_order }) =>
+      client.from('journey_entries').update({ sort_order }).eq('id', id)
+    );
+    const results = await Promise.all(updates);
+    for (const { error } of results) {
+      if (error) throw error;
+    }
+  },
 };
 
 // ============================================================
@@ -460,6 +515,7 @@ export const journalRepository = {
       .from('journal_articles')
       .select('*')
       .eq('status', 'published')
+      .is('deleted_at', null)
       .order('published_date', { ascending: false });
     if (error) throw error;
     return data || [];
@@ -483,6 +539,7 @@ export const journalRepository = {
       .select('*')
       .eq('status', 'published')
       .eq('featured', true)
+      .is('deleted_at', null)
       .order('published_date', { ascending: false });
     if (error) throw error;
     return data || [];
@@ -495,6 +552,7 @@ export const journalRepository = {
       .select('*')
       .eq('status', 'published')
       .eq('category', category)
+      .is('deleted_at', null)
       .order('published_date', { ascending: false });
     if (error) throw error;
     return data || [];
@@ -505,16 +563,17 @@ export const journalRepository = {
     const { data, error } = await client
       .from('journal_articles')
       .select('*')
+      .is('deleted_at', null)
       .order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
   },
 
-  async create(article: Omit<JournalArticle, 'id' | 'created_at' | 'updated_at'>): Promise<JournalArticle> {
+  async create(article: { title: string; slug: string; excerpt?: string | null; content: string; author?: string; category: string; tags?: string[]; status?: string; published_date?: string | null; read_time?: string | null; views?: number; featured?: boolean; trending?: boolean; cover_image?: string | null; og_image?: string | null; seo_title?: string | null; seo_description?: string | null; author_image?: string | null; related_slugs?: string[] }): Promise<JournalArticle> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('journal_articles')
-      .insert(article)
+      .insert({ ...article, version: 1 })
       .select()
       .single();
     if (error) throw error;
@@ -523,9 +582,11 @@ export const journalRepository = {
 
   async update(id: string, updates: Partial<JournalArticle>): Promise<JournalArticle> {
     const client = getSupabaseClient();
+    const current = await this.getById(id);
+    const newVersion = (current?.version || 1) + 1;
     const { data, error } = await client
       .from('journal_articles')
-      .update(updates)
+      .update({ ...updates, version: newVersion })
       .eq('id', id)
       .select()
       .single();
@@ -537,7 +598,6 @@ export const journalRepository = {
     const client = getSupabaseClient();
     const { error } = await client.rpc('increment_views' as never, { article_id: id } as never);
     if (error) {
-      // Fallback: manual increment
       const article = await this.getById(id);
       if (article) {
         await this.update(id, { views: article.views + 1 });
@@ -564,6 +624,47 @@ export const journalRepository = {
       .eq('id', id);
     if (error) throw error;
   },
+
+  async softDelete(id: string, deletedBy?: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('journal_articles')
+      .update({ deleted_at: new Date().toISOString(), deleted_by: deletedBy || null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async restore(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('journal_articles')
+      .update({ deleted_at: null, deleted_by: null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async getDeleted(): Promise<JournalArticle[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('journal_articles')
+      .select('*')
+      .not('deleted_at', 'is', null)
+      .order('deleted_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async search(query: string): Promise<JournalArticle[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('journal_articles')
+      .select('*')
+      .is('deleted_at', null)
+      .or(`title.ilike.%${query}%,content.ilike.%${query}%,excerpt.ilike.%${query}%`)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
 };
 
 // ============================================================
@@ -576,6 +677,7 @@ export const filmographyRepository = {
     const { data, error } = await client
       .from('filmography_entries')
       .select('*')
+      .is('deleted_at', null)
       .order('sort_order', { ascending: true });
     if (error) throw error;
     return data || [];
@@ -592,11 +694,11 @@ export const filmographyRepository = {
     return data;
   },
 
-  async create(entry: Omit<FilmographyEntry, 'id' | 'created_at' | 'updated_at'>): Promise<FilmographyEntry> {
+  async create(entry: { title: string; role: string; year: number; type?: string | null; description?: string | null; status?: string | null; image?: string | null; slug?: string | null; sort_order?: number }): Promise<FilmographyEntry> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('filmography_entries')
-      .insert(entry)
+      .insert({ ...entry, version: 1 })
       .select()
       .single();
     if (error) throw error;
@@ -605,9 +707,11 @@ export const filmographyRepository = {
 
   async update(id: string, updates: Partial<FilmographyEntry>): Promise<FilmographyEntry> {
     const client = getSupabaseClient();
+    const current = await this.getById(id);
+    const newVersion = (current?.version || 1) + 1;
     const { data, error } = await client
       .from('filmography_entries')
-      .update(updates)
+      .update({ ...updates, version: newVersion })
       .eq('id', id)
       .select()
       .single();
@@ -622,6 +726,58 @@ export const filmographyRepository = {
       .delete()
       .eq('id', id);
     if (error) throw error;
+  },
+
+  async softDelete(id: string, deletedBy?: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('filmography_entries')
+      .update({ deleted_at: new Date().toISOString(), deleted_by: deletedBy || null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async restore(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('filmography_entries')
+      .update({ deleted_at: null, deleted_by: null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async getDeleted(): Promise<FilmographyEntry[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('filmography_entries')
+      .select('*')
+      .not('deleted_at', 'is', null)
+      .order('deleted_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async search(query: string): Promise<FilmographyEntry[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('filmography_entries')
+      .select('*')
+      .is('deleted_at', null)
+      .or(`title.ilike.%${query}%,role.ilike.%${query}%`)
+      .order('sort_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async reorder(items: { id: string; sort_order: number }[]): Promise<void> {
+    const client = getSupabaseClient();
+    const updates = items.map(({ id, sort_order }) =>
+      client.from('filmography_entries').update({ sort_order }).eq('id', id)
+    );
+    const results = await Promise.all(updates);
+    for (const { error } of results) {
+      if (error) throw error;
+    }
   },
 };
 
@@ -764,7 +920,8 @@ export const projectsRepository = {
     const { data, error } = await client
       .from('projects')
       .select('*')
-      .order('year', { ascending: false });
+      .is('deleted_at', null)
+      .order('display_order', { ascending: true });
     if (error) throw error;
     return data || [];
   },
@@ -802,9 +959,9 @@ export const projectsRepository = {
     if (!project) return null;
 
     const [mediaResult, videosResult, recognitionResult] = await Promise.all([
-      client.from('project_media').select('*').eq('project_id', project.id).order('sort_order'),
-      client.from('project_videos').select('*').eq('project_id', project.id).order('sort_order'),
-      client.from('project_recognition').select('*').eq('project_id', project.id),
+      client.from('project_media').select('*').eq('project_id', project.id).is('deleted_at', null).order('sort_order'),
+      client.from('project_videos').select('*').eq('project_id', project.id).is('deleted_at', null).order('sort_order'),
+      client.from('project_recognition').select('*').eq('project_id', project.id).is('deleted_at', null),
     ]);
 
     return {
@@ -815,11 +972,11 @@ export const projectsRepository = {
     };
   },
 
-  async create(project: Omit<Project, 'id' | 'created_at' | 'updated_at'>): Promise<Project> {
+  async create(project: Omit<Project, 'id' | 'created_at' | 'updated_at' | 'version'>): Promise<Project> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('projects')
-      .insert(project)
+      .insert({ ...project, version: 1 })
       .select()
       .single();
     if (error) throw error;
@@ -828,9 +985,11 @@ export const projectsRepository = {
 
   async update(id: string, updates: Partial<Project>): Promise<Project> {
     const client = getSupabaseClient();
+    const current = await this.getById(id);
+    const newVersion = (current?.version || 1) + 1;
     const { data, error } = await client
       .from('projects')
-      .update(updates)
+      .update({ ...updates, version: newVersion })
       .eq('id', id)
       .select()
       .single();
@@ -845,6 +1004,58 @@ export const projectsRepository = {
       .delete()
       .eq('id', id);
     if (error) throw error;
+  },
+
+  async softDelete(id: string, deletedBy?: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('projects')
+      .update({ deleted_at: new Date().toISOString(), deleted_by: deletedBy || null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async restore(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('projects')
+      .update({ deleted_at: null, deleted_by: null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async getDeleted(): Promise<Project[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('projects')
+      .select('*')
+      .not('deleted_at', 'is', null)
+      .order('deleted_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async search(query: string): Promise<Project[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('projects')
+      .select('*')
+      .is('deleted_at', null)
+      .or(`title.ilike.%${query}%,synopsis.ilike.%${query}%,director.ilike.%${query}%`)
+      .order('display_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async reorder(items: { id: string; display_order: number }[]): Promise<void> {
+    const client = getSupabaseClient();
+    const updates = items.map(({ id, display_order }) =>
+      client.from('projects').update({ display_order }).eq('id', id)
+    );
+    const results = await Promise.all(updates);
+    for (const { error } of results) {
+      if (error) throw error;
+    }
   },
 };
 
@@ -895,6 +1106,7 @@ export const galleryRepository = {
     const { data, error } = await client
       .from('gallery_photos')
       .select('*')
+      .is('deleted_at', null)
       .order('sort_order', { ascending: true });
     if (error) throw error;
     return data || [];
@@ -906,6 +1118,7 @@ export const galleryRepository = {
       .from('gallery_photos')
       .select('*')
       .eq('featured', true)
+      .is('deleted_at', null)
       .order('sort_order', { ascending: true });
     if (error) throw error;
     return data || [];
@@ -917,6 +1130,7 @@ export const galleryRepository = {
       .from('gallery_photos')
       .select('*')
       .eq('category', category)
+      .is('deleted_at', null)
       .order('sort_order', { ascending: true });
     if (error) throw error;
     return data || [];
@@ -927,16 +1141,49 @@ export const galleryRepository = {
     const { data, error } = await client
       .from('gallery_collections')
       .select('*')
+      .is('deleted_at', null)
       .order('date', { ascending: false });
     if (error) throw error;
     return data || [];
   },
 
-  async createPhoto(photo: Omit<GalleryPhoto, 'id' | 'created_at' | 'updated_at'>): Promise<GalleryPhoto> {
+  async createCollection(collection: Omit<GalleryCollection, 'id' | 'created_at' | 'updated_at'>): Promise<GalleryCollection> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('gallery_collections')
+      .insert(collection)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async updateCollection(id: string, updates: Partial<GalleryCollection>): Promise<GalleryCollection> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('gallery_collections')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async deleteCollection(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('gallery_collections')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async createPhoto(photo: { src: string; alt: string; category: string; caption?: string | null; date?: string | null; event?: string | null; photographer?: string | null; featured?: boolean; collection_id?: string | null; sort_order?: number }): Promise<GalleryPhoto> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('gallery_photos')
-      .insert(photo)
+      .insert({ ...photo, version: 1 })
       .select()
       .single();
     if (error) throw error;
@@ -945,9 +1192,11 @@ export const galleryRepository = {
 
   async updatePhoto(id: string, updates: Partial<GalleryPhoto>): Promise<GalleryPhoto> {
     const client = getSupabaseClient();
+    const current = await client.from('gallery_photos').select('version').eq('id', id).maybeSingle();
+    const newVersion = ((current.data?.version as number) || 1) + 1;
     const { data, error } = await client
       .from('gallery_photos')
-      .update(updates)
+      .update({ ...updates, version: newVersion })
       .eq('id', id)
       .select()
       .single();
@@ -962,6 +1211,58 @@ export const galleryRepository = {
       .delete()
       .eq('id', id);
     if (error) throw error;
+  },
+
+  async softDeletePhoto(id: string, deletedBy?: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('gallery_photos')
+      .update({ deleted_at: new Date().toISOString(), deleted_by: deletedBy || null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async restorePhoto(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('gallery_photos')
+      .update({ deleted_at: null, deleted_by: null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async getDeletedPhotos(): Promise<GalleryPhoto[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('gallery_photos')
+      .select('*')
+      .not('deleted_at', 'is', null)
+      .order('deleted_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async searchPhotos(query: string): Promise<GalleryPhoto[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('gallery_photos')
+      .select('*')
+      .is('deleted_at', null)
+      .or(`alt.ilike.%${query}%,caption.ilike.%${query}%,event.ilike.%${query}%`)
+      .order('sort_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async reorderPhotos(items: { id: string; sort_order: number }[]): Promise<void> {
+    const client = getSupabaseClient();
+    const updates = items.map(({ id, sort_order }) =>
+      client.from('gallery_photos').update({ sort_order }).eq('id', id)
+    );
+    const results = await Promise.all(updates);
+    for (const { error } of results) {
+      if (error) throw error;
+    }
   },
 };
 
@@ -1108,6 +1409,7 @@ export const mediaRepository = {
     const { data, error } = await client
       .from('media_videos')
       .select('*')
+      .is('deleted_at', null)
       .order('sort_order', { ascending: true });
     if (error) throw error;
     return data || [];
@@ -1119,6 +1421,7 @@ export const mediaRepository = {
       .from('media_videos')
       .select('*')
       .eq('featured', true)
+      .is('deleted_at', null)
       .order('sort_order', { ascending: true });
     if (error) throw error;
     return data || [];
@@ -1129,6 +1432,7 @@ export const mediaRepository = {
     const { data, error } = await client
       .from('media_podcasts')
       .select('*')
+      .is('deleted_at', null)
       .order('sort_order', { ascending: true });
     if (error) throw error;
     return data || [];
@@ -1139,16 +1443,17 @@ export const mediaRepository = {
     const { data, error } = await client
       .from('media_press')
       .select('*')
+      .is('deleted_at', null)
       .order('sort_order', { ascending: true });
     if (error) throw error;
     return data || [];
   },
 
-  async createVideo(video: Omit<MediaVideo, 'id' | 'created_at' | 'updated_at'>): Promise<MediaVideo> {
+  async createVideo(video: { title: string; url: string; description?: string | null; thumbnail?: string | null; source?: string | null; category?: string | null; duration?: string | null; date?: string | null; featured?: boolean; sort_order?: number }): Promise<MediaVideo> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('media_videos')
-      .insert(video)
+      .insert({ ...video, version: 1 })
       .select()
       .single();
     if (error) throw error;
@@ -1157,9 +1462,11 @@ export const mediaRepository = {
 
   async updateVideo(id: string, updates: Partial<MediaVideo>): Promise<MediaVideo> {
     const client = getSupabaseClient();
+    const current = await client.from('media_videos').select('version').eq('id', id).maybeSingle();
+    const newVersion = ((current.data?.version as number) || 1) + 1;
     const { data, error } = await client
       .from('media_videos')
-      .update(updates)
+      .update({ ...updates, version: newVersion })
       .eq('id', id)
       .select()
       .single();
@@ -1176,11 +1483,63 @@ export const mediaRepository = {
     if (error) throw error;
   },
 
-  async createPodcast(podcast: Omit<MediaPodcast, 'id' | 'created_at' | 'updated_at'>): Promise<MediaPodcast> {
+  async softDeleteVideo(id: string, deletedBy?: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('media_videos')
+      .update({ deleted_at: new Date().toISOString(), deleted_by: deletedBy || null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async restoreVideo(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('media_videos')
+      .update({ deleted_at: null, deleted_by: null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async getDeletedVideos(): Promise<MediaVideo[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('media_videos')
+      .select('*')
+      .not('deleted_at', 'is', null)
+      .order('deleted_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async searchVideos(query: string): Promise<MediaVideo[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('media_videos')
+      .select('*')
+      .is('deleted_at', null)
+      .or(`title.ilike.%${query}%,description.ilike.%${query}%`)
+      .order('sort_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async reorderVideos(items: { id: string; sort_order: number }[]): Promise<void> {
+    const client = getSupabaseClient();
+    const updates = items.map(({ id, sort_order }) =>
+      client.from('media_videos').update({ sort_order }).eq('id', id)
+    );
+    const results = await Promise.all(updates);
+    for (const { error } of results) {
+      if (error) throw error;
+    }
+  },
+
+  async createPodcast(podcast: { episode_title: string; show_name: string; description?: string | null; cover_art?: string | null; date?: string | null; url: string; sort_order?: number }): Promise<MediaPodcast> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('media_podcasts')
-      .insert(podcast)
+      .insert({ ...podcast, version: 1 })
       .select()
       .single();
     if (error) throw error;
@@ -1189,9 +1548,11 @@ export const mediaRepository = {
 
   async updatePodcast(id: string, updates: Partial<MediaPodcast>): Promise<MediaPodcast> {
     const client = getSupabaseClient();
+    const current = await client.from('media_podcasts').select('version').eq('id', id).maybeSingle();
+    const newVersion = ((current.data?.version as number) || 1) + 1;
     const { data, error } = await client
       .from('media_podcasts')
-      .update(updates)
+      .update({ ...updates, version: newVersion })
       .eq('id', id)
       .select()
       .single();
@@ -1208,11 +1569,63 @@ export const mediaRepository = {
     if (error) throw error;
   },
 
-  async createPress(press: Omit<MediaPress, 'id' | 'created_at' | 'updated_at'>): Promise<MediaPress> {
+  async softDeletePodcast(id: string, deletedBy?: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('media_podcasts')
+      .update({ deleted_at: new Date().toISOString(), deleted_by: deletedBy || null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async restorePodcast(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('media_podcasts')
+      .update({ deleted_at: null, deleted_by: null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async getDeletedPodcasts(): Promise<MediaPodcast[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('media_podcasts')
+      .select('*')
+      .not('deleted_at', 'is', null)
+      .order('deleted_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async searchPodcasts(query: string): Promise<MediaPodcast[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('media_podcasts')
+      .select('*')
+      .is('deleted_at', null)
+      .or(`episode_title.ilike.%${query}%,show_name.ilike.%${query}%`)
+      .order('sort_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async reorderPodcasts(items: { id: string; sort_order: number }[]): Promise<void> {
+    const client = getSupabaseClient();
+    const updates = items.map(({ id, sort_order }) =>
+      client.from('media_podcasts').update({ sort_order }).eq('id', id)
+    );
+    const results = await Promise.all(updates);
+    for (const { error } of results) {
+      if (error) throw error;
+    }
+  },
+
+  async createPress(press: { headline: string; publisher: string; date?: string | null; summary?: string | null; url: string; image?: string | null; sort_order?: number }): Promise<MediaPress> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('media_press')
-      .insert(press)
+      .insert({ ...press, version: 1 })
       .select()
       .single();
     if (error) throw error;
@@ -1221,9 +1634,11 @@ export const mediaRepository = {
 
   async updatePress(id: string, updates: Partial<MediaPress>): Promise<MediaPress> {
     const client = getSupabaseClient();
+    const current = await client.from('media_press').select('version').eq('id', id).maybeSingle();
+    const newVersion = ((current.data?.version as number) || 1) + 1;
     const { data, error } = await client
       .from('media_press')
-      .update(updates)
+      .update({ ...updates, version: newVersion })
       .eq('id', id)
       .select()
       .single();
@@ -1238,6 +1653,58 @@ export const mediaRepository = {
       .delete()
       .eq('id', id);
     if (error) throw error;
+  },
+
+  async softDeletePress(id: string, deletedBy?: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('media_press')
+      .update({ deleted_at: new Date().toISOString(), deleted_by: deletedBy || null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async restorePress(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('media_press')
+      .update({ deleted_at: null, deleted_by: null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async getDeletedPress(): Promise<MediaPress[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('media_press')
+      .select('*')
+      .not('deleted_at', 'is', null)
+      .order('deleted_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async searchPress(query: string): Promise<MediaPress[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('media_press')
+      .select('*')
+      .is('deleted_at', null)
+      .or(`headline.ilike.%${query}%,publisher.ilike.%${query}%`)
+      .order('sort_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async reorderPress(items: { id: string; sort_order: number }[]): Promise<void> {
+    const client = getSupabaseClient();
+    const updates = items.map(({ id, sort_order }) =>
+      client.from('media_press').update({ sort_order }).eq('id', id)
+    );
+    const results = await Promise.all(updates);
+    for (const { error } of results) {
+      if (error) throw error;
+    }
   },
 };
 
@@ -1451,16 +1918,17 @@ export const faqRepository = {
     const { data, error } = await client
       .from('faqs')
       .select('*')
+      .is('deleted_at', null)
       .order('sort_order', { ascending: true });
     if (error) throw error;
     return data || [];
   },
 
-  async create(faq: Omit<Faq, 'id' | 'created_at' | 'updated_at'>): Promise<Faq> {
+  async create(faq: { question: string; answer: string; category: string; sort_order?: number; published?: boolean }): Promise<Faq> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('faqs')
-      .insert(faq)
+      .insert({ ...faq, version: 1 })
       .select()
       .single();
     if (error) throw error;
@@ -1469,9 +1937,11 @@ export const faqRepository = {
 
   async update(id: string, updates: Partial<Faq>): Promise<Faq> {
     const client = getSupabaseClient();
+    const current = await client.from('faqs').select('version').eq('id', id).maybeSingle();
+    const newVersion = ((current.data?.version as number) || 1) + 1;
     const { data, error } = await client
       .from('faqs')
-      .update({ ...updates, updated_at: new Date().toISOString() })
+      .update({ ...updates, version: newVersion, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();
@@ -1486,6 +1956,47 @@ export const faqRepository = {
       .delete()
       .eq('id', id);
     if (error) throw error;
+  },
+
+  async softDelete(id: string, deletedBy?: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('faqs')
+      .update({ deleted_at: new Date().toISOString(), deleted_by: deletedBy || null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async restore(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('faqs')
+      .update({ deleted_at: null, deleted_by: null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async getDeleted(): Promise<Faq[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('faqs')
+      .select('*')
+      .not('deleted_at', 'is', null)
+      .order('deleted_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async search(query: string): Promise<Faq[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('faqs')
+      .select('*')
+      .is('deleted_at', null)
+      .or(`question.ilike.%${query}%,answer.ilike.%${query}%,category.ilike.%${query}%`)
+      .order('sort_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
   },
 
   async reorder(items: { id: string; sort_order: number }[]): Promise<void> {
