@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
-import { Shield, Monitor, Smartphone, Laptop, LogOut, Lock, Eye, EyeOff, Check } from 'lucide-react';
+import { Shield, Monitor, Smartphone, Laptop, LogOut, Lock, Eye, EyeOff, Check, Clock, AlertTriangle } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
+import { supabase } from '../../lib/supabase';
 
 export const DashboardSecurity: React.FC = () => {
-  const { sessions, revokeSession, revokeAllSessions, changePassword, enable2FA, disable2FA, twoFactorEnabled } = useDashboard();
+  const { changePassword } = useDashboard();
   const [showChangePw, setShowChangePw] = useState(false);
   const [currentPw, setCurrentPw] = useState('');
   const [newPw, setNewPw] = useState('');
@@ -14,10 +15,40 @@ export const DashboardSecurity: React.FC = () => {
   const [pwSaved, setPwSaved] = useState(false);
   const [pwError, setPwError] = useState('');
 
-  const getDeviceIcon = (device: string) => {
-    if (device.includes('iPhone') || device.includes('Android')) return Smartphone;
-    if (device.includes('iPad') || device.includes('Tablet')) return Laptop;
+  // Login history from audit logs
+  const [loginHistory, setLoginHistory] = useState<Array<{ id: string; ip_address: string | null; user_agent: string | null; created_at: string }>>([]);
+  const [loadingHistory, setLoadingHistory] = useState(true);
+
+  const loadLoginHistory = useCallback(async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase
+        .from('audit_logs')
+        .select('id, ip_address, user_agent, created_at')
+        .eq('user_id', user.id)
+        .eq('action', 'login')
+        .order('created_at', { ascending: false })
+        .limit(10);
+      setLoginHistory(data || []);
+    } catch { /* silent */ }
+    setLoadingHistory(false);
+  }, []);
+
+  useEffect(() => { loadLoginHistory(); }, [loadLoginHistory]);
+
+  const getDeviceIcon = (ua: string | null) => {
+    if (!ua) return Monitor;
+    if (ua.includes('iPhone') || ua.includes('Android')) return Smartphone;
+    if (ua.includes('iPad') || ua.includes('Tablet')) return Laptop;
     return Monitor;
+  };
+
+  const parseUA = (ua: string | null) => {
+    if (!ua) return { device: 'Unknown Device', browser: 'Unknown Browser' };
+    const browser = ua.includes('Chrome') ? 'Chrome' : ua.includes('Firefox') ? 'Firefox' : ua.includes('Safari') ? 'Safari' : 'Other';
+    const device = ua.includes('iPhone') ? 'iPhone' : ua.includes('Android') ? 'Android' : ua.includes('iPad') ? 'iPad' : ua.includes('Mac') ? 'Mac' : ua.includes('Windows') ? 'Windows' : 'Unknown';
+    return { device, browser };
   };
 
   const handlePasswordChange = async () => {
@@ -41,11 +72,11 @@ export const DashboardSecurity: React.FC = () => {
     <div className="space-y-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
         <h1 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight">Security</h1>
-        <p className="text-sm text-[#57534E] mt-1">Manage your account security and active sessions.</p>
+        <p className="text-sm text-[#57534E] mt-1">Manage your account security and view login history.</p>
       </motion.div>
 
       {/* Change Password */}
-      <motion.div className="rounded-2xl border border-[#A6852F]/20 bg-white p-5 shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10 transition-shadow duration-500" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+      <motion.div className="rounded-2xl border border-[#A6852F]/20 bg-white p-5 shadow-sm" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-medium text-[#1C1917] flex items-center gap-2"><Lock className="w-4 h-4 text-[#57534E]" /> Change Password</h3>
           <button onClick={() => { setShowChangePw(!showChangePw); setPwError(''); }} className="text-xs text-[#A6852F] font-medium hover:text-[#8B6F1F] transition-colors cursor-pointer">{showChangePw ? 'Cancel' : 'Change'}</button>
@@ -68,48 +99,52 @@ export const DashboardSecurity: React.FC = () => {
         )}
       </motion.div>
 
-      {/* Two-Factor */}
-      <motion.div className="rounded-2xl border border-[#A6852F]/20 bg-white p-5 shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10 transition-shadow duration-500" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+      {/* Email Verification */}
+      <motion.div className="rounded-2xl border border-[#A6852F]/20 bg-white p-5 shadow-sm" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-medium text-[#1C1917] flex items-center gap-2"><Shield className="w-4 h-4 text-[#57534E]" /> Two-Factor Authentication</h3>
-            <p className="text-xs text-[#57534E] mt-1">{twoFactorEnabled ? 'Two-factor authentication is enabled.' : 'Add an extra layer of security to your account.'}</p>
+            <p className="text-xs text-[#57534E] mt-1">Add an extra layer of security to your account.</p>
           </div>
-          <button onClick={twoFactorEnabled ? disable2FA : enable2FA} className={`text-xs font-medium px-3 py-1.5 rounded-xl transition-colors cursor-pointer ${twoFactorEnabled ? 'bg-[#16A34A]/10 text-[#16A34A] hover:bg-[#16A34A]/20' : 'bg-[#A6852F]/10 text-[#A6852F] hover:bg-[#A6852F]/20'}`}>
-            {twoFactorEnabled ? 'Disable' : 'Enable'}
+          <button className="text-xs font-medium px-3 py-1.5 rounded-xl bg-[#A6852F]/10 text-[#A6852F] hover:bg-[#A6852F]/20 transition-colors cursor-pointer">
+            Enable
           </button>
         </div>
       </motion.div>
 
-      {/* Active Sessions */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
+      {/* Login History */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-medium text-[#1C1917]">Active Sessions</h3>
-          <button onClick={revokeAllSessions} className="text-xs text-[#DC2626] font-medium hover:text-[#B91C1C] transition-colors cursor-pointer flex items-center gap-1">
-            <LogOut className="w-3 h-3" /> Sign out all devices
-          </button>
+          <h3 className="text-sm font-medium text-[#1C1917] flex items-center gap-2"><Clock className="w-4 h-4 text-[#57534E]" /> Login History</h3>
+          <button onClick={loadLoginHistory} className="text-xs text-[#A6852F] font-medium hover:text-[#8B6F1F] transition-colors cursor-pointer">Refresh</button>
         </div>
-        <div className="space-y-3">
-          {sessions.map((s, i) => {
-            const DeviceIcon = getDeviceIcon(s.device);
-            return (
-              <motion.div key={s.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/20 bg-white shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10 transition-all duration-500" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.35 + i * 0.05 }}>
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${s.current ? 'bg-[#16A34A]/10 text-[#16A34A]' : 'bg-[#F3F1ED] text-[#57534E]'}`}><DeviceIcon className="w-5 h-5" /></div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-[#1C1917]">{s.device}</p>
-                    {s.current && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#16A34A]/10 text-[#16A34A] font-medium">Current</span>}
+        {loadingHistory ? (
+          <div className="text-center py-8 text-[#57534E] text-sm">Loading...</div>
+        ) : loginHistory.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/30 p-8 text-center">
+            <Clock className="w-6 h-6 text-[#57534E]/30 mx-auto mb-2" />
+            <p className="text-sm text-[#57534E]">No login history yet</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {loginHistory.map((login, i) => {
+              const ua = parseUA(login.user_agent);
+              const DeviceIcon = getDeviceIcon(login.user_agent);
+              return (
+                <motion.div key={login.id} className="flex items-center gap-3 p-3 rounded-xl border border-[#A6852F]/10 bg-white hover:border-[#A6852F]/25 transition-all shadow-sm" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: i * 0.03 }}>
+                  <div className="w-9 h-9 rounded-lg bg-[#16A34A]/10 flex items-center justify-center text-[#16A34A]">
+                    <DeviceIcon className="w-4 h-4" />
                   </div>
-                  <p className="text-xs text-[#57534E]">{s.browser} — {s.location}</p>
-                  <p className="text-[10px] text-[#57534E]/60 mt-0.5">Last active: {s.lastActive}</p>
-                </div>
-                {!s.current && (
-                  <button onClick={() => revokeSession(s.id)} className="text-xs text-[#DC2626] hover:text-[#B91C1C] font-medium transition-colors cursor-pointer">Revoke</button>
-                )}
-              </motion.div>
-            );
-          })}
-        </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium text-[#1C1917]">{ua.device} · {ua.browser}</p>
+                    <p className="text-[10px] text-[#57534E]/60">{login.ip_address || 'Unknown IP'} · {new Date(login.created_at).toLocaleString()}</p>
+                  </div>
+                  {i === 0 && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#16A34A]/10 text-[#16A34A] font-medium">Latest</span>}
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
       </motion.div>
     </div>
   );

@@ -183,11 +183,11 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const loadMembership = useCallback(async () => {
     if (!user?.id) return;
     try {
-      const memberships = await membershipsRepository.getByUserId(user.id);
-      const active = memberships.find((m) => m.status === 'active') || memberships[0] || null;
+      const active = await membershipsRepository.getByUserId(user.id);
       setMembership(active);
       if (active?.plan_id) {
-        const plan = await membershipPlansRepository.getBySlug(active.plan_id);
+        const plans = await membershipPlansRepository.getAll();
+        const plan = plans.find((p) => p.id === active.plan_id) || null;
         setMembershipPlan(plan);
       }
     } catch { /* silent */ }
@@ -322,6 +322,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         module: 'profile',
         description: 'Profile updated',
         metadata: { fields: Object.keys(updates) },
+        ip_address: null,
+        user_agent: navigator.userAgent,
       });
     } catch (err) {
       console.error('Failed to update profile:', err);
@@ -344,6 +346,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           module: 'security',
           description: 'Password changed',
           metadata: {},
+          ip_address: null,
+          user_agent: navigator.userAgent,
         });
       }
       return { success: true };

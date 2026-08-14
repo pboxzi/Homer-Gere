@@ -18,6 +18,8 @@ import { DashboardNotifications } from './dashboard/DashboardNotifications';
 import { DashboardSettings } from './dashboard/DashboardSettings';
 import { DashboardSecurity } from './dashboard/DashboardSecurity';
 import { DashboardHelp } from './dashboard/DashboardHelp';
+import DashboardDownloads from './dashboard/DashboardDownloads';
+import DashboardActivity from './dashboard/DashboardActivity';
 import { SEO } from '../components/SEO';
 import { DashboardSection } from '../data/dashboardData';
 
@@ -52,6 +54,8 @@ export default function DashboardPage() {
       case 'messages': return <DashboardMessages />;
       case 'experiences': return <DashboardExperiences openRequestForm={openRequestForm} onRequestFormOpened={() => setOpenRequestForm(false)} />;
       case 'requests': return <DashboardRequests />;
+      case 'downloads': return <DashboardDownloads />;
+      case 'activity': return <DashboardActivity />;
       case 'bookmarks': return <DashboardBookmarks />;
       case 'favorites': return <DashboardFavorites />;
       case 'notifications': return <DashboardNotifications />;
