@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { AdminSection, ADMIN_SIDEBAR_GROUPS } from '../../data/adminData';
 import { useAdmin, SearchResult } from '../../context/AdminContext';
+import { useAuth } from '../../context/AuthContext';
 
 const SECTION_ICONS: Record<string, React.FC<{ className?: string }>> = {
   overview: LayoutDashboard,
@@ -44,6 +45,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 }) => {
   const navigate = useNavigate();
   const { globalAdminSearch } = useAdmin();
+  const { signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
@@ -184,7 +186,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           </div>
         </div>
         <button
-          onClick={() => navigate('/login')}
+          onClick={async () => { await signOut(); navigate('/login'); }}
           className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-[#57534E] hover:text-[#DC2626] hover:bg-[#DC2626]/5 transition-all duration-200 cursor-pointer"
         >
           <LogOut className="w-4 h-4" />

@@ -115,8 +115,8 @@ export default function MemberRegister() {
 
       <main className="relative z-10 max-w-md mx-auto px-5 pb-16 pt-4">
         <div className="flex items-center gap-2 mb-4">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-[#57534E]/60 hover:text-[#A6852F] transition-colors text-xs font-medium cursor-pointer">
-            ← Back
+          <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E8E5DF]/80 bg-white/60 hover:bg-[#F3F1ED] text-[#57534E] hover:text-[#A6852F] transition-all text-xs font-medium cursor-pointer shadow-sm shadow-black/3">
+            <span className="text-sm">←</span> Return
           </button>
         </div>
         <motion.div className="text-center mb-6" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>

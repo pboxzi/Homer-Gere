@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Search, ChevronLeft, ChevronRight, Eye, Send, CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react';
-import { paymentRequestsRepository, paymentMethodsRepository } from '../../lib/repositories';
+import { paymentRequestsRepository, paymentMethodsRepository, profilesRepository } from '../../lib/repositories';
 import { notifyService } from '../../lib/notifications';
 import type { PaymentRequest, PaymentMethod } from '../../types/database';
 
@@ -51,6 +51,15 @@ export default function AdminPaymentRequests() {
     if (successMsg) { const t = setTimeout(() => setSuccessMsg(''), 3000); return () => clearTimeout(t); }
   }, [successMsg]);
 
+  const fetchUserProfile = async (userId: string | null) => {
+    if (!userId) return { email: '', fullName: 'Member' };
+    try {
+      const profile = await profilesRepository.getById(userId);
+      if (profile) return { email: profile.email, fullName: `${profile.first_name} ${profile.last_name}` };
+    } catch { /* fallback */ }
+    return { email: '', fullName: 'Member' };
+  };
+
   const filtered = requests.filter(r => {
     if (filter !== 'all' && r.status !== filter) return false;
     if (search) { const q = search.toLowerCase(); return r.request_number.toLowerCase().includes(q); }
@@ -65,9 +74,10 @@ export default function AdminPaymentRequests() {
     setActionLoading(true);
     try {
       await paymentRequestsRepository.sendInstructions(selected.id, instructionsForm.instructions, instructionsForm.methodId);
+      const user = await fetchUserProfile(selected.user_id);
       await notifyService.paymentInstructionsSent(selected.user_id, {
-        email: selected.user_id ? '' : '',
-        fullName: 'Member',
+        email: user.email,
+        fullName: user.fullName,
         amount: String(selected.amount),
         currency: selected.currency,
         paymentInstructions: instructionsForm.instructions,
@@ -84,9 +94,10 @@ export default function AdminPaymentRequests() {
     setActionLoading(true);
     try {
       await paymentRequestsRepository.updateStatus(req.id, 'approved', 'admin');
+      const user = await fetchUserProfile(req.user_id);
       await notifyService.paymentApproved(req.user_id, {
-        email: '',
-        fullName: 'Member',
+        email: user.email,
+        fullName: user.fullName,
         planName: req.payment_type,
         cardNumber: '',
         expiryDate: '',
@@ -103,9 +114,10 @@ export default function AdminPaymentRequests() {
     setActionLoading(true);
     try {
       await paymentRequestsRepository.updateStatus(req.id, 'rejected');
+      const user = await fetchUserProfile(req.user_id);
       await notifyService.paymentRejected(req.user_id, {
-        email: '',
-        fullName: 'Member',
+        email: user.email,
+        fullName: user.fullName,
         reason: 'Payment could not be verified.',
       });
       setSuccessMsg(`Payment ${req.request_number} rejected`);
