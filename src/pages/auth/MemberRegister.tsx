@@ -100,119 +100,134 @@ export default function MemberRegister() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
+    <div className="min-h-screen bg-[#1C1917] text-[#1C1917] font-body antialiased relative overflow-hidden">
       <SEO title="Register" />
-      <header className="px-5 py-4">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-[-30%] left-[-20%] w-[70vw] h-[70vw] rounded-full bg-[#A6852F]/[0.07] blur-[120px]" />
+        <div className="absolute bottom-[-20%] right-[-15%] w-[60vw] h-[60vw] rounded-full bg-[#D4AF37]/[0.05] blur-[100px]" />
+      </div>
+      <header className="relative z-10 px-6 py-5">
         <button onClick={() => navigate('/')} className="group flex flex-col text-left focus:outline-none cursor-pointer">
-          <span className="font-editorial tracking-[0.06em] text-[#1C1917] group-hover:text-[#A6852F] transition-all duration-500 uppercase text-lg">Homer Gere</span>
-          <span className="font-medium tracking-[0.35em] text-[#A6852F]/70 uppercase text-[10px] mt-0.5">Official Website</span>
+          <span className="font-editorial tracking-[0.06em] text-[#F5F1EB] group-hover:text-[#D4AF37] transition-all duration-500 uppercase text-lg">Homer Gere</span>
+          <span className="font-medium tracking-[0.35em] text-[#D4AF37]/70 uppercase text-[10px] mt-0.5">Official Website</span>
         </button>
       </header>
 
-      <main className="max-w-md mx-auto px-4 pb-16">
-        <motion.div className="text-center mb-8" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <h1 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight mb-2">Create Your Account</h1>
-          <p className="text-sm text-[#57534E]">Join the official Homer Gere platform.</p>
+      <main className="relative z-10 max-w-lg mx-auto px-5 pb-20 pt-4">
+        <motion.div className="text-center mb-10" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <h1 className="text-3xl sm:text-4xl font-editorial text-[#F5F1EB] tracking-tight mb-3">Create Your Account</h1>
+          <p className="text-sm sm:text-base text-[#D4AF37]/70">Join the official Homer Gere platform.</p>
         </motion.div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <motion.div
+          className="relative rounded-2xl bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] p-8 shadow-[0_0_80px_rgba(166,133,47,0.12),0_0_160px_rgba(166,133,47,0.06)]"
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+        >
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#D4AF37]/[0.06] via-transparent to-[#A6852F]/[0.04] pointer-events-none" />
+          <div className="absolute top-[-1px] left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent" />
+          <div className="absolute left-[-1px] top-[15%] bottom-[15%] w-[1px] bg-gradient-to-b from-transparent via-[#D4AF37]/30 to-transparent" />
+          <div className="absolute right-[-1px] top-[15%] bottom-[15%] w-[1px] bg-gradient-to-b from-transparent via-[#D4AF37]/30 to-transparent" />
+
+        <form onSubmit={handleSubmit} className="relative z-10 space-y-6">
           {/* Name */}
-          <motion.div className="grid grid-cols-2 gap-3" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.05 }}>
+          <motion.div className="grid grid-cols-2 gap-4" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.05 }}>
             <div>
-              <label className="block text-[10px] font-bold text-[#57534E] uppercase tracking-wider mb-1.5">First Name *</label>
+              <label className="block text-xs font-semibold text-[#D4AF37]/80 uppercase tracking-wider mb-2">First Name *</label>
               <input type="text" value={firstName} onChange={(e) => { setFirstName(e.target.value); setErrors(p => { const n = { ...p }; delete n.firstName; return n; }); }}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8E5DF]/80 bg-[#FAF9F7] text-sm text-[#1C1917] placeholder:text-[#57534E]/40 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all shadow-sm shadow-black/3" placeholder="First name" />
-              {errors.firstName && <p className="text-[10px] text-red-500 mt-1">{errors.firstName}</p>}
+                className="w-full px-4 py-3 rounded-xl border border-white/[0.1] bg-white/[0.05] text-sm text-[#F5F1EB] placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/30 focus:border-[#D4AF37]/40 transition-all shadow-[0_0_20px_rgba(166,133,47,0.08)]" placeholder="First name" />
+              {errors.firstName && <p className="text-xs text-red-400 mt-1">{errors.firstName}</p>}
             </div>
             <div>
-              <label className="block text-[10px] font-bold text-[#57534E] uppercase tracking-wider mb-1.5">Last Name *</label>
+              <label className="block text-xs font-semibold text-[#D4AF37]/80 uppercase tracking-wider mb-2">Last Name *</label>
               <input type="text" value={lastName} onChange={(e) => { setLastName(e.target.value); setErrors(p => { const n = { ...p }; delete n.lastName; return n; }); }}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8E5DF]/80 bg-[#FAF9F7] text-sm text-[#1C1917] placeholder:text-[#57534E]/40 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all shadow-sm shadow-black/3" placeholder="Last name" />
-              {errors.lastName && <p className="text-[10px] text-red-500 mt-1">{errors.lastName}</p>}
+                className="w-full px-4 py-3 rounded-xl border border-white/[0.1] bg-white/[0.05] text-sm text-[#F5F1EB] placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/30 focus:border-[#D4AF37]/40 transition-all shadow-[0_0_20px_rgba(166,133,47,0.08)]" placeholder="Last name" />
+              {errors.lastName && <p className="text-xs text-red-400 mt-1">{errors.lastName}</p>}
             </div>
           </motion.div>
 
           {/* Email */}
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-            <label className="block text-[10px] font-bold text-[#57534E] uppercase tracking-wider mb-1.5">Email Address *</label>
+            <label className="block text-xs font-semibold text-[#D4AF37]/80 uppercase tracking-wider mb-2">Email Address *</label>
             <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); setErrors(p => { const n = { ...p }; delete n.email; return n; }); }}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8E5DF]/80 bg-[#FAF9F7] text-sm text-[#1C1917] placeholder:text-[#57534E]/40 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all shadow-sm shadow-black/3" placeholder="you@example.com" autoComplete="email" />
-            {errors.email && <p className="text-[10px] text-red-500 mt-1">{errors.email}</p>}
+              className="w-full px-4 py-3 rounded-xl border border-white/[0.1] bg-white/[0.05] text-sm text-[#F5F1EB] placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/30 focus:border-[#D4AF37]/40 transition-all shadow-[0_0_20px_rgba(166,133,47,0.08)]" placeholder="you@example.com" autoComplete="email" />
+            {errors.email && <p className="text-xs text-red-400 mt-1">{errors.email}</p>}
           </motion.div>
 
           {/* Country */}
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
-            <label className="block text-[10px] font-bold text-[#57534E] uppercase tracking-wider mb-1.5">Country</label>
+            <label className="block text-xs font-semibold text-[#D4AF37]/80 uppercase tracking-wider mb-2">Country</label>
             <select value={country} onChange={(e) => setCountry(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8E5DF]/80 bg-[#FAF9F7] text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all appearance-none cursor-pointer shadow-sm shadow-black/3">
+              className="w-full px-4 py-3 rounded-xl border border-white/[0.1] bg-white/[0.05] text-sm text-[#F5F1EB] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/30 focus:border-[#D4AF37]/40 transition-all appearance-none cursor-pointer shadow-[0_0_20px_rgba(166,133,47,0.08)]">
               <option value="">Select country</option>
               {COUNTRIES.map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </motion.div>
 
           {/* Password */}
-          <motion.div className="grid grid-cols-2 gap-3" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+          <motion.div className="grid grid-cols-2 gap-4" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
             <div>
-              <label className="block text-[10px] font-bold text-[#57534E] uppercase tracking-wider mb-1.5">Password *</label>
+              <label className="block text-xs font-semibold text-[#D4AF37]/80 uppercase tracking-wider mb-2">Password *</label>
               <div className="relative">
                 <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => { setPassword(e.target.value); setErrors(p => { const n = { ...p }; delete n.password; return n; }); }}
-                  className="w-full px-3.5 py-2.5 pr-10 rounded-xl border border-[#E8E5DF]/80 bg-[#FAF9F7] text-sm text-[#1C1917] placeholder:text-[#57534E]/40 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all shadow-sm shadow-black/3" placeholder="Create password" autoComplete="new-password" />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#57534E] hover:text-[#1C1917] cursor-pointer p-1" tabIndex={-1}>
-                  {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  className="w-full px-4 py-3 pr-11 rounded-xl border border-white/[0.1] bg-white/[0.05] text-sm text-[#F5F1EB] placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/30 focus:border-[#D4AF37]/40 transition-all shadow-[0_0_20px_rgba(166,133,47,0.08)]" placeholder="Create password" autoComplete="new-password" />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-[#D4AF37] cursor-pointer p-1" tabIndex={-1}>
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
               {password && (
-                <div className="mt-1.5 flex items-center gap-1.5">
-                  <div className="flex-1 h-1 rounded-full bg-[#E8E5DF]/60 overflow-hidden">
+                <div className="mt-2 flex items-center gap-2">
+                  <div className="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden">
                     <div className="h-full rounded-full transition-all duration-300" style={{ width: `${(passwordStrength.score / 5) * 100}%`, backgroundColor: passwordStrength.color }} />
                   </div>
-                  <span className="text-[9px] font-medium" style={{ color: passwordStrength.color }}>{passwordStrength.label}</span>
+                  <span className="text-[11px] font-medium" style={{ color: passwordStrength.color }}>{passwordStrength.label}</span>
                 </div>
               )}
-              {errors.password && <p className="text-[10px] text-red-500 mt-0.5">{errors.password}</p>}
+              {errors.password && <p className="text-xs text-red-400 mt-1">{errors.password}</p>}
             </div>
             <div>
-              <label className="block text-[10px] font-bold text-[#57534E] uppercase tracking-wider mb-1.5">Confirm *</label>
+              <label className="block text-xs font-semibold text-[#D4AF37]/80 uppercase tracking-wider mb-2">Confirm *</label>
               <div className="relative">
                 <input type={showConfirm ? 'text' : 'password'} value={confirmPassword} onChange={(e) => { setConfirmPassword(e.target.value); setErrors(p => { const n = { ...p }; delete n.confirmPassword; return n; }); }}
-                  className="w-full px-3.5 py-2.5 pr-10 rounded-xl border border-[#E8E5DF]/80 bg-[#FAF9F7] text-sm text-[#1C1917] placeholder:text-[#57534E]/40 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all shadow-sm shadow-black/3" placeholder="Confirm password" autoComplete="new-password" />
-                <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#57534E] hover:text-[#1C1917] cursor-pointer p-1" tabIndex={-1}>
-                  {showConfirm ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  className="w-full px-4 py-3 pr-11 rounded-xl border border-white/[0.1] bg-white/[0.05] text-sm text-[#F5F1EB] placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/30 focus:border-[#D4AF37]/40 transition-all shadow-[0_0_20px_rgba(166,133,47,0.08)]" placeholder="Confirm password" autoComplete="new-password" />
+                <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-[#D4AF37] cursor-pointer p-1" tabIndex={-1}>
+                  {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
               {confirmPassword && password === confirmPassword && (
-                <p className="text-[10px] text-[#16A34A] mt-0.5 flex items-center gap-1"><CheckCircle className="w-2.5 h-2.5" /> Match</p>
+                <p className="text-xs text-[#22C55E] mt-1 flex items-center gap-1"><CheckCircle className="w-3 h-3" /> Match</p>
               )}
-              {errors.confirmPassword && <p className="text-[10px] text-red-500 mt-0.5">{errors.confirmPassword}</p>}
+              {errors.confirmPassword && <p className="text-xs text-red-400 mt-1">{errors.confirmPassword}</p>}
             </div>
           </motion.div>
 
           {/* Terms */}
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.25 }}>
-            <label className="flex items-start gap-2.5 cursor-pointer">
+            <label className="flex items-start gap-3 cursor-pointer">
               <input type="checkbox" checked={agreeTerms} onChange={(e) => { setAgreeTerms(e.target.checked); setErrors(p => { const n = { ...p }; delete n.agreeTerms; return n; }); }}
-                className="w-4 h-4 rounded border-[#E8E5DF] text-[#A6852F] focus:ring-[#A6852F]/30 accent-[#A6852F] mt-0.5 shrink-0" />
-              <span className="text-xs text-[#57534E] leading-relaxed">I agree to the <button type="button" className="text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Terms of Service</button> and <button type="button" className="text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Privacy Policy</button> *</span>
+                className="w-4 h-4 rounded border-white/20 text-[#D4AF37] focus:ring-[#D4AF37]/30 accent-[#D4AF37] mt-0.5 shrink-0" />
+              <span className="text-sm text-white/50 leading-relaxed">I agree to the <button type="button" className="text-[#D4AF37] hover:text-[#F5D06A] font-medium cursor-pointer">Terms of Service</button> and <button type="button" className="text-[#D4AF37] hover:text-[#F5D06A] font-medium cursor-pointer">Privacy Policy</button> *</span>
             </label>
-            {errors.agreeTerms && <p className="text-[10px] text-red-500 ml-7">{errors.agreeTerms}</p>}
+            {errors.agreeTerms && <p className="text-xs text-red-400 ml-7">{errors.agreeTerms}</p>}
           </motion.div>
 
           {/* Submit */}
-          <motion.div className="space-y-3 pt-1" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
-            {error && <p className="text-xs text-red-500 text-center">{error}</p>}
+          <motion.div className="space-y-3 pt-2" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
+            {error && <p className="text-sm text-red-400 text-center">{error}</p>}
             <button type="submit" disabled={loading}
-              className="w-full py-3 bg-[#1C1917] hover:bg-[#292524] disabled:bg-[#57534E] text-white text-sm font-medium rounded-xl transition-all cursor-pointer disabled:cursor-not-allowed inline-flex items-center justify-center gap-2 shadow-md shadow-[#1C1917]/15 active:scale-[0.98]">
-              {loading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <>Create Account <ArrowRight className="w-4 h-4" /></>}
+              className="w-full py-3.5 bg-gradient-to-r from-[#A6852F] via-[#D4AF37] to-[#A6852F] hover:from-[#B8962F] hover:via-[#E0BF47] hover:to-[#B8962F] disabled:from-[#57534E] disabled:via-[#57534E] disabled:to-[#57534E] text-[#1C1917] text-sm font-bold rounded-xl transition-all cursor-pointer disabled:cursor-not-allowed inline-flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(212,175,55,0.35),0_0_60px_rgba(212,175,55,0.15)] hover:shadow-[0_0_40px_rgba(212,175,55,0.5),0_0_80px_rgba(212,175,55,0.2)] active:scale-[0.98]">
+              {loading ? <div className="w-4 h-4 border-2 border-[#1C1917]/30 border-t-[#1C1917] rounded-full animate-spin" /> : <>Create Account <ArrowRight className="w-4 h-4" /></>}
             </button>
-            <p className="text-xs text-[#57534E] text-center">
+            <p className="text-sm text-white/40 text-center">
               Already have an account?{' '}
-              <button type="button" onClick={() => navigate('/auth/sign-in')} className="text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Sign In</button>
+              <button type="button" onClick={() => navigate('/auth/sign-in')} className="text-[#D4AF37] hover:text-[#F5D06A] font-medium cursor-pointer">Sign In</button>
             </p>
           </motion.div>
         </form>
 
-        <motion.div className="mt-6 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
-          <button onClick={() => navigate('/')} className="text-xs text-[#57534E]/60 hover:text-[#A6852F] transition-colors cursor-pointer">
+        </motion.div>
+
+        <motion.div className="mt-8 text-center" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}>
+          <button onClick={() => navigate('/')} className="text-sm text-white/30 hover:text-[#D4AF37] transition-colors cursor-pointer">
             ← Back to Homer Gere
           </button>
         </motion.div>

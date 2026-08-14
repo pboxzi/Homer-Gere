@@ -16,6 +16,8 @@ export const DashboardChat: React.FC = () => {
   const [newMessage, setNewMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const loadConversations = useCallback(async () => {
@@ -66,7 +68,12 @@ export const DashboardChat: React.FC = () => {
   };
 
   const handleStartChat = async () => {
-    if (!user?.id || !profile) return;
+    if (!user?.id || !profile) {
+      setError('Profile not loaded. Please refresh the page.');
+      return;
+    }
+    setCreating(true);
+    setError(null);
     try {
       const conv = await fanChatRepository.createConversation({
         participant: `${profile.first_name} ${profile.last_name}`,
@@ -79,8 +86,16 @@ export const DashboardChat: React.FC = () => {
       });
       setConversations((prev) => [conv, ...prev]);
       setActiveConvId(conv.id);
-      logActivity('create', 'chat', 'New fan chat conversation started', { conversation_id: conv.id });
-    } catch (e) { console.error(e); }
+    } catch (e: any) {
+      console.error('Failed to create conversation:', e);
+      setError(e?.message || 'Failed to start conversation. Please try again.');
+      setCreating(false);
+      return;
+    }
+    try {
+      logActivity('create', 'chat', 'New fan chat conversation started', {});
+    } catch { /* non-critical */ }
+    setCreating(false);
   };
 
   const handleClose = async (convId: string) => {
@@ -174,15 +189,21 @@ export const DashboardChat: React.FC = () => {
 
       {/* New Chat */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-        <button onClick={handleStartChat} className="w-full flex items-center gap-4 p-5 rounded-2xl border border-dashed border-[#A6852F]/90 hover:border-[#A6852F]/90 hover:bg-[#A6852F]/8 transition-all duration-500 cursor-pointer group shadow-md shadow-[#A6852F]/22 hover:shadow-lg hover:shadow-[#A6852F]/22">
+        <button onClick={handleStartChat} disabled={creating} className="w-full flex items-center gap-4 p-5 rounded-2xl border border-dashed border-[#A6852F]/90 hover:border-[#A6852F]/90 hover:bg-[#A6852F]/8 transition-all duration-500 cursor-pointer group shadow-md shadow-[#A6852F]/22 hover:shadow-lg hover:shadow-[#A6852F]/22 disabled:opacity-50 disabled:cursor-not-allowed">
           <div className="w-12 h-12 rounded-2xl bg-[#A6852F]/22 flex items-center justify-center text-[#A6852F] group-hover:bg-[#A6852F] group-hover:text-white transition-all duration-500 shadow-sm shadow-[#A6852F]/22"><MessageSquare className="w-5 h-5" /></div>
           <div className="flex-1 text-left">
-            <p className="text-sm font-medium text-[#1C1917] group-hover:text-[#A6852F] transition-colors">Start a New Conversation</p>
-            <p className="text-xs text-[#57534E]">Send a message directly to Homer</p>
+            <p className="text-sm font-medium text-[#1C1917] group-hover:text-[#A6852F] transition-colors">{creating ? 'Starting conversation...' : 'Start a New Conversation'}</p>
+            <p className="text-xs text-[#57534E]">{creating ? 'Please wait...' : 'Send a message directly to Homer'}</p>
           </div>
           <ArrowRight className="w-4 h-4 text-[#A6852F]/40 group-hover:text-[#A6852F] group-hover:translate-x-1 transition-all" />
         </button>
       </motion.div>
+
+      {error && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl border border-red-300 bg-red-50 p-4">
+          <p className="text-sm text-red-700">{error}</p>
+        </motion.div>
+      )}
 
       {/* WhatsApp */}
       {canOpenWhatsApp && (
