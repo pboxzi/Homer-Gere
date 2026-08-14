@@ -23,6 +23,11 @@ export type JournalCategory = 'career-reflections' | 'industry-insights' | 'pers
 export type ExperienceCategory = 'meet-and-greet' | 'fan-event' | 'virtual-session' | 'signed-items' | 'charity-auction' | 'set-visit' | 'custom-experience' | 'business';
 export type Department = 'general' | 'business' | 'membership' | 'fan-relations' | 'press' | 'technical' | 'experiences';
 export type AuditAction = 'create' | 'update' | 'delete' | 'login' | 'logout' | 'approve' | 'reject' | 'export';
+export type MembershipRequestStatus = 'pending' | 'approved_for_payment' | 'payment_submitted' | 'payment_under_review' | 'payment_approved' | 'membership_active' | 'rejected';
+export type PaymentMethodType = 'bank_transfer' | 'mobile_money' | 'cash_deposit' | 'manual_transfer' | 'online_gateway';
+export type PaymentRequestStatus = 'pending' | 'instructions_sent' | 'submitted' | 'under_review' | 'approved' | 'rejected' | 'expired';
+export type PaymentSubmissionStatus = 'pending' | 'verified' | 'rejected' | 'needs_info';
+export type MembershipCardStatus = 'active' | 'expired' | 'deactivated' | 'replaced';
 
 // ============================================================
 // TABLE TYPES
@@ -141,6 +146,11 @@ export interface Membership {
   payment_id: string | null;
   created_at: string;
   updated_at: string;
+  // Phase 4 fields
+  membership_request_id: string | null;
+  card_id: string | null;
+  auto_renew: boolean;
+  last_payment_id: string | null;
 }
 
 export interface JourneyEntry {
@@ -271,6 +281,21 @@ export interface ExperienceRequest {
   status: ExperienceStatus;
   created_at: string;
   updated_at: string;
+  // Phase 4 workflow fields
+  preferred_date: string | null;
+  num_guests: number;
+  special_requirements: string | null;
+  timeline: string | null;
+  payment_request_id: string | null;
+  confirmed_at: string | null;
+  slot_reserved: boolean;
+  reservation_expires_at: string | null;
+  admin_notes: string | null;
+  rejection_reason: string | null;
+  request_number: string;
+  deleted_at: string | null;
+  deleted_by: string | null;
+  version: number;
 }
 
 export interface Project {
@@ -738,6 +763,110 @@ export interface HomepageCta {
 }
 
 // ============================================================
+// PHASE 4: MEMBERSHIP, PAYMENTS & EXPERIENCE TYPES
+// ============================================================
+
+export interface MembershipRequest {
+  id: string;
+  request_number: string;
+  user_id: string | null;
+  full_name: string;
+  email: string;
+  phone: string | null;
+  country: string | null;
+  membership_plan_id: string | null;
+  membership_plan_name: string;
+  duration: string;
+  preferred_payment_method: string | null;
+  currency: string;
+  notes: string | null;
+  status: MembershipRequestStatus;
+  admin_notes: string | null;
+  rejection_reason: string | null;
+  requested_at: string;
+  updated_at: string;
+  approved_at: string | null;
+  approved_by: string | null;
+}
+
+export interface PaymentMethod {
+  id: string;
+  name: string;
+  type: PaymentMethodType;
+  country: string | null;
+  currency: string;
+  account_name: string | null;
+  account_number: string | null;
+  bank_name: string | null;
+  swift_code: string | null;
+  routing_code: string | null;
+  mobile_number: string | null;
+  qr_code_url: string | null;
+  instructions: string | null;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PaymentRequest {
+  id: string;
+  request_number: string;
+  user_id: string | null;
+  payment_type: string;
+  related_record_id: string;
+  payment_method_id: string | null;
+  amount: number;
+  currency: string;
+  status: PaymentRequestStatus;
+  due_date: string | null;
+  admin_notes: string | null;
+  payment_instructions: string | null;
+  approved_by: string | null;
+  approved_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PaymentSubmission {
+  id: string;
+  submission_number: string;
+  payment_request_id: string;
+  user_id: string | null;
+  transaction_reference: string;
+  amount_paid: number;
+  currency: string;
+  payment_date: string;
+  proof_media_id: string | null;
+  proof_url: string | null;
+  notes: string | null;
+  status: PaymentSubmissionStatus;
+  admin_notes: string | null;
+  submitted_at: string;
+  verified_at: string | null;
+  verified_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface MembershipCard {
+  id: string;
+  card_number: string;
+  user_id: string | null;
+  membership_id: string | null;
+  membership_request_id: string | null;
+  qr_code_data: string | null;
+  issue_date: string;
+  expiry_date: string | null;
+  status: MembershipCardStatus;
+  card_design: string;
+  download_url: string | null;
+  replaced_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// ============================================================
 // DATABASE TYPE (Supabase generated format)
 // ============================================================
 
@@ -929,6 +1058,31 @@ export interface Database {
         Insert: Omit<HomepageCta, 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Omit<HomepageCta, 'id' | 'created_at' | 'updated_at'>>;
       };
+      membership_requests: {
+        Row: MembershipRequest;
+        Insert: Omit<MembershipRequest, 'id' | 'created_at' | 'updated_at' | 'requested_at' | 'approved_at' | 'approved_by'>;
+        Update: Partial<Omit<MembershipRequest, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      payment_methods: {
+        Row: PaymentMethod;
+        Insert: Omit<PaymentMethod, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<PaymentMethod, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      payment_requests: {
+        Row: PaymentRequest;
+        Insert: Omit<PaymentRequest, 'id' | 'created_at' | 'updated_at' | 'approved_at' | 'approved_by'>;
+        Update: Partial<Omit<PaymentRequest, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      payment_submissions: {
+        Row: PaymentSubmission;
+        Insert: Omit<PaymentSubmission, 'id' | 'created_at' | 'updated_at' | 'submitted_at' | 'verified_at' | 'verified_by'>;
+        Update: Partial<Omit<PaymentSubmission, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      membership_cards: {
+        Row: MembershipCard;
+        Insert: Omit<MembershipCard, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<MembershipCard, 'id' | 'created_at' | 'updated_at'>>;
+      };
     };
     Enums: {
       user_role: UserRole;
@@ -950,6 +1104,11 @@ export interface Database {
       experience_category: ExperienceCategory;
       department: Department;
       audit_action: AuditAction;
+      membership_request_status: MembershipRequestStatus;
+      payment_method_type: PaymentMethodType;
+      payment_request_status: PaymentRequestStatus;
+      payment_submission_status: PaymentSubmissionStatus;
+      membership_card_status: MembershipCardStatus;
     };
   };
 }

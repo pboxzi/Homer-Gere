@@ -255,3 +255,90 @@ export const siteSettingsSchema = z.object({
 });
 
 export type SiteSettingsFormData = z.infer<typeof siteSettingsSchema>;
+
+// ============================================================
+// PHASE 4: MEMBERSHIP REQUEST
+// ============================================================
+
+export const membershipRequestSchema = z.object({
+  membershipPlanId: z.string().uuid('Invalid plan ID').optional().nullable(),
+  membershipPlanName: z.string().min(1, 'Plan name is required'),
+  duration: z.enum(['monthly', 'quarterly', 'annual']),
+  preferredPaymentMethod: z.string().optional().nullable(),
+  country: z.string().optional().nullable(),
+  currency: z.string().default('USD'),
+  notes: z.string().optional().nullable(),
+});
+
+export type MembershipRequestFormData = z.infer<typeof membershipRequestSchema>;
+
+// ============================================================
+// PHASE 4: PAYMENT METHOD
+// ============================================================
+
+export const paymentMethodSchema = z.object({
+  name: z.string().min(1, 'Name is required').max(100),
+  type: z.enum(['bank_transfer', 'mobile_money', 'cash_deposit', 'manual_transfer', 'online_gateway']),
+  country: z.string().optional().nullable(),
+  currency: z.string().default('USD'),
+  accountName: z.string().optional().nullable(),
+  accountNumber: z.string().optional().nullable(),
+  bankName: z.string().optional().nullable(),
+  swiftCode: z.string().optional().nullable(),
+  routingCode: z.string().optional().nullable(),
+  mobileNumber: z.string().optional().nullable(),
+  instructions: z.string().optional().nullable(),
+  isActive: z.boolean().default(true),
+  sortOrder: z.number().int().default(0),
+});
+
+export type PaymentMethodFormData = z.infer<typeof paymentMethodSchema>;
+
+// ============================================================
+// PHASE 4: PAYMENT SUBMISSION
+// ============================================================
+
+export const paymentSubmissionSchema = z.object({
+  paymentRequestId: z.string().uuid('Invalid payment request ID'),
+  transactionReference: z.string().min(1, 'Transaction reference is required').max(200),
+  amountPaid: z.number().positive('Amount must be positive'),
+  currency: z.string().default('USD'),
+  paymentDate: z.string().min(1, 'Payment date is required'),
+  proofUrl: z.string().url('Invalid URL').optional().nullable(),
+  notes: z.string().optional().nullable(),
+});
+
+export type PaymentSubmissionFormData = z.infer<typeof paymentSubmissionSchema>;
+
+// ============================================================
+// PHASE 4: PAYMENT REQUEST (Admin)
+// ============================================================
+
+export const paymentRequestSchema = z.object({
+  userId: z.string().uuid('Invalid user ID'),
+  paymentType: z.enum(['membership', 'experience']),
+  relatedRecordId: z.string().uuid('Invalid record ID'),
+  paymentMethodId: z.string().uuid('Invalid payment method ID').optional().nullable(),
+  amount: z.number().positive('Amount must be positive'),
+  currency: z.string().default('USD'),
+  dueDate: z.string().optional().nullable(),
+  adminNotes: z.string().optional().nullable(),
+  paymentInstructions: z.string().optional().nullable(),
+});
+
+export type PaymentRequestFormData = z.infer<typeof paymentRequestSchema>;
+
+// ============================================================
+// PHASE 4: EXPERIENCE REQUEST UPDATE (Admin)
+// ============================================================
+
+export const experienceRequestUpdateSchema = z.object({
+  preferredDate: z.string().optional().nullable(),
+  numGuests: z.number().int().min(1).max(20).optional(),
+  specialRequirements: z.string().optional().nullable(),
+  timeline: z.string().optional().nullable(),
+  adminNotes: z.string().optional().nullable(),
+  rejectionReason: z.string().optional().nullable(),
+});
+
+export type ExperienceRequestUpdateFormData = z.infer<typeof experienceRequestUpdateSchema>;

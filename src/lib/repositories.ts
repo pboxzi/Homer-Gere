@@ -42,6 +42,11 @@ import type {
   HomepageQuote,
   HomepageFeatured,
   HomepageCta,
+  MembershipRequest,
+  PaymentMethod,
+  PaymentRequest,
+  PaymentSubmission,
+  MembershipCard,
 } from '../types/database';
 
 // ============================================================
@@ -856,7 +861,7 @@ export const experiencesRepository = {
 // ============================================================
 
 export const experienceRequestsRepository = {
-  async create(request: Omit<ExperienceRequest, 'id' | 'created_at' | 'updated_at'>): Promise<ExperienceRequest> {
+  async create(request: { user_id?: string | null; experience_type: string; full_name: string; email: string; phone?: string | null; country?: string | null; organization?: string | null; event_date?: string | null; event_location?: string | null; budget?: string | null; purpose?: string | null; additional_details?: string | null; status?: string; preferred_date?: string | null; num_guests?: number; special_requirements?: string | null; timeline?: string | null }): Promise<ExperienceRequest> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('experience_requests')
@@ -872,9 +877,21 @@ export const experienceRequestsRepository = {
     const { data, error } = await client
       .from('experience_requests')
       .select('*')
+      .is('deleted_at', null)
       .order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
+  },
+
+  async getById(id: string): Promise<ExperienceRequest | null> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('experience_requests')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
   },
 
   async getByUserId(userId: string): Promise<ExperienceRequest[]> {
@@ -883,6 +900,7 @@ export const experienceRequestsRepository = {
       .from('experience_requests')
       .select('*')
       .eq('user_id', userId)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false });
     if (error) throw error;
     return data || [];
@@ -893,6 +911,98 @@ export const experienceRequestsRepository = {
     const { data, error } = await client
       .from('experience_requests')
       .update({ status })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async update(id: string, updates: Partial<ExperienceRequest>): Promise<ExperienceRequest> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('experience_requests')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async search(query: string): Promise<ExperienceRequest[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('experience_requests')
+      .select('*')
+      .is('deleted_at', null)
+      .or(`full_name.ilike.%${query}%,email.ilike.%${query}%,request_number.ilike.%${query}%`)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getStats(): Promise<Record<string, number>> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('experience_requests')
+      .select('status')
+      .is('deleted_at', null);
+    if (error) throw error;
+    const stats: Record<string, number> = { total: 0, pending: 0, under_review: 0, approved: 0, declined: 0, completed: 0 };
+    for (const row of data || []) {
+      stats.total++;
+      stats[row.status] = (stats[row.status] || 0) + 1;
+    }
+    return stats;
+  },
+
+  async softDelete(id: string, deletedBy: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('experience_requests')
+      .update({ deleted_at: new Date().toISOString(), deleted_by: deletedBy })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async restore(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('experience_requests')
+      .update({ deleted_at: null, deleted_by: null })
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async getDeleted(): Promise<ExperienceRequest[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('experience_requests')
+      .select('*')
+      .not('deleted_at', 'is', null)
+      .order('deleted_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async reserveSlot(id: string): Promise<ExperienceRequest> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('experience_requests')
+      .update({ slot_reserved: true, reservation_expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async confirmExperience(id: string): Promise<ExperienceRequest> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('experience_requests')
+      .update({ confirmed_at: new Date().toISOString(), status: 'completed' })
       .eq('id', id)
       .select()
       .single();
