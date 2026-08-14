@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import { ArrowRight, Clock, User } from 'lucide-react';
 import { JournalArticle } from '../../types';
+import { formatDate } from '../../utils/formatDate';
 
 interface JournalFeaturedProps {
   article: JournalArticle;
@@ -71,7 +72,7 @@ export const JournalFeatured: React.FC<JournalFeaturedProps> = ({ article, onArt
                     {article.author}
                   </span>
                   <span className="w-1 h-1 rounded-full bg-[#71717A]" />
-                  <span>{article.date}</span>
+                  <span>{formatDate(article.date)}</span>
                   <span className="w-1 h-1 rounded-full bg-[#71717A]" />
                   <span className="inline-flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5" />

@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, Clock } from 'lucide-react';
 import { JournalArticle } from '../../types';
+import { formatDate } from '../../utils/formatDate';
 
 interface ArticleCardProps {
   article: JournalArticle;
@@ -45,7 +46,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onArticleClick }) =>
 
         {/* Meta */}
         <div className="flex items-center justify-between text-xs text-[#71717A] mb-5">
-          <span>{article.date}</span>
+          <span>{formatDate(article.date)}</span>
           <span className="inline-flex items-center gap-1">
             <Clock className="w-3 h-3" />
             {article.readTime}

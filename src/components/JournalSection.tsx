@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, Calendar } from 'lucide-react';
 import { useSiteContent } from '../context/SiteContentContext';
 import { JournalArticle } from '../types';
+import { formatDate } from '../utils/formatDate';
 
 interface JournalSectionProps {
   onSelectArticle: (article: JournalArticle) => void;
@@ -35,7 +36,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({ onSelectArticle,
                 <p className="mt-2 text-xs text-[#57534E] line-clamp-2 leading-relaxed">{article.excerpt}</p>
               </div>
               <div className="mt-5 pt-4 flex items-center justify-between text-xs text-[#78716C]">
-                <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />{article.date}</span>
+                <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />{formatDate(article.date)}</span>
                 <span className="font-medium text-[#A6852F] group-hover:translate-x-0.5 transition-transform duration-300">Read &rarr;</span>
               </div>
             </article>

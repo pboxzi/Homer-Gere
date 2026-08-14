@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import { TrendingUp, Clock } from 'lucide-react';
 import { JournalArticle } from '../../types';
+import { formatDate } from '../../utils/formatDate';
 
 interface JournalTrendingProps {
   articles: JournalArticle[];
@@ -63,7 +64,7 @@ export const JournalTrending: React.FC<JournalTrendingProps> = ({ articles, onAr
                   {article.title}
                 </h4>
                 <div className="flex items-center gap-3 text-[11px] text-[#71717A]">
-                  <span>{article.date}</span>
+                  <span>{formatDate(article.date)}</span>
                   <span className="inline-flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     {article.readTime}

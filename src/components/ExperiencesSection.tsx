@@ -24,17 +24,6 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNaviga
     }
   };
 
-  const getAvailabilityBadge = (status?: string) => {
-    switch (status) {
-      case 'available':
-        return <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#16A34A] bg-[#16A34A]/10 px-2.5 py-1 rounded-full"><span className="w-1.5 h-1.5 rounded-full bg-[#16A34A]" />Available</span>;
-      case 'limited':
-        return <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#F59E0B] bg-[#F59E0B]/10 px-2.5 py-1 rounded-full"><span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />Limited</span>;
-      default:
-        return null;
-    }
-  };
-
   const handleExperienceClick = () => {
     if (onRequestExperience) {
       onRequestExperience();
@@ -64,61 +53,28 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNaviga
           </button>
         </div>
 
-        {/* Featured large card */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-5">
-          {experiences.slice(0, 2).map((exp) => (
-            <div key={exp.id} onClick={handleExperienceClick} className="group relative rounded-[1.5rem] overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-xl hover:shadow-[#A6852F]/10 hover:-translate-y-1">
-              {exp.image && (
-                <div className="relative h-56 sm:h-72 lg:h-80 overflow-hidden bg-[#E8E5DF]">
-                  <img src={exp.image} alt={exp.title} referrerPolicy="no-referrer" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out" loading="lazy" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1C1917]/70 via-[#1C1917]/20 to-transparent" />
-                  {exp.availability && (
-                    <div className="absolute top-4 right-4">{getAvailabilityBadge(exp.availability)}</div>
-                  )}
-                </div>
-              )}
-              <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7">
-                <div className="w-11 h-11 rounded-2xl bg-white/15 backdrop-blur-md flex items-center justify-center mb-4 text-white">
-                  {getExperienceIcon(exp.iconName)}
-                </div>
-                <h3 className="text-xl sm:text-2xl font-editorial text-white mb-2">{exp.title}</h3>
-                <p className="text-sm text-white/80 leading-relaxed line-clamp-2 mb-4">{exp.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-[#D4B86A]">{exp.price}</span>
-                  <span className="inline-flex items-center gap-1 text-xs font-medium text-white group-hover:translate-x-0.5 transition-transform duration-300">
-                    Learn More<ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </div>
+        {/* Cards grid — same style as journal */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {experiences.slice(0, 4).map((exp) => (
+            <article key={exp.id} onClick={handleExperienceClick} className="group p-5 rounded-2xl border border-[#E8E5DF]/60 transition-all duration-500 flex flex-col justify-between cursor-pointer hover:border-[#A6852F]/30 hover:shadow-lg hover:shadow-[#A6852F]/5">
+              <div>
+                {exp.image && (
+                  <div className="relative h-56 rounded-xl overflow-hidden mb-5">
+                    <img src={exp.image} alt={exp.title} referrerPolicy="no-referrer" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
+                    <div className="absolute top-3 left-3 bg-[#FAF9F7]/95 backdrop-blur-md px-3 py-1 rounded-xl text-[10px] font-medium tracking-wider text-[#A6852F] uppercase flex items-center gap-1.5">
+                      {getExperienceIcon(exp.iconName)}
+                      Experience
+                    </div>
+                  </div>
+                )}
+                <h3 className="text-base font-editorial text-[#1C1917] group-hover:text-[#A6852F] transition-colors duration-300 line-clamp-2 leading-snug">{exp.title}</h3>
+                <p className="mt-2 text-xs text-[#57534E] line-clamp-2 leading-relaxed">{exp.description}</p>
               </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Smaller cards grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-          {experiences.slice(2, 6).map((exp) => (
-            <div key={exp.id} onClick={handleExperienceClick} className="group relative rounded-[1.5rem] overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-xl hover:shadow-[#A6852F]/10 hover:-translate-y-1">
-              {exp.image && (
-                <div className="relative h-44 overflow-hidden bg-[#E8E5DF]">
-                  <img src={exp.image} alt={exp.title} referrerPolicy="no-referrer" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out" loading="lazy" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1C1917]/60 via-transparent to-transparent" />
-                  {exp.availability && (
-                    <div className="absolute top-3 right-3">{getAvailabilityBadge(exp.availability)}</div>
-                  )}
-                </div>
-              )}
-              <div className="p-5">
-                <div className="w-10 h-10 rounded-xl bg-[#A6852F]/10 flex items-center justify-center mb-3 group-hover:bg-[#A6852F] group-hover:text-white text-[#A6852F] transition-all duration-500">
-                  {getExperienceIcon(exp.iconName)}
-                </div>
-                <h3 className="text-base font-editorial text-[#1C1917] group-hover:text-[#A6852F] transition-colors duration-300 mb-1">{exp.title}</h3>
-                <p className="text-xs text-[#57534E] leading-relaxed line-clamp-2 mb-4">{exp.description}</p>
-                <div className="flex items-center justify-between pt-3 border-t border-[#E8E5DF]/60">
-                  <span className="text-xs font-medium text-[#A6852F]">{exp.price}</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-[#D1D5DB] group-hover:text-[#A6852F] group-hover:translate-x-0.5 transition-all duration-300" />
-                </div>
+              <div className="mt-5 pt-4 flex items-center justify-between text-xs text-[#78716C]">
+                <span className="font-medium text-[#A6852F]">{exp.price}</span>
+                <span className="font-medium text-[#A6852F] group-hover:translate-x-0.5 transition-transform duration-300">Learn More &rarr;</span>
               </div>
-            </div>
+            </article>
           ))}
         </div>
 

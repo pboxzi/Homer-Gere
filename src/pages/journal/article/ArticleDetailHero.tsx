@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, Clock, User, Calendar, Share2, Bookmark } from 'lucide-react';
 import { JournalArticleExtended } from '../../../data/journal';
+import { formatDate } from '../../../utils/formatDate';
 
 interface ArticleDetailHeroProps {
   article: JournalArticleExtended;
@@ -86,7 +87,7 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({ article, o
             <span className="px-3 py-1.5 bg-[#A6852F] text-[#111827] text-[10px] font-semibold tracking-wider uppercase rounded-lg">
               {article.category}
             </span>
-            <span className="text-white/50 text-sm">{article.date}</span>
+            <span className="text-white/50 text-sm">{formatDate(article.date)}</span>
           </div>
 
           {/* Title */}
@@ -110,7 +111,7 @@ export const ArticleDetailHero: React.FC<ArticleDetailHeroProps> = ({ article, o
             <span className="w-1 h-1 rounded-full bg-white/20" />
             <span className="inline-flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5" />
-              {article.date}
+              {formatDate(article.date)}
             </span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
             <span className="inline-flex items-center gap-1.5">

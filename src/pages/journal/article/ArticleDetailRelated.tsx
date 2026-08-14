@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import { ArrowRight, Clock } from 'lucide-react';
 import { JournalArticleExtended } from '../../../data/journal';
+import { formatDate } from '../../../utils/formatDate';
 
 interface ArticleDetailRelatedProps {
   articles: JournalArticleExtended[];
@@ -62,7 +63,7 @@ export const ArticleDetailRelated: React.FC<ArticleDetailRelatedProps> = ({
                   {article.title}
                 </h3>
                 <div className="flex items-center gap-3 text-xs text-[#71717A]">
-                  <span>{article.date}</span>
+                  <span>{formatDate(article.date)}</span>
                   <span className="inline-flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     {article.readTime}

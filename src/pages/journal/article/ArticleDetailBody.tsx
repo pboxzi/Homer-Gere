@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { motion } from 'motion/react';
 import { Clock, Tag, ArrowUp } from 'lucide-react';
 import { JournalArticleExtended } from '../../../data/journal';
+import { formatDate } from '../../../utils/formatDate';
 
 interface ArticleDetailBodyProps {
   article: JournalArticleExtended;
@@ -222,7 +223,7 @@ export const ArticleDetailBody: React.FC<ArticleDetailBodyProps> = ({ article })
                   </div>
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-[#71717A]">Published</span>
-                    <span className="text-[#111827] font-medium">{article.date}</span>
+                    <span className="text-[#111827] font-medium">{formatDate(article.date)}</span>
                   </div>
                 </div>
               </motion.div>
