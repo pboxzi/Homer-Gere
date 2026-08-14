@@ -232,7 +232,7 @@ export const DashboardChat: React.FC = () => {
             )}
             <div className="flex items-center gap-2">
               <input ref={fileInputRef} type="file" accept="image/*,video/*" onChange={handleFileSelect} className="hidden" />
-              <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="w-11 h-11 rounded-xl border border-[#A6852F]/45 bg-white flex items-center justify-center text-[#A6852F] hover:bg-[#A6852F]/10 transition-colors cursor-pointer disabled:opacity-50">
+              <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="w-11 h-11 rounded-xl border border-[#A6852F]/45 bg-white flex items-center justify-center text-[#A6852F] hover:bg-[#A6852F]/10 transition-colors cursor-pointer disabled:opacity-50 shrink-0">
                 <ImageIcon className="w-4 h-4" />
               </button>
               <input

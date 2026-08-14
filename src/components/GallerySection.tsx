@@ -61,7 +61,7 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
         </div>
 
         {/* Header */}
-        <div className="flex items-center justify-between mb-10">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
           <div>
             <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">
               Photo Gallery

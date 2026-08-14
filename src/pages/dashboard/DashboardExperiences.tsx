@@ -218,7 +218,7 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
                     <span className="flex items-center gap-1"><Star className="w-3 h-3" /> {selectedExp.price}</span>
                     <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {selectedExp.duration}</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-medium text-[#1C1917] mb-1">Preferred Date</label>
                       <input type="date" value={requestForm.preferredDate} onChange={e => setRequestForm(f => ({ ...f, preferredDate: e.target.value }))}

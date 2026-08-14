@@ -392,12 +392,12 @@ export default function RegisterPage() {
               <div className="ml-9">
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => update('profilePhoto', e.target.files?.[0] || null)} />
                 {formData.profilePhoto ? (
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-2xl bg-[#F3F1ED] flex items-center justify-center overflow-hidden">
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="w-16 h-16 rounded-2xl bg-[#F3F1ED] flex items-center justify-center overflow-hidden shrink-0">
                       <img src={URL.createObjectURL(formData.profilePhoto)} alt="Preview" className="w-full h-full object-cover" loading="lazy" />
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-[#1C1917]">{formData.profilePhoto.name}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-[#1C1917] truncate">{formData.profilePhoto.name}</p>
                       <button type="button" onClick={() => update('profilePhoto', null)} className="text-xs text-[#A6852F] hover:text-[#8B6F1F] transition-colors duration-200 cursor-pointer">Remove</button>
                     </div>
                   </div>

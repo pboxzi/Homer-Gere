@@ -135,15 +135,15 @@ export default function MemberRegister() {
 
         <form onSubmit={handleSubmit} className="relative z-10 space-y-4">
           {/* Name */}
-          <motion.div className="grid grid-cols-2 gap-3" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.05 }}>
+          <motion.div className="grid grid-cols-1 sm:grid-cols-2 gap-3" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.05 }}>
             <div>
-              <label className="block text-[10px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">First Name *</label>
+              <label className="block text-[11px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">First Name *</label>
               <input type="text" value={firstName} onChange={(e) => { setFirstName(e.target.value); setErrors(p => { const n = { ...p }; delete n.firstName; return n; }); }}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8E5DF]/80 bg-white/60 text-[13px] text-[#1C1917] placeholder:text-[#57534E]/40 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all shadow-[0_0_20px_rgba(166,133,47,0.08)]" placeholder="First name" />
               {errors.firstName && <p className="text-[10px] text-red-500 mt-0.5">{errors.firstName}</p>}
             </div>
             <div>
-              <label className="block text-[10px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Last Name *</label>
+              <label className="block text-[11px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Last Name *</label>
               <input type="text" value={lastName} onChange={(e) => { setLastName(e.target.value); setErrors(p => { const n = { ...p }; delete n.lastName; return n; }); }}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8E5DF]/80 bg-white/60 text-[13px] text-[#1C1917] placeholder:text-[#57534E]/40 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all shadow-[0_0_20px_rgba(166,133,47,0.08)]" placeholder="Last name" />
               {errors.lastName && <p className="text-[10px] text-red-500 mt-0.5">{errors.lastName}</p>}
@@ -152,7 +152,7 @@ export default function MemberRegister() {
 
           {/* Email */}
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-            <label className="block text-[10px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Email Address *</label>
+            <label className="block text-[11px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Email Address *</label>
             <input type="email" value={email} onChange={(e) => { setEmail(e.target.value); setErrors(p => { const n = { ...p }; delete n.email; return n; }); }}
               className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8E5DF]/80 bg-white/60 text-[13px] text-[#1C1917] placeholder:text-[#57534E]/40 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all shadow-[0_0_20px_rgba(166,133,47,0.08)]" placeholder="you@example.com" autoComplete="email" />
             {errors.email && <p className="text-[10px] text-red-500 mt-0.5">{errors.email}</p>}
@@ -160,7 +160,7 @@ export default function MemberRegister() {
 
           {/* Country */}
           <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
-            <label className="block text-[10px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Country</label>
+            <label className="block text-[11px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Country</label>
             <select value={country} onChange={(e) => setCountry(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-xl border border-[#E8E5DF]/80 bg-white/60 text-[13px] text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all appearance-none cursor-pointer shadow-[0_0_20px_rgba(166,133,47,0.08)]">
               <option value="">Select country</option>
@@ -169,9 +169,9 @@ export default function MemberRegister() {
           </motion.div>
 
           {/* Password */}
-          <motion.div className="grid grid-cols-2 gap-3" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+          <motion.div className="grid grid-cols-1 sm:grid-cols-2 gap-3" initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
             <div>
-              <label className="block text-[10px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Password *</label>
+              <label className="block text-[11px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Password *</label>
               <div className="relative">
                 <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => { setPassword(e.target.value); setErrors(p => { const n = { ...p }; delete n.password; return n; }); }}
                   className="w-full px-3.5 py-2.5 pr-10 rounded-xl border border-[#E8E5DF]/80 bg-white/60 text-[13px] text-[#1C1917] placeholder:text-[#57534E]/40 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all shadow-[0_0_20px_rgba(166,133,47,0.08)]" placeholder="Create password" autoComplete="new-password" />
@@ -190,7 +190,7 @@ export default function MemberRegister() {
               {errors.password && <p className="text-[10px] text-red-500 mt-0.5">{errors.password}</p>}
             </div>
             <div>
-              <label className="block text-[10px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Confirm *</label>
+              <label className="block text-[11px] font-semibold text-[#57534E] uppercase tracking-wider mb-1.5">Confirm *</label>
               <div className="relative">
                 <input type={showConfirm ? 'text' : 'password'} value={confirmPassword} onChange={(e) => { setConfirmPassword(e.target.value); setErrors(p => { const n = { ...p }; delete n.confirmPassword; return n; }); }}
                   className="w-full px-3.5 py-2.5 pr-10 rounded-xl border border-[#E8E5DF]/80 bg-white/60 text-[13px] text-[#1C1917] placeholder:text-[#57534E]/40 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/25 focus:border-[#A6852F]/50 transition-all shadow-[0_0_20px_rgba(166,133,47,0.08)]" placeholder="Confirm password" autoComplete="new-password" />

@@ -14,7 +14,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({ onSelectArticle,
   return (
     <section id="journal" className="py-28 sm:py-36">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between mb-14">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-14">
           <div>
             <span className="text-[11px] font-medium tracking-[0.2em] text-[#A6852F] uppercase">Latest from the Journal</span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] mt-3 tracking-tight hover-underline">Reflections & Writings</h2>

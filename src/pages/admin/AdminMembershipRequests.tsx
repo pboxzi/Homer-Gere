@@ -359,7 +359,7 @@ export default function AdminMembershipRequests() {
                 <div className="font-medium">{paymentTarget.membership_plan_name} — {paymentTarget.full_name}</div>
                 <div className="text-[#6b7280]">{paymentTarget.request_number}</div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Amount *</label>
                   <input type="number" value={paymentForm.amount} onChange={e => setPaymentForm(f => ({ ...f, amount: e.target.value }))}

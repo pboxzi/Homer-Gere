@@ -200,7 +200,7 @@ export default function DashboardPayments() {
       {/* Submit Payment Modal */}
       {showSubmitModal && submitTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setShowSubmitModal(false)}>
-          <div className="bg-white rounded-2xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
+            <div className="bg-white rounded-2xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-bold text-[#1C1917] mb-4">Submit Payment Proof</h2>
             <div className="space-y-4">
               <div className="p-3 bg-[#F3F1ED]/50 rounded-lg text-sm">

@@ -324,7 +324,7 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
                         {paymentMethods.map(m => <option key={m.id} value={m.name}>{m.name} ({m.type.replace(/_/g, ' ')})</option>)}
                       </select>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
                         <label className="block text-[10px] font-bold text-[#57534E] uppercase tracking-wider mb-1.5">Country</label>
                         <input value={requestForm.country} onChange={e => setRequestForm(f => ({ ...f, country: e.target.value }))}

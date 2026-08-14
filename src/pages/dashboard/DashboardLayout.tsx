@@ -95,7 +95,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   );
 
   return (
-    <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased flex">
+    <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased flex overflow-x-hidden">
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex w-64 bg-white border-r border-[#A6852F]/20 flex-col fixed inset-y-0 left-0 z-30 shadow-lg shadow-[#A6852F]/5">
         <SidebarContent />

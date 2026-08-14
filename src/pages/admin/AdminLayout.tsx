@@ -197,7 +197,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   );
 
   return (
-    <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased flex">
+    <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased flex overflow-x-hidden">
       <aside className="hidden lg:flex w-60 bg-white border-r border-[#E8E5DF]/40 flex-col fixed inset-y-0 left-0 z-30">
         <SidebarContent />
       </aside>

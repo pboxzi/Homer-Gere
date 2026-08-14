@@ -35,7 +35,7 @@ export const ContactHero: React.FC = () => {
           </motion.div>
 
           <motion.h1
-            className="text-5xl sm:text-6xl lg:text-7xl font-editorial text-[#1C1917] tracking-tight mt-4 mb-5"
+            className="text-4xl sm:text-5xl lg:text-6xl font-editorial text-[#1C1917] tracking-tight mt-4 mb-5"
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}

@@ -50,7 +50,7 @@ export const DashboardNotifications: React.FC = () => {
       </motion.div>
 
       {/* Filter Tabs */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 overflow-x-auto pb-1">
         {[
           { id: 'all', label: 'All', count: notifications.length },
           { id: 'unread', label: 'Unread', count: unread },

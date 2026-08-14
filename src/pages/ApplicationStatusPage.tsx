@@ -138,7 +138,7 @@ export default function ApplicationStatusPage() {
       >
         <div className="bg-white rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-[#E8E5DF]/60 overflow-hidden">
           {/* Header */}
-          <div className="px-8 py-8 border-b border-[#E8E5DF]/60">
+          <div className="px-5 sm:px-8 py-8 border-b border-[#E8E5DF]/60">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-xl bg-[#A6852F]/10 flex items-center justify-center">
                 <FileText className="w-5 h-5 text-[#A6852F]" />
@@ -164,7 +164,7 @@ export default function ApplicationStatusPage() {
 
           {/* Details */}
           <div className="px-8 py-6 space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <p className="text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em]">Submitted</p>
                 <p className="text-sm text-[#1C1917] mt-1">

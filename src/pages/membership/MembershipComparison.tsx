@@ -32,7 +32,7 @@ export const MembershipComparison: React.FC = () => {
 
         {/* Comparison Table */}
         <motion.div
-          className="rounded-[1.5rem] overflow-hidden border border-[#E8E5DF]/60 bg-white"
+          className="rounded-[1.5rem] overflow-x-auto border border-[#E8E5DF]/60 bg-white"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7, delay: 0.15 }}

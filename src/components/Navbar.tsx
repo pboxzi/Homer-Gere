@@ -113,7 +113,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <span className={`font-editorial tracking-[0.06em] text-[#1C1917] group-hover:text-[#A6852F] transition-all duration-500 uppercase leading-none ${scrolled ? 'text-base' : 'text-lg sm:text-xl'}`}>
             Homer Gere
           </span>
-            <span className={`font-medium tracking-[0.35em] text-[#A6852F]/70 uppercase transition-all duration-500 ${scrolled ? 'text-[9px] mt-0.5' : 'text-[10px] sm:text-[11px] mt-1'}`}>
+            <span className={`font-medium tracking-[0.35em] text-[#A6852F]/70 uppercase transition-all duration-500 ${scrolled ? 'text-[10px] mt-0.5' : 'text-[10px] sm:text-[11px] mt-1'}`}>
             Official Website
           </span>
         </button>
@@ -259,7 +259,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile Drawer with staggered animation */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#FAF9F7]/95 backdrop-blur-2xl px-5 pt-4 pb-6 border-t border-[#A6852F]/10">
+        <div className="lg:hidden bg-[#FAF9F7]/95 backdrop-blur-2xl px-5 pt-4 pb-6 border-t border-[#A6852F]/10 overflow-y-auto max-h-[calc(100vh-4rem)]">
           <div className="flex flex-col gap-0.5">
             {navItems.map((item, index) => {
             const isActive = item.id === 'journey' ? isJourneyPage : item.id === 'projects' ? isProjectsPage : item.id === 'media' ? isMediaPage : item.id === 'gallery' ? isGalleryPage : item.id === 'journal' ? isJournalPage : item.id === 'experiences' ? isExperiencesPage : item.id === 'membership' ? isMembershipPage : item.id === 'chat' ? isChatPage : item.id === 'contact' ? isContactPage : activeSection === item.id;
