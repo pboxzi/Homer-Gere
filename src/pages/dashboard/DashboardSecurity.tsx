@@ -45,7 +45,7 @@ export const DashboardSecurity: React.FC = () => {
       </motion.div>
 
       {/* Change Password */}
-      <motion.div className="rounded-2xl border border-[#E8E5DF]/60 bg-white p-5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+      <motion.div className="rounded-2xl border border-[#A6852F]/8 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-500" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-medium text-[#1C1917] flex items-center gap-2"><Lock className="w-4 h-4 text-[#57534E]" /> Change Password</h3>
           <button onClick={() => { setShowChangePw(!showChangePw); setPwError(''); }} className="text-xs text-[#A6852F] font-medium hover:text-[#8B6F1F] transition-colors cursor-pointer">{showChangePw ? 'Cancel' : 'Change'}</button>
@@ -69,7 +69,7 @@ export const DashboardSecurity: React.FC = () => {
       </motion.div>
 
       {/* Two-Factor */}
-      <motion.div className="rounded-2xl border border-[#E8E5DF]/60 bg-white p-5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+      <motion.div className="rounded-2xl border border-[#A6852F]/8 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-500" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
         <div className="flex items-center justify-between">
           <div>
             <h3 className="text-sm font-medium text-[#1C1917] flex items-center gap-2"><Shield className="w-4 h-4 text-[#57534E]" /> Two-Factor Authentication</h3>
@@ -93,7 +93,7 @@ export const DashboardSecurity: React.FC = () => {
           {sessions.map((s, i) => {
             const DeviceIcon = getDeviceIcon(s.device);
             return (
-              <motion.div key={s.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#E8E5DF]/60 bg-white" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.35 + i * 0.05 }}>
+              <motion.div key={s.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/8 bg-white shadow-sm hover:shadow-md transition-all duration-500" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.35 + i * 0.05 }}>
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${s.current ? 'bg-[#16A34A]/10 text-[#16A34A]' : 'bg-[#F3F1ED] text-[#57534E]'}`}><DeviceIcon className="w-5 h-5" /></div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">

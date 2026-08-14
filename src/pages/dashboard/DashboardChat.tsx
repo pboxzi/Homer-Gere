@@ -99,7 +99,7 @@ export const DashboardChat: React.FC = () => {
 
       {/* New Chat */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-        <button onClick={handleStartChat} className="w-full flex items-center gap-4 p-5 rounded-2xl border border-dashed border-[#A6852F]/30 hover:border-[#A6852F]/60 hover:bg-[#A6852F]/5 transition-all duration-300 cursor-pointer group">
+        <button onClick={handleStartChat} className="w-full flex items-center gap-4 p-5 rounded-2xl border border-dashed border-[#A6852F]/30 hover:border-[#A6852F]/60 hover:bg-[#A6852F]/5 transition-all duration-500 cursor-pointer group shadow-sm hover:shadow-md">
           <div className="w-12 h-12 rounded-2xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] group-hover:bg-[#A6852F] group-hover:text-white transition-all duration-500"><MessageSquare className="w-5 h-5" /></div>
           <div className="flex-1 text-left">
             <p className="text-sm font-medium text-[#1C1917] group-hover:text-[#A6852F] transition-colors">Start a New Conversation</p>
@@ -112,7 +112,7 @@ export const DashboardChat: React.FC = () => {
       {/* WhatsApp */}
       {canOpenWhatsApp && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
-          <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="w-full flex items-center gap-4 p-5 rounded-2xl border border-[#25D366]/20 hover:border-[#25D366]/40 hover:bg-[#25D366]/5 transition-all duration-300 cursor-pointer group">
+          <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="w-full flex items-center gap-4 p-5 rounded-2xl border border-[#25D366]/20 hover:border-[#25D366]/40 hover:bg-[#25D366]/5 transition-all duration-500 cursor-pointer group shadow-sm hover:shadow-md">
             <div className="w-12 h-12 rounded-2xl bg-[#25D366]/10 flex items-center justify-center text-[#25D366] group-hover:bg-[#25D366] group-hover:text-white transition-all duration-500"><Phone className="w-5 h-5" /></div>
             <div className="flex-1 text-left">
               <p className="text-sm font-medium text-[#1C1917] group-hover:text-[#25D366] transition-colors">Open Official WhatsApp</p>
@@ -128,7 +128,7 @@ export const DashboardChat: React.FC = () => {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.18 }}>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#57534E]/40" />
-            <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search conversations..." className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[#E8E5DF]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30" />
+            <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search conversations..." className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[#A6852F]/8 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 shadow-sm hover:shadow-md transition-all duration-500" />
           </div>
         </motion.div>
       )}
@@ -147,7 +147,7 @@ export const DashboardChat: React.FC = () => {
             filteredConversations.map((c) => {
               const thread = messages.find((t) => t.subject.includes('Conversation') || t.lastMessage === c.lastMessage);
               return (
-                <div key={c.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#E8E5DF]/60 bg-white hover:border-[#A6852F]/20 transition-all">
+                <div key={c.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/8 bg-white hover:border-[#A6852F]/20 transition-all duration-500 shadow-sm hover:shadow-md">
                   <button onClick={() => thread && setActiveThread(thread.id)} className="flex-1 flex items-center gap-4 text-left cursor-pointer">
                     <div className="w-10 h-10 rounded-xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F]"><MessageSquare className="w-4 h-4" /></div>
                     <div className="flex-1 min-w-0">

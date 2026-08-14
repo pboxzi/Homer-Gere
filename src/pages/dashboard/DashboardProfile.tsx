@@ -30,7 +30,7 @@ export const DashboardProfile: React.FC = () => {
       {/* Avatar + Meta */}
       <motion.div className="flex items-center gap-5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
         <div className="relative">
-          <div className="w-20 h-20 rounded-2xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] text-2xl font-editorial overflow-hidden">
+          <div className="w-20 h-20 rounded-2xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] text-2xl font-editorial overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-500">
             {formData.avatar ? <img src={formData.avatar} alt="Avatar" className="w-full h-full object-cover" loading="lazy" /> : <>{formData.firstName[0]}{formData.lastName[0]}</>}
           </div>
           <input type="file" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) { const reader = new FileReader(); reader.onload = (ev) => { update('avatar', ev.target?.result as string); }; reader.readAsDataURL(file); } }} className="hidden" id="avatar-upload" />
@@ -77,14 +77,14 @@ export const DashboardProfile: React.FC = () => {
 const Field: React.FC<{ label: string; value: string; type?: string; onChange: (v: string) => void }> = ({ label, value, type = 'text', onChange }) => (
   <div>
     <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">{label}</label>
-    <input type={type} value={value} onChange={(e) => onChange(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-white border border-[#E8E5DF]/60 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300" />
+    <input type={type} value={value} onChange={(e) => onChange(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-white border border-[#A6852F]/8 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F]/30 shadow-sm hover:shadow-md transition-all duration-500" />
   </div>
 );
 
 const SelectField: React.FC<{ label: string; value: string; options: string[]; onChange: (v: string) => void }> = ({ label, value, options, onChange }) => (
   <div>
     <label className="block text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">{label}</label>
-    <select value={value} onChange={(e) => onChange(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-white border border-[#E8E5DF]/60 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300 appearance-none">
+    <select value={value} onChange={(e) => onChange(e.target.value)} className="w-full px-4 py-3 rounded-xl bg-white border border-[#A6852F]/8 text-sm text-[#1C1917] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F]/30 shadow-sm hover:shadow-md transition-all duration-500 appearance-none">
       {options.map((o) => <option key={o} value={o}>{o}</option>)}
     </select>
   </div>

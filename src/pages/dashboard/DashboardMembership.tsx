@@ -19,7 +19,7 @@ export const DashboardMembership: React.FC = () => {
       </motion.div>
 
       {/* Current Plan Card */}
-      <motion.div className="rounded-2xl border border-[#A6852F]/20 bg-gradient-to-br from-[#A6852F]/5 to-transparent p-6 sm:p-8" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+      <motion.div className="rounded-2xl border border-[#A6852F]/20 bg-gradient-to-br from-[#A6852F]/5 to-transparent p-6 sm:p-8 shadow-sm hover:shadow-md transition-shadow duration-500" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
         <div className="flex items-start justify-between mb-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -72,10 +72,10 @@ export const DashboardMembership: React.FC = () => {
       {/* Benefits */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
         <h3 className="text-sm font-medium text-[#1C1917] mb-4">Your Benefits</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {membership.benefits && membership.benefits.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+           {membership.benefits && membership.benefits.length > 0 ? (
             membership.benefits.map((b, i) => (
-              <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white border border-[#E8E5DF]/60">
+              <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-white border border-[#A6852F]/8 shadow-sm hover:shadow-md transition-all duration-500">
                 <Check className="w-4 h-4 text-[#16A34A] shrink-0" />
                 <span className="text-sm text-[#57534E]">{b}</span>
               </div>
@@ -84,7 +84,7 @@ export const DashboardMembership: React.FC = () => {
             <p className="text-xs text-[#57534E]/60 col-span-2">No benefits yet. Upgrade your membership to unlock exclusive perks.</p>
           )}
           {canUseWhatsApp && (
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-[#25D366]/5 border border-[#25D366]/20">
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-[#25D366]/5 border border-[#25D366]/20 shadow-sm hover:shadow-md transition-all duration-500">
               <Phone className="w-4 h-4 text-[#25D366] shrink-0" />
               <span className="text-sm text-[#1C1917]">Direct WhatsApp messaging</span>
             </div>
@@ -95,7 +95,7 @@ export const DashboardMembership: React.FC = () => {
       {/* Payment History */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
         <h3 className="text-sm font-medium text-[#1C1917] mb-4">Payment History</h3>
-        <div className="rounded-2xl border border-[#E8E5DF]/60 bg-white overflow-hidden">
+        <div className="rounded-2xl border border-[#A6852F]/8 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-500">
           {PAYMENT_HISTORY.length > 0 ? (
             PAYMENT_HISTORY.map((p, i) => (
               <div key={p.id} className={`flex items-center gap-3 p-4 ${i < PAYMENT_HISTORY.length - 1 ? 'border-b border-[#E8E5DF]/40' : ''}`}>

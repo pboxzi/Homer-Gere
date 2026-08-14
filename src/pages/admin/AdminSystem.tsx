@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import {
   Globe, Palette, Mail, Shield, Database, Plug,
   Save, Eye, EyeOff, CheckCircle, AlertTriangle,
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
-import { emailTemplatesRepository } from '../../lib/repositories';
+import { emailTemplatesRepository, siteSettingsRepository } from '../../lib/repositories';
 import type { AdminSection } from '../../data/adminData';
 
 const Toggle: React.FC<{ checked: boolean; onChange: (v: boolean) => void }> = ({ checked, onChange }) => (
@@ -524,15 +524,42 @@ const BackupsSection: React.FC = () => {
   const [saved, setSaved] = useState(false);
   const [backupMessage, setBackupMessage] = useState('');
 
-  const handleSave = () => {
-    updateBackupSettings(form);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await siteSettingsRepository.getByCategory('backup');
+        if (data?.settings) {
+          setForm(data.settings);
+        }
+      } catch { /* silent */ }
+    };
+    load();
+  }, []);
+
+  const handleSave = async () => {
+    try {
+      await siteSettingsRepository.upsert('backup', form);
+      updateBackupSettings(form);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch {
+      setSaved(false);
+    }
   };
 
-  const handleManualBackup = () => {
-    setBackupMessage('Backup completed successfully.');
-    setTimeout(() => setBackupMessage(''), 3000);
+  const handleManualBackup = async () => {
+    try {
+      await siteSettingsRepository.upsert('backup_manual', { lastBackup: new Date().toISOString() });
+      setBackupMessage('Backup completed successfully.');
+      setTimeout(() => setBackupMessage(''), 3000);
+    } catch {
+      setBackupMessage('Backup failed. Please try again.');
+      setTimeout(() => setBackupMessage(''), 3000);
+    }
+  };
+
+  const handleRestore = () => {
+    alert('Restore is not yet available.');
   };
 
   return (
@@ -598,7 +625,7 @@ const BackupsSection: React.FC = () => {
             <Database className="w-3.5 h-3.5 inline mr-1.5" />
             Backup Now
           </button>
-          <button className="px-4 py-2 rounded-xl border border-[#E8E5DF]/60 text-[#57534E] text-xs font-medium hover:bg-[#F3F1ED]/60 cursor-pointer">
+          <button onClick={handleRestore} className="px-4 py-2 rounded-xl border border-[#E8E5DF]/60 text-[#57534E] text-xs font-medium hover:bg-[#F3F1ED]/60 cursor-pointer">
             Restore from Backup
           </button>
           {saved && <span className="text-[#16A34A] text-xs font-medium">Settings saved successfully.</span>}

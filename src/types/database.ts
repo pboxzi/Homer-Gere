@@ -5,7 +5,7 @@
 // ============================================================
 
 export type UserRole = 'pending' | 'member' | 'admin' | 'super_admin';
-export type AdminRole = 'super_admin' | 'admin' | 'moderator';
+export type AdminRole = 'super_admin' | 'admin' | 'moderator' | 'content_manager' | 'media_manager' | 'membership_manager' | 'support_manager';
 export type MembershipStatus = 'none' | 'pending' | 'active' | 'expired' | 'cancelled';
 export type ApplicationStatus = 'pending' | 'approved' | 'rejected';
 export type ExperienceStatus = 'pending' | 'under_review' | 'approved' | 'declined' | 'completed';
@@ -42,6 +42,21 @@ export interface Profile {
   last_login: string | null;
   created_at: string;
   updated_at: string;
+  // Phase 1 enterprise fields
+  display_name: string | null;
+  biography: string | null;
+  city: string | null;
+  state: string | null;
+  postal_code: string | null;
+  timezone: string | null;
+  preferred_language: string | null;
+  avatar_media_id: string | null;
+  cover_media_id: string | null;
+  profile_completion: number;
+  account_status: string;
+  onboarding_completed: boolean;
+  deleted_at: string | null;
+  deleted_by: string | null;
 }
 
 export interface Admin {
@@ -73,6 +88,24 @@ export interface RegistrationApplication {
   notes: string | null;
   created_at: string;
   updated_at: string;
+  // Phase 1 enterprise fields
+  application_number: string | null;
+  membership_plan_requested: string | null;
+  reason_for_joining: string | null;
+  referral_source: string | null;
+  device_type: string | null;
+  browser: string | null;
+  operating_system: string | null;
+  preferred_language: string | null;
+  user_agent: string | null;
+  ip_address: string | null;
+  city_detected: string | null;
+  country_detected: string | null;
+  review_notes: string | null;
+  status_history: Record<string, unknown>[];
+  assigned_admin: string | null;
+  approved_at: string | null;
+  rejected_at: string | null;
 }
 
 export interface MembershipPlan {
@@ -388,6 +421,12 @@ export interface Notification {
   read: boolean;
   link: string | null;
   created_at: string;
+  // Phase 1 enterprise fields
+  priority: string;
+  category: string | null;
+  action_link: string | null;
+  expires_at: string | null;
+  read_at: string | null;
 }
 
 export interface SiteSetting {

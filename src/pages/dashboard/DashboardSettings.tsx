@@ -48,15 +48,15 @@ export const DashboardSettings: React.FC = () => {
 };
 
 const ToggleRow: React.FC<{ icon: React.ReactNode; label: string; subtext?: string; checked: boolean; onChange: (v: boolean) => void }> = ({ icon, label, subtext, checked, onChange }) => (
-  <label className="flex items-center gap-3 p-3 rounded-xl bg-white border border-[#E8E5DF]/60 cursor-pointer">
-    <div className="text-[#57534E]">{icon}</div>
+  <label className="flex items-center gap-3 p-3 rounded-xl bg-white border border-[#A6852F]/8 shadow-sm hover:shadow-md transition-all duration-500 cursor-pointer">
+    <div className="text-[#57534E] group-hover:scale-110 transition-transform duration-500">{icon}</div>
     <div className="flex-1">
       <span className="text-sm text-[#57534E]">{label}</span>
       {subtext && <p className="text-[10px] text-[#57534E]/60 mt-0.5">{subtext}</p>}
     </div>
     <div className="relative">
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="sr-only" />
-      <div className={`w-10 h-5 rounded-full transition-colors duration-300 ${checked ? 'bg-[#A6852F]' : 'bg-[#E8E5DF]'}`} />
+      <div className={`w-10 h-5 rounded-full transition-colors duration-300 ${checked ? 'bg-[#A6852F] shadow-sm' : 'bg-[#E8E5DF]'}`} />
       <div className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-300 ${checked ? 'translate-x-5' : ''}`} />
     </div>
   </label>

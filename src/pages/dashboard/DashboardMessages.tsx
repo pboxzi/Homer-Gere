@@ -104,12 +104,7 @@ export const DashboardMessages: React.FC = () => {
 
       <AnimatePresence>
         {showNewThread && (
-          <motion.div
-            className="rounded-2xl border border-[#E8E5DF]/60 bg-white p-5 space-y-3"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-          >
+          <motion.div className="rounded-2xl border border-[#A6852F]/8 bg-white p-5 space-y-3 shadow-sm hover:shadow-md transition-shadow duration-500" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
             <input
               value={newSubject}
               onChange={(e) => setNewSubject(e.target.value)}
@@ -135,7 +130,7 @@ export const DashboardMessages: React.FC = () => {
 
       <div className="space-y-2">
         {messages.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/30 p-12 text-center">
+          <div className="rounded-2xl border border-dashed border-[#A6852F]/20 bg-[#A6852F]/5 p-12 text-center shadow-sm hover:shadow-md transition-shadow duration-500">
             <Inbox className="w-8 h-8 text-[#57534E]/30 mx-auto mb-3" />
             <p className="text-sm font-medium text-[#1C1917]">No messages yet</p>
             <p className="text-xs text-[#57534E] mt-1">Start a new thread to begin a conversation.</p>
@@ -148,8 +143,8 @@ export const DashboardMessages: React.FC = () => {
             <motion.button
               key={t.id}
               onClick={() => { setSelectedThread(t.id); markThreadRead(t.id); }}
-              className={`w-full flex items-center gap-4 p-4 rounded-2xl border text-left transition-all cursor-pointer ${
-                !t.read ? 'border-[#A6852F]/20 bg-[#A6852F]/5' : 'border-[#E8E5DF]/60 bg-white hover:border-[#A6852F]/10'
+              className={`w-full flex items-center gap-4 p-4 rounded-2xl border text-left transition-all duration-500 cursor-pointer ${
+                !t.read ? 'border-[#A6852F]/20 bg-[#A6852F]/5 shadow-sm hover:shadow-md' : 'border-[#A6852F]/8 bg-white hover:border-[#A6852F]/10 shadow-sm hover:shadow-md'
               }`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

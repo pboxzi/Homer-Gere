@@ -65,15 +65,15 @@ export const DashboardHome: React.FC<{
         {cards.map((card, i) => (
           <motion.div
             key={card.label}
-            className="rounded-xl p-4 border transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 cursor-default group"
-            style={{ backgroundColor: `${card.color}10`, borderColor: `${card.color}20` }}
+            className="rounded-xl p-4 border transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 cursor-default group"
+            style={{ backgroundColor: `${card.color}10`, borderColor: `${card.color}25`, boxShadow: `0 0 15px ${card.color}12` }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.1 + 0.05 * i }}
           >
             <div className="flex items-center justify-between mb-2.5">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: `${card.color}20`, color: card.color }}>
-                <card.icon className="w-4 h-4" />
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: `${card.color}22`, color: card.color }}>
+                <card.icon className="w-4.5 h-4.5" />
               </div>
               <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: card.color }} />
             </div>
@@ -112,7 +112,7 @@ export const DashboardHome: React.FC<{
 
       {/* Notifications + Conversations */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <motion.div className="rounded-xl border border-[#E8E5DF]/80 bg-white p-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
+        <motion.div className="rounded-xl border border-[#A6852F]/10 bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-semibold text-[#1C1917] uppercase tracking-[0.05em]">Recent Notifications</h3>
             <button onClick={() => onNavigate('notifications')} className="text-[9px] text-[#A6852F] font-bold hover:text-[#8B6F1F] transition-colors cursor-pointer">View All</button>
@@ -136,7 +136,7 @@ export const DashboardHome: React.FC<{
           </div>
         </motion.div>
 
-        <motion.div className="rounded-xl border border-[#E8E5DF]/80 bg-white p-4" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.5 }}>
+        <motion.div className="rounded-xl border border-[#A6852F]/10 bg-white p-4 shadow-sm hover:shadow-md transition-shadow duration-300" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.5 }}>
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-semibold text-[#1C1917] uppercase tracking-[0.05em]">Recent Chat Activity</h3>
             <button onClick={() => onNavigate('chat')} className="text-[9px] text-[#A6852F] font-bold hover:text-[#8B6F1F] transition-colors cursor-pointer">View All</button>

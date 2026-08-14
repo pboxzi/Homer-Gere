@@ -15,7 +15,7 @@ export const DashboardFavorites: React.FC = () => {
 
       {favorites.length === 0 ? (
         <motion.div
-          className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/30 p-12 text-center"
+          className="rounded-2xl border border-dashed border-[#A6852F]/20 bg-[#A6852F]/5 p-12 text-center shadow-sm hover:shadow-md transition-shadow duration-500"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
@@ -32,7 +32,7 @@ export const DashboardFavorites: React.FC = () => {
           {favorites.map((f, i) => (
             <motion.div
               key={f.id}
-              className="group relative rounded-2xl overflow-hidden border border-[#E8E5DF]/60 bg-white"
+              className="group relative rounded-2xl overflow-hidden border border-[#A6852F]/8 bg-white shadow-sm hover:shadow-md transition-all duration-500"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}

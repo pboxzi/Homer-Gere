@@ -146,6 +146,7 @@ interface AdminContextType {
   addExperience: (exp: Omit<AdminExperience, 'id'>) => void;
   updateExperience: (id: string, updates: Partial<AdminExperience>) => void;
   deleteExperience: (id: string) => void;
+  deleteExperienceRequest: (id: string) => void;
   updateExperienceRequest: (id: string, status: 'approved' | 'declined' | 'completed') => void;
   addConversation: (conv: Omit<AdminConversation, 'id'>) => void;
   updateConversation: (id: string, updates: Partial<AdminConversation>) => void;
@@ -411,20 +412,22 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // ----- CRUD: Members -----
   const addMember = useCallback((member: Omit<AdminMember, 'id'>) => {
     setMembers((prev) => [{ ...member, id: generateId() }, ...prev]);
-    supabase.from('profiles').insert({
-      id: generateId(),
-      email: member.email,
-      first_name: member.name.split(' ')[0],
-      last_name: member.name.split(' ').slice(1).join(' ') || '',
-      role: 'member',
-      membership_tier: member.membership || null,
-      email_verified: false,
-    }).then(() => {
+    Promise.resolve(
+      supabase.from('profiles').insert({
+        id: generateId(),
+        email: member.email,
+        first_name: member.name.split(' ')[0],
+        last_name: member.name.split(' ').slice(1).join(' ') || '',
+        role: 'member',
+        membership_tier: member.membership || null,
+        email_verified: false,
+      })
+    ).then(() => {
       profilesRepository.getAll().then((fresh) => {
         setMembers(fresh.map(m => ({
           id: m.id, name: `${m.first_name} ${m.last_name}`.trim(),
-          email: m.email, role: m.role, status: m.role === 'deactivated' ? 'suspended' : 'active',
-          membership: m.membership_tier || 'None', joined: m.created_at, lastActive: m.updated_at,
+          email: m.email, status: 'active',
+          membership: m.membership_tier || 'None', joinDate: m.created_at, lastActive: m.updated_at,
         })));
       });
     }).catch(() => {});
@@ -640,6 +643,10 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   // ----- CRUD: Experience Requests -----
+  const deleteExperienceRequest = useCallback((id: string) => {
+    setExperienceRequests((prev) => prev.filter((r) => r.id !== id));
+    experienceRequestsRepository.delete(id).catch(() => {});
+  }, []);
   const updateExperienceRequest = useCallback((id: string, status: 'approved' | 'declined' | 'completed') => {
     setExperienceRequests((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
     experienceRequestsRepository.updateStatus(id, status).catch(() => {});
@@ -648,31 +655,29 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // ----- CRUD: Conversations -----
   const addConversation = useCallback((conv: Omit<AdminConversation, 'id'>) => {
     setConversations((prev) => [{ ...conv, id: generateId() }, ...prev]);
-    fanChatRepository.createConversation({
-      user_id: conv.userId || null,
-      user_name: conv.userName || '',
-      user_email: conv.userEmail || '',
-      subject: conv.subject || '',
-      status: conv.status || 'open',
-      priority: conv.priority || 'normal',
-      category: conv.category || 'general',
-    }).then(() => {
+    Promise.resolve(
+      fanChatRepository.createConversation({
+        participant: conv.participant || '',
+        email: conv.email || '',
+        status: conv.status || 'open',
+        user_id: null,
+        phone: null,
+        membership_tier: null,
+        method: null,
+      })
+    ).then(() => {
       fanChatRepository.getConversations().then((fresh) => {
         setConversations(fresh.map(c => ({
-          id: c.id, userId: c.user_id, userName: c.user_name, userEmail: c.user_email,
-          subject: c.subject, lastMessage: '', lastMessageTime: c.updated_at,
-          status: c.status as any, priority: c.priority as any, messages: [],
-          category: c.category, assignedTo: null, unreadCount: 0,
+          id: c.id, type: 'fan' as const, participant: c.participant, email: c.email,
+          lastMessage: '', status: c.status as any, date: c.updated_at,
+          messages: [],
         })));
       });
     }).catch(() => {});
   }, []);
   const updateConversation = useCallback((id: string, updates: Partial<AdminConversation>) => {
     setConversations((prev) => prev.map((c) => (c.id === id ? { ...c, ...updates } : c)));
-    const dbUpdates: Record<string, unknown> = {};
-    if (updates.status !== undefined) dbUpdates.status = updates.status;
-    if (updates.priority !== undefined) dbUpdates.priority = updates.priority;
-    if (Object.keys(dbUpdates).length > 0) {
+    if (updates.status !== undefined) {
       fanChatRepository.updateConversationStatus(id, updates.status || 'open').catch(() => {});
     }
   }, []);
@@ -688,12 +693,15 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (c.id !== conversationId) return c;
       return { ...c, lastMessage: text, messages: [...(c.messages || []), { sender, text, time }] };
     }));
-    fanChatRepository.sendMessage({
-      conversation_id: conversationId,
-      sender: sender as any,
-      content: text,
-      message_type: 'text',
-    }).catch(() => {});
+    Promise.resolve(
+      fanChatRepository.sendMessage({
+        conversation_id: conversationId,
+        sender: sender as any,
+        text: text,
+        media_type: null,
+        media_url: null,
+      })
+    ).catch(() => {});
   }, []);
 
   // ----- CRUD: Contact Messages -----
@@ -734,18 +742,23 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const addMedia = useCallback((item: Omit<AdminMediaItem, 'id'>) => {
     const newMedia = { ...item, id: generateId() };
     setMedia((prev) => [newMedia, ...prev]);
-    mediaRepository.createVideo({
-      title: item.title, url: item.url || '', description: item.description || null,
-      thumbnail: item.thumbnail || null, source: item.source || null, category: item.category || null,
-      duration: item.duration || null, date: item.date || null, featured: false, sort_order: 0,
-    }).catch(() => {});
+    Promise.resolve(
+      mediaRepository.createVideo({
+        title: item.name, url: item.url || '', description: null,
+        thumbnail: null, source: null, category: null,
+        duration: null, date: item.date || null, featured: false, sort_order: 0,
+      })
+    ).catch(() => {});
   }, []);
   const updateMedia = useCallback((id: string, updates: Partial<AdminMediaItem>) => {
     setMedia((prev) => prev.map((m) => (m.id === id ? { ...m, ...updates } : m)));
-    mediaRepository.updateVideo(id, { title: updates.title, description: updates.description } as any).catch(() => {});
+    Promise.resolve(
+      mediaRepository.updateVideo(id, { title: updates.name } as any)
+    ).catch(() => {});
   }, []);
   const deleteMedia = useCallback((id: string) => {
     setMedia((prev) => prev.filter((m) => m.id !== id));
+    mediaRepository.deleteVideo(id).catch(() => {});
   }, []);
 
   // ----- CRUD: Payments -----
@@ -845,7 +858,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     addMember, updateMember, deleteMember,
     addPlan, updatePlan, deletePlan,
     addApplication, updateApplication, deleteApplication,
-    addExperience, updateExperience, deleteExperience, updateExperienceRequest,
+    addExperience, updateExperience, deleteExperience, deleteExperienceRequest, updateExperienceRequest,
     addConversation, updateConversation, deleteConversation, sendConversationMessage,
     addContactMessage, updateContactMessage, deleteContactMessage,
     addNotification, updateNotification, deleteNotification,
@@ -864,7 +877,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     addMember, updateMember, deleteMember,
     addPlan, updatePlan, deletePlan,
     addApplication, updateApplication, deleteApplication,
-    addExperience, updateExperience, deleteExperience, updateExperienceRequest,
+    addExperience, updateExperience, deleteExperience, deleteExperienceRequest, updateExperienceRequest,
     addConversation, updateConversation, deleteConversation, sendConversationMessage,
     addContactMessage, updateContactMessage, deleteContactMessage,
     addNotification, updateNotification, deleteNotification,

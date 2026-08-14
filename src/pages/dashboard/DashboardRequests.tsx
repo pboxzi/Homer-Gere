@@ -27,7 +27,7 @@ export const DashboardRequests: React.FC = () => {
         {Object.entries(STATUS_CONFIG).map(([key, config], i) => {
           const count = requests.filter((r) => r.status === key).length;
           return (
-            <motion.div key={key} className="rounded-xl p-3 text-center" style={{ backgroundColor: config.bg }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
+            <motion.div key={key} className="rounded-xl p-3 text-center shadow-sm hover:shadow-md transition-all duration-500" style={{ backgroundColor: config.bg }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
               <p className="text-lg font-editorial" style={{ color: config.color }}>{count}</p>
               <p className="text-[10px] font-medium" style={{ color: config.color }}>{config.label}</p>
             </motion.div>
@@ -49,7 +49,7 @@ export const DashboardRequests: React.FC = () => {
             const isExpanded = expandedId === r.id;
             return (
               <motion.div key={r.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 + i * 0.05 }}>
-                <button onClick={() => setExpandedId(isExpanded ? null : r.id)} className="w-full flex items-start gap-4 p-5 rounded-2xl border border-[#E8E5DF]/60 bg-white hover:border-[#A6852F]/20 transition-all cursor-pointer text-left">
+                <button onClick={() => setExpandedId(isExpanded ? null : r.id)} className="w-full flex items-start gap-4 p-5 rounded-2xl border border-[#A6852F]/8 bg-white hover:border-[#A6852F]/20 transition-all duration-500 cursor-pointer text-left shadow-sm hover:shadow-md">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: status.bg }}><StatusIcon className="w-5 h-5" /></div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">

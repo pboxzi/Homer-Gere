@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Globe,
@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import type { AdminSection } from '../../data/adminData';
+import { siteSettingsRepository } from '../../lib/repositories';
 
 interface AdminWebsiteProps {
   activeSection: AdminSection;
@@ -254,6 +255,14 @@ const NavigationSection: React.FC<{ search: string }> = ({ search }) => {
   const [editUrl, setEditUrl] = useState('');
   const [saved, setSaved] = useState(false);
 
+  useEffect(() => {
+    siteSettingsRepository.getByCategory('navigation').then((data) => {
+      if (data?.settings?.items) {
+        setItems(data.settings.items as NavItem[]);
+      }
+    }).catch(() => {});
+  }, []);
+
   const addItem = () => {
     const newItem: NavItem = {
       id: 'nav_' + Date.now(),
@@ -363,8 +372,10 @@ const NavigationSection: React.FC<{ search: string }> = ({ search }) => {
       <div className="flex justify-end">
         <button
           onClick={() => {
-            setSaved(true);
-            setTimeout(() => setSaved(false), 2000);
+            siteSettingsRepository.upsert('navigation', { items: items }).then(() => {
+              setSaved(true);
+              setTimeout(() => setSaved(false), 2000);
+            }).catch(() => {});
           }}
           className={saveBtnCls}
         >
@@ -435,6 +446,19 @@ const FooterSection: React.FC<{ search: string }> = ({ search }) => {
   const [socials, setSocials] = useState<SocialLink[]>(defaultSocial);
   const [copyright, setCopyright] = useState('© 2025 Homer Gere. All rights reserved.');
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    siteSettingsRepository.getByCategory('footer').then((data) => {
+      if (data?.settings) {
+        if (data.settings.columns) {
+          setColumns(data.settings.columns as FooterColumn[]);
+        }
+        if (data.settings.socials) {
+          setSocials(data.settings.socials as SocialLink[]);
+        }
+      }
+    }).catch(() => {});
+  }, []);
 
   const updateSocialUrl = (platform: string, url: string) => {
     setSocials((p) => p.map((s) => (s.platform === platform ? { ...s, url } : s)));
@@ -580,8 +604,10 @@ const FooterSection: React.FC<{ search: string }> = ({ search }) => {
       <div className="flex justify-end">
         <button
           onClick={() => {
-            setSaved(true);
-            setTimeout(() => setSaved(false), 2000);
+            siteSettingsRepository.upsert('footer', { columns: columns, socials: socials }).then(() => {
+              setSaved(true);
+              setTimeout(() => setSaved(false), 2000);
+            }).catch(() => {});
           }}
           className={saveBtnCls}
         >
@@ -732,6 +758,14 @@ const MenusSection: React.FC<{ search: string }> = ({ search }) => {
   const [menus, setMenus] = useState<MenuItem[]>(defaultMenus);
   const [saved, setSaved] = useState(false);
 
+  useEffect(() => {
+    siteSettingsRepository.getByCategory('menus').then((data) => {
+      if (data?.settings?.menus) {
+        setMenus(data.settings.menus as MenuItem[]);
+      }
+    }).catch(() => {});
+  }, []);
+
   const toggleTab = useCallback((targetId: string) => {
     const toggle = (items: MenuItem[]): MenuItem[] =>
       items.map((i) =>
@@ -808,8 +842,10 @@ const MenusSection: React.FC<{ search: string }> = ({ search }) => {
       <div className="flex justify-end">
         <button
           onClick={() => {
-            setSaved(true);
-            setTimeout(() => setSaved(false), 2000);
+            siteSettingsRepository.upsert('menus', { menus: menus }).then(() => {
+              setSaved(true);
+              setTimeout(() => setSaved(false), 2000);
+            }).catch(() => {});
           }}
           className={saveBtnCls}
         >

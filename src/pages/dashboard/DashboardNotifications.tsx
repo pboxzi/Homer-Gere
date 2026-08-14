@@ -54,13 +54,13 @@ export const DashboardNotifications: React.FC = () => {
             return (
               <motion.div
                 key={n.id}
-                className={`flex items-start gap-4 p-4 rounded-2xl border transition-all ${!n.read ? 'border-[#A6852F]/20 bg-[#A6852F]/5 hover:bg-[#A6852F]/8' : 'border-[#E8E5DF]/60 bg-white hover:border-[#A6852F]/10'}`}
+                className={`flex items-start gap-4 p-4 rounded-2xl border transition-all duration-500 ${!n.read ? 'border-[#A6852F]/20 bg-[#A6852F]/5 hover:bg-[#A6852F]/8 shadow-sm hover:shadow-md' : 'border-[#E8E5DF]/60 bg-white hover:border-[#A6852F]/10 shadow-sm hover:shadow-md'}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}
               >
                 <button onClick={() => markNotificationRead(n.id)} className="flex items-start gap-4 flex-1 text-left cursor-pointer">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${color}12`, color }}><Icon className="w-4 h-4" /></div>
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-500" style={{ backgroundColor: `${color}12`, color }}><Icon className="w-4 h-4" /></div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium text-[#1C1917]">{n.title}</p>

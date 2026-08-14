@@ -875,7 +875,7 @@ const ExperiencesSection: React.FC = () => {
 // ────────────────────────────────────────────────────────────
 
 const ExperienceRequestsSection: React.FC = () => {
-  const { experienceRequests, experiences, updateExperience, updateExperienceRequest } = useAdmin();
+  const { experienceRequests, experiences, updateExperience, deleteExperienceRequest, updateExperienceRequest } = useAdmin();
   const [filterTab, setFilterTab] = useState<ExperienceRequestStatus | 'all'>('all');
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [viewId, setViewId] = useState<string | null>(null);
@@ -995,7 +995,7 @@ const ExperienceRequestsSection: React.FC = () => {
         open={!!deleteId}
         title="Delete Request"
         message="Are you sure you want to delete this experience request? This action cannot be undone."
-        onConfirm={() => setDeleteId(null)}
+        onConfirm={() => { if (deleteId) { deleteExperienceRequest(deleteId); setDeleteId(null); } }}
         onCancel={() => setDeleteId(null)}
       />
 
