@@ -44,12 +44,12 @@ export const ExperiencesExplore: React.FC<ExperiencesExploreProps> = ({
             transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="relative h-56 sm:h-64 overflow-hidden bg-[#E8E5DF]">
-              <img
+              <img 
                 src={SECTION_IMAGES.exploreMore.projects}
                 alt="Membership"
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out"
-              />
+                loading="lazy" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/50 via-[#111827]/10 to-transparent" />
               <div className="absolute bottom-5 left-5 w-11 h-11 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center text-white">
                 <Crown className="w-5 h-5" />
@@ -78,12 +78,12 @@ export const ExperiencesExplore: React.FC<ExperiencesExploreProps> = ({
             transition={{ duration: 0.6, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="relative h-56 sm:h-64 overflow-hidden bg-[#E8E5DF]">
-              <img
+              <img 
                 src={SECTION_IMAGES.exploreMore.contact}
                 alt="Chat with Homer"
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out"
-              />
+                loading="lazy" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/50 via-[#111827]/10 to-transparent" />
               <div className="absolute bottom-5 left-5 w-11 h-11 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center text-white">
                 <MessageSquare className="w-5 h-5" />

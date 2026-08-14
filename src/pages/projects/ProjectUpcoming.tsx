@@ -43,12 +43,12 @@ export const ProjectUpcoming: React.FC = () => {
                 {/* Background */}
                 {item.image && (
                   <div className="absolute inset-0 z-0">
-                    <img
+                    <img 
                       src={item.image}
                       alt={item.title}
                       referrerPolicy="no-referrer"
                       className="w-full h-full object-cover opacity-30 group-hover:opacity-40 group-hover:scale-105 transition-all duration-[1.2s]"
-                    />
+                      loading="lazy" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-[#111827]/60 to-transparent" />
                   </div>
                 )}

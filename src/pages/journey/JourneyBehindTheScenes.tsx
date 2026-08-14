@@ -138,12 +138,12 @@ export const JourneyBehindTheScenes: React.FC<JourneyBehindTheScenesProps> = ({ 
               }}
             >
               {/* Image */}
-              <img
+              <img 
                 src={item.image}
                 alt={item.title}
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out"
-              />
+                loading="lazy" />
 
               {/* Dark gradient overlay — always visible */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/60 via-[#111827]/10 to-transparent" />

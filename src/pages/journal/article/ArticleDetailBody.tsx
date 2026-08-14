@@ -80,12 +80,12 @@ export const ArticleDetailBody: React.FC<ArticleDetailBodyProps> = ({ article })
                 transition={{ duration: 0.6 }}
               >
                 <div className="rounded-[1.5rem] overflow-hidden bg-[#E8E5DF]">
-                  <img
+                  <img 
                     src={article.image}
                     alt={article.imageAlt}
                     referrerPolicy="no-referrer"
                     className="w-full aspect-[16/9] object-cover object-top"
-                  />
+                    loading="lazy" />
                 </div>
                 <figcaption className="mt-3 text-xs text-[#71717A] text-center italic">
                   {article.imageCaption}

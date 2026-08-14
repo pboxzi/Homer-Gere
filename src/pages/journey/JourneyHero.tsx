@@ -18,12 +18,12 @@ export const JourneyHero: React.FC<JourneyHeroProps> = ({ onExploreProjects, onV
         animate={{ scale: 1 }}
         transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
       >
-        <img
+        <img 
           src={IMAGES.homerBrightLuxuryEditorial}
           alt="Homer Gere - Editorial Portrait"
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover object-top"
-        />
+          loading="lazy" />
         {/* Warm fade into left space */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#FAF9F7] via-[#FAF9F7]/20 to-transparent hidden lg:block" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F7] via-[#FAF9F7]/15 to-transparent lg:hidden" />

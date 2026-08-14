@@ -46,12 +46,12 @@ export const ProjectRelated: React.FC<ProjectRelatedProps> = ({ project, onNavig
               transition={{ duration: 0.7, delay: 0.15 + idx * 0.12 }}
             >
               {/* Image */}
-              <img
+              <img 
                 src={related.heroImage}
                 alt={related.title}
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover object-top opacity-60 group-hover:opacity-40 group-hover:scale-105 transition-all duration-700"
-              />
+                loading="lazy" />
 
               {/* Gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-[#111827]/30 to-transparent" />

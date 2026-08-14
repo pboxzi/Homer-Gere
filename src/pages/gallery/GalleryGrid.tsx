@@ -76,12 +76,12 @@ export const GalleryGrid: React.FC<GalleryGridProps> = ({ photos }) => {
               className="group relative w-full rounded-[1.25rem] overflow-hidden bg-[#E8E5DF] cursor-pointer block"
               onClick={() => openLightbox(idx)}
             >
-              <img
+              <img 
                 src={photo.image}
                 alt={photo.title}
                 referrerPolicy="no-referrer"
                 className="w-full h-auto object-cover object-top group-hover:scale-105 transition-transform duration-700"
-              />
+                loading="lazy" />
 
               {/* Hover Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/70 via-[#111827]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

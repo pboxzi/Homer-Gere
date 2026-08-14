@@ -38,7 +38,7 @@ export const DashboardFavorites: React.FC = () => {
               transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}
             >
               <div className="aspect-square overflow-hidden bg-[#F3F1ED]">
-                <img src={f.src} alt={f.alt} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" />
+                <img src={f.src} alt={f.alt} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" loading="lazy" />
               </div>
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <button

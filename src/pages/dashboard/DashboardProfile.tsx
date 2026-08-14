@@ -31,7 +31,7 @@ export const DashboardProfile: React.FC = () => {
       <motion.div className="flex items-center gap-5" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
         <div className="relative">
           <div className="w-20 h-20 rounded-2xl bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] text-2xl font-editorial overflow-hidden">
-            {formData.avatar ? <img src={formData.avatar} alt="Avatar" className="w-full h-full object-cover" /> : <>{formData.firstName[0]}{formData.lastName[0]}</>}
+            {formData.avatar ? <img src={formData.avatar} alt="Avatar" className="w-full h-full object-cover" loading="lazy" /> : <>{formData.firstName[0]}{formData.lastName[0]}</>}
           </div>
           <input type="file" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) { const reader = new FileReader(); reader.onload = (ev) => { update('avatar', ev.target?.result as string); }; reader.readAsDataURL(file); } }} className="hidden" id="avatar-upload" />
           <label htmlFor="avatar-upload" className="absolute -bottom-1 -right-1 w-7 h-7 rounded-lg bg-[#1C1917] text-white flex items-center justify-center hover:bg-[#292524] transition-colors cursor-pointer">

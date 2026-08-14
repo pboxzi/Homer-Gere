@@ -45,12 +45,12 @@ export const ArticleDetailRelated: React.FC<ArticleDetailRelatedProps> = ({
               transition={{ duration: 0.5, delay: idx * 0.1 }}
             >
               <div className="relative h-48 overflow-hidden bg-[#E8E5DF]">
-                <img
+                <img 
                   src={article.image}
                   alt={article.imageAlt}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out"
-                />
+                  loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/30 to-transparent" />
                 <div className="absolute top-3 left-3 px-2 py-1 bg-[#111827]/60 backdrop-blur-sm text-white text-[10px] font-medium tracking-wider uppercase rounded-lg">
                   {article.category}

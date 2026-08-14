@@ -39,12 +39,12 @@ export const PressHighlights: React.FC<PressHighlightsProps> = ({ onReadArticle 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
               {mediaPress[0].image && (
                 <div className="relative aspect-[4/3] lg:aspect-auto overflow-hidden">
-                  <img
+                  <img 
                     src={mediaPress[0].image}
                     alt={mediaPress[0].publisher}
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
+                    loading="lazy" />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#F3F1ED] to-transparent lg:block hidden" />
                 </div>
               )}
@@ -90,12 +90,12 @@ export const PressHighlights: React.FC<PressHighlightsProps> = ({ onReadArticle 
               {/* Image */}
               {press.image && (
                 <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-[#E8E5DF]">
-                  <img
+                  <img 
                     src={press.image}
                     alt={press.publisher}
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
+                    loading="lazy" />
                 </div>
               )}
 

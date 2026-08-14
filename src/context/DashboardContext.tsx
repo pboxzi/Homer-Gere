@@ -352,7 +352,6 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     if (!currentPw || !newPw) return { success: false, error: 'Please fill in all fields.' };
     if (newPw.length < 8) return { success: false, error: 'New password must be at least 8 characters.' };
     try {
-      const { supabase } = await import('../lib/supabase');
       const { error } = await supabase.auth.updateUser({ password: newPw });
       if (error) return { success: false, error: error.message };
       return { success: true };

@@ -80,12 +80,12 @@ export const FeaturedExperiences: React.FC<FeaturedExperiencesProps> = ({
               {/* Image */}
               {exp.image && (
                 <div className="relative h-48 overflow-hidden bg-[#E8E5DF]">
-                  <img
+                  <img 
                     src={exp.image}
                     alt={exp.title}
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out"
-                  />
+                    loading="lazy" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#1C1917]/40 via-transparent to-transparent" />
                   {exp.availability && (
                     <div className="absolute top-4 right-4">

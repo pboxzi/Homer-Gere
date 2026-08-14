@@ -20,12 +20,12 @@ export const JourneyQuote: React.FC = () => {
           >
             <div className="relative">
               <div className="relative w-72 h-96 sm:w-80 sm:h-[420px] rounded-[2rem] overflow-hidden bg-[#E8E5DF]">
-                <img
+                <img 
                   src={IMAGES.heroSplitBanner}
                   alt="Homer Gere Portrait"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
-                />
+                  loading="lazy" />
               </div>
               {/* Decorative accent */}
               <div className="absolute -bottom-6 -right-6 w-32 h-32 rounded-[1.25rem] bg-[#A6852F]/8 border border-[#A6852F]/10 -z-10" />

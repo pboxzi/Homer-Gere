@@ -62,12 +62,12 @@ export const ContactContinueExploring: React.FC<ContactContinueExploringProps> =
               transition={{ duration: 0.6, delay: option.delay, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="relative h-48 overflow-hidden bg-[#E8E5DF]">
-                <img
+                <img 
                   src={option.image}
                   alt={option.title}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out"
-                />
+                  loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/50 via-[#111827]/10 to-transparent" />
                 <div className="absolute bottom-4 left-4 w-9 h-9 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center text-white">
                   <option.icon className="w-4 h-4" />

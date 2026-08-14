@@ -114,12 +114,12 @@ export const ProjectFilmography: React.FC<ProjectFilmographyProps> = ({ onItemCl
                 {/* Poster */}
                 {entry.image ? (
                   <div className="w-full sm:w-52 h-72 sm:h-72 rounded-2xl overflow-hidden bg-[#E8E5DF] shrink-0">
-                    <img
+                    <img 
                       src={entry.image}
                       alt={entry.title}
                       referrerPolicy="no-referrer"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
+                      loading="lazy" />
                   </div>
                 ) : (
                   <div className="w-full sm:w-52 h-72 sm:h-72 rounded-2xl bg-[#E8E5DF] shrink-0 flex items-center justify-center">

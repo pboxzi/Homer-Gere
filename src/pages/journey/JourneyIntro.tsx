@@ -11,12 +11,12 @@ export const JourneyIntro: React.FC = () => {
           <Reveal direction="left">
             <div className="relative">
               <div className="relative rounded-[2rem] overflow-hidden aspect-[4/5] bg-[#E8E5DF]">
-                <img
+                <img 
                   src={IMAGES.heroPortraitClean}
                   alt="Homer Gere - Editorial Portrait"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
-                />
+                  loading="lazy" />
               </div>
               {/* Decorative accents */}
               <div className="absolute -bottom-4 -right-4 w-24 h-24 rounded-[1rem] bg-[#A6852F]/10 border border-[#A6852F]/15 -z-10" />

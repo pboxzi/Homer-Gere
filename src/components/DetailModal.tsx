@@ -85,12 +85,12 @@ export const DetailModal: React.FC<DetailModalProps> = ({
           {modal.type === 'article' && modal.article && (
             <div className="space-y-6">
               <div className="relative h-64 sm:h-80 -mx-6 sm:-mx-8 -mt-6 sm:-mt-8 mb-6 overflow-hidden bg-[#EDE9E0]">
-                <img
+                <img 
                   src={modal.article.image}
                   alt={modal.article.title}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
-                />
+                  loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6 text-white">
                   <span className="bg-blue-600 px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider">
@@ -270,12 +270,12 @@ export const DetailModal: React.FC<DetailModalProps> = ({
           {modal.type === 'gallery' && modal.item && (
             <div className="space-y-4">
               <div className="relative rounded-2xl overflow-hidden bg-black max-h-[70vh] flex items-center justify-center">
-                <img
+                <img 
                   src={modal.item.image}
                   alt={modal.item.title}
                   referrerPolicy="no-referrer"
                   className="max-h-[65vh] w-auto object-contain mx-auto"
-                />
+                  loading="lazy" />
               </div>
 
               <div className="flex items-center justify-between pt-2">
@@ -382,12 +382,12 @@ export const DetailModal: React.FC<DetailModalProps> = ({
           {modal.type === 'project' && (
             <div className="space-y-6">
               <div className="relative h-64 -mx-6 sm:-mx-8 -mt-6 sm:-mt-8 mb-4 overflow-hidden">
-                <img
+                <img 
                   src={FEATURED_PROJECT.image}
                   alt={FEATURED_PROJECT.title}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
-                />
+                  loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6 text-white">
                   <span className="bg-blue-600 px-3 py-1 rounded-full text-xs font-medium uppercase">

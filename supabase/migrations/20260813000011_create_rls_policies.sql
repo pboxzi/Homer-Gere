@@ -12,7 +12,7 @@ RETURNS BOOLEAN AS $$
     SELECT 1 FROM profiles
     WHERE id = auth.uid() AND role = 'super_admin'
   );
-$$ LANGUAGE sql SECURITY DEFINER STABLE;
+$$ LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public;
 
 -- ============================================================
 -- HELPER FUNCTION: Check if user is admin or super_admin
@@ -23,7 +23,7 @@ RETURNS BOOLEAN AS $$
     SELECT 1 FROM profiles
     WHERE id = auth.uid() AND role IN ('admin', 'super_admin')
   );
-$$ LANGUAGE sql SECURITY DEFINER STABLE;
+$$ LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public;
 
 -- ============================================================
 -- HELPER FUNCTION: Check if user is authenticated member
@@ -34,7 +34,7 @@ RETURNS BOOLEAN AS $$
     SELECT 1 FROM profiles
     WHERE id = auth.uid() AND role = 'member'
   );
-$$ LANGUAGE sql SECURITY DEFINER STABLE;
+$$ LANGUAGE sql SECURITY DEFINER STABLE SET search_path = public;
 
 -- ============================================================
 -- PROFILES

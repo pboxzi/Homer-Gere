@@ -43,12 +43,12 @@ export const ProjectVideos: React.FC<ProjectVideosProps> = ({ project }) => {
               transition={{ duration: 0.7, delay: 0.15 + idx * 0.12 }}
             >
               {/* Thumbnail */}
-              <img
+              <img 
                 src={video.thumbnail || project.heroImage}
                 alt={video.title}
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover object-top opacity-60 group-hover:opacity-40 group-hover:scale-105 transition-all duration-700"
-              />
+                loading="lazy" />
 
               {/* Play Button */}
               <div className="absolute inset-0 flex items-center justify-center">

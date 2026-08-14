@@ -17,12 +17,12 @@ export const ProjectHero: React.FC<ProjectHeroProps> = ({ onExploreFilms }) => {
         animate={{ scale: 1 }}
         transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
       >
-        <img
+        <img 
           src={SECTION_IMAGES.hero.projects}
           alt="Homer Gere — Projects"
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover object-top"
-        />
+          loading="lazy" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#FAF9F7] via-[#FAF9F7]/20 to-transparent hidden lg:block" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F7] via-[#FAF9F7]/15 to-transparent lg:hidden" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#FAF9F7]/10 via-transparent to-[#FAF9F7]" />

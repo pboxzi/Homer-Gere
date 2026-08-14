@@ -79,12 +79,12 @@ export const VideoLibrary: React.FC<VideoLibraryProps> = ({ onWatch }) => {
             >
               {/* Thumbnail */}
               <div className="relative aspect-video rounded-2xl overflow-hidden mb-4 bg-[#E8E5DF]">
-                <img
+                <img 
                   src={video.thumbnail}
                   alt={video.title}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                  loading="lazy" />
                 <div className="absolute inset-0 bg-[#1C1917]/20 group-hover:bg-[#1C1917]/40 transition-colors duration-300 flex items-center justify-center">
                   <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <Play className="w-5 h-5 text-[#1C1917] fill-[#1C1917] ml-0.5" />

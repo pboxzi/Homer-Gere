@@ -18,12 +18,12 @@ export const ProjectDetailHero: React.FC<ProjectDetailHeroProps> = ({ project, o
         animate={{ scale: 1 }}
         transition={{ duration: 2, ease: [0.22, 1, 0.36, 1] }}
       >
-        <img
+        <img 
           src={project.heroImage}
           alt={project.title}
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover object-top opacity-35"
-        />
+          loading="lazy" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#111827] via-[#111827]/80 to-[#111827]/30" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-[#111827]/20 to-[#111827]/60" />
       </motion.div>

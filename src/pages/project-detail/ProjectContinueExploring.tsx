@@ -67,12 +67,12 @@ export const ProjectContinueExploring: React.FC<ProjectContinueExploringProps> =
             >
               {/* Image */}
               <div className="relative h-56 sm:h-64 overflow-hidden bg-[#E8E5DF]">
-                <img
+                <img 
                   src={card.image}
                   alt={card.title}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out"
-                />
+                  loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/50 via-[#111827]/10 to-transparent" />
                 <div className="absolute bottom-5 left-5 w-10 h-10 rounded-xl bg-white/15 backdrop-blur-md flex items-center justify-center text-white">
                   {card.icon}

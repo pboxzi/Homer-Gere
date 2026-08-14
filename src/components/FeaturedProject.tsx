@@ -14,7 +14,7 @@ export const FeaturedProject: React.FC<FeaturedProjectProps> = ({ onDiscoverMore
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative rounded-[2rem] overflow-hidden min-h-[560px] lg:min-h-[640px]">
           <div className="absolute inset-0 z-0">
-            <img src={featuredProject.image} alt={featuredProject.title} referrerPolicy="no-referrer" className="w-full h-full object-cover object-top scale-105 hover:scale-100 transition-transform duration-[1.5s]" />
+            <img src={featuredProject.image} alt={featuredProject.title} referrerPolicy="no-referrer" className="w-full h-full object-cover object-top scale-105 hover:scale-100 transition-transform duration-[1.5s]" loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-r from-[#F8F5EF] via-[#F8F5EF]/75 to-transparent" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#F8F5EF] via-transparent to-[#F8F5EF]/40" />
           </div>

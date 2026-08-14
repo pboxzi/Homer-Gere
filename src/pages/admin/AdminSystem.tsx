@@ -227,7 +227,7 @@ const BrandingSection: React.FC = () => {
             />
             {form.logoUrl && (
               <div className="mt-2 p-3 rounded-xl border border-[#E8E5DF]/60 bg-[#F3F1ED]/30 flex items-center justify-center h-20">
-                <img src={form.logoUrl} alt="Logo preview" className="max-h-full object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                <img src={form.logoUrl} alt="Logo preview" className="max-h-full object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} loading="lazy" />
               </div>
             )}
           </div>
@@ -241,7 +241,7 @@ const BrandingSection: React.FC = () => {
             />
             {form.faviconUrl && (
               <div className="mt-2 p-3 rounded-xl border border-[#E8E5DF]/60 bg-[#F3F1ED]/30 flex items-center justify-center h-20">
-                <img src={form.faviconUrl} alt="Favicon preview" className="max-h-full object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                <img src={form.faviconUrl} alt="Favicon preview" className="max-h-full object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} loading="lazy" />
               </div>
             )}
           </div>

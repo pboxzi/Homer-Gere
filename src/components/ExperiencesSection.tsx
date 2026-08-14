@@ -53,7 +53,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNaviga
             <div key={exp.id} onClick={() => onNavigate('experiences')} className="group relative rounded-[1.5rem] overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-xl hover:shadow-[#A6852F]/10 hover:-translate-y-1">
               {exp.image && (
                 <div className="relative h-72 sm:h-80 overflow-hidden bg-[#E8E5DF]">
-                  <img src={exp.image} alt={exp.title} referrerPolicy="no-referrer" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out" />
+                  <img src={exp.image} alt={exp.title} referrerPolicy="no-referrer" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out" loading="lazy" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#1C1917]/70 via-[#1C1917]/20 to-transparent" />
                   {exp.availability && (
                     <div className="absolute top-4 right-4">{getAvailabilityBadge(exp.availability)}</div>
@@ -83,7 +83,7 @@ export const ExperiencesSection: React.FC<ExperiencesSectionProps> = ({ onNaviga
             <div key={exp.id} onClick={() => onNavigate('experiences')} className="group relative rounded-[1.5rem] overflow-hidden cursor-pointer transition-all duration-500 hover:shadow-xl hover:shadow-[#A6852F]/10 hover:-translate-y-1">
               {exp.image && (
                 <div className="relative h-44 overflow-hidden bg-[#E8E5DF]">
-                  <img src={exp.image} alt={exp.title} referrerPolicy="no-referrer" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out" />
+                  <img src={exp.image} alt={exp.title} referrerPolicy="no-referrer" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out" loading="lazy" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#1C1917]/60 via-transparent to-transparent" />
                   {exp.availability && (
                     <div className="absolute top-3 right-3">{getAvailabilityBadge(exp.availability)}</div>

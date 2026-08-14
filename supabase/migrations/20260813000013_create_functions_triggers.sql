@@ -12,7 +12,7 @@ BEGIN
   NEW.updated_at = NOW();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SET search_path = public;
 
 -- ============================================================
 -- FUNCTION: Auto-create profile on auth user creation
@@ -35,7 +35,7 @@ BEGIN
   END IF;
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- ============================================================
 -- TRIGGER: When auth user is created, create profile
@@ -123,7 +123,7 @@ BEGIN
   NEW.reviewed_at := NOW();
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- ============================================================
 -- TRIGGER: Handle registration approval/rejection
@@ -158,7 +158,7 @@ BEGIN
 
   RETURN v_log_id;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- ============================================================
 -- Apply updated_at triggers to all tables with updated_at
@@ -183,5 +183,13 @@ CREATE TRIGGER set_updated_at BEFORE UPDATE ON media_podcasts FOR EACH ROW EXECU
 CREATE TRIGGER set_updated_at BEFORE UPDATE ON media_press FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER set_updated_at BEFORE UPDATE ON site_settings FOR EACH ROW EXECUTE FUNCTION update_updated_at();
 CREATE TRIGGER set_updated_at BEFORE UPDATE ON email_templates FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+-- ============================================================
+-- REVOKE execute on trigger/helper functions from anon role
+-- These functions should only be called by triggers, not via RPC
+-- ============================================================
+REVOKE EXECUTE ON FUNCTION handle_new_user() FROM anon, authenticated;
+REVOKE EXECUTE ON FUNCTION handle_registration_approval() FROM anon, authenticated;
+REVOKE EXECUTE ON FUNCTION create_audit_log(audit_action, text, uuid, jsonb, jsonb) FROM anon, authenticated;
 
 COMMIT;

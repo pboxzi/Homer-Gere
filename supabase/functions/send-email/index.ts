@@ -7,8 +7,10 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 const FROM_EMAIL = Deno.env.get("FROM_EMAIL") || "Homer Gere <noreply@homergere.com>";
 const SITE_URL = Deno.env.get("SITE_URL") || "https://homergere.com";
 
+const ALLOWED_ORIGIN = Deno.env.get("SITE_URL") || "https://homergere.com";
+
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
@@ -127,13 +129,28 @@ Deno.serve(async (req: Request) => {
     }
 
     const body = await req.json();
-    const { to, templateName, variables = {}, subject: overrideSubject, html: overrideHtml, text: overrideText } = body;
+    const { to, templateName, variables = {}, subject: overrideSubject } = body;
 
     if (!to || !templateName) {
       return new Response(
         JSON.stringify({ error: "Missing 'to' or 'templateName'" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(to)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid email address" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Sanitize template variables — strip any {{ }} patterns from values to prevent injection
+    const sanitizedVariables: Record<string, string> = {};
+    for (const [key, value] of Object.entries(variables)) {
+      sanitizedVariables[key] = String(value ?? "").replace(/\{\{|\}\}/g, "");
     }
 
     // Rate limit check
@@ -160,9 +177,9 @@ Deno.serve(async (req: Request) => {
     }
 
     // Render template with variables
-    const subject = overrideSubject || renderTemplate(template.subject, variables);
-    const htmlBody = overrideHtml || renderTemplate(template.html_body, variables);
-    const textBody = overrideText || (template.text_body ? renderTemplate(template.text_body, variables) : undefined);
+    const subject = overrideSubject || renderTemplate(template.subject, sanitizedVariables);
+    const htmlBody = renderTemplate(template.html_body, sanitizedVariables);
+    const textBody = template.text_body ? renderTemplate(template.text_body, sanitizedVariables) : undefined;
 
     // Wrap in branded template
     const fullHtml = wrapInBrandedTemplate(htmlBody, subject);
@@ -196,7 +213,7 @@ Deno.serve(async (req: Request) => {
       }).catch(() => {});
 
       return new Response(
-        JSON.stringify({ error: "Failed to send email", details: resendData }),
+        JSON.stringify({ error: "Failed to send email" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -215,8 +232,9 @@ Deno.serve(async (req: Request) => {
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err) {
+    console.error("Email function error:", err);
     return new Response(
-      JSON.stringify({ error: "Internal server error", message: String(err) }),
+      JSON.stringify({ error: "Internal server error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

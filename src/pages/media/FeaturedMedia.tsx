@@ -33,12 +33,12 @@ export const FeaturedMedia: React.FC<FeaturedMediaProps> = ({ onWatch }) => {
         >
           {/* Thumbnail */}
           <div className="relative aspect-[16/7] sm:aspect-[16/6]">
-            <img
+            <img 
               src={featured.thumbnail}
               alt={featured.title}
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-            />
+              loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#1C1917]/80 via-[#1C1917]/20 to-transparent" />
           </div>
 

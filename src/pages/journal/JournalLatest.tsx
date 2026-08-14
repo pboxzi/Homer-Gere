@@ -19,12 +19,12 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onArticleClick }) =>
     >
       {/* Image */}
       <div className="relative h-56 sm:h-64 overflow-hidden bg-[#E8E5DF]">
-        <img
+        <img 
           src={article.image}
           alt={article.imageAlt}
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-[1.2s] ease-out"
-        />
+          loading="lazy" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/40 via-transparent to-transparent" />
 
         {/* Category Badge */}

@@ -82,12 +82,12 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
               onClick={() => onSelectImage(item)}
               className="group relative rounded-[1.5rem] overflow-hidden aspect-square cursor-pointer transition-all duration-500"
             >
-              <img
+              <img 
                 src={item.image}
                 alt={item.title}
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
-              />
+                loading="lazy" />
 
               {/* Hover Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/80 via-[#111827]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-6 flex flex-col justify-end text-white">

@@ -142,12 +142,12 @@ export const JournalNewsletter: React.FC = () => {
 
             {/* Decorative Image */}
             <div className="hidden lg:block relative h-full min-h-[400px]">
-              <img
+              <img 
                 src={SECTION_IMAGES.exploreMore.journal}
                 alt="Homer Gere — Editorial"
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover object-top"
-              />
+                loading="lazy" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#F3F1ED] to-transparent" />
             </div>
           </div>

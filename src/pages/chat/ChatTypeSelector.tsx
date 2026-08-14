@@ -25,12 +25,12 @@ export const ChatTypeSelector: React.FC<ChatTypeSelectorProps> = ({ onSelect }) 
         >
           <div className="relative">
             <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-xl shadow-[#A6852F]/20 mx-auto">
-              <img
+              <img 
                 src={IMAGES.homerGqLifestyleStudio}
                 alt="Homer Gere"
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-cover object-center"
-              />
+                loading="lazy" />
             </div>
             <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-[#16A34A] flex items-center justify-center border-3 border-[#FAF9F7]">
               <span className="w-2.5 h-2.5 rounded-full bg-white" />

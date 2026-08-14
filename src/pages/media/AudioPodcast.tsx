@@ -40,12 +40,12 @@ export const AudioPodcast: React.FC<AudioPodcastProps> = ({ onListen }) => {
             >
               {/* Cover Art */}
               <div className="relative aspect-square rounded-2xl overflow-hidden mb-4 bg-white/5">
-                <img
+                <img 
                   src={podcast.coverArt}
                   alt={podcast.showName}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                  loading="lazy" />
                 <div className="absolute inset-0 bg-[#1C1917]/20 group-hover:bg-[#1C1917]/40 transition-colors duration-300 flex items-center justify-center">
                   <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <Headphones className="w-6 h-6 text-[#1C1917]" />

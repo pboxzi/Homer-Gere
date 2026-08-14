@@ -251,7 +251,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
           </button>
           <div className="relative shrink-0">
             <div className="w-11 h-11 rounded-full overflow-hidden ring-2 ring-[#A6852F]/30 ring-offset-2 ring-offset-white">
-              <img src={IMAGES.homerGqLifestyleStudio} alt="Homer Gere" referrerPolicy="no-referrer" className="w-full h-full object-cover object-top" />
+              <img src={IMAGES.homerGqLifestyleStudio} alt="Homer Gere" referrerPolicy="no-referrer" className="w-full h-full object-cover object-top" loading="lazy" />
             </div>
             <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#16A34A] rounded-full border-2 border-white" />
           </div>
@@ -288,14 +288,14 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
                 <div key={msg.id} className={`flex ${isUser ? 'justify-end' : 'justify-start'} items-end gap-2`}>
                   {!isUser && (
                     <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 mb-4">
-                      <img src={IMAGES.homerGqLifestyleStudio} alt="Homer" referrerPolicy="no-referrer" className="w-full h-full object-cover object-center" />
+                      <img src={IMAGES.homerGqLifestyleStudio} alt="Homer" referrerPolicy="no-referrer" className="w-full h-full object-cover object-center" loading="lazy" />
                     </div>
                   )}
                   <div className={`max-w-[88%] ${isUser ? 'order-1' : ''}`}>
                     {msg.media && (
                       <div className={`mb-1 ${isUser ? 'rounded-2xl rounded-br-sm' : 'rounded-2xl rounded-bl-sm'} overflow-hidden`}>
                         {msg.media.type === 'image' ? (
-                          <img src={msg.media.url} alt={msg.media.name || 'Shared image'} className="max-w-full max-h-56 object-cover" referrerPolicy="no-referrer" />
+                          <img src={msg.media.url} alt={msg.media.name || 'Shared image'} className="max-w-full max-h-56 object-cover" referrerPolicy="no-referrer" loading="lazy" />
                         ) : (
                           <video src={msg.media.url} className="max-w-full max-h-56" controls preload="metadata" />
                         )}
@@ -322,7 +322,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
           {loading && (
             <div className="flex items-end gap-2 mt-0.5">
               <div className="w-6 h-6 rounded-full overflow-hidden shrink-0">
-                <img src={IMAGES.homerGqLifestyleStudio} alt="Homer" referrerPolicy="no-referrer" className="w-full h-full object-cover object-center" />
+                <img src={IMAGES.homerGqLifestyleStudio} alt="Homer" referrerPolicy="no-referrer" className="w-full h-full object-cover object-center" loading="lazy" />
               </div>
               <div className="bg-white rounded-2xl rounded-bl-sm px-4 py-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
                 <div className="flex gap-1">
@@ -359,7 +359,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
             <div className="px-4 pt-2">
               <div className="relative inline-block">
                 {mediaPreview.type === 'image' ? (
-                  <img src={mediaPreview.url} alt="Preview" className="h-16 rounded-xl object-cover" />
+                  <img src={mediaPreview.url} alt="Preview" className="h-16 rounded-xl object-cover" loading="lazy" />
                 ) : (
                   <div className="relative h-16 w-28 rounded-xl overflow-hidden bg-black/10">
                     <video src={mediaPreview.url} className="h-full w-full object-cover" preload="metadata" />

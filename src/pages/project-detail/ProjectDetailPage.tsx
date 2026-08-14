@@ -24,19 +24,12 @@ export default function ProjectDetailPage() {
   const [activeModal, setActiveModal] = React.useState<ModalType>(null);
 
   const handleNavigate = (sectionId: string) => {
-    if (sectionId === 'home') {
-      navigate('/');
-    } else if (sectionId === 'journey') {
-      navigate('/journey');
-    } else if (sectionId === 'projects') {
-      navigate('/projects');
-    } else if (sectionId === 'media') {
-      navigate('/media');
-    } else if (sectionId === 'gallery') {
-      navigate('/gallery');
-    } else {
-      navigate('/');
-    }
+    const routes: Record<string, string> = {
+      home: '/', journey: '/journey', projects: '/projects', media: '/media',
+      gallery: '/gallery', journal: '/journal', experiences: '/experiences',
+      membership: '/membership', chat: '/chat', contact: '/contact',
+    };
+    navigate(routes[sectionId] || '/');
   };
 
   const handleOpenChat = () => {

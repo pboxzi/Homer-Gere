@@ -12,12 +12,12 @@ export const ContactHero: React.FC = () => {
       className="relative h-[65vh] min-h-[500px] flex items-end overflow-hidden bg-[#FAF9F7]"
     >
       <div className="absolute inset-0">
-        <img
+        <img 
           src={SECTION_IMAGES.exploreMore.contact}
           alt="Contact Homer Gere"
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover object-top"
-        />
+          loading="lazy" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F7] via-[#FAF9F7]/40 to-[#FAF9F7]/10" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#FAF9F7]/60 to-transparent" />
       </div>

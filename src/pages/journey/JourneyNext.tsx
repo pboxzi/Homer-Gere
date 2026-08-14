@@ -23,12 +23,12 @@ export const JourneyNext: React.FC<JourneyNextProps> = ({ onExploreProjects, onO
         >
           {/* Background Image */}
           <div className="absolute inset-0 z-0">
-            <img
+            <img 
               src={IMAGES.heroComposed}
               alt="Homer Gere"
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover object-top opacity-40 scale-105"
-            />
+              loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-r from-[#111827] via-[#111827]/70 to-[#111827]/30" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-[#111827]/30" />
           </div>

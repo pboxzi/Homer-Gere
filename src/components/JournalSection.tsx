@@ -28,7 +28,7 @@ export const JournalSection: React.FC<JournalSectionProps> = ({ onSelectArticle,
             <article key={article.id} onClick={() => onSelectArticle(article)} className="group p-5 rounded-2xl border border-[#E8E5DF]/60 transition-all duration-500 flex flex-col justify-between cursor-pointer hover:border-[#A6852F]/30 hover:shadow-lg hover:shadow-[#A6852F]/5">
               <div>
                 <div className="relative h-56 rounded-xl overflow-hidden mb-5">
-                  <img src={article.image} alt={article.title} referrerPolicy="no-referrer" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <img src={article.image} alt={article.title} referrerPolicy="no-referrer" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />
                   <div className="absolute top-3 left-3 bg-[#FAF9F7]/95 backdrop-blur-md px-3 py-1 rounded-xl text-[10px] font-medium tracking-wider text-[#A6852F] uppercase">{article.category}</div>
                 </div>
                 <h3 className="text-base font-editorial text-[#1C1917] group-hover:text-[#A6852F] transition-colors duration-300 line-clamp-2 leading-snug">{article.title}</h3>

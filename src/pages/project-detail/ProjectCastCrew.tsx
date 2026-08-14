@@ -40,12 +40,12 @@ export const ProjectCastCrew: React.FC<ProjectCastCrewProps> = ({ project }) => 
               >
                 <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-[#111827] mb-3">
                   {member.image ? (
-                    <img
+                    <img 
                       src={member.image}
                       alt={member.name}
                       referrerPolicy="no-referrer"
                       className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                    />
+                      loading="lazy" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
                       <span className="text-[#A6852F] text-4xl font-editorial font-bold">

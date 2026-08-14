@@ -3,7 +3,7 @@
 // Homer Gere Platform - Supabase Database Operations
 // ============================================================
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { supabase as supabaseClient } from './supabase';
 import type {
   Profile,
   Admin,
@@ -36,23 +36,11 @@ import type {
 } from '../types/database';
 
 // ============================================================
-// CLIENT SINGLETON
+// CLIENT SINGLETON — reuses the shared Supabase client
 // ============================================================
 
-let supabaseInstance: SupabaseClient | null = null;
-
-export function getSupabaseClient(): SupabaseClient {
-  if (supabaseInstance) return supabaseInstance;
-
-  const url = import.meta.env.VITE_SUPABASE_URL;
-  const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-  if (!url || !key) {
-    throw new Error('Missing Supabase environment variables: VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY');
-  }
-
-  supabaseInstance = createClient(url, key);
-  return supabaseInstance;
+export function getSupabaseClient() {
+  return supabaseClient;
 }
 
 // ============================================================

@@ -394,7 +394,7 @@ export default function RegisterPage() {
                 {formData.profilePhoto ? (
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-2xl bg-[#F3F1ED] flex items-center justify-center overflow-hidden">
-                      <img src={URL.createObjectURL(formData.profilePhoto)} alt="Preview" className="w-full h-full object-cover" />
+                      <img src={URL.createObjectURL(formData.profilePhoto)} alt="Preview" className="w-full h-full object-cover" loading="lazy" />
                     </div>
                     <div>
                       <p className="text-sm font-medium text-[#1C1917]">{formData.profilePhoto.name}</p>

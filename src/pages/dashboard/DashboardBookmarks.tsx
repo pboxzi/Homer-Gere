@@ -38,7 +38,7 @@ export const DashboardBookmarks: React.FC = () => {
               transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}
             >
               {b.image && (
-                <img src={b.image} alt={b.title} className="w-16 h-16 rounded-xl object-cover shrink-0" referrerPolicy="no-referrer" />
+                <img src={b.image} alt={b.title} className="w-16 h-16 rounded-xl object-cover shrink-0" referrerPolicy="no-referrer" loading="lazy" />
               )}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">

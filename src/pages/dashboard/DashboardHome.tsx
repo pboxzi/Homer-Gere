@@ -230,7 +230,7 @@ export const DashboardHome: React.FC<{
               <div className="grid grid-cols-3 gap-1.5">
                 {favorites.slice(0, 6).map((f) => (
                   <div key={f.id} className="aspect-square rounded-lg overflow-hidden bg-[#F3F1ED]">
-                    <img src={f.src} alt={f.alt} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    <img src={f.src} alt={f.alt} className="w-full h-full object-cover" referrerPolicy="no-referrer" loading="lazy" />
                   </div>
                 ))}
               </div>

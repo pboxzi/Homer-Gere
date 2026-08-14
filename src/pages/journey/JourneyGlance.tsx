@@ -29,12 +29,12 @@ export const JourneyGlance: React.FC = () => {
           >
             <div className="relative">
               <div className="relative rounded-[2rem] overflow-hidden aspect-[3/4] bg-[#E8E5DF]">
-                <img
+                <img 
                   src={IMAGES.heroPortraitClean}
                   alt="Homer Gere — Portrait"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
-                />
+                  loading="lazy" />
               </div>
               <div className="absolute -bottom-5 -right-5 w-28 h-28 rounded-[1rem] bg-[#A6852F]/8 border border-[#A6852F]/10 -z-10" />
             </div>

@@ -22,12 +22,12 @@ export const ProjectFeatured: React.FC<ProjectFeaturedProps> = ({ onViewProject 
         >
           {/* Background Image */}
           <div className="absolute inset-0 z-0">
-            <img
+            <img 
               src={SECTION_IMAGES.hero.projects}
               alt="The Shards"
               referrerPolicy="no-referrer"
               className="w-full h-full object-cover object-top scale-105 hover:scale-100 transition-transform duration-[1.5s]"
-            />
+              loading="lazy" />
             <div className="absolute inset-0 bg-gradient-to-r from-[#111827] via-[#111827]/70 to-transparent" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-[#111827]/30" />
           </div>

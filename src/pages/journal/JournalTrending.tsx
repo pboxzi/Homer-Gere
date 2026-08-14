@@ -46,12 +46,12 @@ export const JournalTrending: React.FC<JournalTrendingProps> = ({ articles, onAr
             >
               {/* Thumbnail */}
               <div className="relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-[#1C1917]">
-                <img
+                <img 
                   src={article.image}
                   alt={article.title}
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
-                />
+                  loading="lazy" />
               </div>
 
               {/* Content */}

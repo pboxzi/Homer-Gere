@@ -62,12 +62,12 @@ export const ExperienceDetailModal: React.FC<ExperienceDetailModalProps> = ({
               {/* Hero Image */}
               {experience.image && (
                 <div className="relative h-56 sm:h-72 overflow-hidden">
-                  <img
+                  <img 
                     src={experience.image}
                     alt={experience.title}
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover object-top"
-                  />
+                    loading="lazy" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F7] via-transparent to-transparent" />
                 </div>
               )}
