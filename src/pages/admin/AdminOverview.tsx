@@ -10,17 +10,8 @@ import {
 import { useAdmin } from '../../context/AdminContext';
 import { type AdminSection } from '../../data/adminData';
 import {
-  registrationRepository,
-  membershipRequestsRepository,
-  paymentRequestsRepository,
-  paymentSubmissionsRepository,
-  fanChatRepository,
-  businessEnquiriesRepository,
-  auditLogsRepository,
-  notificationsRepository,
   profilesRepository,
-  membershipsRepository,
-  siteMediaRepository,
+  auditLogsRepository,
 } from '../../lib/repositories';
 import { getSupabaseClient } from '../../lib/repositories';
 
