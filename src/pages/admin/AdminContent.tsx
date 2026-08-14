@@ -24,6 +24,7 @@ import {
   filmographyRepository,
   galleryRepository,
   mediaRepository,
+  faqRepository,
 } from '../../lib/repositories';
 
 interface AdminContentProps {
@@ -52,15 +53,15 @@ function todayFormatted(): string {
 function statusBadgeClass(status: string): string {
   switch (status) {
     case 'published':
-      return 'bg-[#16A34A]/10 text-[#16A34A]';
+      return 'bg-[#16A34A]/15 text-[#16A34A] border border-[#16A34A]/20';
     case 'draft':
-      return 'bg-[#F59E0B]/10 text-[#F59E0B]';
+      return 'bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/20';
     case 'scheduled':
-      return 'bg-[#2563EB]/10 text-[#2563EB]';
+      return 'bg-[#2563EB]/15 text-[#2563EB] border border-[#2563EB]/20';
     case 'archived':
-      return 'bg-[#9CA3AF]/10 text-[#9CA3AF]';
+      return 'bg-[#9CA3AF]/10 text-[#9CA3AF] border border-[#9CA3AF]/15';
     default:
-      return 'bg-[#9CA3AF]/10 text-[#9CA3AF]';
+      return 'bg-[#9CA3AF]/10 text-[#9CA3AF] border border-[#9CA3AF]/15';
   }
 }
 
@@ -262,7 +263,7 @@ function ContentTable({ items, onAdd, onUpdate, onDelete }: ContentTableProps) {
       </AnimatePresence>
 
       {/* Table */}
-      <div className="rounded-2xl border border-[#E8E5DF]/60 bg-white overflow-hidden">
+      <div className="rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
         <div className="grid grid-cols-[1fr_100px_120px_100px] gap-4 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
           <span>Title</span>
           <span>Status</span>
@@ -595,7 +596,7 @@ function JournalTable({ articles, onAdd, onUpdate, onDelete }: JournalTableProps
       </AnimatePresence>
 
       {/* Table */}
-      <div className="rounded-2xl border border-[#E8E5DF]/60 bg-white overflow-hidden">
+      <div className="rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
         <div className="grid grid-cols-[1fr_100px_100px_100px_80px_60px_100px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
           <span>Title</span>
           <span>Author</span>
@@ -926,7 +927,7 @@ function FAQList({ items, onAdd, onUpdate, onDelete, onReorder }: FAQListProps) 
       </AnimatePresence>
 
       {/* FAQ List */}
-      <div className="rounded-2xl border border-[#E8E5DF]/60 bg-white overflow-hidden">
+      <div className="rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
         <div className="grid grid-cols-[40px_1fr_120px_80px_100px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
           <span></span>
           <span>Question</span>
@@ -1087,7 +1088,7 @@ export const AdminContent: React.FC<AdminContentProps> = ({ activeSection }) => 
     let cancelled = false;
     (async () => {
       try {
-        const [journeyRes, filmographyRes, galleryRes, videosRes, podcastsRes, pressRes, journalRes] = await Promise.allSettled([
+        const [journeyRes, filmographyRes, galleryRes, videosRes, podcastsRes, pressRes, journalRes, faqRes] = await Promise.allSettled([
           journeyRepository.getAll(),
           filmographyRepository.getAll(),
           galleryRepository.getAllPhotos(),
@@ -1095,6 +1096,7 @@ export const AdminContent: React.FC<AdminContentProps> = ({ activeSection }) => 
           mediaRepository.getPodcasts(),
           mediaRepository.getPress(),
           journalRepository.getAll(),
+          faqRepository.getAll(),
         ]);
         if (cancelled) return;
 
@@ -1140,6 +1142,17 @@ export const AdminContent: React.FC<AdminContentProps> = ({ activeSection }) => 
             publishedDate: a.published_date || '', lastModified: a.updated_at || '', readTime: a.read_time || '5 min', views: a.views || 0,
           })));
         }
+
+        if (faqRes.status === 'fulfilled') {
+          setFaqs(faqRes.value.map((f) => ({
+            id: f.id,
+            question: f.question,
+            answer: f.answer,
+            category: f.category,
+            order: f.sort_order,
+            published: f.published,
+          })));
+        }
       } catch { /* empty */ }
       setLoading(false);
     })();
@@ -1168,7 +1181,7 @@ export const AdminContent: React.FC<AdminContentProps> = ({ activeSection }) => 
       } else if (item.section === 'projects') {
         await filmographyRepository.create({ title: item.title, type: item.category as any || 'film', role: '', year: new Date().getFullYear(), description: item.excerpt || '', status: 'Announced', image: null, slug: item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'), sort_order: 0 });
       } else if (item.section === 'gallery') {
-        await galleryRepository.createPhoto({ title: item.title, src: '', alt: item.title, category: (item.category || 'other') as any, caption: item.excerpt || '', date: null, event: null, photographer: null, featured: false, collection_id: null, sort_order: 0 });
+        await galleryRepository.createPhoto({ src: '', alt: item.title, category: (item.category || 'other') as any, caption: item.excerpt || '', date: null, event: null, photographer: null, featured: false, collection_id: null, sort_order: 0 });
       } else if (item.section === 'media') {
         await mediaRepository.createVideo({ title: item.title, url: '', description: null, thumbnail: null, source: null, category: item.category || '', duration: null, date: null, featured: false, sort_order: 0 });
       }
@@ -1185,7 +1198,7 @@ export const AdminContent: React.FC<AdminContentProps> = ({ activeSection }) => 
       } else if (item.section === 'projects') {
         await filmographyRepository.update(id, { title: updates.title, description: updates.excerpt, type: updates.category as any });
       } else if (item.section === 'gallery') {
-        await galleryRepository.updatePhoto(id, { title: updates.title, caption: updates.excerpt, category: updates.category as any });
+        await galleryRepository.updatePhoto(id, { alt: updates.title, caption: updates.excerpt, category: updates.category as any });
       }
     } catch { /* optimistic */ }
   };
@@ -1207,9 +1220,10 @@ export const AdminContent: React.FC<AdminContentProps> = ({ activeSection }) => 
       await journalRepository.create({
         title: article.title, slug: article.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
         excerpt: article.excerpt, content: article.content, author: article.author,
-        category: article.category, tags: article.tags, status: article.status as any,
+        category: (article.category || 'announcements') as any, tags: article.tags, status: article.status as any,
         published_date: article.publishedDate || null, read_time: article.readTime,
-        views: 0, featured: false, cover_image: null, og_image: null, image_alt: null,
+        views: 0, featured: false, trending: false, cover_image: null, og_image: null,
+        seo_title: null, seo_description: null, author_image: null, related_slugs: [],
       });
     } catch { /* optimistic */ }
   };
@@ -1234,25 +1248,53 @@ export const AdminContent: React.FC<AdminContentProps> = ({ activeSection }) => 
     try { await journalRepository.delete(id); } catch { /* optimistic */ }
   };
 
-  const handleAddFAQ = (item: FAQItem) => {
+  const handleAddFAQ = async (item: FAQItem) => {
     setFaqs((prev) => [...prev, item]);
+    try {
+      await faqRepository.create({
+        question: item.question,
+        answer: item.answer,
+        category: item.category,
+        sort_order: item.order,
+        published: item.published,
+      });
+    } catch { /* optimistic */ }
   };
 
-  const handleUpdateFAQ = (id: string, updates: Partial<FAQItem>) => {
+  const handleUpdateFAQ = async (id: string, updates: Partial<FAQItem>) => {
     setFaqs((prev) =>
       prev.map((f) => (f.id === id ? { ...f, ...updates } : f))
     );
+    try {
+      const dbUpdates: Record<string, unknown> = {};
+      if (updates.question !== undefined) dbUpdates.question = updates.question;
+      if (updates.answer !== undefined) dbUpdates.answer = updates.answer;
+      if (updates.category !== undefined) dbUpdates.category = updates.category;
+      if (updates.order !== undefined) dbUpdates.sort_order = updates.order;
+      if (updates.published !== undefined) dbUpdates.published = updates.published;
+      if (Object.keys(dbUpdates).length > 0) {
+        await faqRepository.update(id, dbUpdates);
+      }
+    } catch { /* optimistic */ }
   };
 
-  const handleDeleteFAQ = (id: string) => {
+  const handleDeleteFAQ = async (id: string) => {
     setFaqs((prev) => prev.filter((f) => f.id !== id));
+    try {
+      await faqRepository.delete(id);
+    } catch { /* optimistic */ }
   };
 
-  const handleReorderFAQs = (reordered: FAQItem[]) => {
+  const handleReorderFAQs = async (reordered: FAQItem[]) => {
     setFaqs((prev) => {
       const map = new Map(prev.map((f) => [f.id, f]));
       return reordered.map((f) => ({ ...map.get(f.id)!, order: f.order }));
     });
+    try {
+      await faqRepository.reorder(
+        reordered.map((f) => ({ id: f.id, sort_order: f.order }))
+      );
+    } catch { /* optimistic */ }
   };
 
   return (

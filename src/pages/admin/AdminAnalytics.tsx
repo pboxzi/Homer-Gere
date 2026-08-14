@@ -70,7 +70,8 @@ function VisitorsSection() {
         {summaryCards.map((card, i) => (
           <motion.div
             key={card.label}
-            className="rounded-xl p-4 border border-[#E8E5DF]/60 bg-white"
+            className="rounded-xl p-4 border border-[#E8E5DF]/60 bg-white transition-shadow duration-300 hover:shadow-lg"
+            style={{ boxShadow: `0 0 20px ${card.bg}, 0 4px 15px rgba(0,0,0,0.03)` }}
             {...fadeInUp}
             transition={{ duration: 0.4, delay: 0.05 * i }}
           >
@@ -86,7 +87,7 @@ function VisitorsSection() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div className="rounded-xl border border-[#E8E5DF]/60 bg-white p-5" {...fadeInUp} transition={{ duration: 0.5, delay: 0.2 }}>
+        <motion.div className="rounded-xl border border-[#A6852F]/10 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300" {...fadeInUp} transition={{ duration: 0.5, delay: 0.2 }}>
           <h3 className="text-sm font-semibold text-[#1C1917] mb-4">Monthly Visitor Trends</h3>
           <div className="h-48 flex items-end gap-1.5">
             {MONTHLY_VISITORS.map((val, i) => (
@@ -109,7 +110,7 @@ function VisitorsSection() {
           </div>
         </motion.div>
 
-        <motion.div className="rounded-xl border border-[#E8E5DF]/60 bg-white p-5" {...fadeInUp} transition={{ duration: 0.5, delay: 0.3 }}>
+        <motion.div className="rounded-xl border border-[#A6852F]/10 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300" {...fadeInUp} transition={{ duration: 0.5, delay: 0.3 }}>
           <h3 className="text-sm font-semibold text-[#1C1917] mb-4">Daily Visitors (Last 30 Days)</h3>
           <div className="h-48 flex items-end gap-0.5">
             {DAILY_VISITORS.map((val, i) => (
@@ -138,7 +139,7 @@ function VisitorsSection() {
         </motion.div>
       </div>
 
-      <motion.div className="rounded-xl border border-[#E8E5DF]/60 bg-white p-5" {...fadeInUp} transition={{ duration: 0.5, delay: 0.4 }}>
+      <motion.div className="rounded-xl border border-[#A6852F]/10 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300" {...fadeInUp} transition={{ duration: 0.5, delay: 0.4 }}>
         <h3 className="text-sm font-semibold text-[#1C1917] mb-4">Top Pages</h3>
         <div className="overflow-x-auto">
           <div className="min-w-0">
@@ -201,7 +202,8 @@ function MembershipStatsSection() {
         {summaryCards.map((card, i) => (
           <motion.div
             key={card.label}
-            className="rounded-xl p-4 border border-[#E8E5DF]/60 bg-white"
+            className="rounded-xl p-4 border border-[#E8E5DF]/60 bg-white transition-shadow duration-300 hover:shadow-lg"
+            style={{ boxShadow: `0 0 20px ${card.bg}, 0 4px 15px rgba(0,0,0,0.03)` }}
             {...fadeInUp}
             transition={{ duration: 0.4, delay: 0.05 * i }}
           >
@@ -217,7 +219,7 @@ function MembershipStatsSection() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div className="rounded-xl border border-[#E8E5DF]/60 bg-white p-5" {...fadeInUp} transition={{ duration: 0.5, delay: 0.2 }}>
+        <motion.div className="rounded-xl border border-[#A6852F]/10 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300" {...fadeInUp} transition={{ duration: 0.5, delay: 0.2 }}>
           <h3 className="text-sm font-semibold text-[#1C1917] mb-4">Membership Growth</h3>
           <div className="h-48 flex items-end gap-1.5">
             {MEMBERSHIP_GROWTH.map((val, i) => (
@@ -240,7 +242,7 @@ function MembershipStatsSection() {
           </div>
         </motion.div>
 
-        <motion.div className="rounded-xl border border-[#E8E5DF]/60 bg-white p-5" {...fadeInUp} transition={{ duration: 0.5, delay: 0.3 }}>
+        <motion.div className="rounded-xl border border-[#A6852F]/10 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300" {...fadeInUp} transition={{ duration: 0.5, delay: 0.3 }}>
           <h3 className="text-sm font-semibold text-[#1C1917] mb-4">Tier Breakdown</h3>
           <div className="flex items-center gap-6">
             <div className="relative w-36 h-36 flex-shrink-0">
@@ -315,7 +317,7 @@ function MembershipStatsSection() {
         </motion.div>
       </div>
 
-      <motion.div className="rounded-xl border border-[#E8E5DF]/60 bg-white p-5" {...fadeInUp} transition={{ duration: 0.5, delay: 0.4 }}>
+      <motion.div className="rounded-xl border border-[#A6852F]/10 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300" {...fadeInUp} transition={{ duration: 0.5, delay: 0.4 }}>
         <h3 className="text-sm font-semibold text-[#1C1917] mb-4">Recent Signups</h3>
         <div className="space-y-2">
           {recentSignups.map((member) => (
@@ -375,7 +377,8 @@ function ExperienceStatsSection() {
         {summaryCards.map((card, i) => (
           <motion.div
             key={card.label}
-            className="rounded-xl p-4 border border-[#E8E5DF]/60 bg-white"
+            className="rounded-xl p-4 border border-[#E8E5DF]/60 bg-white transition-shadow duration-300 hover:shadow-lg"
+            style={{ boxShadow: `0 0 20px ${card.bg}, 0 4px 15px rgba(0,0,0,0.03)` }}
             {...fadeInUp}
             transition={{ duration: 0.4, delay: 0.05 * i }}
           >
@@ -391,7 +394,7 @@ function ExperienceStatsSection() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div className="rounded-xl border border-[#E8E5DF]/60 bg-white p-5" {...fadeInUp} transition={{ duration: 0.5, delay: 0.2 }}>
+        <motion.div className="rounded-xl border border-[#A6852F]/10 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300" {...fadeInUp} transition={{ duration: 0.5, delay: 0.2 }}>
           <h3 className="text-sm font-semibold text-[#1C1917] mb-4">Requests Over Time</h3>
           <div className="h-48 flex items-end gap-1.5">
             {EXPERIENCE_REQUESTS_MONTHLY.map((val, i) => (
@@ -414,7 +417,7 @@ function ExperienceStatsSection() {
           </div>
         </motion.div>
 
-        <motion.div className="rounded-xl border border-[#E8E5DF]/60 bg-white p-5" {...fadeInUp} transition={{ duration: 0.5, delay: 0.3 }}>
+        <motion.div className="rounded-xl border border-[#A6852F]/10 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300" {...fadeInUp} transition={{ duration: 0.5, delay: 0.3 }}>
           <h3 className="text-sm font-semibold text-[#1C1917] mb-4">Status Breakdown</h3>
           <div className="space-y-4">
             {Object.entries(statusCounts).map(([status, count]) => (
@@ -438,7 +441,7 @@ function ExperienceStatsSection() {
         </motion.div>
       </div>
 
-      <motion.div className="rounded-xl border border-[#E8E5DF]/60 bg-white p-5" {...fadeInUp} transition={{ duration: 0.5, delay: 0.4 }}>
+      <motion.div className="rounded-xl border border-[#A6852F]/10 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300" {...fadeInUp} transition={{ duration: 0.5, delay: 0.4 }}>
         <h3 className="text-sm font-semibold text-[#1C1917] mb-4">Top Experiences</h3>
         <div className="overflow-x-auto">
           <div className="min-w-0">
@@ -485,7 +488,8 @@ function ChatStatsSection() {
         {summaryCards.map((card, i) => (
           <motion.div
             key={card.label}
-            className="rounded-xl p-4 border border-[#E8E5DF]/60 bg-white"
+            className="rounded-xl p-4 border border-[#E8E5DF]/60 bg-white transition-shadow duration-300 hover:shadow-lg"
+            style={{ boxShadow: `0 0 20px ${card.bg}, 0 4px 15px rgba(0,0,0,0.03)` }}
             {...fadeInUp}
             transition={{ duration: 0.4, delay: 0.05 * i }}
           >
@@ -501,7 +505,7 @@ function ChatStatsSection() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div className="rounded-xl border border-[#E8E5DF]/60 bg-white p-5" {...fadeInUp} transition={{ duration: 0.5, delay: 0.2 }}>
+        <motion.div className="rounded-xl border border-[#A6852F]/10 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300" {...fadeInUp} transition={{ duration: 0.5, delay: 0.2 }}>
           <h3 className="text-sm font-semibold text-[#1C1917] mb-4">Chat Activity</h3>
           <div className="h-48 flex items-end gap-1.5">
             {CHAT_ACTIVITY_MONTHLY.map((val, i) => (
@@ -524,7 +528,7 @@ function ChatStatsSection() {
           </div>
         </motion.div>
 
-        <motion.div className="rounded-xl border border-[#E8E5DF]/60 bg-white p-5" {...fadeInUp} transition={{ duration: 0.5, delay: 0.3 }}>
+        <motion.div className="rounded-xl border border-[#A6852F]/10 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300" {...fadeInUp} transition={{ duration: 0.5, delay: 0.3 }}>
           <h3 className="text-sm font-semibold text-[#1C1917] mb-4">Fan vs Business</h3>
           <div className="space-y-5">
             <div>
@@ -561,7 +565,7 @@ function ChatStatsSection() {
         </motion.div>
       </div>
 
-      <motion.div className="rounded-xl border border-[#E8E5DF]/60 bg-white p-5" {...fadeInUp} transition={{ duration: 0.5, delay: 0.4 }}>
+      <motion.div className="rounded-xl border border-[#A6852F]/10 bg-white p-5 shadow-sm hover:shadow-md transition-shadow duration-300" {...fadeInUp} transition={{ duration: 0.5, delay: 0.4 }}>
         <h3 className="text-sm font-semibold text-[#1C1917] mb-4">Recent Conversations</h3>
         <div className="space-y-2">
           {conversations.slice(0, 5).map((conv) => (

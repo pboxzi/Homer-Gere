@@ -21,12 +21,12 @@ type DateFilter = (typeof DATE_FILTERS)[number];
 
 const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
   const styles: Record<string, string> = {
-    completed: 'bg-[#16A34A]/10 text-[#16A34A]',
-    pending: 'bg-[#F59E0B]/10 text-[#F59E0B]',
-    refunded: 'bg-[#DC2626]/10 text-[#DC2626]',
+    completed: 'bg-[#16A34A]/15 text-[#16A34A] border border-[#16A34A]/20',
+    pending: 'bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/20',
+    refunded: 'bg-[#DC2626]/15 text-[#DC2626] border border-[#DC2626]/20',
   };
   return (
-    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium w-fit capitalize ${styles[status] || 'bg-[#57534E]/10 text-[#57534E]'}`}>
+    <span className={`text-xs px-2.5 py-1 rounded-full font-semibold w-fit capitalize ${styles[status] || 'bg-[#57534E]/10 text-[#57534E] border border-[#57534E]/15'}`}>
       {status}
     </span>
   );
@@ -306,44 +306,44 @@ export const AdminPayments: React.FC<AdminPaymentsProps> = ({ activeSection }) =
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <motion.div
-          className="rounded-xl p-4 border bg-[#16A34A]/8 border-[#16A34A]/20"
+          className="rounded-xl p-4 border border-[#16A34A]/30 bg-[#16A34A]/10 glow-emerald transition-shadow duration-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
         >
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-[#16A34A]/15 flex items-center justify-center">
-              <CreditCard className="w-4 h-4 text-[#16A34A]" />
+            <div className="w-9 h-9 rounded-xl bg-[#16A34A]/20 flex items-center justify-center">
+              <CreditCard className="w-4.5 h-4.5 text-[#16A34A]" />
             </div>
-            <p className="text-[11px] text-[#57534E] uppercase tracking-[0.05em]">Total Revenue</p>
+            <p className="text-xs font-medium text-[#16A34A]/80 uppercase tracking-[0.05em]">Total Revenue</p>
           </div>
           <p className="text-2xl font-editorial text-[#16A34A]">${summaryData.total.toLocaleString()}</p>
         </motion.div>
         <motion.div
-          className="rounded-xl p-4 border bg-[#A6852F]/8 border-[#A6852F]/20"
+          className="rounded-xl p-4 border border-[#A6852F]/30 bg-[#A6852F]/10 glow-gold transition-shadow duration-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.15 }}
         >
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-[#A6852F]/15 flex items-center justify-center">
-              <CheckCircle className="w-4 h-4 text-[#A6852F]" />
+            <div className="w-9 h-9 rounded-xl bg-[#A6852F]/20 flex items-center justify-center">
+              <CheckCircle className="w-4.5 h-4.5 text-[#A6852F]" />
             </div>
-            <p className="text-[11px] text-[#57534E] uppercase tracking-[0.05em]">Completed</p>
+            <p className="text-xs font-medium text-[#A6852F]/80 uppercase tracking-[0.05em]">Completed</p>
           </div>
           <p className="text-2xl font-editorial text-[#A6852F]">{summaryData.completedCount}</p>
         </motion.div>
         <motion.div
-          className="rounded-xl p-4 border bg-[#F59E0B]/8 border-[#F59E0B]/20"
+          className="rounded-xl p-4 border border-[#F59E0B]/30 bg-[#F59E0B]/10 glow-amber transition-shadow duration-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
         >
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-[#F59E0B]/15 flex items-center justify-center">
-              <Clock className="w-4 h-4 text-[#F59E0B]" />
+            <div className="w-9 h-9 rounded-xl bg-[#F59E0B]/20 flex items-center justify-center">
+              <Clock className="w-4.5 h-4.5 text-[#F59E0B]" />
             </div>
-            <p className="text-[11px] text-[#57534E] uppercase tracking-[0.05em]">Pending</p>
+            <p className="text-xs font-medium text-[#F59E0B]/80 uppercase tracking-[0.05em]">Pending</p>
           </div>
           <p className="text-2xl font-editorial text-[#F59E0B]">{summaryData.pendingCount}</p>
         </motion.div>
@@ -404,7 +404,7 @@ export const AdminPayments: React.FC<AdminPaymentsProps> = ({ activeSection }) =
           </div>
         </div>
 
-        <div className="rounded-xl border border-[#E8E5DF]/60 bg-white overflow-hidden">
+        <div className="rounded-xl border border-[#A6852F]/10 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
           {/* Desktop */}
           <div className="hidden md:block">
             <div className={`grid ${isMembership ? 'grid-cols-[1fr_80px_80px_100px_100px_80px]' : 'grid-cols-[120px_1fr_80px_80px_100px_100px_80px]'} gap-4 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]`}>

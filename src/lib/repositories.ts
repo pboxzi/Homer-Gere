@@ -28,6 +28,7 @@ import type {
   MediaVideo,
   MediaPodcast,
   MediaPress,
+  Faq,
   Notification,
   SiteSetting,
   EmailTemplate,
@@ -699,6 +700,15 @@ export const experienceRequestsRepository = {
     if (error) throw error;
     return data;
   },
+
+  async delete(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('experience_requests')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
 };
 
 // ============================================================
@@ -1102,6 +1112,27 @@ export const mediaRepository = {
     return data;
   },
 
+  async updateVideo(id: string, updates: Partial<MediaVideo>): Promise<MediaVideo> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('media_videos')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async deleteVideo(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('media_videos')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+
   async createPodcast(podcast: Omit<MediaPodcast, 'id' | 'created_at' | 'updated_at'>): Promise<MediaPodcast> {
     const client = getSupabaseClient();
     const { data, error } = await client
@@ -1113,6 +1144,27 @@ export const mediaRepository = {
     return data;
   },
 
+  async updatePodcast(id: string, updates: Partial<MediaPodcast>): Promise<MediaPodcast> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('media_podcasts')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async deletePodcast(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('media_podcasts')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+
   async createPress(press: Omit<MediaPress, 'id' | 'created_at' | 'updated_at'>): Promise<MediaPress> {
     const client = getSupabaseClient();
     const { data, error } = await client
@@ -1122,6 +1174,27 @@ export const mediaRepository = {
       .single();
     if (error) throw error;
     return data;
+  },
+
+  async updatePress(id: string, updates: Partial<MediaPress>): Promise<MediaPress> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('media_press')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async deletePress(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('media_press')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
   },
 };
 
@@ -1288,6 +1361,68 @@ export const emailTemplatesRepository = {
       .single();
     if (error) throw error;
     return data;
+  },
+};
+
+// ============================================================
+// FAQS
+// ============================================================
+
+export const faqRepository = {
+  async getAll(): Promise<Faq[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('faqs')
+      .select('*')
+      .order('sort_order', { ascending: true });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async create(faq: Omit<Faq, 'id' | 'created_at' | 'updated_at'>): Promise<Faq> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('faqs')
+      .insert(faq)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async update(id: string, updates: Partial<Faq>): Promise<Faq> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('faqs')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
+  async delete(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('faqs')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  },
+
+  async reorder(items: { id: string; sort_order: number }[]): Promise<void> {
+    const client = getSupabaseClient();
+    const updates = items.map(({ id, sort_order }) =>
+      client
+        .from('faqs')
+        .update({ sort_order, updated_at: new Date().toISOString() })
+        .eq('id', id)
+    );
+    const results = await Promise.all(updates);
+    for (const { error } of results) {
+      if (error) throw error;
+    }
   },
 };
 

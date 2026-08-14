@@ -30,22 +30,22 @@ const Section: React.FC<{ title: string; subtitle?: string; action?: React.React
 const StatusBadge: React.FC<{ status: string; variant?: 'status' | 'availability' }> = ({ status, variant = 'status' }) => {
   const styles: Record<string, string> = variant === 'status'
     ? {
-        active: 'bg-[#16A34A]/10 text-[#16A34A]',
-        suspended: 'bg-[#DC2626]/10 text-[#DC2626]',
-        pending: 'bg-[#F59E0B]/10 text-[#F59E0B]',
-        approved: 'bg-[#16A34A]/10 text-[#16A34A]',
-        declined: 'bg-[#DC2626]/10 text-[#DC2626]',
-        completed: 'bg-[#16A34A]/10 text-[#16A34A]',
-        draft: 'bg-[#F59E0B]/10 text-[#F59E0B]',
-        archived: 'bg-[#57534E]/10 text-[#57534E]',
+        active: 'bg-[#16A34A]/15 text-[#16A34A] border border-[#16A34A]/20',
+        suspended: 'bg-[#DC2626]/15 text-[#DC2626] border border-[#DC2626]/20',
+        pending: 'bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/20',
+        approved: 'bg-[#16A34A]/15 text-[#16A34A] border border-[#16A34A]/20',
+        declined: 'bg-[#DC2626]/15 text-[#DC2626] border border-[#DC2626]/20',
+        completed: 'bg-[#16A34A]/15 text-[#16A34A] border border-[#16A34A]/20',
+        draft: 'bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/20',
+        archived: 'bg-[#57534E]/10 text-[#57534E] border border-[#57534E]/15',
       }
     : {
-        available: 'bg-[#16A34A]/10 text-[#16A34A]',
-        limited: 'bg-[#F59E0B]/10 text-[#F59E0B]',
-        unavailable: 'bg-[#DC2626]/10 text-[#DC2626]',
+        available: 'bg-[#16A34A]/15 text-[#16A34A] border border-[#16A34A]/20',
+        limited: 'bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/20',
+        unavailable: 'bg-[#DC2626]/15 text-[#DC2626] border border-[#DC2626]/20',
       };
   return (
-    <span className={`text-xs px-2 py-0.5 rounded-full font-medium w-fit ${styles[status] || 'bg-[#57534E]/10 text-[#57534E]'}`}>
+    <span className={`text-xs px-2.5 py-1 rounded-full font-semibold w-fit ${styles[status] || 'bg-[#57534E]/10 text-[#57534E] border border-[#57534E]/15'}`}>
       {status}
     </span>
   );
@@ -67,7 +67,7 @@ const ConfirmDialog: React.FC<{ open: boolean; title: string; message: string; o
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
-          className="bg-white rounded-xl border border-[#E8E5DF]/80 p-6 w-full max-w-sm shadow-xl"
+          className="bg-white rounded-xl border border-[#A6852F]/10 p-6 w-full max-w-sm shadow-xl shadow-[#A6852F]/5"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center gap-3 mb-3">
@@ -110,7 +110,7 @@ const ViewModal: React.FC<{
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
-          className="bg-white rounded-xl border border-[#E8E5DF]/80 p-6 w-full max-w-md shadow-xl"
+          className="bg-white rounded-xl border border-[#A6852F]/10 p-6 w-full max-w-md shadow-xl shadow-[#A6852F]/5"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between mb-5">
@@ -281,7 +281,7 @@ const MembersSection: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="rounded-xl border border-[#E8E5DF]/80 bg-white overflow-hidden">
+      <div className="rounded-xl border border-[#A6852F]/10 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
         {/* Desktop table */}
         <div className="hidden md:block overflow-x-auto">
           <div className="grid grid-cols-[1fr_120px_100px_100px_80px_100px] gap-4 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
@@ -492,7 +492,7 @@ const PlansSection: React.FC = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {plans.map((plan) => (
-          <div key={plan.id} className="rounded-xl border border-[#E8E5DF]/80 bg-white p-4">
+          <div key={plan.id} className="rounded-xl border border-[#A6852F]/10 bg-white p-4 shadow-sm hover:shadow-md hover:border-[#A6852F]/20 transition-all duration-300">
             {editingId === plan.id ? (
               <div className="space-y-3">
                 <input
@@ -800,7 +800,7 @@ const ExperiencesSection: React.FC = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {experiences.map((exp) => (
-          <div key={exp.id} className="rounded-xl border border-[#E8E5DF]/80 bg-white p-4">
+          <div key={exp.id} className="rounded-xl border border-[#16A34A]/10 bg-white p-4 shadow-sm hover:shadow-md hover:border-[#16A34A]/20 transition-all duration-300">
             {editingId === exp.id ? (
               <div className="space-y-3">
                 <input

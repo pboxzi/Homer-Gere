@@ -172,3 +172,46 @@
 .hover-underline:hover::after {
   width: 100%;
 }
+
+/* Admin glow card utilities */
+.glow-gold {
+  box-shadow: 0 0 20px rgba(166, 133, 47, 0.15), 0 0 40px rgba(166, 133, 47, 0.05);
+}
+.glow-gold:hover {
+  box-shadow: 0 0 25px rgba(166, 133, 47, 0.25), 0 0 50px rgba(166, 133, 47, 0.1);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 20px rgba(22, 163, 74, 0.15), 0 0 40px rgba(22, 163, 74, 0.05);
+}
+.glow-emerald:hover {
+  box-shadow: 0 0 25px rgba(22, 163, 74, 0.25), 0 0 50px rgba(22, 163, 74, 0.1);
+}
+
+.glow-amber {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.15), 0 0 40px rgba(245, 158, 11, 0.05);
+}
+.glow-amber:hover {
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.25), 0 0 50px rgba(245, 158, 11, 0.1);
+}
+
+.glow-blue {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.15), 0 0 40px rgba(59, 130, 246, 0.05);
+}
+.glow-blue:hover {
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.25), 0 0 50px rgba(59, 130, 246, 0.1);
+}
+
+.glow-red {
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.12), 0 0 40px rgba(220, 38, 38, 0.04);
+}
+.glow-red:hover {
+  box-shadow: 0 0 25px rgba(220, 38, 38, 0.2), 0 0 50px rgba(220, 38, 38, 0.08);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.15), 0 0 40px rgba(139, 92, 246, 0.05);
+}
+.glow-purple:hover {
+  box-shadow: 0 0 25px rgba(139, 92, 246, 0.25), 0 0 50px rgba(139, 92, 246, 0.1);
+}

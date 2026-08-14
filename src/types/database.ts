@@ -410,6 +410,17 @@ export interface EmailTemplate {
   updated_at: string;
 }
 
+export interface Faq {
+  id: string;
+  question: string;
+  answer: string;
+  category: string;
+  sort_order: number;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface AuditLog {
   id: string;
   user_id: string | null;
@@ -579,6 +590,11 @@ export interface Database {
         Row: EmailTemplate;
         Insert: Omit<EmailTemplate, 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Omit<EmailTemplate, 'id' | 'created_at' | 'updated_at'>>;
+      };
+      faqs: {
+        Row: Faq;
+        Insert: Omit<Faq, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<Faq, 'id' | 'created_at' | 'updated_at'>>;
       };
       audit_logs: {
         Row: AuditLog;

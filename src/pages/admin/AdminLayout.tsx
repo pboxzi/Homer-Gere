@@ -89,7 +89,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
-      <div className="px-5 py-5 border-b border-[#E8E5DF]/40">
+      <div className="px-5 py-5 border-b border-[#A6852F]/15 bg-gradient-to-b from-[#A6852F]/5 to-transparent">
         <button onClick={() => navigate('/')} className="group flex flex-col text-left focus:outline-none cursor-pointer">
           <span className="font-editorial tracking-[0.06em] text-[#1C1917] group-hover:text-[#A6852F] transition-all duration-500 uppercase leading-none text-base">
             Homer Gere
@@ -111,7 +111,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                   key={item.id}
                   onClick={() => handleNav(item.id)}
                   className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all duration-200 cursor-pointer ${
-                    isActive ? 'bg-[#A6852F]/10 text-[#A6852F] font-medium' : 'text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917]'
+                    isActive ? 'bg-[#A6852F]/15 text-[#A6852F] font-medium shadow-sm' : 'text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917]'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -155,7 +155,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                             key={item.id}
                             onClick={() => handleNav(item.id)}
                             className={`w-full flex items-center gap-2.5 pl-7 pr-3 py-1.5 rounded-xl text-sm transition-all duration-200 cursor-pointer ${
-                              isActive ? 'bg-[#A6852F]/10 text-[#A6852F] font-medium' : 'text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917]'
+                              isActive ? 'bg-[#A6852F]/15 text-[#A6852F] font-medium shadow-sm' : 'text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917]'
                             }`}
                           >
                             <Icon className="w-3.5 h-3.5" />
@@ -172,12 +172,12 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         })}
       </nav>
 
-      <div className="px-3 py-4 border-t border-[#E8E5DF]/40">
+      <div className="px-3 py-4 border-t border-[#A6852F]/10 bg-gradient-to-t from-[#A6852F]/5 to-transparent">
         <div className="flex items-center gap-3 px-3 mb-3">
-          <div className="w-8 h-8 rounded-lg bg-[#1C1917] flex items-center justify-center text-white text-xs font-medium">SA</div>
+          <div className="w-9 h-9 rounded-xl bg-[#A6852F] flex items-center justify-center text-white text-xs font-bold shadow-sm shadow-[#A6852F]/20">SA</div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-[#1C1917] truncate">Super Admin</p>
-            <p className="text-[10px] text-[#57534E] truncate">admin@homergere.com</p>
+            <p className="text-xs font-semibold text-[#1C1917] truncate">Super Admin</p>
+            <p className="text-[11px] text-[#57534E] truncate">admin@homergere.com</p>
           </div>
         </div>
         <button
@@ -228,7 +228,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 
       <div className="flex-1 lg:ml-60 min-h-screen flex flex-col">
         {/* Top bar with search */}
-        <header className="sticky top-0 z-20 bg-[#FAF9F7]/90 backdrop-blur-xl border-b border-[#E8E5DF]/40 px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-4">
+        <header className="sticky top-0 z-20 bg-[#FAF9F7]/90 backdrop-blur-xl border-b border-[#A6852F]/10 px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-4">
           <button onClick={() => setMobileOpen(true)} className="lg:hidden w-9 h-9 rounded-xl flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
             <Menu className="w-5 h-5" />
           </button>
@@ -288,8 +288,8 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 
           <div className="flex-1" />
 
-          <div className="hidden sm:flex items-center gap-2 text-[10px] text-[#57534E]">
-            <div className="w-2 h-2 rounded-full bg-[#16A34A]" />
+          <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-[#16A34A]">
+            <div className="w-2.5 h-2.5 rounded-full bg-[#16A34A] shadow-sm shadow-[#16A34A]/40 animate-pulse" />
             System Online
           </div>
         </header>
