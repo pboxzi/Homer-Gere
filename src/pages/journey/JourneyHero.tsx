@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, BookOpen } from 'lucide-react';
-import { IMAGES } from '../../data/images';
+import { IMAGES, SECTION_IMAGES } from '../../data/images';
 
 interface JourneyHeroProps {
   onExploreProjects: () => void;
@@ -19,7 +19,7 @@ export const JourneyHero: React.FC<JourneyHeroProps> = ({ onExploreProjects, onV
         transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
       >
         <img 
-          src={IMAGES.homerBrightLuxuryEditorial}
+          src={SECTION_IMAGES.media.hero}
           alt="Homer Gere - Editorial Portrait"
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover object-top"

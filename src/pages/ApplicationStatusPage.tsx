@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Clock, FileText, AlertCircle, LogOut, ArrowRight, CheckCircle } from 'lucide-react';
-import { SEO } from '../../components/SEO';
-import { useAuth } from '../../context/AuthContext';
-import { registrationRepository } from '../../lib/repositories';
+import { SEO } from '../components/SEO';
+import { useAuth } from '../context/AuthContext';
+import { registrationRepository } from '../lib/repositories';
 
 export default function ApplicationStatusPage() {
   const navigate = useNavigate();

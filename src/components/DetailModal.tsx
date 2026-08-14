@@ -375,6 +375,24 @@ export const DetailModal: React.FC<DetailModalProps> = ({
                   )}
                 </button>
               </form>
+
+              <div className="text-center space-y-2">
+                <button
+                  onClick={() => { onClose(); navigate('/auth/forgot-password'); }}
+                  className="text-xs text-[#A6852F] hover:text-[#8B6F1F] font-medium transition-colors cursor-pointer"
+                >
+                  Forgot password?
+                </button>
+                <p className="text-xs text-[#57534E]">
+                  Don&apos;t have an account?{' '}
+                  <button
+                    onClick={() => { onClose(); navigate('/auth/register'); }}
+                    className="text-[#A6852F] hover:text-[#8B6F1F] font-medium transition-colors cursor-pointer"
+                  >
+                    Apply for Membership
+                  </button>
+                </p>
+              </div>
             </div>
           )}
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { ArrowRight, BarChart3 } from 'lucide-react';
-import { MEMBERSHIP_IMAGES } from '../../data/images';
+import { MEMBERSHIP_IMAGES, SECTION_IMAGES } from '../../data/images';
 
 interface MembershipHeroProps {
   onBecomeMember: () => void;
@@ -19,7 +19,7 @@ export const MembershipHero: React.FC<MembershipHeroProps> = ({ onBecomeMember, 
         transition={{ duration: 1.8, ease: [0.22, 1, 0.36, 1] }}
       >
         <img 
-          src={MEMBERSHIP_IMAGES.hero}
+          src={SECTION_IMAGES.media.hero}
           alt="Homer Gere — Official Membership"
           referrerPolicy="no-referrer"
           className="w-full h-full object-cover object-top"

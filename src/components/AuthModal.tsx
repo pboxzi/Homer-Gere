@@ -1,12 +1,14 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Shield, Star, MessageSquare, Download, Bell, User } from 'lucide-react';
+import { X, Shield, Star, MessageSquare, Download, Bell, User, ArrowRight, Crown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   feature?: string;
+  onNavigateToSignIn?: () => void;
+  onNavigateToRegister?: () => void;
 }
 
 const BENEFITS = [
@@ -18,17 +20,31 @@ const BENEFITS = [
   { icon: Shield, text: 'Secure member dashboard' },
 ];
 
-export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, feature }) => {
+export const AuthModal: React.FC<AuthModalProps> = ({
+  isOpen,
+  onClose,
+  feature,
+  onNavigateToSignIn,
+  onNavigateToRegister,
+}) => {
   const navigate = useNavigate();
+
+  const handleSignIn = () => {
+    onClose();
+    if (onNavigateToSignIn) {
+      onNavigateToSignIn();
+    } else {
+      navigate('/auth/sign-in');
+    }
+  };
 
   const handleRegister = () => {
     onClose();
-    navigate('/register');
-  };
-
-  const handleLogin = () => {
-    onClose();
-    navigate('/login');
+    if (onNavigateToRegister) {
+      onNavigateToRegister();
+    } else {
+      navigate('/auth/register');
+    }
   };
 
   return (
@@ -59,13 +75,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, feature }
                 <X className="w-4 h-4" />
               </button>
               <div className="w-14 h-14 rounded-2xl bg-[#A6852F]/20 flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-7 h-7 text-[#A6852F]" />
+                <Crown className="w-7 h-7 text-[#A6852F]" />
               </div>
               <h2 className="text-xl font-editorial text-white tracking-tight">
-                {feature ? `Sign in to access ${feature}` : 'Sign in to continue'}
+                {feature ? `${feature}` : 'Members Only'}
               </h2>
               <p className="text-sm text-white/60 mt-2">
-                Join the Homer Gere community to unlock exclusive features
+                This feature is available to approved members.
               </p>
             </div>
 
@@ -87,22 +103,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, feature }
             {/* Actions */}
             <div className="px-8 pb-8 space-y-3">
               <button
+                onClick={handleSignIn}
+                className="w-full bg-[#1C1917] hover:bg-[#292524] text-white text-sm font-medium py-3 rounded-2xl transition-all cursor-pointer inline-flex items-center justify-center gap-2"
+              >
+                Sign In
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <button
                 onClick={handleRegister}
                 className="w-full bg-[#A6852F] hover:bg-[#8B6F1F] text-white text-sm font-medium py-3 rounded-2xl transition-all cursor-pointer"
               >
-                Create Free Account
-              </button>
-              <button
-                onClick={handleLogin}
-                className="w-full bg-[#F3F1ED] hover:bg-[#E8E5DF] text-[#1C1917] text-sm font-medium py-3 rounded-2xl transition-all cursor-pointer"
-              >
-                Sign In
+                Apply for Membership
               </button>
               <button
                 onClick={onClose}
                 className="w-full text-[#57534E] text-xs hover:text-[#1C1917] transition-colors cursor-pointer py-2"
               >
-                Maybe later
+                Cancel
               </button>
             </div>
           </motion.div>

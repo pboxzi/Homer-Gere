@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { DetailModal } from '../components/DetailModal';
+import { AuthModal } from '../components/AuthModal';
 import { Footer } from '../components/Footer';
 import { SectionFadeIn } from '../components/SectionFadeIn';
 import { MembershipHero } from './membership/MembershipHero';
@@ -15,11 +16,15 @@ import { MembershipTestimonials } from './membership/MembershipTestimonials';
 import { MembershipCTA } from './membership/MembershipCTA';
 import { SEO } from '../components/SEO';
 import { ModalType } from '../types';
+import { useAuth } from '../context/AuthContext';
 
 export default function MembershipPage() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [activeSection] = useState<string>('membership');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authFeature, setAuthFeature] = useState<string | undefined>();
 
   const handleNavigate = (sectionId: string) => {
     if (sectionId === 'home') { navigate('/'); return; }
@@ -35,9 +40,26 @@ export default function MembershipPage() {
   };
 
   const handleOpenChat = () => { navigate('/chat'); };
-  const handleBecomeMember = () => { document.getElementById('membership-plans')?.scrollIntoView({ behavior: 'smooth' }); };
+
+  const handleBecomeMember = () => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    } else {
+      setAuthFeature('Become a Member');
+      setAuthModalOpen(true);
+    }
+  };
+
   const handleComparePlans = () => { document.getElementById('membership-comparison')?.scrollIntoView({ behavior: 'smooth' }); };
-  const handleSelectTier = (tierId: string) => { setActiveModal({ type: 'membership', tier: { id: tierId } as any }); };
+
+  const handleSelectTier = (tierId: string) => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    } else {
+      setAuthFeature('Apply for Membership');
+      setAuthModalOpen(true);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
@@ -56,6 +78,7 @@ export default function MembershipPage() {
       </main>
       <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />
       <DetailModal modal={activeModal} onClose={() => setActiveModal(null)} onOpenChat={handleOpenChat} />
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} feature={authFeature} />
     </div>
   );
 }

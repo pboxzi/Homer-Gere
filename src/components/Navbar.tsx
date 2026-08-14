@@ -179,7 +179,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </div>
           ) : (
-            <button onClick={() => routerNavigate('/login')} className="text-xs font-medium text-[#A6852F] hover:text-[#8B6F1F]">
+            <button onClick={() => routerNavigate('/auth/sign-in')} className="text-xs font-medium text-[#A6852F] hover:text-[#8B6F1F]">
               Sign In
             </button>
           )}
@@ -226,7 +226,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           ) : (
             <button
-              onClick={() => routerNavigate('/login')}
+              onClick={() => routerNavigate('/auth/sign-in')}
               className="inline-flex items-center gap-1.5 bg-[#1C1917] text-white text-xs font-medium px-3 py-1.5 rounded-full focus:outline-none cursor-pointer min-h-[44px]"
             >
               <User className="w-3 h-3" />

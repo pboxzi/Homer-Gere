@@ -8,7 +8,7 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin = false }) => {
-  const { isAuthenticated, isAdmin, loading } = useAuth();
+  const { isAuthenticated, isAdmin, user, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -23,11 +23,18 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requir
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    if (requireAdmin) {
+      return <Navigate to="/admin/login" state={{ from: location }} replace />;
+    }
+    return <Navigate to="/auth/sign-in" state={{ from: location }} replace />;
   }
 
   if (requireAdmin && !isAdmin) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/access-denied" replace />;
+  }
+
+  if (user?.role === 'pending' && !requireAdmin) {
+    return <Navigate to="/application-status" replace />;
   }
 
   return <>{children}</>;

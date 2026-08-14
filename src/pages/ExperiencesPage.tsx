@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/Navbar';
 import { DetailModal } from '../components/DetailModal';
+import { AuthModal } from '../components/AuthModal';
 import { Footer } from '../components/Footer';
 import { SectionFadeIn } from '../components/SectionFadeIn';
 import { ExperiencesHero } from './experiences/ExperiencesHero';
@@ -15,15 +16,18 @@ import { ExperiencesFAQ } from './experiences/ExperiencesFAQ';
 import { ExperiencesExplore } from './experiences/ExperiencesExplore';
 import { SEO } from '../components/SEO';
 import { ModalType, Experience } from '../types';
+import { useAuth } from '../context/AuthContext';
 
 export default function ExperiencesPage() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [activeSection] = useState<string>('experiences');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
   const [showDetailModal, setShowDetailModal] = useState<boolean>(false);
   const [showRequestForm, setShowRequestForm] = useState<boolean>(false);
   const [preselectedForRequest, setPreselectedForRequest] = useState<Experience | null>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const handleNavigate = (sectionId: string) => {
     if (sectionId === 'home') { navigate('/'); return; }
@@ -40,8 +44,25 @@ export default function ExperiencesPage() {
 
   const handleOpenChat = () => { navigate('/chat'); };
   const handleSelectExperience = (experience: Experience) => { setSelectedExperience(experience); setShowDetailModal(true); };
-  const handleRequestExperience = (experience?: Experience) => { setShowDetailModal(false); setPreselectedForRequest(experience || null); setShowRequestForm(true); };
-  const handleRequestFromHero = () => { setShowRequestForm(true); };
+
+  const handleRequestExperience = (experience?: Experience) => {
+    if (!isAuthenticated) {
+      setAuthModalOpen(true);
+      return;
+    }
+    setShowDetailModal(false);
+    setPreselectedForRequest(experience || null);
+    setShowRequestForm(true);
+  };
+
+  const handleRequestFromHero = () => {
+    if (!isAuthenticated) {
+      setAuthModalOpen(true);
+      return;
+    }
+    setShowRequestForm(true);
+  };
+
   const handleExploreMembership = () => { navigate('/membership'); };
 
   return (
@@ -61,6 +82,7 @@ export default function ExperiencesPage() {
       <DetailModal modal={activeModal} onClose={() => setActiveModal(null)} onOpenChat={handleOpenChat} />
       <ExperienceDetailModal experience={selectedExperience} onClose={() => { setShowDetailModal(false); setSelectedExperience(null); }} onRequestExperience={handleRequestExperience} />
       {showRequestForm && <RequestExperienceForm preselectedExperience={preselectedForRequest} onClose={() => { setShowRequestForm(false); setPreselectedForRequest(null); }} />}
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} feature="Request an Experience" />
     </div>
   );
 }

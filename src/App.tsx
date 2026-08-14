@@ -1,5 +1,5 @@
 import React, { Suspense, useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
@@ -31,11 +31,17 @@ const ExperiencesPage = React.lazy(() => import('./pages/ExperiencesPage'));
 const MembershipPage = React.lazy(() => import('./pages/MembershipPage'));
 const ChatPage = React.lazy(() => import('./pages/chat/ChatPage'));
 const ContactPage = React.lazy(() => import('./pages/ContactPage'));
-const LoginPage = React.lazy(() => import('./pages/LoginPage'));
-const RegisterPage = React.lazy(() => import('./pages/RegisterPage'));
 const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 const AdminDashboard = React.lazy(() => import('./pages/admin/AdminDashboard'));
 const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage'));
+
+const MemberSignIn = React.lazy(() => import('./pages/auth/MemberSignIn'));
+const MemberRegister = React.lazy(() => import('./pages/auth/MemberRegister'));
+const ForgotPasswordPage = React.lazy(() => import('./pages/auth/ForgotPasswordPage'));
+const ResetPasswordPage = React.lazy(() => import('./pages/auth/ResetPasswordPage'));
+const AdminLoginPage = React.lazy(() => import('./pages/admin/AdminLoginPage'));
+const ApplicationStatusPage = React.lazy(() => import('./pages/ApplicationStatusPage'));
+const AccessDeniedPage = React.lazy(() => import('./pages/AccessDeniedPage'));
 
 function RouteLoader({ children }: { children: React.ReactNode }) {
   const location = useLocation();
@@ -142,6 +148,7 @@ export default function App() {
           }>
             <RouteLoader>
               <Routes>
+              {/* Public Routes */}
               <Route path="/" element={<HomePage />} />
               <Route path="/journey" element={<JourneyPage />} />
               <Route path="/projects" element={<ProjectsPage />} />
@@ -154,18 +161,37 @@ export default function App() {
               <Route path="/membership" element={<MembershipPage />} />
               <Route path="/chat" element={<ChatPage />} />
               <Route path="/contact" element={<ContactPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
+
+              {/* Member Auth Routes */}
+              <Route path="/auth/sign-in" element={<MemberSignIn />} />
+              <Route path="/auth/register" element={<MemberRegister />} />
+              <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
+
+              {/* Admin Auth Route */}
+              <Route path="/admin/login" element={<AdminLoginPage />} />
+
+              {/* Backward Compatibility Redirects */}
+              <Route path="/login" element={<Navigate to="/auth/sign-in" replace />} />
+              <Route path="/register" element={<Navigate to="/auth/register" replace />} />
+
+              {/* Protected Member Routes */}
               <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <DashboardProvider><DashboardPage /></DashboardProvider>
                 </ProtectedRoute>
               } />
+              <Route path="/application-status" element={<ApplicationStatusPage />} />
+
+              {/* Protected Admin Routes */}
               <Route path="/admin" element={
                 <ProtectedRoute requireAdmin>
                   <AdminDashboard />
                 </ProtectedRoute>
               } />
+
+              {/* Error Pages */}
+              <Route path="/access-denied" element={<AccessDeniedPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
             </RouteLoader>

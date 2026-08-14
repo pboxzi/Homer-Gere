@@ -2,20 +2,24 @@ import React, { useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Navbar } from '../../components/Navbar';
 import { DetailModal } from '../../components/DetailModal';
+import { AuthModal } from '../../components/AuthModal';
 import { ChatLanding } from './ChatLanding';
 import { FanChat } from './FanChat';
 import { BusinessChat } from './BusinessChat';
 import { ChatConfirmation } from './ChatConfirmation';
 import { SEO } from '../../components/SEO';
 import { ModalType } from '../../types';
+import { useAuth } from '../../context/AuthContext';
 
 
 export default function ChatPage() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [searchParams] = useSearchParams();
   const mode = searchParams.get('mode') || 'fan';
   const [activeSection] = useState<string>('chat');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [submittedData, setSubmittedData] = useState<{
     fullName: string;
     email: string;
@@ -36,6 +40,7 @@ export default function ChatPage() {
     if (sectionId === 'membership') { navigate('/membership'); return; }
     if (sectionId === 'media') { navigate('/media'); return; }
     if (sectionId === 'chat') { navigate('/chat'); return; }
+    if (sectionId === 'contact') { navigate('/contact'); return; }
     navigate('/');
   };
 
@@ -60,12 +65,20 @@ export default function ChatPage() {
   }, [navigate]);
 
   const handleStartFanChat = useCallback(() => {
-    navigate('/chat?mode=fan');
-  }, [navigate]);
+    if (!isAuthenticated) {
+      setAuthModalOpen(true);
+      return;
+    }
+    navigate('/dashboard');
+  }, [isAuthenticated, navigate]);
 
   const handleStartBusinessChat = useCallback(() => {
-    navigate('/chat?mode=business');
-  }, [navigate]);
+    if (!isAuthenticated) {
+      setAuthModalOpen(true);
+      return;
+    }
+    navigate('/dashboard');
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="h-dvh h-screen flex flex-col bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
@@ -85,10 +98,18 @@ export default function ChatPage() {
             formData={submittedData}
             onClose={handleCloseConfirmation}
           />
-        ) : mode === 'business' ? (
-          <BusinessChat onBack={() => navigate('/')} onComplete={handleBusinessComplete} />
-        ) : mode === 'fan' ? (
-          <FanChat onBack={() => navigate('/')} />
+        ) : (mode === 'fan' || mode === 'business') && isAuthenticated ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center space-y-4 px-4">
+              <p className="text-sm text-[#57534E]">Redirecting to your dashboard...</p>
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="inline-flex items-center gap-2 bg-[#1C1917] hover:bg-[#292524] text-white font-medium text-sm px-6 py-3 rounded-2xl transition-all duration-300 cursor-pointer"
+              >
+                Go to Dashboard
+              </button>
+            </div>
+          </div>
         ) : (
           <ChatLanding onStartFanChat={handleStartFanChat} onStartBusinessChat={handleStartBusinessChat} />
         )}
@@ -99,6 +120,7 @@ export default function ChatPage() {
         onClose={() => setActiveModal(null)}
         onOpenChat={handleOpenChat}
       />
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} feature="Chat with Homer" />
     </div>
   );
 }

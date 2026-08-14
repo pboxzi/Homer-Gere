@@ -9,7 +9,7 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'admin' | 'member' | 'super_admin';
+  role: 'admin' | 'member' | 'super_admin' | 'pending';
   membershipTier: string | null;
   avatar?: string;
   emailVerified: boolean;
@@ -60,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       const role: User['role'] = adminRecord
         ? (adminRecord.admin_role === 'super_admin' ? 'super_admin' : 'admin')
-        : (userProfile.role as User['role']);
+        : (userProfile.role as User['role']) || 'member';
 
       const u: User = {
         id: authUser.id,
@@ -209,7 +209,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const resetPassword = useCallback(async (email: string): Promise<{ error?: string }> => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/login`,
+        redirectTo: `${window.location.origin}/auth/reset-password`,
       });
       if (error) return { error: error.message };
       return {};
