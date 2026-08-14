@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Search, ChevronLeft, ChevronRight, CheckCircle, XCircle, Clock, Eye, FileText, Download } from 'lucide-react';
-import { membershipRequestsRepository } from '../../lib/repositories';
+import { Search, ChevronLeft, ChevronRight, CheckCircle, XCircle, Clock, Eye, FileText, Download, DollarSign } from 'lucide-react';
+import { membershipRequestsRepository, paymentRequestsRepository, paymentMethodsRepository } from '../../lib/repositories';
 import { notifyService } from '../../lib/notifications';
-import type { MembershipRequest } from '../../types/database';
+import type { MembershipRequest, PaymentMethod } from '../../types/database';
 
 const PAGE_SIZE = 10;
 
@@ -40,6 +40,12 @@ export default function AdminMembershipRequests() {
   const [rejectTarget, setRejectTarget] = useState<MembershipRequest | null>(null);
   const [successMsg, setSuccessMsg] = useState('');
 
+  // Payment request modal state
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentTarget, setPaymentTarget] = useState<MembershipRequest | null>(null);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [paymentForm, setPaymentForm] = useState({ amount: '', currency: 'USD', methodId: '', instructions: '', dueDate: '' });
+
   const load = useCallback(async () => {
     setLoading(true);
     try {
@@ -54,6 +60,10 @@ export default function AdminMembershipRequests() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    paymentMethodsRepository.getActive().then(setPaymentMethods).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (successMsg) { const t = setTimeout(() => setSuccessMsg(''), 3000); return () => clearTimeout(t); }
@@ -112,6 +122,36 @@ export default function AdminMembershipRequests() {
       setSuccessMsg(`Request ${req.request_number} deleted`);
       load();
     } catch (e) { console.error(e); }
+  };
+
+  const handleCreatePaymentRequest = async () => {
+    if (!paymentTarget || !paymentForm.amount || !paymentForm.methodId) return;
+    setActionLoading(true);
+    try {
+      await paymentRequestsRepository.create({
+        user_id: paymentTarget.user_id || '',
+        payment_type: 'membership',
+        related_record_id: paymentTarget.id,
+        payment_method_id: paymentForm.methodId,
+        amount: parseFloat(paymentForm.amount),
+        currency: paymentForm.currency,
+        due_date: paymentForm.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        admin_notes: `Payment request for ${paymentTarget.membership_plan_name} membership`,
+        payment_instructions: paymentForm.instructions || null,
+      });
+      await notifyService.paymentRequestCreated(paymentTarget.user_id || '', {
+        email: paymentTarget.email,
+        fullName: paymentTarget.full_name,
+        amount: paymentForm.amount,
+        currency: paymentForm.currency,
+      });
+      setSuccessMsg(`Payment request created for ${paymentTarget.full_name}`);
+      setShowPaymentModal(false);
+      setPaymentTarget(null);
+      setPaymentForm({ amount: '', currency: 'USD', methodId: '', instructions: '', dueDate: '' });
+      load();
+    } catch (e) { console.error(e); }
+    setActionLoading(false);
   };
 
   const exportCSV = () => {
@@ -283,6 +323,13 @@ export default function AdminMembershipRequests() {
                 <button onClick={() => { setRejectTarget(selected); setShowRejectModal(true); }} className="flex-1 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium">Reject</button>
               </div>
             )}
+            {selected.status === 'approved_for_payment' && (
+              <div className="flex gap-2 mt-6">
+                <button onClick={() => { setPaymentTarget(selected); setPaymentForm(f => ({ ...f, amount: '', instructions: '' })); setShowPaymentModal(true); }} className="flex-1 py-2 bg-[#A6852F] text-white rounded-lg hover:bg-[#8B6F24] text-sm font-medium flex items-center justify-center gap-2">
+                  <DollarSign className="w-4 h-4" /> Create Payment Request
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -297,6 +344,62 @@ export default function AdminMembershipRequests() {
             <div className="flex gap-2 mt-4">
               <button onClick={handleReject} disabled={actionLoading || !rejectReason.trim()} className="flex-1 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium disabled:opacity-50">Reject</button>
               <button onClick={() => { setShowRejectModal(false); setRejectTarget(null); setRejectReason(''); }} className="flex-1 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Payment Request Modal */}
+      {showPaymentModal && paymentTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setShowPaymentModal(false)}>
+          <div className="bg-white rounded-2xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
+            <h2 className="text-lg font-bold text-[#1a1a1a] mb-4">Create Payment Request</h2>
+            <div className="space-y-4">
+              <div className="p-3 bg-gray-50 rounded-lg text-sm">
+                <div className="font-medium">{paymentTarget.membership_plan_name} — {paymentTarget.full_name}</div>
+                <div className="text-[#6b7280]">{paymentTarget.request_number}</div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Amount *</label>
+                  <input type="number" value={paymentForm.amount} onChange={e => setPaymentForm(f => ({ ...f, amount: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" placeholder="0.00" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Currency</label>
+                  <select value={paymentForm.currency} onChange={e => setPaymentForm(f => ({ ...f, currency: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]">
+                    <option value="USD">USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="GBP">GBP (£)</option>
+                    <option value="NGN">NGN (₦)</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Payment Method *</label>
+                <select value={paymentForm.methodId} onChange={e => setPaymentForm(f => ({ ...f, methodId: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]">
+                  <option value="">Select method...</option>
+                  {paymentMethods.map(m => <option key={m.id} value={m.id}>{m.name} ({m.type.replace(/_/g, ' ')})</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Payment Instructions</label>
+                <textarea value={paymentForm.instructions} onChange={e => setPaymentForm(f => ({ ...f, instructions: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F] min-h-[100px]"
+                  placeholder="Bank details, account number, etc." />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Due Date</label>
+                <input type="date" value={paymentForm.dueDate} onChange={e => setPaymentForm(f => ({ ...f, dueDate: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" />
+              </div>
+            </div>
+            <div className="flex gap-2 mt-6">
+              <button onClick={handleCreatePaymentRequest} disabled={actionLoading || !paymentForm.amount || !paymentForm.methodId}
+                className="flex-1 py-2 bg-[#A6852F] text-white rounded-lg hover:bg-[#8B6F24] text-sm font-medium disabled:opacity-50">Create Payment Request</button>
+              <button onClick={() => setShowPaymentModal(false)} className="flex-1 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">Cancel</button>
             </div>
           </div>
         </div>

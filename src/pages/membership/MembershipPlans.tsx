@@ -56,8 +56,8 @@ export const MembershipPlans: React.FC<MembershipPlansProps> = ({ onSelectTier }
                 key={tier.id}
                 className="rounded-2xl p-6 text-white relative overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] group flex flex-col"
                 style={{
-                  background: `linear-gradient(135deg, ${tierColor}, ${tierColor} 50%, ${tierColor}E6 75%, ${tierColor}F2)`,
-                  boxShadow: `0 12px 48px ${tierColor}80, 0 0 80px ${tierColor}50, inset 0 1px 0 rgba(255,255,255,0.25)`,
+                  background: `linear-gradient(135deg, ${tierColor}F5, ${tierColor}E8 50%, ${tierColor}D9 75%, ${tierColor}E6)`,
+                  boxShadow: `0 10px 36px ${tierColor}55, 0 0 50px ${tierColor}25, inset 0 1px 0 rgba(255,255,255,0.15)`,
                 }}
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}

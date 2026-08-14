@@ -114,7 +114,7 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
           { label: 'Approved', count: experienceRequestsList.filter((r) => r.status === 'approved').length, color: '#16A34A' },
           { label: 'Completed', count: experienceRequestsList.filter((r) => r.status === 'completed').length, color: '#57534E' },
         ].map((s, i) => (
-          <motion.div key={s.label} className="rounded-xl p-4 text-center border" style={{ borderColor: `${s.color}35`, background: `linear-gradient(135deg, ${s.color}18, ${s.color}06)`, boxShadow: `0 0 25px ${s.color}27, 0 4px 15px ${s.color}1B` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
+          <motion.div key={s.label} className="rounded-xl p-4 text-center border" style={{ borderColor: `${s.color}45`, background: `linear-gradient(135deg, ${s.color}22, ${s.color}0A)`, boxShadow: `0 0 35px ${s.color}35, 0 6px 20px ${s.color}25` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
             <p className="text-xl font-editorial" style={{ color: s.color }}>{s.count}</p>
             <p className="text-[10px] font-semibold mt-1" style={{ color: s.color }}>{s.label}</p>
           </motion.div>
@@ -131,41 +131,32 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
             return (
               <motion.div
                 key={exp.id}
-                className="rounded-2xl p-5 text-white relative overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.02]"
-                style={{
-                  background: `linear-gradient(135deg, ${color}, ${color} 50%, ${color}E6 75%, ${color}F2)`,
-                  boxShadow: `0 10px 40px ${color}70, 0 0 60px ${color}35, inset 0 1px 0 rgba(255,255,255,0.2)`,
-                }}
+                className={`rounded-2xl p-5 transition-all duration-500 border bg-white ${accessible ? 'hover:scale-[1.01] cursor-pointer' : 'opacity-60'}`}
+                style={{ borderColor: `${color}45`, boxShadow: `0 0 40px ${color}40, 0 8px 25px ${color}30, inset 0 1px 0 ${color}15` }}
                 onClick={() => accessible && setSelectedExp(exp)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.15 + i * 0.05 }}
               >
-                {/* Decorative circles */}
-                <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(25%, -25%)' }} />
-                <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(-25%, 25%)' }} />
-
-                <div className="relative z-10">
-                  <div className="flex items-start justify-between mb-3">
-                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 bg-white/25 backdrop-blur-sm border border-white/20">
-                      {ICON_MAP[exp.iconName] || <Sparkles className="w-3 h-3" />}
-                      {exp.title}
-                    </span>
-                    <span className="text-[10px] font-bold bg-white/25 backdrop-blur-sm border border-white/20 px-2.5 py-1 rounded-full">{exp.availability === 'available' ? 'Available' : exp.availability === 'limited' ? 'Limited' : 'Unavailable'}</span>
+                <div className="flex items-start justify-between mb-3">
+                  <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1" style={{ backgroundColor: `${color}18`, color, boxShadow: `0 0 12px ${color}22` }}>
+                    {ICON_MAP[exp.iconName] || <Sparkles className="w-3 h-3" />}
+                    {exp.title}
+                  </span>
+                  <span className="text-[10px] font-medium" style={{ color }}>{exp.availability === 'available' ? 'Available' : exp.availability === 'limited' ? 'Limited' : 'Unavailable'}</span>
+                </div>
+                <h4 className="text-sm font-medium text-[#1C1917] mb-1">{exp.title}</h4>
+                <p className="text-xs text-[#57534E] mb-3">{exp.description}</p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3 text-[10px] text-[#57534E]">
+                    <span className="flex items-center gap-1"><Star className="w-3 h-3" /> {exp.price}</span>
+                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {exp.duration}</span>
                   </div>
-                  <h4 className="text-sm font-semibold text-white mb-1">{exp.title}</h4>
-                  <p className="text-[11px] text-white/75 mb-3 leading-relaxed">{exp.description}</p>
-                  <div className="flex items-center justify-between pt-3 border-t border-white/20">
-                    <div className="flex items-center gap-3 text-[10px] text-white/80">
-                      <span className="flex items-center gap-1"><Star className="w-3 h-3" /> {exp.price}</span>
-                      <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {exp.duration}</span>
-                    </div>
-                    {accessible && exp.availability !== 'unavailable' ? (
-                      <span className="text-[10px] text-white font-semibold bg-white/20 px-2.5 py-1 rounded-full backdrop-blur-sm">Request Pricing</span>
-                    ) : (
-                      <span className="text-[10px] text-white/40">{!accessible ? 'Upgrade required' : 'Unavailable'}</span>
-                    )}
-                  </div>
+                  {accessible && exp.availability !== 'unavailable' ? (
+                    <span className="text-[10px] font-medium px-2.5 py-1 rounded-full" style={{ backgroundColor: `${color}15`, color }}>Request Pricing</span>
+                  ) : (
+                    <span className="text-[10px] text-[#57534E]/60">{!accessible ? 'Upgrade required' : 'Unavailable'}</span>
+                  )}
                 </div>
               </motion.div>
             );
@@ -181,7 +172,7 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
             {experienceRequestsList.map((r, i) => {
               const reqColor = r.status === 'approved' ? '#16A34A' : r.status === 'completed' ? '#57534E' : '#F59E0B';
               return (
-                <motion.div key={r.id} className="flex items-center gap-4 p-4 rounded-2xl border bg-white transition-all duration-500" style={{ borderColor: `${reqColor}30`, boxShadow: `0 0 20px ${reqColor}18, 0 4px 15px ${reqColor}0C` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 + i * 0.04 }}>
+                <motion.div key={r.id} className="flex items-center gap-4 p-4 rounded-2xl border bg-white transition-all duration-500" style={{ borderColor: `${reqColor}40`, boxShadow: `0 0 30px ${reqColor}25, 0 6px 20px ${reqColor}18` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 + i * 0.04 }}>
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm" style={{ backgroundColor: `${reqColor}15`, color: reqColor, boxShadow: `0 0 12px ${reqColor}1B` }}>
                     {r.status === 'approved' || r.status === 'completed' ? <Check className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
                   </div>
@@ -220,13 +211,33 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
                     <span className="flex items-center gap-1"><Star className="w-3 h-3" /> {selectedExp.price}</span>
                     <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {selectedExp.duration}</span>
                   </div>
-                  <textarea
-                    value={requestNote}
-                    onChange={(e) => setRequestNote(e.target.value)}
-                    placeholder="Add a note (optional)..."
-                    rows={3}
-                    className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 resize-none"
-                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-medium text-[#1C1917] mb-1">Preferred Date</label>
+                      <input type="date" value={requestForm.preferredDate} onChange={e => setRequestForm(f => ({ ...f, preferredDate: e.target.value }))}
+                        className="w-full px-3 py-2 border border-[#A6852F]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-[#1C1917] mb-1">Guests</label>
+                      <input type="number" min="1" max="20" value={requestForm.guests} onChange={e => setRequestForm(f => ({ ...f, guests: e.target.value }))}
+                        className="w-full px-3 py-2 border border-[#A6852F]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-[#1C1917] mb-1">Preferred Location</label>
+                    <input value={requestForm.location} onChange={e => setRequestForm(f => ({ ...f, location: e.target.value }))}
+                      className="w-full px-3 py-2 border border-[#A6852F]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" placeholder="e.g. Los Angeles, CA" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-[#1C1917] mb-1">Special Requirements</label>
+                    <textarea value={requestForm.specialRequirements} onChange={e => setRequestForm(f => ({ ...f, specialRequirements: e.target.value }))}
+                      className="w-full px-3 py-2 border border-[#A6852F]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F] min-h-[60px]" placeholder="Accessibility needs, dietary restrictions, etc." />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-[#1C1917] mb-1">Additional Notes</label>
+                    <textarea value={requestForm.notes} onChange={e => setRequestForm(f => ({ ...f, notes: e.target.value }))}
+                      className="w-full px-3 py-2 border border-[#A6852F]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F] min-h-[60px]" placeholder="Any additional details..." />
+                  </div>
                   <button onClick={handleSubmit} disabled={submitting} className="w-full bg-[#1C1917] hover:bg-[#292524] text-white text-sm font-medium py-3 rounded-2xl transition-all cursor-pointer disabled:opacity-50">
                     {submitting ? 'Submitting...' : 'Submit Request'}
                   </button>

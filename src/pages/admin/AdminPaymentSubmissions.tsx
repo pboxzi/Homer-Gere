@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Search, ChevronLeft, ChevronRight, Eye, CheckCircle, XCircle, AlertCircle, HelpCircle } from 'lucide-react';
-import { paymentSubmissionsRepository, paymentRequestsRepository } from '../../lib/repositories';
+import { paymentSubmissionsRepository, paymentRequestsRepository, membershipRequestsRepository, membershipsRepository, membershipCardsRepository, profilesRepository } from '../../lib/repositories';
+import { notifyService } from '../../lib/notifications';
 import type { PaymentSubmission, PaymentRequest } from '../../types/database';
 
 const PAGE_SIZE = 10;
@@ -64,6 +65,66 @@ export default function AdminPaymentSubmissions() {
     try {
       await paymentSubmissionsRepository.verify(sub.id, 'admin');
       await paymentRequestsRepository.updateStatus(sub.payment_request_id, 'approved', 'admin');
+
+      // Check if this is a membership payment and activate membership
+      const paymentReq = paymentRequests.find(r => r.id === sub.payment_request_id);
+      if (paymentReq && paymentReq.payment_type === 'membership' && paymentReq.user_id) {
+        // Get membership request
+        const memRequests = await membershipRequestsRepository.getByUserId(paymentReq.user_id);
+        const memRequest = memRequests.find(r => r.id === paymentReq.related_record_id);
+
+        if (memRequest) {
+          // Get the plan details to calculate duration
+          const plans = await import('../../lib/repositories').then(m => m.membershipPlansRepository.getAll());
+          const plan = plans.find(p => p.id === memRequest.membership_plan_id);
+
+          // Create membership
+          const startDate = new Date().toISOString().split('T')[0];
+          const endDate = new Date(Date.now() + (plan?.duration || 30) * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+          const membership = await membershipsRepository.create({
+            user_id: paymentReq.user_id,
+            plan_id: memRequest.membership_plan_id || '',
+            status: 'active',
+            start_date: startDate,
+            end_date: endDate,
+            membership_request_id: memRequest.id,
+            auto_renew: false,
+          });
+
+          // Generate membership card
+          const cardNumber = 'HG-' + Date.now().toString(36).toUpperCase().slice(-8);
+          const card = await membershipCardsRepository.create({
+            user_id: paymentReq.user_id,
+            membership_id: membership.id,
+            membership_request_id: memRequest.id,
+            card_number: cardNumber,
+            qr_code_data: cardNumber,
+            issue_date: startDate,
+            expiry_date: endDate,
+            card_design: memRequest.membership_plan_name?.toLowerCase() || 'gold',
+          });
+
+          // Update membership with card_id
+          await membershipsRepository.update(membership.id, { card_id: card.id });
+
+          // Update membership request status
+          await membershipRequestsRepository.updateStatus(memRequest.id, 'membership_active');
+
+          // Notify member
+          const profile = await profilesRepository.getById(paymentReq.user_id);
+          if (profile) {
+            await notifyService.membershipActivated(paymentReq.user_id, {
+              email: profile.email,
+              fullName: `${profile.first_name} ${profile.last_name}`.trim(),
+              planName: memRequest.membership_plan_name,
+              cardNumber: card.card_number,
+              expiryDate: card.expiry_date || 'No Expiry',
+            });
+          }
+        }
+      }
+
       setSuccessMsg(`Submission ${sub.submission_number} verified and payment approved`);
       setShowDetail(false);
       load();

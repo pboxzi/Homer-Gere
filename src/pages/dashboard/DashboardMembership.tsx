@@ -196,7 +196,7 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
             const hasActiveRequest = !!activeRequest;
             const tierColor = TIER_COLORS[tier.id] || '#A6852F';
             return (
-              <motion.div key={tier.id} className="rounded-2xl p-5 text-white relative overflow-hidden transition-all duration-500" style={{ background: `linear-gradient(135deg, ${tierColor}, ${tierColor}DD, ${tierColor}AA, ${tierColor}CC)`, boxShadow: `0 10px 40px ${tierColor}68, 0 0 60px ${tierColor}30, inset 0 1px 0 rgba(255,255,255,0.2)` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
+              <motion.div key={tier.id} className="rounded-2xl p-5 text-white relative overflow-hidden transition-all duration-500" style={{ background: `linear-gradient(135deg, ${tierColor}F5, ${tierColor}E8 50%, ${tierColor}D9 75%, ${tierColor}E6)`, boxShadow: `0 10px 36px ${tierColor}55, 0 0 50px ${tierColor}25, inset 0 1px 0 rgba(255,255,255,0.15)` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
                 <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-15" style={{ background: `radial-gradient(circle, white, transparent)`, transform: 'translate(25%, -25%)' }} />
                 <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full opacity-15" style={{ background: `radial-gradient(circle, white, transparent)`, transform: 'translate(-25%, 25%)' }} />
                 <div className="absolute top-1/2 left-1/2 w-full h-full opacity-5" style={{ background: `radial-gradient(circle, white, transparent)`, transform: 'translate(-50%, -50%)' }} />
