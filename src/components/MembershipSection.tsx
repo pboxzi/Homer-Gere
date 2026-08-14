@@ -48,8 +48,8 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onNavigate
                 onClick={() => onNavigate('membership')}
                 className="rounded-2xl p-6 text-white relative overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] group"
                 style={{
-                  background: `linear-gradient(135deg, ${tierColor}, ${tierColor}DD, ${tierColor}AA, ${tierColor}CC)`,
-                  boxShadow: `0 10px 40px ${tierColor}68, 0 0 60px ${tierColor}30, inset 0 1px 0 rgba(255,255,255,0.2)`,
+                  background: `linear-gradient(135deg, ${tierColor}, ${tierColor} 50%, ${tierColor}E6 75%, ${tierColor}F2)`,
+                  boxShadow: `0 12px 48px ${tierColor}80, 0 0 80px ${tierColor}50, inset 0 1px 0 rgba(255,255,255,0.25)`,
                 }}
                 initial={{ opacity: 0, y: 25 }}
                 whileInView={{ opacity: 1, y: 0 }}

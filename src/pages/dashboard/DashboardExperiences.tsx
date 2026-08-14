@@ -45,9 +45,15 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
   const { experienceRequests, membershipPlan, refreshExperiences, logActivity } = useDashboard();
   const { experiences } = useSiteContent();
   const [selectedExp, setSelectedExp] = useState<Experience | null>(null);
-  const [requestNote, setRequestNote] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [requestForm, setRequestForm] = useState({
+    preferredDate: '',
+    location: '',
+    guests: '1',
+    specialRequirements: '',
+    notes: '',
+  });
 
   React.useEffect(() => {
     if (openRequestForm) {
@@ -75,17 +81,21 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
         phone: profile.phone || null,
         country: profile.country || null,
         organization: null,
-        event_date: null,
-        event_location: null,
+        event_date: requestForm.preferredDate || null,
+        event_location: requestForm.location || null,
         budget: null,
-        purpose: requestNote || null,
-        additional_details: requestNote || null,
+        purpose: requestForm.notes || null,
+        additional_details: requestForm.specialRequirements || null,
+        preferred_date: requestForm.preferredDate || null,
+        num_guests: parseInt(requestForm.guests) || 1,
+        special_requirements: requestForm.specialRequirements || null,
+        timeline: null,
         status: 'pending',
       });
       setSubmitted(true);
       refreshExperiences();
       logActivity('create', 'experience', `Experience request submitted: ${selectedExp.type}`, { experience_type: selectedExp.type });
-      setTimeout(() => { setSubmitted(false); setSelectedExp(null); setRequestNote(''); }, 2000);
+      setTimeout(() => { setSubmitted(false); setSelectedExp(null); setRequestForm({ preferredDate: '', location: '', guests: '1', specialRequirements: '', notes: '' }); }, 2000);
     } catch (e) { console.error(e); }
     setSubmitting(false);
   };
@@ -121,32 +131,41 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
             return (
               <motion.div
                 key={exp.id}
-                className={`rounded-2xl border bg-white p-5 transition-all duration-500 ${accessible ? 'hover:scale-[1.01] cursor-pointer' : 'border-[#E8E5DF]/30 opacity-60'}`}
-                style={accessible ? { borderColor: `${color}35`, boxShadow: `0 0 30px ${color}1B, 0 8px 25px ${color}18, inset 0 1px 0 ${color}0C` } : {}}
+                className="rounded-2xl p-5 text-white relative overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.02]"
+                style={{
+                  background: `linear-gradient(135deg, ${color}, ${color} 50%, ${color}E6 75%, ${color}F2)`,
+                  boxShadow: `0 10px 40px ${color}70, 0 0 60px ${color}35, inset 0 1px 0 rgba(255,255,255,0.2)`,
+                }}
                 onClick={() => accessible && setSelectedExp(exp)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.15 + i * 0.05 }}
               >
-                <div className="flex items-start justify-between mb-3">
-                  <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1" style={{ backgroundColor: `${color}20`, color, boxShadow: `0 0 12px ${color}22` }}>
-                    {ICON_MAP[exp.iconName] || <Sparkles className="w-3 h-3" />}
-                    {exp.title}
-                  </span>
-                  <span className="text-[10px] font-medium text-[#57534E]">{exp.availability === 'available' ? 'Available' : exp.availability === 'limited' ? 'Limited' : 'Unavailable'}</span>
-                </div>
-                <h4 className="text-sm font-medium text-[#1C1917] mb-1">{exp.title}</h4>
-                <p className="text-xs text-[#57534E] mb-3">{exp.description}</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3 text-[10px] text-[#57534E]">
-                    <span className="flex items-center gap-1"><Star className="w-3 h-3" /> {exp.price}</span>
-                    <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {exp.duration}</span>
+                {/* Decorative circles */}
+                <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(25%, -25%)' }} />
+                <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(-25%, 25%)' }} />
+
+                <div className="relative z-10">
+                  <div className="flex items-start justify-between mb-3">
+                    <span className="text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1 bg-white/25 backdrop-blur-sm border border-white/20">
+                      {ICON_MAP[exp.iconName] || <Sparkles className="w-3 h-3" />}
+                      {exp.title}
+                    </span>
+                    <span className="text-[10px] font-bold bg-white/25 backdrop-blur-sm border border-white/20 px-2.5 py-1 rounded-full">{exp.availability === 'available' ? 'Available' : exp.availability === 'limited' ? 'Limited' : 'Unavailable'}</span>
                   </div>
-                  {accessible && exp.availability !== 'unavailable' ? (
-                    <span className="text-[10px] text-[#16A34A] font-medium">Available</span>
-                  ) : (
-                    <span className="text-[10px] text-[#57534E]/60">{!accessible ? 'Upgrade required' : 'Unavailable'}</span>
-                  )}
+                  <h4 className="text-sm font-semibold text-white mb-1">{exp.title}</h4>
+                  <p className="text-[11px] text-white/75 mb-3 leading-relaxed">{exp.description}</p>
+                  <div className="flex items-center justify-between pt-3 border-t border-white/20">
+                    <div className="flex items-center gap-3 text-[10px] text-white/80">
+                      <span className="flex items-center gap-1"><Star className="w-3 h-3" /> {exp.price}</span>
+                      <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {exp.duration}</span>
+                    </div>
+                    {accessible && exp.availability !== 'unavailable' ? (
+                      <span className="text-[10px] text-white font-semibold bg-white/20 px-2.5 py-1 rounded-full backdrop-blur-sm">Request Pricing</span>
+                    ) : (
+                      <span className="text-[10px] text-white/40">{!accessible ? 'Upgrade required' : 'Unavailable'}</span>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             );
