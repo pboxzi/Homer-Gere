@@ -82,25 +82,36 @@ interface SiteContentType {
 // Mapping helpers: DB types -> Frontend types
 // ============================================================
 
-function mapJourneyToMilestone(entry: { id: string; year: number; title: string; description: string; details: string | null; highlight?: boolean; icon_name?: string | null }): TimelineMilestone {
+function mapJourneyToMilestone(entry: { id: string; year: number; title: string; description: string; details: string | null; highlight?: boolean | string | null; icon_name?: string | null }): TimelineMilestone {
   return {
     id: entry.id,
     year: String(entry.year),
     title: entry.title,
     description: entry.description,
     details: entry.details || '',
-    highlight: entry.highlight ? 'Highlight' : undefined,
+    highlight: entry.highlight ? (typeof entry.highlight === 'string' ? entry.highlight : 'Highlight') : undefined,
     iconName: entry.icon_name || 'Star',
   };
 }
 
 function mapJournalToFrontend(article: { id: string; title: string; excerpt: string; content: string; category: string; cover_image?: string; slug: string; published_date?: string; reading_time?: string; author?: string; image_alt?: string }): JournalArticle {
+  const categoryMap: Record<string, string> = {
+    'events': 'Events',
+    'productions': 'Productions',
+    'announcements': 'Announcements',
+    'press': 'Press',
+    'behind-the-scenes': 'Behind the Scenes',
+    'personal-stories': 'News',
+    'career-reflections': 'Career',
+    'industry-insights': 'Industry',
+    'advice': 'Advice',
+  };
   return {
     id: article.id,
     title: article.title,
     excerpt: article.excerpt,
     content: article.content,
-    category: article.category,
+    category: categoryMap[article.category] || article.category,
     image: article.cover_image || '',
     date: article.published_date || '',
     readTime: article.reading_time || '5 min read',

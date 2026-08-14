@@ -166,15 +166,65 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Load profile from Supabase
   useEffect(() => {
-    if (user) {
-      setProfile((prev) => ({
-        ...prev,
-        firstName: user.firstName || prev.firstName,
-        lastName: user.lastName || prev.lastName,
-        email: user.email || prev.email,
-      }));
-    }
+    if (!user) return;
+    let mounted = true;
+    (async () => {
+      try {
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+        if (mounted && profileData) {
+          setProfile((prev) => ({
+            ...prev,
+            firstName: profileData.first_name || user.firstName || prev.firstName,
+            lastName: profileData.last_name || user.lastName || prev.lastName,
+            email: profileData.email || user.email || prev.email,
+            phone: profileData.phone || prev.phone,
+            memberSince: profileData.created_at || prev.memberSince,
+            lastLogin: profileData.last_login || prev.lastLogin,
+          }));
+        }
+      } catch {
+        // Use defaults from auth user
+      }
+    })();
+    return () => { mounted = false; };
+  }, [user?.id]);
+
+  // Load membership from Supabase
+  useEffect(() => {
+    if (!user) return;
+    let mounted = true;
+    (async () => {
+      try {
+        const { data: membershipData } = await supabase
+          .from('memberships')
+          .select('*, membership_plans(*)')
+          .eq('user_id', user.id)
+          .eq('status', 'active')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (mounted && membershipData) {
+          const plan = (membershipData as any).membership_plans;
+          setMembership({
+            plan: plan?.name || 'Member',
+            status: 'active',
+            renewalDate: membershipData.current_period_end || '',
+            activationDate: membershipData.created_at,
+            membershipNumber: membershipData.id || '',
+            benefits: plan?.features || [],
+          });
+        }
+      } catch {
+        // Use defaults
+      }
+    })();
+    return () => { mounted = false; };
   }, [user?.id]);
 
   // Load notifications from Supabase
@@ -206,10 +256,19 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return () => { mounted = false; };
   }, [user?.id]);
 
-  // Profile
+  // Profile — persist to Supabase
   const updateProfile = useCallback((updates: Partial<MemberProfile>) => {
     setProfile((prev) => ({ ...prev, ...updates }));
-  }, []);
+    if (user) {
+      const supabaseUpdates: Record<string, unknown> = {};
+      if (updates.firstName !== undefined) supabaseUpdates.first_name = updates.firstName;
+      if (updates.lastName !== undefined) supabaseUpdates.last_name = updates.lastName;
+      if (updates.phone !== undefined) supabaseUpdates.phone = updates.phone;
+      if (Object.keys(supabaseUpdates).length > 0) {
+        supabase.from('profiles').update(supabaseUpdates).eq('id', user.id).then(() => {});
+      }
+    }
+  }, [user]);
 
   // Membership
   const updateMembership = useCallback((updates: Partial<MemberMembership>) => {
@@ -364,8 +423,57 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const disable2FA = useCallback(() => { setTwoFactorEnabled(false); }, []);
 
   const refreshData = useCallback(async () => {
-    // Will be wired to Supabase repositories
-  }, []);
+    if (!user) return;
+    setLoading(true);
+    try {
+      const [profileRes, membershipRes, notifRes] = await Promise.allSettled([
+        supabase.from('profiles').select('*').eq('id', user.id).maybeSingle(),
+        supabase.from('memberships').select('*, membership_plans(*)').eq('user_id', user.id).eq('status', 'active').order('created_at', { ascending: false }).limit(1).maybeSingle(),
+        supabase.from('notifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(50),
+      ]);
+
+      if (profileRes.status === 'fulfilled' && profileRes.value.data) {
+        const p = profileRes.value.data;
+        setProfile((prev) => ({
+          ...prev,
+          firstName: p.first_name || prev.firstName,
+          lastName: p.last_name || prev.lastName,
+          email: p.email || prev.email,
+          phone: p.phone || prev.phone,
+          memberSince: p.created_at || prev.memberSince,
+          lastLogin: p.last_login || prev.lastLogin,
+        }));
+      }
+
+      if (membershipRes.status === 'fulfilled' && membershipRes.value.data) {
+        const m = membershipRes.value.data as any;
+        const plan = m.membership_plans;
+        setMembership({
+          plan: plan?.name || 'Member',
+          status: 'active',
+          renewalDate: m.current_period_end || '',
+          activationDate: m.created_at,
+          membershipNumber: m.id || '',
+          benefits: plan?.features || [],
+        });
+      }
+
+      if (notifRes.status === 'fulfilled' && notifRes.value.data) {
+        setNotifications(notifRes.value.data.map((n) => ({
+          id: n.id,
+          type: (n.type as DashboardNotification['type']) || 'system',
+          title: n.title,
+          message: n.message,
+          date: n.created_at,
+          read: n.read,
+        })));
+      }
+    } catch {
+      // Silent
+    } finally {
+      setLoading(false);
+    }
+  }, [user]);
 
   return (
     <DashboardContext.Provider value={{

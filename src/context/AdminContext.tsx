@@ -448,7 +448,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                 .from('membership_plans')
                 .select('id')
                 .eq('slug', app.plan || 'silver')
-                .single();
+                .maybeSingle();
               if (plan) {
                 await supabase.from('memberships').insert({
                   user_id: authData.user.id,

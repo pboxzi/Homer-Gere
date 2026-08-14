@@ -5,54 +5,13 @@ import { ChatMessage, ChatMedia } from '../../types';
 import { CHAT_SETTINGS } from '../../data/chatSettings';
 import { IMAGES } from '../../data/images';
 import { useAuth } from '../../context/AuthContext';
-import type { AdminConversation } from '../../data/adminData';
+import { fanChatRepository } from '../../lib/repositories';
+import type { FanConversation } from '../../types/database';
 import { checkRateLimit, sanitizeInput } from '../../lib/security';
-
-const ADMIN_STORAGE_KEY = 'homer_admin';
 
 function getFanConversationId(user?: { email?: string; firstName?: string; lastName?: string }): string {
   if (user?.email) return `fan-${user.email}`;
-  let sessionId = localStorage.getItem('homer_fan_session_id');
-  if (!sessionId) {
-    sessionId = 'fan-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-    localStorage.setItem('homer_fan_session_id', sessionId);
-  }
-  return sessionId;
-}
-
-function loadAdminConversations(): AdminConversation[] {
-  try {
-    const raw = localStorage.getItem(ADMIN_STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return parsed.conversations || [];
-  } catch { return []; }
-}
-
-function saveAdminConversations(conversations: AdminConversation[]) {
-  try {
-    const raw = localStorage.getItem(ADMIN_STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : {};
-    parsed.conversations = conversations;
-    localStorage.setItem(ADMIN_STORAGE_KEY, JSON.stringify(parsed));
-  } catch { /* ignore */ }
-}
-
-function findOrCreateFanConversation(conversations: AdminConversation[], participantId: string, participantName: string): AdminConversation {
-  const existing = conversations.find((c) => c.id === participantId);
-  if (existing) return existing;
-  const newConv: AdminConversation = {
-    id: participantId,
-    type: 'fan',
-    participant: participantName,
-    email: participantId.replace('fan-', ''),
-    lastMessage: '',
-    status: 'open',
-    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-    messages: [],
-  };
-  conversations.unshift(newConv);
-  return newConv;
+  return 'fan-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 }
 
 interface FanChatProps {
@@ -75,6 +34,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const messageTimestampsRef = useRef<number[]>([]);
+  const conversationIdRef = useRef<string | null>(null);
   const settings = CHAT_SETTINGS.fanChat;
   const { user } = useAuth();
   const hasMembership = user?.membershipTier === 'Gold' || user?.membershipTier === 'Platinum';
@@ -85,49 +45,71 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
 
   useEffect(() => {
     if (messages.length === 0) {
-      const conversationId = getFanConversationId(user);
-      const conversations = loadAdminConversations();
-      const conv = conversations.find((c) => c.id === conversationId);
-      if (conv && conv.messages && conv.messages.length > 0) {
-        const loaded: ChatMessage[] = conv.messages.map((m, i) => ({
-          id: `loaded-${i}`,
-          sender: m.sender === 'Admin' ? 'homer' as const : 'user' as const,
-          text: m.text,
-          timestamp: m.time,
-        }));
-        setMessages(loaded);
-      } else {
-        setMessages([
-          {
-            id: 'welcome',
-            sender: 'homer',
-            text: "Hey, I'm glad you're here. This is my private space — no noise, just us. So tell me, what brings you here tonight?",
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          },
-        ]);
-      }
+      const participantId = getFanConversationId(user);
+      fanChatRepository.getConversations()
+        .then((conversations) => {
+          const conv = conversations.find((c) => c.participant === participantId);
+          if (conv) {
+            conversationIdRef.current = conv.id;
+            return fanChatRepository.getMessages(conv.id);
+          }
+          return null;
+        })
+        .then((dbMessages) => {
+          if (dbMessages && dbMessages.length > 0) {
+            const loaded: ChatMessage[] = dbMessages.map((m, i) => ({
+              id: `loaded-${i}`,
+              sender: m.sender === 'admin' ? 'homer' as const : 'user' as const,
+              text: m.text,
+              timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            }));
+            setMessages(loaded);
+          } else {
+            setMessages([
+              {
+                id: 'welcome',
+                sender: 'homer',
+                text: "Hey, I'm glad you're here. This is my private space — no noise, just us. So tell me, what brings you here tonight?",
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              },
+            ]);
+          }
+        })
+        .catch(() => {
+          setMessages([
+            {
+              id: 'welcome',
+              sender: 'homer',
+              text: "Hey, I'm glad you're here. This is my private space — no noise, just us. So tell me, what brings you here tonight?",
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            },
+          ]);
+        });
     }
   }, [user]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (messages.length === 0) return;
-      const conversationId = getFanConversationId(user);
-      const conversations = loadAdminConversations();
-      const conv = conversations.find((c) => c.id === conversationId);
-      if (!conv || !conv.messages) return;
-      const adminMsgs = conv.messages.filter((m) => m.sender === 'Admin');
-      const homerMsgs = messages.filter((m) => m.sender === 'homer');
-      if (adminMsgs.length > homerMsgs.length) {
-        const newAdminMsgs = adminMsgs.slice(homerMsgs.length);
-        const newChatMsgs: ChatMessage[] = newAdminMsgs.map((m, i) => ({
-          id: `admin-${Date.now()}-${i}`,
-          sender: 'homer' as const,
-          text: m.text,
-          timestamp: m.time,
-        }));
-        setMessages((prev) => [...prev, ...newChatMsgs]);
-      }
+      const cid = conversationIdRef.current;
+      if (!cid) return;
+      fanChatRepository.getMessages(cid)
+        .then((dbMessages) => {
+          if (!dbMessages) return;
+          const adminMsgs = dbMessages.filter((m) => m.sender === 'admin');
+          const homerMsgs = messages.filter((m) => m.sender === 'homer');
+          if (adminMsgs.length > homerMsgs.length) {
+            const newAdminMsgs = adminMsgs.slice(homerMsgs.length);
+            const newChatMsgs: ChatMessage[] = newAdminMsgs.map((m, i) => ({
+              id: `admin-${Date.now()}-${i}`,
+              sender: 'homer' as const,
+              text: m.text,
+              timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            }));
+            setMessages((prev) => [...prev, ...newChatMsgs]);
+          }
+        })
+        .catch(() => {});
     }, 3000);
     return () => clearInterval(interval);
   }, [messages.length, user]);
@@ -215,16 +197,46 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
     setMessages((prev) => [...prev, userMsg]);
     setLoading(true);
 
-    const conversationId = getFanConversationId(user);
-    const participantName = user ? `${user.firstName} ${user.lastName}`.trim() : 'Fan Visitor';
-    const conversations = loadAdminConversations();
-    const conv = findOrCreateFanConversation(conversations, conversationId, participantName);
-    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    conv.messages = conv.messages || [];
-    conv.messages.push({ sender: participantName, text: displayText, time });
-    conv.lastMessage = displayText;
-    conv.date = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    saveAdminConversations(conversations);
+    try {
+      const participantId = getFanConversationId(user);
+      const participantName = user ? `${user.firstName} ${user.lastName}`.trim() : 'Fan Visitor';
+      const email = user?.email || '';
+
+      let conversation = conversationIdRef.current
+        ? await fanChatRepository.getConversationById(conversationIdRef.current)
+        : null;
+
+      if (!conversation) {
+        const conversations = await fanChatRepository.getConversations();
+        conversation = conversations.find((c) => c.participant === participantId) || null;
+      }
+
+      if (!conversation) {
+        conversation = await fanChatRepository.createConversation({
+          participant: participantId,
+          email,
+          phone: null,
+          membership_tier: user?.membershipTier || null,
+          status: 'open',
+          method: 'fan_chat',
+          user_id: user?.id || null,
+        });
+      }
+
+      conversationIdRef.current = conversation.id;
+
+      const mediaType = attachedMedia?.type === 'image' ? 'image' as const : attachedMedia?.type === 'video' ? 'video' as const : null;
+
+      await fanChatRepository.sendMessage({
+        conversation_id: conversation.id,
+        sender: 'user',
+        text: displayText,
+        media_type: mediaType,
+        media_url: attachedMedia?.url || null,
+      });
+    } catch {
+      // Silently handle errors to avoid breaking UX
+    }
 
     setLoading(false);
   };

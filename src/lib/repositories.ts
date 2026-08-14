@@ -54,7 +54,7 @@ export const profilesRepository = {
       .from('profiles')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -65,7 +65,7 @@ export const profilesRepository = {
       .from('profiles')
       .select('*')
       .eq('email', email)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -108,7 +108,7 @@ export const adminsRepository = {
       .from('admins')
       .select('*')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -158,13 +158,11 @@ export const adminsRepository = {
 export const registrationRepository = {
   async create(application: Omit<RegistrationApplication, 'id' | 'created_at' | 'updated_at'>): Promise<RegistrationApplication> {
     const client = getSupabaseClient();
-    const { data, error } = await client
+    const { error } = await client
       .from('registration_applications')
-      .insert(application)
-      .select()
-      .single();
+      .insert(application);
     if (error) throw error;
-    return data;
+    return application as RegistrationApplication;
   },
 
   async getAll(): Promise<RegistrationApplication[]> {
@@ -256,7 +254,7 @@ export const membershipPlansRepository = {
       .from('membership_plans')
       .select('*')
       .eq('slug', slug)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -309,7 +307,7 @@ export const membershipsRepository = {
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -369,7 +367,7 @@ export const journeyRepository = {
       .from('journey_entries')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -429,7 +427,7 @@ export const journalRepository = {
       .from('journal_articles')
       .select('*')
       .eq('slug', slug)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -509,7 +507,7 @@ export const journalRepository = {
       .from('journal_articles')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -545,7 +543,7 @@ export const filmographyRepository = {
       .from('filmography_entries')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -604,7 +602,7 @@ export const experiencesRepository = {
       .from('experiences')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -724,7 +722,7 @@ export const projectsRepository = {
       .from('projects')
       .select('*')
       .eq('slug', slug)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -735,7 +733,7 @@ export const projectsRepository = {
       .from('projects')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -934,7 +932,7 @@ export const fanChatRepository = {
       .from('fan_conversations')
       .select('*')
       .eq('id', id)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -1193,7 +1191,7 @@ export const siteSettingsRepository = {
       .from('site_settings')
       .select('*')
       .eq('category', category)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
@@ -1232,7 +1230,7 @@ export const emailTemplatesRepository = {
       .select('*')
       .eq('name', name)
       .eq('is_active', true)
-      .single();
+      .maybeSingle();
     if (error) throw error;
     return data;
   },
