@@ -1,53 +1,98 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Inbox, Send, ArrowLeft, Circle, Trash2 } from 'lucide-react';
-import { useDashboard } from '../../context/DashboardContext';
+import { Inbox, Send, ArrowLeft, Circle, Trash2, Plus } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { businessEnquiriesRepository } from '../../lib/repositories';
+import type { BusinessEnquiry, BusinessMessage } from '../../types/database';
 
 export const DashboardMessages: React.FC = () => {
-  const { messages, addMessage, markThreadRead, addMessageThread, deleteMessageThread } = useDashboard();
-  const [selectedThread, setSelectedThread] = useState<string | null>(null);
+  const { user, profile } = useAuth();
+  const [enquiries, setEnquiries] = useState<BusinessEnquiry[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<BusinessMessage[]>([]);
   const [replyText, setReplyText] = useState('');
+  const [showNew, setShowNew] = useState(false);
   const [newSubject, setNewSubject] = useState('');
   const [newBody, setNewBody] = useState('');
-  const [showNewThread, setShowNewThread] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const thread = messages.find((t) => t.id === selectedThread);
+  const loadEnquiries = useCallback(async () => {
+    if (!user?.id) return;
+    setLoading(true);
+    try {
+      const data = await businessEnquiriesRepository.getAll();
+      setEnquiries(data.filter((e) => e.user_id === user.id));
+    } catch (e) { console.error(e); }
+    setLoading(false);
+  }, [user?.id]);
 
-  const handleSendReply = () => {
-    if (!thread || !replyText.trim()) return;
-    addMessage(thread.id, replyText.trim());
-    setReplyText('');
+  useEffect(() => { loadEnquiries(); }, [loadEnquiries]);
+
+  const loadMessages = useCallback(async (enqId: string) => {
+    try {
+      const msgs = await businessEnquiriesRepository.getMessages(enqId);
+      setMessages(msgs);
+    } catch (e) { console.error(e); }
+  }, []);
+
+  useEffect(() => {
+    if (selectedId) loadMessages(selectedId);
+  }, [selectedId, loadMessages]);
+
+  const handleSendReply = async () => {
+    if (!selectedId || !replyText.trim() || !user?.id) return;
+    try {
+      await businessEnquiriesRepository.sendMessage(selectedId, {
+        sender: 'member',
+        text: replyText.trim(),
+      });
+      setReplyText('');
+      loadMessages(selectedId);
+    } catch (e) { console.error(e); }
   };
 
-  const handleCreateThread = () => {
-    if (!newSubject.trim() || !newBody.trim()) return;
-    const threadId = addMessageThread(newSubject.trim(), newBody.trim());
-    setSelectedThread(threadId);
-    setNewSubject('');
-    setNewBody('');
-    setShowNewThread(false);
+  const handleCreate = async () => {
+    if (!newSubject.trim() || !newBody.trim() || !user?.id || !profile) return;
+    try {
+      const enq = await businessEnquiriesRepository.create({
+        full_name: `${profile.first_name} ${profile.last_name}`,
+        email: profile.email,
+        phone: profile.phone || null,
+        company: null,
+        enquiry_type: 'general',
+        subject: newSubject.trim(),
+        message: newBody.trim(),
+        status: 'open',
+        user_id: user.id,
+      });
+      setEnquiries((prev) => [enq, ...prev]);
+      setSelectedId(enq.id);
+      setNewSubject('');
+      setNewBody('');
+      setShowNew(false);
+    } catch (e) { console.error(e); }
   };
 
-  const senderLabel = (sender: string) => {
-    if (sender === 'homer') return 'Homer Gere';
-    if (sender === 'system') return 'System';
-    return 'You';
-  };
+  const selected = enquiries.find((e) => e.id === selectedId);
 
-  const unreadCount = messages.filter((t) => !t.read).length;
-
-  if (thread) {
+  if (selectedId && selected) {
     return (
       <div className="space-y-6">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <button onClick={() => setSelectedThread(null)} className="flex items-center gap-2 text-sm text-[#57534E] hover:text-[#1C1917] transition-colors mb-4 cursor-pointer">
+          <button onClick={() => setSelectedId(null)} className="flex items-center gap-2 text-sm text-[#57534E] hover:text-[#1C1917] transition-colors mb-4 cursor-pointer">
             <ArrowLeft className="w-4 h-4" /> Back to messages
           </button>
-          <h1 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight">{thread.subject}</h1>
+          <h1 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight">{selected.subject || 'Business Enquiry'}</h1>
+          <p className="text-xs text-[#57534E] mt-1">{selected.enquiry_type} · {selected.status}</p>
         </motion.div>
 
         <div className="space-y-4">
-          {thread.messages.map((msg, i) => (
+          {messages.length === 0 ? (
+            <div className="text-center py-8">
+              <Inbox className="w-6 h-6 text-[#57534E]/20 mx-auto mb-2" />
+              <p className="text-xs text-[#57534E]/60">No messages yet.</p>
+            </div>
+          ) : messages.map((msg, i) => (
             <motion.div
               key={msg.id}
               className={`flex ${msg.sender === 'member' ? 'justify-end' : 'justify-start'}`}
@@ -58,15 +103,13 @@ export const DashboardMessages: React.FC = () => {
               <div className={`max-w-[80%] rounded-2xl px-5 py-3 ${
                 msg.sender === 'member'
                   ? 'bg-[#1C1917] text-white'
-                  : msg.sender === 'homer'
-                    ? 'bg-[#A6852F]/10 border border-[#A6852F]/20'
-                    : 'bg-[#F3F1ED] border border-[#E8E5DF]/60'
+                  : 'bg-[#A6852F]/10 border border-[#A6852F]/20'
               }`}>
                 {msg.sender !== 'member' && (
-                  <p className="text-[10px] font-medium text-[#A6852F] mb-1">{senderLabel(msg.sender)}</p>
+                  <p className="text-[10px] font-medium text-[#A6852F] mb-1">{msg.sender === 'admin' ? 'Support Team' : 'System'}</p>
                 )}
                 <p className={`text-sm ${msg.sender === 'member' ? 'text-white' : 'text-[#1C1917]'}`}>{msg.text}</p>
-                <p className={`text-[10px] mt-1 ${msg.sender === 'member' ? 'text-white/50' : 'text-[#57534E]/60'}`}>{msg.date}</p>
+                <p className={`text-[10px] mt-1 ${msg.sender === 'member' ? 'text-white/50' : 'text-[#57534E]/60'}`}>{new Date(msg.created_at).toLocaleString()}</p>
               </div>
             </motion.div>
           ))}
@@ -94,76 +137,59 @@ export const DashboardMessages: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight">My Messages</h1>
-            <p className="text-sm text-[#57534E] mt-1">{unreadCount > 0 ? `${unreadCount} unread thread${unreadCount > 1 ? 's' : ''}` : 'All caught up!'}</p>
+            <p className="text-sm text-[#57534E] mt-1">Business enquiries and support conversations.</p>
           </div>
-          <button onClick={() => setShowNewThread(!showNewThread)} className="inline-flex items-center gap-2 text-xs font-medium text-[#A6852F] hover:text-[#8B6F1F] transition-colors cursor-pointer bg-[#A6852F]/10 px-3 py-1.5 rounded-xl">
-            <Inbox className="w-3.5 h-3.5" /> New Thread
+          <button onClick={() => setShowNew(!showNew)} className="inline-flex items-center gap-2 text-xs font-medium text-[#A6852F] hover:text-[#8B6F1F] transition-colors cursor-pointer bg-[#A6852F]/10 px-3 py-1.5 rounded-xl">
+            <Plus className="w-3.5 h-3.5" /> New Enquiry
           </button>
         </div>
       </motion.div>
 
       <AnimatePresence>
-        {showNewThread && (
-          <motion.div className="rounded-2xl border border-[#A6852F]/8 bg-white p-5 space-y-3 shadow-sm hover:shadow-md transition-shadow duration-500" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
-            <input
-              value={newSubject}
-              onChange={(e) => setNewSubject(e.target.value)}
-              placeholder="Subject"
-              className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30"
-            />
-            <textarea
-              value={newBody}
-              onChange={(e) => setNewBody(e.target.value)}
-              placeholder="Write your message..."
-              rows={3}
-              className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 resize-none"
-            />
+        {showNew && (
+          <motion.div className="rounded-2xl border border-[#A6852F]/8 bg-white p-5 space-y-3 shadow-sm" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}>
+            <input value={newSubject} onChange={(e) => setNewSubject(e.target.value)} placeholder="Subject" className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30" />
+            <textarea value={newBody} onChange={(e) => setNewBody(e.target.value)} placeholder="Describe your enquiry..." rows={3} className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 resize-none" />
             <div className="flex gap-2">
-              <button onClick={handleCreateThread} className="inline-flex items-center gap-2 bg-[#1C1917] hover:bg-[#292524] text-white text-sm font-medium px-5 py-2.5 rounded-2xl transition-all cursor-pointer">
+              <button onClick={handleCreate} className="inline-flex items-center gap-2 bg-[#1C1917] hover:bg-[#292524] text-white text-sm font-medium px-5 py-2.5 rounded-2xl transition-all cursor-pointer">
                 <Send className="w-4 h-4" /> Send
               </button>
-              <button onClick={() => setShowNewThread(false)} className="text-sm text-[#57534E] hover:text-[#1C1917] px-4 py-2.5 cursor-pointer">Cancel</button>
+              <button onClick={() => setShowNew(false)} className="text-sm text-[#57534E] hover:text-[#1C1917] px-4 py-2.5 cursor-pointer">Cancel</button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
       <div className="space-y-2">
-        {messages.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[#A6852F]/20 bg-[#A6852F]/5 p-12 text-center shadow-sm hover:shadow-md transition-shadow duration-500">
+        {loading ? (
+          <div className="text-center py-8 text-[#57534E] text-sm">Loading...</div>
+        ) : enquiries.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-[#A6852F]/20 bg-[#A6852F]/5 p-12 text-center shadow-sm">
             <Inbox className="w-8 h-8 text-[#57534E]/30 mx-auto mb-3" />
             <p className="text-sm font-medium text-[#1C1917]">No messages yet</p>
-            <p className="text-xs text-[#57534E] mt-1">Start a new thread to begin a conversation.</p>
-            <button onClick={() => setShowNewThread(true)} className="inline-flex items-center gap-1.5 mt-4 text-xs font-medium text-[#A6852F] hover:text-[#8B6F1F] transition-colors cursor-pointer">
-              <Inbox className="w-3 h-3" /> New Thread
-            </button>
+            <p className="text-xs text-[#57534E] mt-1">Start a new enquiry to begin a conversation.</p>
           </div>
         ) : (
-          messages.map((t, i) => (
+          enquiries.map((enq, i) => (
             <motion.button
-              key={t.id}
-              onClick={() => { setSelectedThread(t.id); markThreadRead(t.id); }}
+              key={enq.id}
+              onClick={() => setSelectedId(enq.id)}
               className={`w-full flex items-center gap-4 p-4 rounded-2xl border text-left transition-all duration-500 cursor-pointer ${
-                !t.read ? 'border-[#A6852F]/35 bg-[#A6852F]/10 shadow-sm shadow-[#A6852F]/10 hover:shadow-md hover:shadow-[#A6852F]/15' : 'border-[#A6852F]/20 bg-white hover:border-[#A6852F]/35 shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10'
+                enq.status === 'open' ? 'border-[#A6852F]/35 bg-[#A6852F]/10 shadow-sm' : 'border-[#A6852F]/20 bg-white hover:border-[#A6852F]/35 shadow-sm'
               }`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}
             >
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${!t.read ? 'bg-[#A6852F]/10 text-[#A6852F]' : 'bg-[#F3F1ED] text-[#57534E]'}`}>
-                <Inbox className="w-4 h-4" />
-              </div>
+              <div className="w-10 h-10 rounded-xl bg-[#8B5CF6]/10 flex items-center justify-center text-[#8B5CF6]"><Inbox className="w-4 h-4" /></div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-[#1C1917] truncate">{t.subject}</p>
-                  {!t.read && <Circle className="w-2 h-2 fill-[#A6852F] text-[#A6852F] shrink-0" />}
+                  <p className="text-sm font-medium text-[#1C1917] truncate">{enq.subject || 'Business Enquiry'}</p>
+                  <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${enq.status === 'open' ? 'bg-[#16A34A]/10 text-[#16A34A]' : enq.status === 'in_progress' ? 'bg-[#3B82F6]/10 text-[#3B82F6]' : 'bg-[#57534E]/10 text-[#57534E]'}`}>{enq.status}</span>
                 </div>
-                <p className="text-xs text-[#57534E] truncate mt-0.5">{t.lastMessage}</p>
-                <p className="text-[10px] text-[#57534E]/60 mt-0.5">{t.lastDate}</p>
+                <p className="text-xs text-[#57534E] truncate mt-0.5">{enq.message}</p>
+                <p className="text-[10px] text-[#57534E]/60 mt-0.5">{new Date(enq.created_at).toLocaleDateString()}</p>
               </div>
-              <button onClick={(e) => { e.stopPropagation(); deleteMessageThread(t.id); }} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E]/30 hover:text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer shrink-0">
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
             </motion.button>
           ))
         )}

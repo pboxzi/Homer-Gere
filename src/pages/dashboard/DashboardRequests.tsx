@@ -2,19 +2,46 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Clock, CheckCircle, XCircle, Hourglass, ChevronDown, ChevronUp, Calendar, FileText } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
-import { RequestStatus } from '../../data/dashboardData';
 
-const STATUS_CONFIG: Record<RequestStatus, { label: string; icon: React.FC<{ className?: string }>; color: string; bg: string }> = {
+const STATUS_CONFIG: Record<string, { label: string; icon: React.FC<{ className?: string }>; color: string; bg: string }> = {
   pending: { label: 'Pending', icon: Clock, color: '#F59E0B', bg: '#F59E0B10' },
   under_review: { label: 'Under Review', icon: Hourglass, color: '#3B82F6', bg: '#3B82F610' },
   approved: { label: 'Approved', icon: CheckCircle, color: '#16A34A', bg: '#16A34A10' },
   declined: { label: 'Declined', icon: XCircle, color: '#DC2626', bg: '#DC262610' },
   completed: { label: 'Completed', icon: CheckCircle, color: '#57534E', bg: '#57534E10' },
+  rejected: { label: 'Rejected', icon: XCircle, color: '#DC2626', bg: '#DC262610' },
+  approved_for_payment: { label: 'Approved', icon: CheckCircle, color: '#16A34A', bg: '#16A34A10' },
+  payment_submitted: { label: 'Payment Submitted', icon: Clock, color: '#8B5CF6', bg: '#8B5CF610' },
+  payment_under_review: { label: 'Under Review', icon: Hourglass, color: '#F59E0B', bg: '#F59E0B10' },
+  payment_approved: { label: 'Payment Approved', icon: CheckCircle, color: '#16A34A', bg: '#16A34A10' },
+  membership_active: { label: 'Active', icon: CheckCircle, color: '#16A34A', bg: '#16A34A10' },
 };
 
 export const DashboardRequests: React.FC = () => {
-  const { requests, withdrawRequest } = useDashboard();
+  const { experienceRequests, membershipRequests } = useDashboard();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  // Combine experience requests and membership requests into a unified list
+  const allRequests = [
+    ...experienceRequests.map((r) => ({
+      id: r.id,
+      type: 'experience' as const,
+      title: r.experience_type,
+      description: r.purpose || r.additional_details || '',
+      status: r.status,
+      date: new Date(r.created_at).toLocaleDateString(),
+      requestNumber: r.request_number,
+    })),
+    ...membershipRequests.map((r) => ({
+      id: r.id,
+      type: 'membership' as const,
+      title: r.membership_plan_name,
+      description: r.notes || `${r.duration} plan`,
+      status: r.status,
+      date: new Date(r.requested_at).toLocaleDateString(),
+      requestNumber: r.request_number,
+    })),
+  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
     <div className="space-y-8">
@@ -23,28 +50,30 @@ export const DashboardRequests: React.FC = () => {
         <p className="text-sm text-[#57534E] mt-1">Track all your submitted enquiries and requests.</p>
       </motion.div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        {Object.entries(STATUS_CONFIG).map(([key, config], i) => {
-          const count = requests.filter((r) => r.status === key).length;
-          return (
-            <motion.div key={key} className="rounded-xl p-3 text-center shadow-sm hover:shadow-md transition-all duration-500" style={{ backgroundColor: config.bg }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
-              <p className="text-lg font-editorial" style={{ color: config.color }}>{count}</p>
-              <p className="text-[10px] font-medium" style={{ color: config.color }}>{config.label}</p>
-            </motion.div>
-          );
-        })}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { label: 'Experience', count: experienceRequests.length, color: '#8B5CF6' },
+          { label: 'Membership', count: membershipRequests.length, color: '#A6852F' },
+          { label: 'Pending', count: allRequests.filter((r) => ['pending', 'under_review', 'approved_for_payment', 'payment_submitted', 'payment_under_review'].includes(r.status)).length, color: '#F59E0B' },
+          { label: 'Active', count: allRequests.filter((r) => ['approved', 'completed', 'membership_active'].includes(r.status)).length, color: '#16A34A' },
+        ].map((s, i) => (
+          <motion.div key={s.label} className="rounded-xl p-3 text-center shadow-sm hover:shadow-md transition-all duration-500" style={{ backgroundColor: `${s.color}10` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
+            <p className="text-lg font-editorial" style={{ color: s.color }}>{s.count}</p>
+            <p className="text-[10px] font-medium" style={{ color: s.color }}>{s.label}</p>
+          </motion.div>
+        ))}
       </div>
 
       <div className="space-y-3">
-        {requests.length === 0 ? (
+        {allRequests.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/30 p-12 text-center">
             <Clock className="w-8 h-8 text-[#57534E]/30 mx-auto mb-3" />
             <p className="text-sm font-medium text-[#1C1917]">No requests yet</p>
-            <p className="text-xs text-[#57534E] mt-1">Submit a request from the Experiences page.</p>
+            <p className="text-xs text-[#57534E] mt-1">Submit a request from the Experiences or Membership pages.</p>
           </div>
         ) : (
-          requests.map((r, i) => {
-            const status = STATUS_CONFIG[r.status];
+          allRequests.map((r, i) => {
+            const status = STATUS_CONFIG[r.status] || { label: r.status, icon: Clock, color: '#57534E', bg: '#57534E10' };
             const StatusIcon = status.icon;
             const isExpanded = expandedId === r.id;
             return (
@@ -57,18 +86,13 @@ export const DashboardRequests: React.FC = () => {
                       <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium" style={{ backgroundColor: status.bg, color: status.color }}>{status.label}</span>
                     </div>
                     <p className="text-sm font-medium text-[#1C1917]">{r.title}</p>
-                    <p className="text-xs text-[#57534E] mt-0.5">{r.description}</p>
+                    {r.description && <p className="text-xs text-[#57534E] mt-0.5 line-clamp-1">{r.description}</p>}
                     <div className="flex items-center gap-3 mt-1.5">
+                      <p className="text-[10px] text-[#57534E]/60">{r.requestNumber}</p>
                       <p className="text-[10px] text-[#57534E]/60">Submitted: {r.date}</p>
-                      {r.eventDate && <p className="text-[10px] text-[#16A34A] font-medium">Event: {r.eventDate}</p>}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0 mt-1">
-                    {r.status === 'pending' && (
-                      <button onClick={(e) => { e.stopPropagation(); withdrawRequest(r.id); }} className="text-[10px] text-[#DC2626] hover:text-[#B91C1C] font-medium transition-colors cursor-pointer">Withdraw</button>
-                    )}
-                    {isExpanded ? <ChevronUp className="w-4 h-4 text-[#57534E]/40" /> : <ChevronDown className="w-4 h-4 text-[#57534E]/40" />}
-                  </div>
+                  {isExpanded ? <ChevronUp className="w-4 h-4 text-[#57534E]/40 shrink-0 mt-1" /> : <ChevronDown className="w-4 h-4 text-[#57534E]/40 shrink-0 mt-1" />}
                 </button>
                 <AnimatePresence>
                   {isExpanded && (
@@ -76,8 +100,8 @@ export const DashboardRequests: React.FC = () => {
                       <div className="px-5 pb-4 pt-1 ml-14">
                         <div className="rounded-xl bg-[#F3F1ED]/50 p-4 space-y-2.5">
                           <div className="flex items-center justify-between text-xs">
-                            <span className="text-[#57534E]">Request ID</span>
-                            <span className="font-medium text-[#1C1917]">#{r.id}</span>
+                            <span className="text-[#57534E]">Request Number</span>
+                            <span className="font-medium text-[#1C1917]">{r.requestNumber}</span>
                           </div>
                           <div className="flex items-center justify-between text-xs">
                             <span className="text-[#57534E]">Type</span>
@@ -87,28 +111,10 @@ export const DashboardRequests: React.FC = () => {
                             <span className="text-[#57534E]">Submitted</span>
                             <span className="font-medium text-[#1C1917]">{r.date}</span>
                           </div>
-                          {r.eventDate && (
-                            <div className="flex items-center justify-between text-xs">
-                              <span className="text-[#57534E] flex items-center gap-1"><Calendar className="w-3 h-3" /> Event Date</span>
-                              <span className="font-medium text-[#16A34A]">{r.eventDate}</span>
-                            </div>
-                          )}
                           <div className="flex items-center justify-between text-xs">
                             <span className="text-[#57534E]">Status</span>
                             <span className="font-medium capitalize" style={{ color: status.color }}>{status.label}</span>
                           </div>
-                          {r.department && (
-                            <div className="flex items-center justify-between text-xs">
-                              <span className="text-[#57534E]">Department</span>
-                              <span className="font-medium text-[#1C1917]">{r.department}</span>
-                            </div>
-                          )}
-                          {r.managementNotes && (
-                            <div className="pt-2 border-t border-[#E8E5DF]/40">
-                              <p className="text-[10px] text-[#57534E] uppercase font-medium mb-1 flex items-center gap-1"><FileText className="w-3 h-3" /> Management Notes</p>
-                              <p className="text-xs text-[#1C1917] leading-relaxed">{r.managementNotes}</p>
-                            </div>
-                          )}
                         </div>
                       </div>
                     </motion.div>

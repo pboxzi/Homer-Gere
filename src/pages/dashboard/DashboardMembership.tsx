@@ -128,44 +128,50 @@ export const DashboardMembership: React.FC = () => {
 
       {/* Plans Tab */}
       {activeTab === 'plans' && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="space-y-4">
           {membershipTiers.map((tier, i) => {
             const isCurrent = tier.name === membershipPlan?.name;
             const tierColor = TIER_COLORS[tier.id] || '#A6852F';
             return (
-              <motion.div key={tier.id} className={`rounded-2xl border bg-white overflow-hidden transition-all duration-500 ${isCurrent ? 'border-[#A6852F]/50 shadow-lg ring-1 ring-[#A6852F]/25' : 'border-[#A6852F]/15 shadow-sm hover:shadow-md'}`} style={{ boxShadow: isCurrent ? undefined : `0 0 20px ${tierColor}10, 0 2px 10px ${tierColor}08` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
-                <div className="px-5 pt-5 pb-4" style={{ background: `linear-gradient(135deg, ${tierColor}10, transparent)` }}>
-                  <div className="flex items-center justify-between mb-2">
+              <motion.div key={tier.id} className="rounded-2xl border bg-gradient-to-br to-transparent p-6 shadow-sm" style={{ borderColor: isCurrent ? `${tierColor}50` : `${tierColor}25`, boxShadow: `0 0 25px ${tierColor}12, 0 4px 15px ${tierColor}08`, background: `linear-gradient(135deg, ${tierColor}08, transparent)` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-md" style={{ backgroundColor: `${tierColor}18`, color: tierColor, boxShadow: `0 0 15px ${tierColor}15` }}>
+                    {TIER_ICONS[tier.id] || <Crown className="w-6 h-6" />}
+                  </div>
+                  <div>
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm" style={{ backgroundColor: `${tierColor}18`, color: tierColor, boxShadow: `0 0 12px ${tierColor}12` }}>
-                        {TIER_ICONS[tier.id] || <Crown className="w-4 h-4" />}
-                      </div>
-                      <span className="text-[11px] font-medium tracking-[0.1em] uppercase" style={{ color: tierColor }}>{tier.name}</span>
+                      <h3 className="text-lg font-editorial text-[#1C1917]">{tier.name} Membership</h3>
+                      {isCurrent && <span className="text-[9px] px-2 py-0.5 rounded-full font-medium shadow-sm" style={{ backgroundColor: `${tierColor}15`, color: tierColor, boxShadow: `0 0 10px ${tierColor}12` }}>Current</span>}
+                      {tier.isPopular && !isCurrent && tier.badge && <span className="text-[9px] px-2 py-0.5 rounded-full font-medium shadow-sm" style={{ backgroundColor: `${tierColor}12`, color: tierColor, boxShadow: `0 0 10px ${tierColor}10` }}>{tier.badge}</span>}
                     </div>
-                    {isCurrent && <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#A6852F]/15 text-[#A6852F] font-medium shadow-sm shadow-[#A6852F]/15">Current</span>}
-                  </div>
-                  <p className="text-xs text-[#57534E]">{tier.description}</p>
-                </div>
-                <div className="px-5 py-4 border-t border-[#E8E5DF]/30">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-[13px] text-[#57534E]">{tier.currency === 'USD' ? '$' : tier.currency}</span>
-                    <span className="text-3xl font-editorial text-[#1C1917]">{tier.price}</span>
-                    <span className="text-[10px] text-[#57534E]">{tier.period}</span>
+                    <p className="text-xs text-[#57534E]">{tier.description}</p>
                   </div>
                 </div>
-                <div className="px-5 py-4 border-t border-[#E8E5DF]/30">
-                  <ul className="space-y-2">
-                    {(Array.isArray(tier.features) ? tier.features : []).slice(0, 4).map((feature, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-xs">
-                        <Check className="w-3 h-3 text-[#16A34A] mt-0.5 shrink-0" />
-                        <span className="text-[#1C1917]">{typeof feature === 'string' ? feature : (feature as any).label || ''}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="text-center p-3 rounded-xl bg-white/60 shadow-sm" style={{ boxShadow: `0 2px 10px ${tierColor}08` }}>
+                    <CreditCard className="w-4 h-4 mx-auto mb-1" style={{ color: tierColor }} />
+                    <p className="text-xs font-medium text-[#1C1917]">{tier.currency === 'USD' ? '$' : tier.currency}{tier.price}</p>
+                    <p className="text-[10px] text-[#57534E]">/{tier.period}</p>
+                  </div>
+                  <div className="text-center p-3 rounded-xl bg-white/60 shadow-sm shadow-[#16A34A]/5">
+                    <Check className="w-4 h-4 text-[#16A34A] mx-auto mb-1" />
+                    <p className="text-xs font-medium text-[#1C1917]">{tier.features.filter((f) => f.included).length}</p>
+                    <p className="text-[10px] text-[#57534E]">Features</p>
+                  </div>
+                  <div className="text-center p-3 rounded-xl bg-white/60 shadow-sm shadow-[#8B5CF6]/5">
+                    <Star className="w-4 h-4 text-[#8B5CF6] mx-auto mb-1" />
+                    <p className="text-xs font-medium text-[#1C1917]">{tier.period === 'month' ? 'Monthly' : 'Yearly'}</p>
+                    <p className="text-[10px] text-[#57534E]">Billing</p>
+                  </div>
+                  <div className="text-center p-3 rounded-xl bg-white/60 shadow-sm shadow-[#F59E0B]/5">
+                    <Zap className="w-4 h-4 text-[#F59E0B] mx-auto mb-1" />
+                    <p className="text-xs font-medium text-[#1C1917]">{isCurrent ? 'Active' : tier.ctaText}</p>
+                    <p className="text-[10px] text-[#57534E]">Status</p>
+                  </div>
                 </div>
-                <div className="px-5 pb-5 pt-2">
-                  <button onClick={() => navigate('/membership')} className={`w-full py-3 rounded-2xl text-xs font-medium transition-all cursor-pointer ${isCurrent ? 'bg-[#A6852F]/10 text-[#A6852F] border border-[#A6852F]/30 shadow-sm shadow-[#A6852F]/10' : 'bg-[#1C1917] text-white hover:bg-[#292524] shadow-md shadow-[#1C1917]/15'}`}>
-                    {isCurrent ? 'Current Plan' : 'Select Plan'}
+                <div className="mt-4">
+                  <button onClick={() => navigate('/membership')} className={`w-full py-3 rounded-2xl text-xs font-medium transition-all cursor-pointer ${isCurrent ? 'border border-[#A6852F]/30 text-[#A6852F] shadow-sm shadow-[#A6852F]/10' : 'bg-[#1C1917] text-white hover:bg-[#292524] shadow-md shadow-[#1C1917]/15'}`} style={isCurrent ? { backgroundColor: `${tierColor}10`, color: tierColor, borderColor: `${tierColor}30` } : {}}>
+                    {isCurrent ? 'Current Plan' : tier.ctaText || 'Select Plan'}
                   </button>
                 </div>
               </motion.div>

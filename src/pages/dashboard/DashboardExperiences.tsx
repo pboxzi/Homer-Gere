@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Calendar, Check, X, Star, Clock, Trash2, Users, Heart, Mic, Briefcase, Sparkles, Video, Play } from 'lucide-react';
+import { Calendar, Check, X, Star, Clock, Users, Heart, Mic, Briefcase, Sparkles, Video, Play } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import { useSiteContent } from '../../context/SiteContentContext';
+import { useAuth } from '../../context/AuthContext';
+import { experienceRequestsRepository } from '../../lib/repositories';
 import type { Experience } from '../../types';
 
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -39,11 +41,13 @@ const TIER_ACCESS: Record<string, string[]> = {
 };
 
 export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onRequestFormOpened?: () => void }> = ({ openRequestForm, onRequestFormOpened }) => {
-  const { requests, addRequest, membership, withdrawRequest } = useDashboard();
+  const { user, profile } = useAuth();
+  const { experienceRequests, membershipPlan, refreshExperiences } = useDashboard();
   const { experiences } = useSiteContent();
   const [selectedExp, setSelectedExp] = useState<Experience | null>(null);
   const [requestNote, setRequestNote] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   React.useEffect(() => {
     if (openRequestForm) {
@@ -52,22 +56,37 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
     }
   }, [openRequestForm, onRequestFormOpened]);
 
-  const experienceRequests = requests.filter((r) => r.type === 'experience');
+  const experienceRequestsList = experienceRequests.filter((r) => r.status !== 'deleted');
 
   const canAccess = (exp: Experience) => {
     const requiredTiers = TIER_ACCESS[exp.type] || ['Silver', 'Gold', 'Platinum'];
-    return requiredTiers.includes(membership.plan);
+    return requiredTiers.includes(membershipPlan?.name || '');
   };
 
-  const handleSubmit = () => {
-    if (!selectedExp) return;
-    addRequest({
-      type: 'experience',
-      title: selectedExp.title,
-      description: requestNote || selectedExp.description,
-    });
-    setSubmitted(true);
-    setTimeout(() => { setSubmitted(false); setSelectedExp(null); setRequestNote(''); }, 2000);
+  const handleSubmit = async () => {
+    if (!selectedExp || !user?.id || !profile) return;
+    setSubmitting(true);
+    try {
+      await experienceRequestsRepository.create({
+        user_id: user.id,
+        experience_type: selectedExp.type,
+        full_name: `${profile.first_name} ${profile.last_name}`,
+        email: profile.email,
+        phone: profile.phone || null,
+        country: profile.country || null,
+        organization: null,
+        event_date: null,
+        event_location: null,
+        budget: null,
+        purpose: requestNote || null,
+        additional_details: requestNote || null,
+        status: 'pending',
+      });
+      setSubmitted(true);
+      refreshExperiences();
+      setTimeout(() => { setSubmitted(false); setSelectedExp(null); setRequestNote(''); }, 2000);
+    } catch (e) { console.error(e); }
+    setSubmitting(false);
   };
 
   return (
@@ -80,9 +99,9 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3">
         {[
-          { label: 'Pending', count: experienceRequests.filter((r) => r.status === 'pending').length, color: '#F59E0B' },
-          { label: 'Approved', count: experienceRequests.filter((r) => r.status === 'approved').length, color: '#16A34A' },
-          { label: 'Completed', count: experienceRequests.filter((r) => r.status === 'completed').length, color: '#57534E' },
+          { label: 'Pending', count: experienceRequestsList.filter((r) => r.status === 'pending').length, color: '#F59E0B' },
+          { label: 'Approved', count: experienceRequestsList.filter((r) => r.status === 'approved').length, color: '#16A34A' },
+          { label: 'Completed', count: experienceRequestsList.filter((r) => r.status === 'completed').length, color: '#57534E' },
         ].map((s, i) => (
           <motion.div key={s.label} className="rounded-xl p-3 text-center shadow-sm hover:shadow-md transition-all duration-500" style={{ backgroundColor: `${s.color}10` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 + i * 0.05 }}>
             <p className="text-lg font-editorial" style={{ color: s.color }}>{s.count}</p>
@@ -134,23 +153,20 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
       </div>
 
       {/* Recent Requests */}
-      {experienceRequests.length > 0 && (
+      {experienceRequestsList.length > 0 && (
         <div>
           <h3 className="text-sm font-medium text-[#1C1917] mb-4">Your Requests</h3>
           <div className="space-y-2">
-            {experienceRequests.map((r, i) => (
+            {experienceRequestsList.map((r, i) => (
               <motion.div key={r.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/20 bg-white shadow-sm shadow-[#A6852F]/5 hover:shadow-md hover:shadow-[#A6852F]/10 transition-all duration-500" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 + i * 0.04 }}>
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${r.status === 'approved' ? 'bg-[#16A34A]/10 text-[#16A34A]' : r.status === 'completed' ? 'bg-[#57534E]/10 text-[#57534E]' : 'bg-[#F59E0B]/10 text-[#F59E0B]'}`}>
                   {r.status === 'approved' || r.status === 'completed' ? <Check className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-[#1C1917]">{r.title}</p>
-                  <p className="text-[10px] text-[#57534E] mt-0.5">{r.date}</p>
+                  <p className="text-sm font-medium text-[#1C1917]">{r.experience_type}</p>
+                  <p className="text-[10px] text-[#57534E] mt-0.5">{r.request_number} · {new Date(r.created_at).toLocaleDateString()}</p>
                 </div>
                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium capitalize ${r.status === 'approved' ? 'bg-[#16A34A]/10 text-[#16A34A]' : r.status === 'completed' ? 'bg-[#57534E]/10 text-[#57534E]' : 'bg-[#F59E0B]/10 text-[#F59E0B]'}`}>{r.status.replace('_', ' ')}</span>
-                {r.status === 'pending' && (
-                  <button onClick={() => withdrawRequest(r.id)} className="text-[10px] text-[#DC2626] hover:text-[#B91C1C] font-medium transition-colors cursor-pointer">Withdraw</button>
-                )}
               </motion.div>
             ))}
           </div>
@@ -187,8 +203,8 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
                     rows={3}
                     className="w-full px-4 py-3 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 resize-none"
                   />
-                  <button onClick={handleSubmit} className="w-full bg-[#1C1917] hover:bg-[#292524] text-white text-sm font-medium py-3 rounded-2xl transition-all cursor-pointer">
-                    Submit Request
+                  <button onClick={handleSubmit} disabled={submitting} className="w-full bg-[#1C1917] hover:bg-[#292524] text-white text-sm font-medium py-3 rounded-2xl transition-all cursor-pointer disabled:opacity-50">
+                    {submitting ? 'Submitting...' : 'Submit Request'}
                   </button>
                 </>
               )}
