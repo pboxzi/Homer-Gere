@@ -143,7 +143,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {isAuthenticated ? (
             <div className="relative" ref={userMenuRef}>
               <button
-                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                onClick={(e) => { e.stopPropagation(); setUserMenuOpen(!userMenuOpen); }}
                 className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full hover:bg-[#A6852F]/5 transition-colors"
               >
                 <div className="w-7 h-7 rounded-full bg-[#A6852F]/15 flex items-center justify-center">
@@ -161,14 +161,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </div>
                   <div className="py-1">
                     <button
-                      onClick={() => { setUserMenuOpen(false); routerNavigate((user?.role === 'admin' || user?.role === 'super_admin') ? '/admin' : '/dashboard'); }}
+                      onClick={(e) => { e.stopPropagation(); setUserMenuOpen(false); routerNavigate((user?.role === 'admin' || user?.role === 'super_admin') ? '/admin' : '/dashboard'); }}
                       className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors"
                     >
                       {(user?.role === 'admin' || user?.role === 'super_admin') ? <Shield className="w-3.5 h-3.5" /> : <LayoutDashboard className="w-3.5 h-3.5" />}
                       {(user?.role === 'admin' || user?.role === 'super_admin') ? 'Admin Panel' : 'Dashboard'}
                     </button>
                     <button
-                      onClick={() => { signOut(); setUserMenuOpen(false); routerNavigate('/'); }}
+                      onClick={(e) => { e.stopPropagation(); signOut(); setUserMenuOpen(false); routerNavigate('/'); }}
                       className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-[#57534E] hover:bg-[#FEF2F2] hover:text-[#DC2626] transition-colors"
                     >
                       <LogOut className="w-3.5 h-3.5" />
@@ -190,32 +190,32 @@ export const Navbar: React.FC<NavbarProps> = ({
           {isAuthenticated ? (
             <div className="relative" ref={userMenuRef}>
               <button
-                onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center gap-1.5 pl-1.5 pr-2.5 py-1 rounded-full hover:bg-[#A6852F]/5 transition-colors"
+                onClick={(e) => { e.stopPropagation(); setUserMenuOpen(!userMenuOpen); }}
+                className="flex items-center gap-1.5 pl-1.5 pr-2.5 py-1 rounded-full hover:bg-[#A6852F]/5 transition-colors min-h-[44px] min-w-[44px] justify-center"
               >
-                <div className="w-7 h-7 rounded-full bg-[#A6852F]/15 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-[#A6852F]/15 flex items-center justify-center">
                   <span className="text-[11px] font-semibold text-[#A6852F]">
                     {user?.firstName?.[0]}{user?.lastName?.[0]}
                   </span>
                 </div>
               </button>
               {userMenuOpen && (
-                <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.08)] border border-[#E8E5DF]/60 py-1.5 z-50">
+                <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-[0_4px_24px_rgba(0,0,0,0.12)] border border-[#E8E5DF]/60 py-1.5 z-50">
                   <div className="px-4 py-2.5 border-b border-[#E8E5DF]/60">
                     <p className="text-xs font-medium text-[#1C1917]">{user?.firstName} {user?.lastName}</p>
                     <p className="text-[11px] text-[#57534E] mt-0.5 truncate">{user?.email}</p>
                   </div>
                   <div className="py-1">
                     <button
-                      onClick={() => { setUserMenuOpen(false); routerNavigate((user?.role === 'admin' || user?.role === 'super_admin') ? '/admin' : '/dashboard'); }}
-                      className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors"
+                      onClick={(e) => { e.stopPropagation(); setUserMenuOpen(false); routerNavigate((user?.role === 'admin' || user?.role === 'super_admin') ? '/admin' : '/dashboard'); }}
+                      className="w-full flex items-center gap-2.5 px-4 py-3 text-xs text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors min-h-[44px]"
                     >
                       {(user?.role === 'admin' || user?.role === 'super_admin') ? <Shield className="w-3.5 h-3.5" /> : <LayoutDashboard className="w-3.5 h-3.5" />}
                       {(user?.role === 'admin' || user?.role === 'super_admin') ? 'Admin Panel' : 'Dashboard'}
                     </button>
                     <button
-                      onClick={() => { signOut(); setUserMenuOpen(false); routerNavigate('/'); }}
-                      className="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-[#57534E] hover:bg-[#FEF2F2] hover:text-[#DC2626] transition-colors"
+                      onClick={(e) => { e.stopPropagation(); signOut(); setUserMenuOpen(false); routerNavigate('/'); }}
+                      className="w-full flex items-center gap-2.5 px-4 py-3 text-xs text-[#57534E] hover:bg-[#FEF2F2] hover:text-[#DC2626] transition-colors min-h-[44px]"
                     >
                       <LogOut className="w-3.5 h-3.5" />
                       Sign Out

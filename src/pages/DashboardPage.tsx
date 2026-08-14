@@ -85,7 +85,7 @@ export default function DashboardPage() {
       case 'settings': return <DashboardSettings />;
       case 'security': return <DashboardSecurity />;
       case 'help': return <DashboardHelp />;
-      default: return <DashboardHome onOpenChat={handleOpenChat} onRequestExperience={handleRequestExperience} onNavigate={handleSectionChange} />;
+      default: return <DashboardHome onOpenChat={() => handleSectionChange('chat')} onRequestExperience={handleRequestExperience} onNavigate={handleSectionChange} />;
     }
   };
 

@@ -1,12 +1,9 @@
 import React, { useState, useCallback } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../../components/Navbar';
 import { DetailModal } from '../../components/DetailModal';
 import { AuthModal } from '../../components/AuthModal';
 import { ChatLanding } from './ChatLanding';
-import { FanChat } from './FanChat';
-import { BusinessChat } from './BusinessChat';
-import { ChatConfirmation } from './ChatConfirmation';
 import { SEO } from '../../components/SEO';
 import { ModalType } from '../../types';
 import { useAuth } from '../../context/AuthContext';
@@ -15,21 +12,10 @@ import { useAuth } from '../../context/AuthContext';
 export default function ChatPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
-  const [searchParams] = useSearchParams();
-  const mode = searchParams.get('mode') || 'fan';
   const [activeSection] = useState<string>('chat');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [chatType, setChatType] = useState<'fan' | 'business'>(mode === 'business' ? 'business' : 'fan');
-  const [submittedData, setSubmittedData] = useState<{
-    fullName: string;
-    email: string;
-    company: string;
-    enquiryType: string;
-    message: string;
-    method: string;
-  } | null>(null);
-
+  const [authFeature, setAuthFeature] = useState('Chat with Homer');
 
   const handleNavigate = (sectionId: string) => {
     if (sectionId === 'home') { navigate('/'); return; }
@@ -51,68 +37,24 @@ export default function ChatPage() {
 
   const handleStartFanChat = useCallback(() => {
     if (!isAuthenticated) {
-      setChatType('fan');
+      setAuthFeature('Chat with Homer');
       setAuthModalOpen(true);
       return;
     }
-    setChatType('fan');
-  }, [isAuthenticated]);
+    navigate('/dashboard?section=chat');
+  }, [isAuthenticated, navigate]);
 
   const handleStartBusinessChat = useCallback(() => {
     if (!isAuthenticated) {
-      setChatType('business');
+      setAuthFeature('Chat with Homer');
       setAuthModalOpen(true);
       return;
     }
-    setChatType('business');
-  }, [isAuthenticated]);
-
-  const handleBusinessComplete = useCallback((data: {
-    fullName: string;
-    email: string;
-    company: string;
-    enquiryType: string;
-    message: string;
-    method: string;
-  }) => {
-    setSubmittedData(data);
-  }, []);
-
-  const handleCloseConfirmation = useCallback(() => {
-    setSubmittedData(null);
-    navigate('/');
-  }, [navigate]);
-
-  const renderChat = () => {
-    if (submittedData) {
-      return (
-        <ChatConfirmation
-          chatType="business"
-          method={submittedData.method}
-          formData={submittedData}
-          onClose={handleCloseConfirmation}
-        />
-      );
-    }
-
-    if (chatType === 'business' && isAuthenticated) {
-      return <BusinessChat onComplete={handleBusinessComplete} />;
-    }
-
-    if (isAuthenticated) {
-      return <FanChat />;
-    }
-
-    return (
-      <ChatLanding
-        onStartFanChat={handleStartFanChat}
-        onStartBusinessChat={handleStartBusinessChat}
-      />
-    );
-  };
+    navigate('/dashboard?section=messages');
+  }, [isAuthenticated, navigate]);
 
   return (
-    <div className="h-dvh h-screen flex flex-col bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
+    <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
       <SEO title="Chat with Homer" />
       <Navbar
         activeSection={activeSection}
@@ -121,16 +63,19 @@ export default function ChatPage() {
         onOpenSignIn={() => setActiveModal({ type: 'signin' })}
       />
 
-      <div className="flex-1 min-h-0 pt-16 lg:pt-20">
-        {renderChat()}
-      </div>
+      <main className="pt-16 lg:pt-20">
+        <ChatLanding
+          onStartFanChat={handleStartFanChat}
+          onStartBusinessChat={handleStartBusinessChat}
+        />
+      </main>
 
       <DetailModal
         modal={activeModal}
         onClose={() => setActiveModal(null)}
         onOpenChat={handleOpenChat}
       />
-      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} feature="Chat with Homer" />
+      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} feature={authFeature} />
     </div>
   );
 }
