@@ -179,10 +179,10 @@ const MemberProfileModal: React.FC<MemberProfileModalProps> = ({ open, memberId,
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#E8E5DF]/40">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-[#A6852F]/10 flex items-center justify-center">
-                  <span className="text-sm font-medium text-[#A6852F]">{profile?.full_name?.charAt(0) || profile?.email?.charAt(0) || '?'}</span>
+                  <span className="text-sm font-medium text-[#A6852F]">{(profile?.first_name || profile?.email || '?').charAt(0).toUpperCase()}</span>
                 </div>
                 <div>
-                  <h4 className="text-sm font-medium text-[#1C1917]">{profile?.full_name || 'Unknown'}</h4>
+                  <h4 className="text-sm font-medium text-[#1C1917]">{profile?.first_name || profile?.last_name ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : profile?.email || 'Unknown'}</h4>
                   <p className="text-[11px] text-[#57534E]">{profile?.email || ''}</p>
                 </div>
               </div>
@@ -230,7 +230,7 @@ const MemberProfileModal: React.FC<MemberProfileModalProps> = ({ open, memberId,
                       <div className="grid grid-cols-2 gap-4">
                         <div className="rounded-xl border border-[#E8E5DF]/60 bg-[#F3F1ED]/20 p-4">
                           <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Full Name</p>
-                          <p className="text-sm text-[#1C1917] font-medium mt-1">{profile?.full_name || '—'}</p>
+                          <p className="text-sm text-[#1C1917] font-medium mt-1">{profile?.first_name || profile?.last_name ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : '—'}</p>
                         </div>
                         <div className="rounded-xl border border-[#E8E5DF]/60 bg-[#F3F1ED]/20 p-4">
                           <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Email</p>
