@@ -33,7 +33,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requir
     return <Navigate to="/access-denied" replace />;
   }
 
-  if (user?.role === 'pending' && !requireAdmin) {
+  if (user?.role === 'pending') {
+    if (requireAdmin) {
+      return <Navigate to="/access-denied" replace />;
+    }
     return <Navigate to="/application-status" replace />;
   }
 

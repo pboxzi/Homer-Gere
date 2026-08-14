@@ -47,6 +47,8 @@ export default function MemberSignIn() {
     if (result.error) {
       setError(result.error);
       setLoading(false);
+    } else {
+      setLoading(false);
     }
   };
 

@@ -142,7 +142,7 @@ export default function ArticleDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
-      <SEO title={article.title} description={article.seoDescription} />
+      <SEO title={article.seoTitle || article.title} description={article.seoDescription || article.description} />
       <Navbar
         activeSection={activeSection}
         onNavigate={handleNavigate}
@@ -150,16 +150,14 @@ export default function ArticleDetailPage() {
         onOpenSignIn={() => setActiveModal({ type: 'signin' })}
       />
 
-      {/* SEO */}
+      {/* SEO structured data + Open Graph */}
       <Helmet>
-        <title>{article.seoTitle}</title>
-        <meta name="description" content={article.seoDescription} />
         <link rel="canonical" href={articleUrl} />
 
         {/* Open Graph */}
         <meta property="og:type" content="article" />
-        <meta property="og:title" content={article.seoTitle} />
-        <meta property="og:description" content={article.seoDescription} />
+        <meta property="og:title" content={article.seoTitle || article.title} />
+        <meta property="og:description" content={article.seoDescription || article.description} />
         <meta property="og:image" content={ogImage} />
         <meta property="og:url" content={articleUrl} />
         <meta property="og:site_name" content="Homer Gere — Official Website" />
@@ -172,8 +170,8 @@ export default function ArticleDetailPage() {
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={article.seoTitle} />
-        <meta name="twitter:description" content={article.seoDescription} />
+        <meta name="twitter:title" content={article.seoTitle || article.title} />
+        <meta name="twitter:description" content={article.seoDescription || article.description} />
         <meta name="twitter:image" content={ogImage} />
 
         {/* Article Structured Data */}

@@ -75,7 +75,7 @@ export const DashboardMessages: React.FC = () => {
       setNewSubject('');
       setNewBody('');
       setShowNew(false);
-      logActivity('create', 'messages', `Business enquiry created: ${newSubject.trim()}`, { enquiry_id: enq.id });
+      logActivity('create', 'business', `Business enquiry created: ${newSubject.trim()}`, { enquiry_id: enq.id });
     } catch (e) { console.error(e); }
   };
 

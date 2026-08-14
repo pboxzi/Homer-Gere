@@ -53,7 +53,7 @@ export const GalleryPage: React.FC = () => {
         activeSection={activeSection}
         onNavigate={handleNavigate}
         onOpenChat={handleOpenChat}
-        onOpenSignIn={() => {}}
+        onOpenSignIn={() => navigate('/auth/sign-in')}
       />
       {/* 1. Hero */}
       <GalleryHero />
@@ -120,10 +120,10 @@ export const GalleryPage: React.FC = () => {
       <GalleryLatest initialCount={8} loadMore={4} />
 
       {/* 6. Explore More */}
-      <GalleryExplore onNavigate={(path) => navigate(path)} />
+      <GalleryExplore onNavigate={handleNavigate} />
 
       {/* Footer */}
-      <Footer onNavigate={(path) => navigate(path)} onOpenChat={handleOpenChat} />
+      <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />
     </main>
   );
 };

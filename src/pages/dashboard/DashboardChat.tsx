@@ -30,8 +30,8 @@ export const DashboardChat: React.FC = () => {
     if (!user?.id) return;
     setLoading(true);
     try {
-      const allConvs = await fanChatRepository.getConversations();
-      setConversations(allConvs.filter((c) => c.user_id === user.id));
+      const userConvs = await fanChatRepository.getConversationsByUserId(user.id);
+      setConversations(userConvs);
     } catch (e) { console.error(e); }
     setLoading(false);
   }, [user?.id]);

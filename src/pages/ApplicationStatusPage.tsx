@@ -17,6 +17,7 @@ export default function ApplicationStatusPage() {
     notes: string | null;
   } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchApplication = async () => {
@@ -36,7 +37,7 @@ export default function ApplicationStatusPage() {
           });
         }
       } catch {
-        // Silently handle error
+        setError('Unable to load application status. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -89,7 +90,36 @@ export default function ApplicationStatusPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#A6852F] border-t-transparent rounded-full animate-spin" />
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-[#A6852F] border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs text-[#57534E]">Loading your application status...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <AlertCircle className="w-10 h-10 text-[#DC2626] mx-auto mb-4" />
+          <h2 className="text-lg font-editorial text-[#1C1917] mb-2">Error Loading Status</h2>
+          <p className="text-sm text-[#57534E] mb-4">{error}</p>
+          <button onClick={() => window.location.reload()} className="text-sm text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Try Again</button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!application) {
+    return (
+      <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center px-4">
+        <div className="text-center max-w-md">
+          <FileText className="w-10 h-10 text-[#57534E]/30 mx-auto mb-4" />
+          <h2 className="text-lg font-editorial text-[#1C1917] mb-2">No Application Found</h2>
+          <p className="text-sm text-[#57534E] mb-4">We couldn't find a membership application associated with your account.</p>
+          <button onClick={() => navigate('/register')} className="text-sm text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Apply Now</button>
+        </div>
       </div>
     );
   }

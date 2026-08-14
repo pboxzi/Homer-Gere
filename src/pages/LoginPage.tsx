@@ -48,6 +48,8 @@ export default function LoginPage() {
     if (result.error) {
       setError(result.error);
       setLoading(false);
+    } else {
+      setLoading(false);
     }
     // Loading stays true if successful (will redirect)
   };
@@ -153,6 +155,7 @@ export default function LoginPage() {
               <span className="py-2">
                 <button
                   type="button"
+                  onClick={() => navigate('/auth/forgot-password')}
                   className="text-xs text-[#A6852F] hover:text-[#8B6F1F] font-medium transition-colors duration-200 cursor-pointer"
                 >
                   Forgot password?

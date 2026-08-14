@@ -36,6 +36,8 @@ export default function AdminLoginPage() {
     if (result.error) {
       setError(result.error);
       setLoading(false);
+    } else {
+      setLoading(false);
     }
   };
 

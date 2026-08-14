@@ -23,7 +23,6 @@ export default function ExperiencesPage() {
   const [activeSection] = useState<string>('experiences');
   const [activeModal, setActiveModal] = useState<ModalType>(null);
   const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null);
-  const [showDetailModal, setShowDetailModal] = useState<boolean>(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
   const handleNavigate = (sectionId: string) => {
@@ -40,7 +39,7 @@ export default function ExperiencesPage() {
   };
 
   const handleOpenChat = () => { navigate('/chat'); };
-  const handleSelectExperience = (experience: Experience) => { setSelectedExperience(experience); setShowDetailModal(true); };
+  const handleSelectExperience = (experience: Experience) => { setSelectedExperience(experience); };
 
   const handleRequestExperience = () => {
     if (!isAuthenticated) {
@@ -67,7 +66,7 @@ export default function ExperiencesPage() {
       </main>
       <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />
       <DetailModal modal={activeModal} onClose={() => setActiveModal(null)} onOpenChat={handleOpenChat} />
-      <ExperienceDetailModal experience={selectedExperience} onClose={() => { setShowDetailModal(false); setSelectedExperience(null); }} onRequestExperience={handleRequestExperience} />
+      <ExperienceDetailModal experience={selectedExperience} onClose={() => { setSelectedExperience(null); }} onRequestExperience={handleRequestExperience} />
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} feature="Request an Experience" />
     </div>
   );

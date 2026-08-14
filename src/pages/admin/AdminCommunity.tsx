@@ -17,6 +17,7 @@ import {
   auditLogsRepository,
 } from '../../lib/repositories';
 import { getSupabaseClient } from '../../lib/repositories';
+import { notifyService } from '../../lib/notifications';
 
 type MemberStatus = 'active' | 'suspended' | 'pending';
 type ApplicationStatus = 'pending' | 'approved' | 'declined';
@@ -1012,18 +1013,37 @@ const ExperienceRequestsSection: React.FC = () => {
     { key: 'all', label: 'All' }, { key: 'pending', label: 'Pending' }, { key: 'approved', label: 'Approved' }, { key: 'declined', label: 'Declined' }, { key: 'completed', label: 'Completed' },
   ];
 
-  const handleApprove = (id: string) => {
+  const handleApprove = async (id: string) => {
     const req = experienceRequests.find((r) => r.id === id);
     if (!req) return;
     const exp = experiences.find((e) => req.experience.toLowerCase().includes(e.title.toLowerCase()));
     if (exp) updateExperience(exp.id, { requests: exp.requests + 1 });
     updateExperienceRequest(id, 'approved');
     showSuccess('Experience request approved');
+    try {
+      await notifyService.experienceApproved(req.user_id || '', {
+        email: req.email,
+        fullName: req.full_name,
+        experienceType: req.experience,
+        eventDate: req.preferred_date || req.event_date || 'TBD',
+      });
+    } catch { /* notification failed silently */ }
   };
 
-  const handleDecline = (id: string) => {
+  const handleDecline = async (id: string) => {
+    const req = experienceRequests.find((r) => r.id === id);
     updateExperienceRequest(id, 'declined');
     showSuccess('Experience request declined');
+    if (req) {
+      try {
+        await notifyService.experienceRejected(req.user_id || '', {
+          email: req.email,
+          fullName: req.full_name,
+          experienceType: req.experience,
+          rejectionReason: 'The experience is currently unavailable.',
+        });
+      } catch { /* notification failed silently */ }
+    }
   };
 
   const viewedReq = viewId ? experienceRequests.find((r) => r.id === viewId) : null;

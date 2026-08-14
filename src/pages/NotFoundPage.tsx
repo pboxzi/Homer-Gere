@@ -28,7 +28,7 @@ export default function NotFoundPage() {
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
       <SEO title="Page Not Found" description="The page you're looking for doesn't exist." noindex />
-      <Navbar activeSection="" onNavigate={handleNavigate} onOpenChat={handleOpenChat} onOpenSignIn={() => {}} />
+      <Navbar activeSection="" onNavigate={handleNavigate} onOpenChat={handleOpenChat} onOpenSignIn={() => navigate('/auth/sign-in')} />
 
       <main className="flex items-center justify-center min-h-[70vh] px-4">
         <motion.div

@@ -264,8 +264,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const loadConversations = useCallback(async () => {
     if (!user?.id) return;
     try {
-      const allConvs = await fanChatRepository.getConversations();
-      const convs = allConvs.filter((c) => c.user_id === user.id);
+      const convs = await fanChatRepository.getConversationsByUserId(user.id);
       setConversations(convs);
       // Load messages for each conversation
       const allMessages: FanMessage[] = [];
@@ -292,7 +291,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         message: t.message,
         category: t.category,
         date: new Date(t.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        status: t.status as 'open' | 'in_progress' | 'resolved' | 'closed',
+        status: t.status as 'open' | 'in_progress' | 'resolved' | 'closed' | 'replied',
         replies: [],
       })));
     } catch { /* silent */ }

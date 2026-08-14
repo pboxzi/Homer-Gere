@@ -168,7 +168,7 @@ export default function RegisterPage() {
               Return to Home
             </button>
             <button
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/auth/sign-in')}
               className="inline-flex items-center justify-center gap-2 border border-[#E8E5DF]/60 hover:bg-[#F3F1ED]/60 text-[#57534E] font-medium text-sm px-6 py-3 rounded-2xl transition-all duration-300 cursor-pointer"
             >
               Sign In
@@ -485,19 +485,19 @@ export default function RegisterPage() {
             <div className="space-y-3">
               <label className="flex items-start gap-3 cursor-pointer py-2">
                 <input type="checkbox" checked={formData.agreeTerms} onChange={(e) => update('agreeTerms', e.target.checked)} className="w-4 h-4 rounded border-[#E8E5DF] text-[#A6852F] focus:ring-[#A6852F]/30 accent-[#A6852F] mt-0.5" />
-                <span className="text-sm text-[#57534E] leading-relaxed">I agree to the <button type="button" className="text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Terms of Service</button> *</span>
+                <span className="text-sm text-[#57534E] leading-relaxed">I agree to the <button type="button" onClick={() => window.open('https://homgere.com/terms', '_blank')} className="text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Terms of Service</button> *</span>
               </label>
               {errors.agreeTerms && <p className="text-xs text-red-500 ml-7">{errors.agreeTerms}</p>}
 
               <label className="flex items-start gap-3 cursor-pointer py-2">
                 <input type="checkbox" checked={formData.agreePrivacy} onChange={(e) => update('agreePrivacy', e.target.checked)} className="w-4 h-4 rounded border-[#E8E5DF] text-[#A6852F] focus:ring-[#A6852F]/30 accent-[#A6852F] mt-0.5" />
-                <span className="text-sm text-[#57534E] leading-relaxed">I agree to the <button type="button" className="text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Privacy Policy</button> *</span>
+                <span className="text-sm text-[#57534E] leading-relaxed">I agree to the <button type="button" onClick={() => window.open('https://homgere.com/privacy', '_blank')} className="text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Privacy Policy</button> *</span>
               </label>
               {errors.agreePrivacy && <p className="text-xs text-red-500 ml-7">{errors.agreePrivacy}</p>}
 
               <label className="flex items-start gap-3 cursor-pointer py-2">
                 <input type="checkbox" checked={formData.agreeCommunity} onChange={(e) => update('agreeCommunity', e.target.checked)} className="w-4 h-4 rounded border-[#E8E5DF] text-[#A6852F] focus:ring-[#A6852F]/30 accent-[#A6852F] mt-0.5" />
-                <span className="text-sm text-[#57534E] leading-relaxed">I agree to the <button type="button" className="text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Community Guidelines</button> *</span>
+                <span className="text-sm text-[#57534E] leading-relaxed">I agree to the <button type="button" onClick={() => window.open('https://homgere.com/community-guidelines', '_blank')} className="text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Community Guidelines</button> *</span>
               </label>
               {errors.agreeCommunity && <p className="text-xs text-red-500 ml-7">{errors.agreeCommunity}</p>}
             </div>
@@ -525,7 +525,7 @@ export default function RegisterPage() {
             </button>
             <p className="text-xs text-[#57534E]">
               Already have an account?{' '}
-              <button type="button" onClick={() => navigate('/login')} className="text-[#A6852F] hover:text-[#8B6F1F] font-medium transition-colors duration-200 cursor-pointer">
+              <button type="button" onClick={() => navigate('/auth/sign-in')} className="text-[#A6852F] hover:text-[#8B6F1F] font-medium transition-colors duration-200 cursor-pointer">
                 Sign In
               </button>
             </p>

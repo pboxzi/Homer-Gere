@@ -125,10 +125,10 @@ export const JournalPage: React.FC = () => {
       <JournalNewsletter />
 
       {/* 6. Continue Exploring */}
-      <JournalExplore onNavigate={(path) => navigate(path)} />
+      <JournalExplore onNavigate={handleNavigate} />
 
       {/* Footer */}
-      <Footer onNavigate={(path) => navigate(path)} onOpenChat={handleOpenChat} />
+      <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />
       </main>
 
       <DetailModal

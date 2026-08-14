@@ -1406,6 +1406,17 @@ export const fanChatRepository = {
     return data || [];
   },
 
+  async getConversationsByUserId(userId: string): Promise<FanConversation[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('fan_conversations')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  },
+
   async getConversationById(id: string): Promise<FanConversation | null> {
     const client = getSupabaseClient();
     const { data, error } = await client
@@ -3696,7 +3707,7 @@ export const experienceDocumentsRepository = {
 // ============================================================
 
 export const helpDeskTicketsRepository = {
-  async getAll(): Promise<any[]> {
+  async getAll(): Promise<HelpDeskTicket[]> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('help_desk_tickets')
@@ -3706,7 +3717,7 @@ export const helpDeskTicketsRepository = {
     return data || [];
   },
 
-  async getByUserId(userId: string): Promise<any[]> {
+  async getByUserId(userId: string): Promise<HelpDeskTicket[]> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('help_desk_tickets')
@@ -3717,7 +3728,7 @@ export const helpDeskTicketsRepository = {
     return data || [];
   },
 
-  async create(ticket: { user_id: string; subject: string; message: string; category?: string }): Promise<any> {
+  async create(ticket: { user_id: string; subject: string; message: string; category?: string }): Promise<HelpDeskTicket> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('help_desk_tickets')

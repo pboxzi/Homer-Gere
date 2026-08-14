@@ -6,6 +6,7 @@ import heroSplitBanner from '../assets/images/homer_hero_cinematic_banner_178653
 import homerBrightLuxuryEditorial from '../assets/images/homer_bright_luxury_editorial_1786538711966.jpg';
 import homerPurePhotorealisticPortrait from '../assets/images/homer_pure_photorealistic_portrait_1786538895660.jpg';
 import homerGqLifestyleStudio from '../assets/images/homer_gq_lifestyle_studio_1786539137760.jpg';
+import heroPortraitNew from '../assets/images/homer_hero_portrait_new.png';
 import shardsBanner from '../assets/images/homer_shards_banner_1786535665393.jpg';
 import journalOnset from '../assets/images/homer_journal_onset_1786535677128.jpg';
 import journalPortrait from '../assets/images/homer_journal_portrait_1786535686554.jpg';
@@ -83,7 +84,8 @@ export const SECTION_IMAGES = {
     journalOnset,
     journalPortrait,
     bwInterview,
-    homerGqLifestyleStudio,
+  homerGqLifestyleStudio,
+  heroPortraitNew,
   ],
   filmography: {
     whiteLies: cannesRedCarpet,
