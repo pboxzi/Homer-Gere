@@ -103,6 +103,7 @@ interface DashboardContextType {
 
   updateProfile: (updates: Partial<Profile>) => Promise<void>;
   changePassword: (currentPw: string, newPw: string) => Promise<{ success: boolean; error?: string }>;
+  logActivity: (action: string, module: string, description: string, metadata?: Record<string, unknown>) => Promise<void>;
 
   markNotificationRead: (id: string) => void;
   markAllNotificationsRead: () => void;
@@ -267,7 +268,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const loadConversations = useCallback(async () => {
     if (!user?.id) return;
     try {
-      const convs = await fanChatRepository.getConversations(user.id);
+      const allConvs = await fanChatRepository.getConversations();
+      const convs = allConvs.filter((c) => c.user_id === user.id);
       setConversations(convs);
       // Load messages for each conversation
       const allMessages: FanMessage[] = [];
@@ -355,6 +357,26 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return { success: false, error: 'Failed to update password.' };
     }
   }, [user?.id]);
+
+  // ============================================================
+  // Activity logging helper
+  // ============================================================
+  const logActivity = useCallback(async (action: string, module: string, description: string, metadata: Record<string, unknown> = {}) => {
+    if (!user?.id) return;
+    try {
+      await activityLogsRepository.create({
+        user_id: user.id,
+        action,
+        module,
+        description,
+        metadata,
+        ip_address: null,
+        user_agent: navigator.userAgent,
+      });
+      // Refresh activity logs in background
+      refreshActivity();
+    } catch { /* silent */ }
+  }, [user?.id, refreshActivity]);
 
   // ============================================================
   // Notifications
@@ -466,7 +488,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       conversations, fanMessages, bookmarks, favorites, helpTickets, loading,
       refreshData, refreshProfile, refreshNotifications, refreshPayments,
       refreshExperiences, refreshActivity,
-      updateProfile, changePassword,
+      updateProfile, changePassword, logActivity,
       markNotificationRead, markAllNotificationsRead, deleteNotification,
       addHelpTicket, replyHelpTicket, closeHelpTicket,
       toggleBookmark, isBookmarked, toggleFavorite, isFavorited,

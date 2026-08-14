@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
 import { Download, FileText, Image, Film, Music, Search, Filter, Check, ExternalLink } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useDashboard } from '../../context/DashboardContext';
 import { downloadItemsRepository, memberDownloadsRepository } from '../../lib/repositories';
 import type { DownloadItem } from '../../types/database';
 
@@ -28,6 +29,7 @@ const FILE_TYPE_ICONS: Record<string, React.FC<{ className?: string }>> = {
 
 export default function DashboardDownloads() {
   const { user } = useAuth();
+  const { logActivity } = useDashboard();
   const [items, setItems] = useState<DownloadItem[]>([]);
   const [downloaded, setDownloaded] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
@@ -55,6 +57,7 @@ export default function DashboardDownloads() {
     try {
       await memberDownloadsRepository.recordDownload(user.id, item.id);
       setDownloaded((prev) => new Set([...prev, item.id]));
+      logActivity('download', 'downloads', `Downloaded: ${item.title}`, { item_id: item.id, title: item.title });
       // Open file in new tab
       window.open(item.file_url, '_blank');
     } catch (e) { console.error(e); }

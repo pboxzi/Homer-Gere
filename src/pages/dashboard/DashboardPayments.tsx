@@ -3,6 +3,7 @@ import { DollarSign, Clock, CheckCircle, XCircle, Send, ChevronDown, ChevronUp, 
 import { paymentRequestsRepository, paymentSubmissionsRepository, paymentMethodsRepository } from '../../lib/repositories';
 import { notifyService } from '../../lib/notifications';
 import { useAuth } from '../../context/AuthContext';
+import { useDashboard } from '../../context/DashboardContext';
 import type { PaymentRequest, PaymentSubmission, PaymentMethod } from '../../types/database';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
@@ -17,6 +18,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
 
 export default function DashboardPayments() {
   const { user, profile } = useAuth();
+  const { logActivity } = useDashboard();
   const [requests, setRequests] = useState<PaymentRequest[]>([]);
   const [submissions, setSubmissions] = useState<PaymentSubmission[]>([]);
   const [methods, setMethods] = useState<PaymentMethod[]>([]);
@@ -72,6 +74,7 @@ export default function DashboardPayments() {
       setShowSubmitModal(false);
       setSubmitTarget(null);
       setSubmitForm({ transactionReference: '', amountPaid: '', paymentDate: '', notes: '' });
+      logActivity('submit', 'payment', `Payment submitted: ${submitTarget.currency} ${submitTarget.amount}`, { payment_request_id: submitTarget.id });
       load();
     } catch (e) { console.error(e); }
     setActionLoading(false);

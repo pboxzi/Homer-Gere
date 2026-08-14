@@ -46,7 +46,7 @@ export default function DashboardPage() {
     switch (activeSection) {
       case 'home': return <DashboardHome onOpenChat={handleOpenChat} onRequestExperience={handleRequestExperience} onNavigate={(section) => setActiveSection(section)} />;
       case 'profile': return <DashboardProfile />;
-      case 'membership': return <DashboardMembership />;
+      case 'membership': return <DashboardMembership onNavigate={(section) => setActiveSection(section)} />;
       case 'membership-requests': return <DashboardMembershipRequests />;
       case 'payments': return <DashboardPayments />;
       case 'membership-card': return <DashboardMembershipCard />;

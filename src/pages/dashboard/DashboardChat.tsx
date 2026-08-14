@@ -8,7 +8,7 @@ import type { FanConversation, FanMessage } from '../../types/database';
 
 export const DashboardChat: React.FC = () => {
   const { user, profile } = useAuth();
-  const { membershipPlan } = useDashboard();
+  const { membershipPlan, logActivity } = useDashboard();
   const canOpenWhatsApp = membershipPlan?.name === 'Gold' || membershipPlan?.name === 'Platinum';
   const [conversations, setConversations] = useState<FanConversation[]>([]);
   const [activeConvId, setActiveConvId] = useState<string | null>(null);
@@ -22,8 +22,8 @@ export const DashboardChat: React.FC = () => {
     if (!user?.id) return;
     setLoading(true);
     try {
-      const convs = await fanChatRepository.getConversations(user.id);
-      setConversations(convs);
+      const allConvs = await fanChatRepository.getConversations();
+      setConversations(allConvs.filter((c) => c.user_id === user.id));
     } catch (e) { console.error(e); }
     setLoading(false);
   }, [user?.id]);
@@ -53,9 +53,12 @@ export const DashboardChat: React.FC = () => {
   const handleSend = async () => {
     if (!activeConvId || !newMessage.trim() || !user?.id) return;
     try {
-      await fanChatRepository.sendMessage(activeConvId, {
+      await fanChatRepository.sendMessage({
+        conversation_id: activeConvId,
         sender: 'member',
         text: newMessage.trim(),
+        media_type: null,
+        media_url: null,
       });
       setNewMessage('');
       loadMessages(activeConvId);
@@ -76,6 +79,7 @@ export const DashboardChat: React.FC = () => {
       });
       setConversations((prev) => [conv, ...prev]);
       setActiveConvId(conv.id);
+      logActivity('create', 'chat', 'New fan chat conversation started', { conversation_id: conv.id });
     } catch (e) { console.error(e); }
   };
 

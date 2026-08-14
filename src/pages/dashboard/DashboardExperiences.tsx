@@ -42,7 +42,7 @@ const TIER_ACCESS: Record<string, string[]> = {
 
 export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onRequestFormOpened?: () => void }> = ({ openRequestForm, onRequestFormOpened }) => {
   const { user, profile } = useAuth();
-  const { experienceRequests, membershipPlan, refreshExperiences } = useDashboard();
+  const { experienceRequests, membershipPlan, refreshExperiences, logActivity } = useDashboard();
   const { experiences } = useSiteContent();
   const [selectedExp, setSelectedExp] = useState<Experience | null>(null);
   const [requestNote, setRequestNote] = useState('');
@@ -56,7 +56,7 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
     }
   }, [openRequestForm, onRequestFormOpened]);
 
-  const experienceRequestsList = experienceRequests.filter((r) => r.status !== 'deleted');
+  const experienceRequestsList = experienceRequests;
 
   const canAccess = (exp: Experience) => {
     const requiredTiers = TIER_ACCESS[exp.type] || ['Silver', 'Gold', 'Platinum'];
@@ -84,6 +84,7 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
       });
       setSubmitted(true);
       refreshExperiences();
+      logActivity('create', 'experience', `Experience request submitted: ${selectedExp.type}`, { experience_type: selectedExp.type });
       setTimeout(() => { setSubmitted(false); setSelectedExp(null); setRequestNote(''); }, 2000);
     } catch (e) { console.error(e); }
     setSubmitting(false);

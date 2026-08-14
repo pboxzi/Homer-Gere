@@ -2,11 +2,13 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Inbox, Send, ArrowLeft, Circle, Trash2, Plus } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useDashboard } from '../../context/DashboardContext';
 import { businessEnquiriesRepository } from '../../lib/repositories';
 import type { BusinessEnquiry, BusinessMessage } from '../../types/database';
 
 export const DashboardMessages: React.FC = () => {
   const { user, profile } = useAuth();
+  const { logActivity } = useDashboard();
   const [enquiries, setEnquiries] = useState<BusinessEnquiry[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [messages, setMessages] = useState<BusinessMessage[]>([]);
@@ -42,9 +44,12 @@ export const DashboardMessages: React.FC = () => {
   const handleSendReply = async () => {
     if (!selectedId || !replyText.trim() || !user?.id) return;
     try {
-      await businessEnquiriesRepository.sendMessage(selectedId, {
+      await businessEnquiriesRepository.sendMessage({
+        enquiry_id: selectedId,
         sender: 'member',
         text: replyText.trim(),
+        media_type: null,
+        media_url: null,
       });
       setReplyText('');
       loadMessages(selectedId);
@@ -70,6 +75,7 @@ export const DashboardMessages: React.FC = () => {
       setNewSubject('');
       setNewBody('');
       setShowNew(false);
+      logActivity('create', 'messages', `Business enquiry created: ${newSubject.trim()}`, { enquiry_id: enq.id });
     } catch (e) { console.error(e); }
   };
 
