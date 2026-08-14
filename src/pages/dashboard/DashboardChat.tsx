@@ -11,6 +11,7 @@ const WHATSAPP_NUMBER = '1234567890';
 export const DashboardChat: React.FC = () => {
   const { user, profile } = useAuth();
   const { membershipPlan, logActivity } = useDashboard();
+  const canOpenWhatsApp = membershipPlan?.name === 'Gold' || membershipPlan?.name === 'Platinum';
   const [conversations, setConversations] = useState<FanConversation[]>([]);
   const [activeConvId, setActiveConvId] = useState<string | null>(null);
   const [messages, setMessages] = useState<FanMessage[]>([]);
@@ -278,17 +279,19 @@ export const DashboardChat: React.FC = () => {
         </motion.div>
       )}
 
-      {/* WhatsApp - Available for all members */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
-        <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className="w-full flex items-center gap-4 p-5 rounded-2xl border border-[#25D366]/53 hover:border-[#25D366]/60 hover:bg-[#25D366]/8 transition-all duration-500 cursor-pointer group shadow-md shadow-[#25D366]/22 hover:shadow-lg hover:shadow-[#25D366]/22">
-          <div className="w-12 h-12 rounded-2xl bg-[#25D366]/22 flex items-center justify-center text-[#25D366] group-hover:bg-[#25D366] group-hover:text-white transition-all duration-500 shadow-sm shadow-[#25D366]/22"><Phone className="w-5 h-5" /></div>
-          <div className="flex-1 text-left">
-            <p className="text-sm font-medium text-[#1C1917] group-hover:text-[#25D366] transition-colors">Open Official WhatsApp</p>
-            <p className="text-xs text-[#57534E]">Message Homer directly on WhatsApp</p>
-          </div>
-          <ArrowRight className="w-4 h-4 text-[#25D366]/40 group-hover:text-[#25D366] group-hover:translate-x-1 transition-all" />
-        </a>
-      </motion.div>
+      {/* WhatsApp - Gold/Platinum only */}
+      {canOpenWhatsApp && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
+          <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className="w-full flex items-center gap-4 p-5 rounded-2xl border border-[#25D366]/53 hover:border-[#25D366]/60 hover:bg-[#25D366]/8 transition-all duration-500 cursor-pointer group shadow-md shadow-[#25D366]/22 hover:shadow-lg hover:shadow-[#25D366]/22">
+            <div className="w-12 h-12 rounded-2xl bg-[#25D366]/22 flex items-center justify-center text-[#25D366] group-hover:bg-[#25D366] group-hover:text-white transition-all duration-500 shadow-sm shadow-[#25D366]/22"><Phone className="w-5 h-5" /></div>
+            <div className="flex-1 text-left">
+              <p className="text-sm font-medium text-[#1C1917] group-hover:text-[#25D366] transition-colors">Open Official WhatsApp</p>
+              <p className="text-xs text-[#57534E]">Available for Gold and Platinum members</p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-[#25D366]/40 group-hover:text-[#25D366] group-hover:translate-x-1 transition-all" />
+          </a>
+        </motion.div>
+      )}
 
       {/* Search */}
       {conversations.length > 0 && (
