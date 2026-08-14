@@ -121,9 +121,15 @@ export default function App() {
           <ScrollToTop />
           <Suspense fallback={
             <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-8 h-8 border-2 border-[#A6852F] border-t-transparent rounded-full animate-spin" />
-                <p className="text-xs text-[#57534E]">Loading...</p>
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative">
+                  <div className="w-16 h-16 border-2 border-[#A6852F]/20 rounded-full" />
+                  <div className="absolute inset-0 w-16 h-16 border-2 border-[#A6852F] border-t-transparent rounded-full animate-spin" />
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-editorial text-[#1C1917]">Homer Gere</p>
+                  <p className="text-[10px] text-[#57534E] mt-1">Loading page...</p>
+                </div>
               </div>
             </div>
           }>
