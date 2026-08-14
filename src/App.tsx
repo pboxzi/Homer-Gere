@@ -98,7 +98,11 @@ function HomePage() {
   };
 
   const handleOpenChat = () => {
-    navigate('/chat');
+    if (isAuthenticated) {
+      navigate('/dashboard?section=chat');
+    } else {
+      navigate('/chat');
+    }
   };
 
   const handleRequestExperience = () => {
