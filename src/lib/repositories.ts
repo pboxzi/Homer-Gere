@@ -890,6 +890,18 @@ export const galleryRepository = {
     return data;
   },
 
+  async updatePhoto(id: string, updates: Partial<GalleryPhoto>): Promise<GalleryPhoto> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('gallery_photos')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
   async deletePhoto(id: string): Promise<void> {
     const client = getSupabaseClient();
     const { error } = await client

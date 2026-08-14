@@ -141,7 +141,7 @@ function VisitorsSection() {
       <motion.div className="rounded-xl border border-[#E8E5DF]/60 bg-white p-5" {...fadeInUp} transition={{ duration: 0.5, delay: 0.4 }}>
         <h3 className="text-sm font-semibold text-[#1C1917] mb-4">Top Pages</h3>
         <div className="overflow-x-auto">
-          <div className="min-w-[500px]">
+          <div className="min-w-0">
             <div className="grid grid-cols-4 gap-4 pb-2 border-b border-[#E8E5DF]/60">
               <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider">Page</span>
               <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider text-right">Views</span>
@@ -441,7 +441,7 @@ function ExperienceStatsSection() {
       <motion.div className="rounded-xl border border-[#E8E5DF]/60 bg-white p-5" {...fadeInUp} transition={{ duration: 0.5, delay: 0.4 }}>
         <h3 className="text-sm font-semibold text-[#1C1917] mb-4">Top Experiences</h3>
         <div className="overflow-x-auto">
-          <div className="min-w-[500px]">
+          <div className="min-w-0">
             <div className="grid grid-cols-4 gap-4 pb-2 border-b border-[#E8E5DF]/60">
               <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider">Experience</span>
               <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider text-right">Type</span>

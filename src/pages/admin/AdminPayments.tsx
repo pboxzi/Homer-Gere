@@ -350,9 +350,9 @@ export const AdminPayments: React.FC<AdminPaymentsProps> = ({ activeSection }) =
       </div>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 flex-1 w-full sm:w-auto">
-            <div className="relative flex-1 max-w-xs">
+            <div className="relative flex-1 max-w-xs w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#57534E]" />
               <input
                 type="text"
@@ -362,12 +362,12 @@ export const AdminPayments: React.FC<AdminPaymentsProps> = ({ activeSection }) =
                 className="w-full pl-9 pr-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-xs text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:border-[#A6852F]/40 focus:ring-1 focus:ring-[#A6852F]/20 transition-all"
               />
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
               {STATUS_FILTERS.map((filter) => (
                 <button
                   key={filter}
                   onClick={() => { setStatusFilter(filter); setCurrentPage(1); }}
-                  className={`px-2.5 py-1.5 rounded-lg text-[10px] font-medium transition-colors cursor-pointer ${
+                  className={`px-2.5 py-1.5 rounded-lg text-[10px] font-medium transition-colors cursor-pointer whitespace-nowrap ${
                     statusFilter === filter
                       ? 'bg-[#A6852F]/10 text-[#A6852F] border border-[#A6852F]/25'
                       : 'text-[#57534E] hover:bg-[#F3F1ED] border border-transparent'
@@ -378,13 +378,13 @@ export const AdminPayments: React.FC<AdminPaymentsProps> = ({ activeSection }) =
               ))}
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
             <div className="flex items-center gap-1.5">
               {DATE_FILTERS.map((filter) => (
                 <button
                   key={filter}
                   onClick={() => { setDateFilter(filter); setCurrentPage(1); }}
-                  className={`px-2.5 py-1.5 rounded-lg text-[10px] font-medium transition-colors cursor-pointer ${
+                  className={`px-2.5 py-1.5 rounded-lg text-[10px] font-medium transition-colors cursor-pointer whitespace-nowrap ${
                     dateFilter === filter
                       ? 'bg-[#1C1917]/10 text-[#1C1917] border border-[#1C1917]/20'
                       : 'text-[#57534E] hover:bg-[#F3F1ED] border border-transparent'
@@ -405,63 +405,68 @@ export const AdminPayments: React.FC<AdminPaymentsProps> = ({ activeSection }) =
         </div>
 
         <div className="rounded-xl border border-[#E8E5DF]/60 bg-white overflow-hidden">
-          <div className={`grid ${isMembership ? 'grid-cols-[1fr_80px_80px_100px_100px_80px]' : 'grid-cols-[120px_1fr_80px_80px_100px_100px_80px]'} gap-4 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]`}>
-            {!isMembership && <span>Transaction ID</span>}
-            <span>Member</span>
-            <span>Plan</span>
-            <span>Amount</span>
-            <span>Date</span>
-            <span>Status</span>
-            <span>Actions</span>
+          {/* Desktop */}
+          <div className="hidden md:block">
+            <div className={`grid ${isMembership ? 'grid-cols-[1fr_80px_80px_100px_100px_80px]' : 'grid-cols-[120px_1fr_80px_80px_100px_100px_80px]'} gap-4 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]`}>
+              {!isMembership && <span>Transaction ID</span>}
+              <span>Member</span><span>Plan</span><span>Amount</span><span>Date</span><span>Status</span><span>Actions</span>
+            </div>
+
+            {paginatedPayments.length === 0 ? (
+              <div className="px-5 py-12 text-center">
+                <FileText className="w-8 h-8 text-[#E8E5DF] mx-auto mb-2" />
+                <p className="text-xs text-[#57534E]">No payments found matching your criteria.</p>
+              </div>
+            ) : (
+              paginatedPayments.map((p) => (
+                <div key={p.id} className={`grid ${isMembership ? 'grid-cols-[1fr_80px_80px_100px_100px_80px]' : 'grid-cols-[120px_1fr_80px_80px_100px_100px_80px]'} gap-4 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors`}>
+                  {!isMembership && <span className="text-[10px] font-mono text-[#57534E] truncate">TXN-{p.id.toUpperCase()}</span>}
+                  <span className="text-sm text-[#1C1917] truncate">{p.member}</span>
+                  <span className="text-xs text-[#57534E]">{p.plan}</span>
+                  <span className="text-sm font-medium text-[#1C1917]">${p.amount}</span>
+                  <span className="text-xs text-[#57534E]">{p.date}</span>
+                  <StatusBadge status={p.status} />
+                  <div className="flex items-center gap-1">
+                    <button onClick={() => { setSelectedPayment(p); setDetailModalOpen(true); }} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#A6852F]/10 hover:text-[#A6852F] transition-colors cursor-pointer" title="View Details"><Eye className="w-3.5 h-3.5" /></button>
+                    <button onClick={() => handleDownloadInvoice(p)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#A6852F]/10 hover:text-[#A6852F] transition-colors cursor-pointer" title="Download Invoice"><Download className="w-3.5 h-3.5" /></button>
+                    {p.status === 'completed' && <button onClick={() => handleRefund(p.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] transition-colors cursor-pointer" title="Refund"><RotateCcw className="w-3.5 h-3.5" /></button>}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
 
-          {paginatedPayments.length === 0 ? (
-            <div className="px-5 py-12 text-center">
-              <FileText className="w-8 h-8 text-[#E8E5DF] mx-auto mb-2" />
-              <p className="text-xs text-[#57534E]">No payments found matching your criteria.</p>
-            </div>
-          ) : (
-            paginatedPayments.map((p) => (
-              <div
-                key={p.id}
-                className={`grid ${isMembership ? 'grid-cols-[1fr_80px_80px_100px_100px_80px]' : 'grid-cols-[120px_1fr_80px_80px_100px_100px_80px]'} gap-4 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors`}
-              >
-                {!isMembership && (
-                  <span className="text-[10px] font-mono text-[#57534E] truncate">TXN-{p.id.toUpperCase()}</span>
-                )}
-                <span className="text-sm text-[#1C1917] truncate">{p.member}</span>
-                <span className="text-xs text-[#57534E]">{p.plan}</span>
-                <span className="text-sm font-medium text-[#1C1917]">${p.amount}</span>
-                <span className="text-xs text-[#57534E]">{p.date}</span>
-                <StatusBadge status={p.status} />
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => { setSelectedPayment(p); setDetailModalOpen(true); }}
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#A6852F]/10 hover:text-[#A6852F] transition-colors cursor-pointer"
-                    title="View Details"
-                  >
-                    <Eye className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    onClick={() => handleDownloadInvoice(p)}
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#A6852F]/10 hover:text-[#A6852F] transition-colors cursor-pointer"
-                    title="Download Invoice"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                  </button>
-                  {p.status === 'completed' && (
-                    <button
-                      onClick={() => handleRefund(p.id)}
-                      className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] transition-colors cursor-pointer"
-                      title="Refund"
-                    >
-                      <RotateCcw className="w-3.5 h-3.5" />
-                    </button>
-                  )}
-                </div>
+          {/* Mobile cards */}
+          <div className="md:hidden">
+            {paginatedPayments.length === 0 ? (
+              <div className="px-5 py-12 text-center">
+                <FileText className="w-8 h-8 text-[#E8E5DF] mx-auto mb-2" />
+                <p className="text-xs text-[#57534E]">No payments found.</p>
               </div>
-            ))
-          )}
+            ) : (
+              <div className="divide-y divide-[#E8E5DF]/20">
+                {paginatedPayments.map((p) => (
+                  <div key={p.id} className="p-4 space-y-2">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-[#1C1917]">{p.member}</p>
+                        {!isMembership && <p className="text-[10px] font-mono text-[#57534E]">TXN-{p.id.toUpperCase()}</p>}
+                      </div>
+                      <StatusBadge status={p.status} />
+                    </div>
+                    <div className="flex items-center gap-3 text-[11px] text-[#57534E]">
+                      <span>{p.plan}</span><span className="text-[#E8E5DF]">·</span><span className="font-medium text-[#1C1917]">${p.amount}</span><span className="text-[#E8E5DF]">·</span><span>{p.date}</span>
+                    </div>
+                    <div className="flex items-center gap-1 pt-2 border-t border-[#E8E5DF]/20">
+                      <button onClick={() => { setSelectedPayment(p); setDetailModalOpen(true); }} className="flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><Eye className="w-3.5 h-3.5" /> View</button>
+                      <button onClick={() => handleDownloadInvoice(p)} className="flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><Download className="w-3.5 h-3.5" /> Invoice</button>
+                      {p.status === 'completed' && <button onClick={() => handleRefund(p.id)} className="py-1.5 px-3 rounded-lg flex items-center justify-center text-xs text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer"><RotateCcw className="w-3.5 h-3.5" /></button>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           {filteredPayments.length > 0 && (
             <div className="flex items-center justify-between px-5 py-3 border-t border-[#E8E5DF]/40">

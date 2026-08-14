@@ -5,6 +5,7 @@ import {
   Save, Eye, EyeOff, CheckCircle, AlertTriangle,
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
+import { emailTemplatesRepository } from '../../lib/repositories';
 import type { AdminSection } from '../../data/adminData';
 
 const Toggle: React.FC<{ checked: boolean; onChange: (v: boolean) => void }> = ({ checked, onChange }) => (
@@ -345,55 +346,25 @@ const CommSettingsSection: React.FC = () => {
 // Email Templates
 // ============================================================
 
-interface EmailTemplate {
-  id: string;
-  name: string;
-  description: string;
-  body: string;
-}
-
-const DEFAULT_TEMPLATES: EmailTemplate[] = [
-  {
-    id: 'welcome',
-    name: 'Welcome Email',
-    description: 'Sent when a new member joins the community.',
-    body: 'Hi {{name}},\n\nWelcome to Homer Gere\'s official community! We\'re thrilled to have you on board.\n\nYour {{plan}} membership is now active. You can explore exclusive content, experiences, and more from your dashboard.\n\nIf you have any questions, feel free to reach out.\n\nWarm regards,\nThe Homer Gere Team',
-  },
-  {
-    id: 'password-reset',
-    name: 'Password Reset',
-    description: 'Sent when a member requests a password reset.',
-    body: 'Hi {{name}},\n\nWe received a request to reset your password. Click the link below to create a new one:\n\n{{resetLink}}\n\nThis link expires in 24 hours. If you did not request this, please ignore this email.\n\nBest,\nThe Homer Gere Team',
-  },
-  {
-    id: 'membership-renewal',
-    name: 'Membership Renewal',
-    description: 'Sent before a membership expires to prompt renewal.',
-    body: 'Hi {{name}},\n\nYour {{plan}} membership is set to expire on {{expiryDate}}.\n\nTo continue enjoying exclusive content and experiences, please renew your membership before it expires.\n\nRenew now: {{renewLink}}\n\nThank you for being a valued member.\n\nBest,\nThe Homer Gere Team',
-  },
-  {
-    id: 'experience-confirmation',
-    name: 'Experience Confirmation',
-    description: 'Sent when an experience booking is confirmed.',
-    body: 'Hi {{name}},\n\nGreat news! Your {{experience}} booking has been confirmed.\n\nDate: {{date}}\nTime: {{time}}\nLocation: {{location}}\n\nWe look forward to seeing you there. If you need to make any changes, please contact us as soon as possible.\n\nBest,\nThe Homer Gere Team',
-  },
-];
-
 const EmailTemplatesSection: React.FC = () => {
-  const [templates, setTemplates] = useState<EmailTemplate[]>(DEFAULT_TEMPLATES);
+  const { emailTemplates } = useAdmin();
+  const [templates, setTemplates] = useState(emailTemplates.map((t) => ({ ...t, description: t.subject || t.name, body: t.html_body })));
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editBody, setEditBody] = useState('');
   const [previewId, setPreviewId] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
-  const handleEdit = (t: EmailTemplate) => {
+  const handleEdit = (t: typeof templates[0]) => {
     setEditingId(t.id);
     setEditBody(t.body);
     setPreviewId(null);
   };
 
-  const handleSaveTemplate = (id: string) => {
+  const handleSaveTemplate = async (id: string) => {
     setTemplates((prev) => prev.map((t) => (t.id === id ? { ...t, body: editBody } : t)));
+    try {
+      await emailTemplatesRepository.update(id, { html_body: editBody });
+    } catch { /* optimistic */ }
     setEditingId(null);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);

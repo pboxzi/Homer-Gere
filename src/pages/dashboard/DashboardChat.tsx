@@ -81,7 +81,7 @@ export const DashboardChat: React.FC = () => {
             placeholder="Type your message..."
             className="flex-1 px-4 py-3 rounded-xl bg-white border border-[#E8E5DF]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30"
           />
-          <button onClick={handleSend} className="w-10 h-10 rounded-xl bg-[#1C1917] text-white flex items-center justify-center hover:bg-[#292524] transition-colors cursor-pointer">
+          <button onClick={handleSend} className="w-11 h-11 rounded-xl bg-[#1C1917] text-white flex items-center justify-center hover:bg-[#292524] transition-colors cursor-pointer">
             <Send className="w-4 h-4" />
           </button>
         </div>
@@ -163,7 +163,7 @@ export const DashboardChat: React.FC = () => {
                     {c.status === 'open' && (
                       <button onClick={() => closeConversation(c.id)} className="text-[9px] text-[#57534E] hover:text-[#1C1917] px-2 py-1 rounded-lg hover:bg-[#F3F1ED] transition-colors cursor-pointer">Close</button>
                     )}
-                    <button onClick={() => deleteConversation(c.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E]/30 hover:text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer">
+                    <button onClick={() => deleteConversation(c.id)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E]/30 hover:text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer">
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>

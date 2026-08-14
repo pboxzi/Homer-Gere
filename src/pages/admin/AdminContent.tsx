@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   Plus,
@@ -14,9 +14,17 @@ import {
   X,
   ToggleLeft,
   ToggleRight,
+  Loader2,
 } from 'lucide-react';
 import type { AdminSection, ContentItem, FAQItem, JournalArticle } from '../../data/adminData';
 import { useAdmin } from '../../context/AdminContext';
+import {
+  journeyRepository,
+  journalRepository,
+  filmographyRepository,
+  galleryRepository,
+  mediaRepository,
+} from '../../lib/repositories';
 
 interface AdminContentProps {
   activeSection: AdminSection;
@@ -1071,10 +1079,72 @@ export const AdminContent: React.FC<AdminContentProps> = ({ activeSection }) => 
   const { pages } = useAdmin();
 
   const [contentItems, setContentItems] = useState<ContentItem[]>([]);
-
   const [journalArticles, setJournalArticles] = useState<JournalArticle[]>([]);
-
   const [faqs, setFaqs] = useState<FAQItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const [journeyRes, filmographyRes, galleryRes, videosRes, podcastsRes, pressRes, journalRes] = await Promise.allSettled([
+          journeyRepository.getAll(),
+          filmographyRepository.getAll(),
+          galleryRepository.getAllPhotos(),
+          mediaRepository.getVideos(),
+          mediaRepository.getPodcasts(),
+          mediaRepository.getPress(),
+          journalRepository.getAll(),
+        ]);
+        if (cancelled) return;
+
+        const items: ContentItem[] = [];
+
+        if (journeyRes.status === 'fulfilled') {
+          journeyRes.value.forEach((e) => {
+            items.push({ id: e.id, title: e.title, section: 'journey', status: 'published', author: 'Admin', lastModified: e.updated_at || '', tags: [], category: e.highlight ? 'highlight' : '', excerpt: e.description || '' });
+          });
+        }
+        if (filmographyRes.status === 'fulfilled') {
+          filmographyRes.value.forEach((e) => {
+            items.push({ id: e.id, title: e.title, section: 'projects', status: 'published', author: 'Admin', lastModified: e.updated_at || '', tags: [], category: e.type || '', excerpt: e.description || '' });
+          });
+        }
+        if (galleryRes.status === 'fulfilled') {
+          galleryRes.value.forEach((e) => {
+            items.push({ id: e.id, title: e.alt || 'Untitled', section: 'gallery', status: 'published', author: 'Admin', lastModified: e.updated_at || '', tags: [], category: e.category || '', excerpt: e.caption || '' });
+          });
+        }
+        if (videosRes.status === 'fulfilled') {
+          videosRes.value.forEach((v) => {
+            items.push({ id: v.id, title: v.title, section: 'media', status: 'published', author: 'Admin', lastModified: v.updated_at || '', tags: [], category: v.category || '', excerpt: v.description || '' });
+          });
+        }
+        if (podcastsRes.status === 'fulfilled') {
+          podcastsRes.value.forEach((p) => {
+            items.push({ id: p.id, title: p.episode_title || p.show_name, section: 'media', status: 'published', author: 'Admin', lastModified: p.updated_at || '', tags: [], category: p.show_name || '', excerpt: p.description || '' });
+          });
+        }
+        if (pressRes.status === 'fulfilled') {
+          pressRes.value.forEach((p) => {
+            items.push({ id: p.id, title: p.headline, section: 'media', status: 'published', author: 'Admin', lastModified: p.updated_at || '', tags: [], category: p.publisher || '', excerpt: p.summary || '' });
+          });
+        }
+
+        setContentItems(items);
+
+        if (journalRes.status === 'fulfilled') {
+          setJournalArticles(journalRes.value.map((a) => ({
+            id: a.id, title: a.title, excerpt: a.excerpt || '', content: a.content || '', author: a.author || 'Admin',
+            category: a.category || '', tags: a.tags || [], status: (a.status as JournalArticle['status']) || 'draft',
+            publishedDate: a.published_date || '', lastModified: a.updated_at || '', readTime: a.read_time || '5 min', views: a.views || 0,
+          })));
+        }
+      } catch { /* empty */ }
+      setLoading(false);
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const sectionMap: Record<string, ContentItem['section']> = {
     journey: 'journey',
@@ -1090,32 +1160,78 @@ export const AdminContent: React.FC<AdminContentProps> = ({ activeSection }) => 
     return contentItems.filter((item) => item.section === currentSection);
   }, [contentItems, currentSection]);
 
-  const handleAddContentItem = (item: ContentItem) => {
+  const handleAddContentItem = async (item: ContentItem) => {
     setContentItems((prev) => [item, ...prev]);
+    try {
+      if (item.section === 'journey') {
+        await journeyRepository.create({ title: item.title, description: item.excerpt || '', year: new Date().getFullYear(), sort_order: 0, highlight: false, details: null, icon_name: null, image_url: null });
+      } else if (item.section === 'projects') {
+        await filmographyRepository.create({ title: item.title, type: item.category as any || 'film', role: '', year: new Date().getFullYear(), description: item.excerpt || '', status: 'Announced', image: null, slug: item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'), sort_order: 0 });
+      } else if (item.section === 'gallery') {
+        await galleryRepository.createPhoto({ title: item.title, src: '', alt: item.title, category: (item.category || 'other') as any, caption: item.excerpt || '', date: null, event: null, photographer: null, featured: false, collection_id: null, sort_order: 0 });
+      } else if (item.section === 'media') {
+        await mediaRepository.createVideo({ title: item.title, url: '', description: null, thumbnail: null, source: null, category: item.category || '', duration: null, date: null, featured: false, sort_order: 0 });
+      }
+    } catch { /* optimistic update already shown */ }
   };
 
-  const handleUpdateContentItem = (id: string, updates: Partial<ContentItem>) => {
-    setContentItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, ...updates } : item))
-    );
+  const handleUpdateContentItem = async (id: string, updates: Partial<ContentItem>) => {
+    setContentItems((prev) => prev.map((item) => (item.id === id ? { ...item, ...updates } : item)));
+    const item = contentItems.find((i) => i.id === id);
+    if (!item) return;
+    try {
+      if (item.section === 'journey') {
+        await journeyRepository.update(id, { title: updates.title, description: updates.excerpt });
+      } else if (item.section === 'projects') {
+        await filmographyRepository.update(id, { title: updates.title, description: updates.excerpt, type: updates.category as any });
+      } else if (item.section === 'gallery') {
+        await galleryRepository.updatePhoto(id, { title: updates.title, caption: updates.excerpt, category: updates.category as any });
+      }
+    } catch { /* optimistic */ }
   };
 
-  const handleDeleteContentItem = (id: string) => {
+  const handleDeleteContentItem = async (id: string) => {
     setContentItems((prev) => prev.filter((item) => item.id !== id));
+    const item = contentItems.find((i) => i.id === id);
+    if (!item) return;
+    try {
+      if (item.section === 'journey') await journeyRepository.delete(id);
+      else if (item.section === 'projects') await filmographyRepository.delete(id);
+      else if (item.section === 'gallery') await galleryRepository.deletePhoto(id);
+    } catch { /* optimistic */ }
   };
 
-  const handleAddJournalArticle = (article: JournalArticle) => {
+  const handleAddJournalArticle = async (article: JournalArticle) => {
     setJournalArticles((prev) => [article, ...prev]);
+    try {
+      await journalRepository.create({
+        title: article.title, slug: article.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        excerpt: article.excerpt, content: article.content, author: article.author,
+        category: article.category, tags: article.tags, status: article.status as any,
+        published_date: article.publishedDate || null, read_time: article.readTime,
+        views: 0, featured: false, cover_image: null, og_image: null, image_alt: null,
+      });
+    } catch { /* optimistic */ }
   };
 
-  const handleUpdateJournalArticle = (id: string, updates: Partial<JournalArticle>) => {
-    setJournalArticles((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, ...updates } : a))
-    );
+  const handleUpdateJournalArticle = async (id: string, updates: Partial<JournalArticle>) => {
+    setJournalArticles((prev) => prev.map((a) => (a.id === id ? { ...a, ...updates } : a)));
+    try {
+      const dbUpdates: Record<string, unknown> = {};
+      if (updates.title !== undefined) dbUpdates.title = updates.title;
+      if (updates.excerpt !== undefined) dbUpdates.excerpt = updates.excerpt;
+      if (updates.content !== undefined) dbUpdates.content = updates.content;
+      if (updates.category !== undefined) dbUpdates.category = updates.category;
+      if (updates.tags !== undefined) dbUpdates.tags = updates.tags;
+      if (updates.status !== undefined) dbUpdates.status = updates.status;
+      if (updates.readTime !== undefined) dbUpdates.read_time = updates.readTime;
+      await journalRepository.update(id, dbUpdates);
+    } catch { /* optimistic */ }
   };
 
-  const handleDeleteJournalArticle = (id: string) => {
+  const handleDeleteJournalArticle = async (id: string) => {
     setJournalArticles((prev) => prev.filter((a) => a.id !== id));
+    try { await journalRepository.delete(id); } catch { /* optimistic */ }
   };
 
   const handleAddFAQ = (item: FAQItem) => {
@@ -1152,6 +1268,12 @@ export const AdminContent: React.FC<AdminContentProps> = ({ activeSection }) => 
         </p>
       </motion.div>
 
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <Loader2 className="w-6 h-6 text-[#A6852F] animate-spin" />
+          <span className="ml-3 text-sm text-[#57534E]">Loading content...</span>
+        </div>
+      ) : (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -1185,6 +1307,7 @@ export const AdminContent: React.FC<AdminContentProps> = ({ activeSection }) => 
           />
         )}
       </motion.div>
+      )}
     </div>
   );
 };

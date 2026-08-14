@@ -12,9 +12,11 @@ import {
   journeyRepository,
   projectsRepository,
   galleryRepository,
+  filmographyRepository,
   mediaRepository,
   notificationsRepository,
   siteSettingsRepository,
+  emailTemplatesRepository,
   auditLogsRepository,
 } from '../lib/repositories';
 import { supabase } from '../lib/supabase';
@@ -34,6 +36,7 @@ import {
   type AdminPage,
   EMPTY_ADMIN_STATS,
 } from '../data/adminData';
+import type { EmailTemplate } from '../types/database';
 
 // ============================================================
 // Settings types
@@ -120,6 +123,7 @@ interface AdminContextType {
   media: AdminMediaItem[];
   payments: AdminPayment[];
   pages: AdminPage[];
+  emailTemplates: EmailTemplate[];
   stats: AdminStats;
   websiteSettings: WebsiteSettings;
   branding: BrandingSettings;
@@ -142,6 +146,7 @@ interface AdminContextType {
   addExperience: (exp: Omit<AdminExperience, 'id'>) => void;
   updateExperience: (id: string, updates: Partial<AdminExperience>) => void;
   deleteExperience: (id: string) => void;
+  updateExperienceRequest: (id: string, status: 'approved' | 'declined' | 'completed') => void;
   addConversation: (conv: Omit<AdminConversation, 'id'>) => void;
   updateConversation: (id: string, updates: Partial<AdminConversation>) => void;
   deleteConversation: (id: string) => void;
@@ -254,6 +259,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [media, setMedia] = useState<AdminMediaItem[]>([]);
   const [payments, setPayments] = useState<AdminPayment[]>([]);
   const [pages, setPages] = useState<AdminPage[]>([]);
+  const [emailTemplates, setEmailTemplates] = useState<EmailTemplate[]>([]);
   const [websiteSettings, setWebsiteSettings] = useState<WebsiteSettings>(DEFAULT_WEBSITE_SETTINGS);
   const [branding, setBranding] = useState<BrandingSettings>(DEFAULT_BRANDING);
   const [securitySettings, setSecuritySettings] = useState<SecuritySettings>(DEFAULT_SECURITY);
@@ -266,7 +272,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [profilesRes, plansRes, appsRes, expsRes, reqsRes, fanChatRes, bizChatRes, notifRes, settingsRes, mediaVidsRes, mediaPodsRes, mediaPressRes] = await Promise.allSettled([
+      const [profilesRes, plansRes, appsRes, expsRes, reqsRes, fanChatRes, bizChatRes, notifRes, settingsRes, mediaVidsRes, mediaPodsRes, mediaPressRes, journalRes, emailTemplatesRes, galleryRes] = await Promise.allSettled([
         profilesRepository.getAll(),
         membershipPlansRepository.getAll(),
         registrationRepository.getAll(),
@@ -279,6 +285,9 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         mediaRepository.getVideos(),
         mediaRepository.getPodcasts(),
         mediaRepository.getPress(),
+        journalRepository.getAll(),
+        emailTemplatesRepository.getAll(),
+        galleryRepository.getAllPhotos(),
       ]);
 
       if (profilesRes.status === 'fulfilled') {
@@ -369,6 +378,22 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           date: (m.created_at as string) || '', url: (m.url as string) || '',
         })));
       }
+
+      if (journalRes.status === 'fulfilled') {
+        setJournalArticleCount(journalRes.value.length);
+      }
+
+      if (fanChatRes.status === 'fulfilled') {
+        setFanMessageCount(fanChatRes.value.length);
+      }
+
+      if (emailTemplatesRes.status === 'fulfilled') {
+        setEmailTemplates(emailTemplatesRes.value);
+      }
+
+      if (galleryRes.status === 'fulfilled') {
+        setGalleryCount(galleryRes.value.length);
+      }
     } catch {
       // Use empty defaults
     } finally {
@@ -378,12 +403,24 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   useEffect(() => { loadData(); }, [loadData]);
 
+  // Store counts for stats
+  const [fanMessageCount, setFanMessageCount] = useState(0);
+  const [journalArticleCount, setJournalArticleCount] = useState(0);
+  const [galleryCount, setGalleryCount] = useState(0);
+
   // ----- CRUD: Members -----
   const addMember = useCallback((member: Omit<AdminMember, 'id'>) => {
     setMembers((prev) => [{ ...member, id: generateId() }, ...prev]);
   }, []);
   const updateMember = useCallback((id: string, updates: Partial<AdminMember>) => {
     setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, ...updates } : m)));
+    // Persist relevant fields to Supabase
+    const dbUpdates: Record<string, unknown> = {};
+    if (updates.membership !== undefined) dbUpdates.membership_tier = updates.membership;
+    if (updates.status !== undefined) dbUpdates.role = updates.status === 'pending' ? 'pending' : 'member';
+    if (Object.keys(dbUpdates).length > 0) {
+      profilesRepository.update(id, dbUpdates as any).catch(() => {});
+    }
   }, []);
   const deleteMember = useCallback((id: string) => {
     setMembers((prev) => prev.filter((m) => m.id !== id));
@@ -391,13 +428,64 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // ----- CRUD: Plans -----
   const addPlan = useCallback((plan: Omit<AdminPlan, 'id'>) => {
-    setPlans((prev) => [{ ...plan, id: generateId() }, ...prev]);
+    const slug = plan.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    membershipPlansRepository.create({
+      name: plan.name,
+      slug,
+      description: null,
+      price: plan.price,
+      currency: 'USD',
+      period: plan.period,
+      duration: null,
+      badge: null,
+      is_popular: false,
+      features: [],
+      cta_text: 'Join Now',
+      availability: 'available',
+      requires_approval: false,
+      members_count: plan.members,
+      status: plan.status,
+      sort_order: 0,
+    }).then(() => {
+      membershipPlansRepository.getAll().then((fresh) => {
+        setPlans(fresh.map((p) => ({
+          id: p.id, name: p.name, price: p.price, period: p.period,
+          members: p.members_count, status: p.status as AdminPlan['status'],
+        })));
+      });
+    }).catch(() => {
+      setPlans((prev) => [{ ...plan, id: generateId() }, ...prev]);
+    });
   }, []);
   const updatePlan = useCallback((id: string, updates: Partial<AdminPlan>) => {
     setPlans((prev) => prev.map((p) => (p.id === id ? { ...p, ...updates } : p)));
+    const dbUpdates: Record<string, unknown> = {};
+    if (updates.name !== undefined) dbUpdates.name = updates.name;
+    if (updates.price !== undefined) dbUpdates.price = updates.price;
+    if (updates.period !== undefined) dbUpdates.period = updates.period;
+    if (updates.members !== undefined) dbUpdates.members_count = updates.members;
+    if (updates.status !== undefined) dbUpdates.status = updates.status;
+    membershipPlansRepository.update(id, dbUpdates as any).then(() => {
+      membershipPlansRepository.getAll().then((fresh) => {
+        setPlans(fresh.map((p) => ({
+          id: p.id, name: p.name, price: p.price, period: p.period,
+          members: p.members_count, status: p.status as AdminPlan['status'],
+        })));
+      });
+    }).catch(() => {});
   }, []);
   const deletePlan = useCallback((id: string) => {
     setPlans((prev) => prev.filter((p) => p.id !== id));
+    Promise.resolve(
+      supabase.from('membership_plans').delete().eq('id', id)
+    ).then(() => {
+      return membershipPlansRepository.getAll().then((fresh) => {
+        setPlans(fresh.map((p) => ({
+          id: p.id, name: p.name, price: p.price, period: p.period,
+          members: p.members_count, status: p.status as AdminPlan['status'],
+        })));
+      });
+    }).catch(() => {});
   }, []);
 
   // ----- CRUD: Applications -----
@@ -487,13 +575,41 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // ----- CRUD: Experiences -----
   const addExperience = useCallback((exp: Omit<AdminExperience, 'id'>) => {
-    setExperiences((prev) => [{ ...exp, id: generateId() }, ...prev]);
+    experiencesRepository.create({
+      title: exp.title,
+      type: exp.type,
+      price: exp.price === 'N/A' ? null : parseFloat(exp.price) || null,
+      availability: exp.availability,
+      sort_order: 0,
+    } as any).then(() => {
+      experiencesRepository.getAll().then((fresh) => {
+        setExperiences(fresh.map((e) => ({
+          id: e.id, title: e.title, type: e.type, price: e.price || 'N/A',
+          availability: (e.availability as AdminExperience['availability']) || 'available', requests: 0,
+        })));
+      });
+    }).catch(() => {
+      setExperiences((prev) => [{ ...exp, id: generateId() }, ...prev]);
+    });
   }, []);
   const updateExperience = useCallback((id: string, updates: Partial<AdminExperience>) => {
     setExperiences((prev) => prev.map((e) => (e.id === id ? { ...e, ...updates } : e)));
+    const dbUpdates: Record<string, unknown> = {};
+    if (updates.title !== undefined) dbUpdates.title = updates.title;
+    if (updates.type !== undefined) dbUpdates.type = updates.type;
+    if (updates.price !== undefined) dbUpdates.price = updates.price === 'N/A' ? null : parseFloat(updates.price) || null;
+    if (updates.availability !== undefined) dbUpdates.availability = updates.availability;
+    experiencesRepository.update(id, dbUpdates as any).catch(() => {});
   }, []);
   const deleteExperience = useCallback((id: string) => {
     setExperiences((prev) => prev.filter((e) => e.id !== id));
+    experiencesRepository.delete(id).catch(() => {});
+  }, []);
+
+  // ----- CRUD: Experience Requests -----
+  const updateExperienceRequest = useCallback((id: string, status: 'approved' | 'declined' | 'completed') => {
+    setExperienceRequests((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
+    experienceRequestsRepository.updateStatus(id, status).catch(() => {});
   }, []);
 
   // ----- CRUD: Conversations -----
@@ -584,24 +700,30 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // ----- Settings updates -----
   const updateWebsiteSettings = useCallback((updates: Partial<WebsiteSettings>) => {
     setWebsiteSettings((prev) => ({ ...prev, ...updates }));
+    siteSettingsRepository.upsert('website', updates as Record<string, unknown>).catch(() => {});
   }, []);
   const updateBranding = useCallback((updates: Partial<BrandingSettings>) => {
     setBranding((prev) => ({ ...prev, ...updates }));
+    siteSettingsRepository.upsert('branding', updates as Record<string, unknown>).catch(() => {});
   }, []);
   const updateSecuritySettings = useCallback((updates: Partial<SecuritySettings>) => {
     setSecuritySettings((prev) => ({ ...prev, ...updates }));
+    siteSettingsRepository.upsert('security', updates as Record<string, unknown>).catch(() => {});
   }, []);
   const updateBackupSettings = useCallback((updates: Partial<BackupSettings>) => {
     setBackupSettings((prev) => ({ ...prev, ...updates }));
   }, []);
   const updateEmailSettings = useCallback((updates: Partial<EmailSettings>) => {
     setEmailSettings((prev) => ({ ...prev, ...updates }));
+    siteSettingsRepository.upsert('email', updates as Record<string, unknown>).catch(() => {});
   }, []);
   const updateSEOSettings = useCallback((updates: Partial<SEOSettings>) => {
     setSeoSettings((prev) => ({ ...prev, ...updates }));
+    siteSettingsRepository.upsert('seo', updates as Record<string, unknown>).catch(() => {});
   }, []);
   const updateIntegrations = useCallback((updates: Partial<IntegrationSettings>) => {
     setIntegrations((prev) => ({ ...prev, ...updates }));
+    siteSettingsRepository.upsert('integrations', updates as Record<string, unknown>).catch(() => {});
   }, []);
 
   // ----- Stats -----
@@ -609,14 +731,14 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     totalMembers: members.length,
     activeMemberships: members.filter((m) => m.status === 'active').length,
     pendingApplications: applications.filter((a) => a.status === 'pending').length,
-    fanChatMessages: conversations.filter((c) => c.type === 'fan').length * 12,
-    businessEnquiries: conversations.filter((c) => c.type === 'business').length,
+    fanChatMessages: fanMessageCount,
+    businessEnquiries: contactMessages.length,
     experienceRequests: experienceRequests.length,
-    journalArticles: pages.filter((p) => p.title.toLowerCase().includes('journal')).length * 4 || 0,
-    galleryImages: media.filter((m) => m.type === 'image').length,
+    journalArticles: journalArticleCount,
+    galleryImages: galleryCount,
     mediaItems: media.length,
-    websiteVisitors: 45230 + payments.length * 12,
-  }), [members, applications, conversations, experienceRequests, pages, media, payments]);
+    websiteVisitors: 45230,
+  }), [members, applications, experienceRequests, contactMessages, media, fanMessageCount, journalArticleCount, galleryCount]);
 
   // ----- Global admin search -----
   const globalAdminSearch = useCallback((query: string): SearchResult[] => {
@@ -644,12 +766,13 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const value: AdminContextType = useMemo(() => ({
     members, plans, applications, experiences, experienceRequests,
     conversations, contactMessages, notifications, media, payments, pages,
+    emailTemplates,
     stats, websiteSettings, branding, securitySettings, backupSettings,
     emailSettings, seoSettings, integrations, loading,
     addMember, updateMember, deleteMember,
     addPlan, updatePlan, deletePlan,
     addApplication, updateApplication, deleteApplication,
-    addExperience, updateExperience, deleteExperience,
+    addExperience, updateExperience, deleteExperience, updateExperienceRequest,
     addConversation, updateConversation, deleteConversation, sendConversationMessage,
     addContactMessage, updateContactMessage, deleteContactMessage,
     addNotification, updateNotification, deleteNotification,
@@ -662,12 +785,13 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }), [
     members, plans, applications, experiences, experienceRequests,
     conversations, contactMessages, notifications, media, payments, pages,
+    emailTemplates,
     stats, websiteSettings, branding, securitySettings, backupSettings,
     emailSettings, seoSettings, integrations, loading,
     addMember, updateMember, deleteMember,
     addPlan, updatePlan, deletePlan,
     addApplication, updateApplication, deleteApplication,
-    addExperience, updateExperience, deleteExperience,
+    addExperience, updateExperience, deleteExperience, updateExperienceRequest,
     addConversation, updateConversation, deleteConversation, sendConversationMessage,
     addContactMessage, updateContactMessage, deleteContactMessage,
     addNotification, updateNotification, deleteNotification,

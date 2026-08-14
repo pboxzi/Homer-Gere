@@ -16,6 +16,10 @@
 }
 
 @layer base {
+  html, body {
+    overflow-x: hidden;
+  }
+
   body {
     font-family: 'Outfit', sans-serif;
     font-weight: 400;

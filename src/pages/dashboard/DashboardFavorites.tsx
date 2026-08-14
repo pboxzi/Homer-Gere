@@ -40,10 +40,10 @@ export const DashboardFavorites: React.FC = () => {
               <div className="aspect-square overflow-hidden bg-[#F3F1ED]">
                 <img src={f.src} alt={f.alt} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" referrerPolicy="no-referrer" loading="lazy" />
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
               <button
                 onClick={() => toggleFavorite(f)}
-                className="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 flex items-center justify-center text-[#DC2626] opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer hover:bg-white"
+                className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center text-[#DC2626] md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 cursor-pointer hover:bg-white shadow-sm"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
