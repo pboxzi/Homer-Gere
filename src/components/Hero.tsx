@@ -47,7 +47,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreJourney, onViewProject, onO
             <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F7] via-[#FAF9F7]/20 to-transparent lg:hidden pointer-events-none" />
           </div>
           {/* Left Side — Editorial Content */}
-          <div className="relative z-10 p-6 sm:p-10 md:p-14 lg:p-16 lg:pt-24 lg:pb-12 w-full lg:w-[48%] flex flex-col items-start justify-between h-full space-y-6 lg:space-y-0">
+          <div className="relative z-10 p-6 sm:p-10 md:p-14 lg:p-16 lg:pt-36 lg:pb-16 w-full lg:w-[48%] flex flex-col items-start justify-between h-full space-y-6 lg:space-y-0">
             <div className="flex flex-col items-start gap-5 sm:gap-6 max-w-xl">
               {heroTitle && (
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-editorial text-[#1C1917] tracking-tight leading-tight">
