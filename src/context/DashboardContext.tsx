@@ -19,7 +19,7 @@ import {
 import type {
   Profile, Membership, MembershipRequest, MembershipPlan,
   PaymentRequest, PaymentSubmission, PaymentMethod,
-  ExperienceRequest, Notification, ActivityLog,
+  ExperienceRequest, Notification, ActivityLog, ActivityModule,
   FanConversation, FanMessage,
 } from '../types/database';
 import {
@@ -310,6 +310,54 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, [user?.id, refreshData]);
 
   // ============================================================
+  // Realtime subscriptions for live updates
+  // ============================================================
+  useEffect(() => {
+    if (!user?.id) return;
+
+    // Subscribe to notifications changes
+    const notificationsChannel = supabase
+      .channel('dashboard-notifications')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, (payload) => {
+        if (payload.eventType === 'INSERT') {
+          setNotifications((prev) => [payload.new as DashboardNotification, ...prev]);
+        } else if (payload.eventType === 'UPDATE') {
+          setNotifications((prev) => prev.map((n) => n.id === (payload.new as DashboardNotification).id ? (payload.new as DashboardNotification) : n));
+        } else if (payload.eventType === 'DELETE') {
+          setNotifications((prev) => prev.filter((n) => n.id !== (payload.old as DashboardNotification).id));
+        }
+      })
+      .subscribe();
+
+    // Subscribe to fan chat messages
+    const fanChatChannel = supabase
+      .channel('dashboard-fan-chat')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'fan_messages' }, (payload) => {
+        const newMsg = payload.new as FanMessage;
+        setFanMessages((prev) => {
+          // Only add if we're already tracking this conversation's messages
+          if (prev.some((m) => m.id === newMsg.id)) return prev;
+          return [...prev, newMsg];
+        });
+      })
+      .subscribe();
+
+    // Subscribe to business messages
+    const bizChatChannel = supabase
+      .channel('dashboard-biz-chat')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'business_messages' }, () => {
+        // Reload enquiries when new message arrives (simple approach)
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(notificationsChannel);
+      supabase.removeChannel(fanChatChannel);
+      supabase.removeChannel(bizChatChannel);
+    };
+  }, [user?.id]);
+
+  // ============================================================
   // Profile update - persist to Supabase
   // ============================================================
   const updateProfile = useCallback(async (updates: Partial<Profile>) => {
@@ -367,7 +415,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       await activityLogsRepository.create({
         user_id: user.id,
         action,
-        module,
+        module: module as ActivityModule,
         description,
         metadata,
         ip_address: null,

@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { Crown, Check, X, Shield, Zap, ArrowRight, Calendar, CreditCard, Clock, Star } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import { useSiteContent } from '../../context/SiteContentContext';
+import type { DashboardSection } from '../../data/dashboardData';
 
 const TIER_ICONS: Record<string, React.ReactNode> = {
   silver: <Shield className="w-4 h-4" />,
@@ -17,7 +18,7 @@ const TIER_COLORS: Record<string, string> = {
   platinum: '#8B5CF6',
 };
 
-export const DashboardMembership: React.FC<{ onNavigate?: (section: string) => void }> = ({ onNavigate }) => {
+export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSection) => void }> = ({ onNavigate }) => {
   const navigate = useNavigate();
   const { membership, membershipPlan, membershipRequests } = useDashboard();
   const { membershipTiers } = useSiteContent();
@@ -116,7 +117,7 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: string) => v
 
           {/* Actions */}
           <div className="flex gap-3">
-            <button onClick={() => navigate('/membership')} className="flex-1 py-3 bg-[#A6852F] text-white rounded-2xl text-sm font-medium hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#A6852F]/25">
+            <button onClick={() => setActiveTab('plans')} className="flex-1 py-3 bg-[#A6852F] text-white rounded-2xl text-sm font-medium hover:opacity-90 transition-all cursor-pointer flex items-center justify-center gap-2 shadow-lg shadow-[#A6852F]/25">
               <Crown className="w-4 h-4" /> {membership?.status === 'active' ? 'Upgrade Plan' : 'Get Membership'}
             </button>
             <button onClick={() => onNavigate?.('membership-card')} className="px-4 py-3 border border-[#A6852F]/30 rounded-2xl text-sm font-medium text-[#A6852F] hover:bg-[#A6852F]/5 transition-all cursor-pointer shadow-sm shadow-[#A6852F]/10">
