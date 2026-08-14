@@ -24,6 +24,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import type { AdminSection } from '../../data/adminData';
+import { useAuth } from '../../context/AuthContext';
 import {
   journeyRepository,
   journalRepository,
@@ -116,6 +117,7 @@ function StatsBar({ total, published, draft, archived }: { total: number; publis
 // Journey CMS
 // ============================================================
 function JourneyCMS() {
+  const { user } = useAuth();
   const [items, setItems] = useState<JourneyEntry[]>([]);
   const [deletedItems, setDeletedItems] = useState<JourneyEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -187,7 +189,7 @@ function JourneyCMS() {
     try {
       const created = await journeyRepository.create({ title: addForm.title, description: addForm.description, year: addForm.year, highlight: addForm.highlight, status: addForm.status, sort_order: 0 });
       setItems(prev => prev.map(i => i.id === optimistic.id ? created : i));
-      await auditLogsRepository.create({ user_id: null, action: 'create', table_name: 'journey_entries', record_id: created.id, new_data: JSON.parse(JSON.stringify(created)), module: 'journey' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'create', table_name: 'journey_entries', record_id: created.id, new_data: JSON.parse(JSON.stringify(created)), module: 'journey' });
       showSuccess('Journey entry created');
     } catch { setItems(prev => prev.filter(i => i.id !== optimistic.id)); }
   };
@@ -198,7 +200,7 @@ function JourneyCMS() {
     setEditingId(null);
     try {
       await journeyRepository.update(id, editForm);
-      await auditLogsRepository.create({ user_id: null, action: 'update', table_name: 'journey_entries', record_id: id, old_data: JSON.parse(JSON.stringify(original)), new_data: JSON.parse(JSON.stringify(editForm)), module: 'journey' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'update', table_name: 'journey_entries', record_id: id, old_data: JSON.parse(JSON.stringify(original)), new_data: JSON.parse(JSON.stringify(editForm)), module: 'journey' });
       showSuccess('Journey entry updated');
     } catch { /* optimistic */ }
   };
@@ -210,7 +212,7 @@ function JourneyCMS() {
     setDeleteConfirmId(null);
     try {
       await journeyRepository.softDelete(id);
-      await auditLogsRepository.create({ user_id: null, action: 'delete', table_name: 'journey_entries', record_id: id, old_data: JSON.parse(JSON.stringify(item)), module: 'journey' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'delete', table_name: 'journey_entries', record_id: id, old_data: JSON.parse(JSON.stringify(item)), module: 'journey' });
       showSuccess('Moved to trash');
     } catch { /* optimistic */ }
   };
@@ -221,7 +223,7 @@ function JourneyCMS() {
     if (item) setItems(prev => [item, ...prev]);
     try {
       await journeyRepository.restore(id);
-      await auditLogsRepository.create({ user_id: null, action: 'update', table_name: 'journey_entries', record_id: id, module: 'journey' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'update', table_name: 'journey_entries', record_id: id, module: 'journey' });
       showSuccess('Restored');
     } catch { /* optimistic */ }
   };
@@ -372,6 +374,7 @@ function JourneyCMS() {
 // Projects CMS
 // ============================================================
 function ProjectsCMS() {
+  const { user } = useAuth();
   const [items, setItems] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -422,7 +425,7 @@ function ProjectsCMS() {
       setItems(prev => [created, ...prev]);
       setShowAddForm(false);
       setAddForm({ title: '', slug: '', year: new Date().getFullYear(), type: 'film', status: 'announced', tagline: '', synopsis: '', genre: '', director: '' });
-      await auditLogsRepository.create({ user_id: null, action: 'create', table_name: 'projects', record_id: created.id, new_data: JSON.parse(JSON.stringify(created)), module: 'projects' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'create', table_name: 'projects', record_id: created.id, new_data: JSON.parse(JSON.stringify(created)), module: 'projects' });
       showSuccess('Project created');
     } catch { /* empty */ }
   };
@@ -433,7 +436,7 @@ function ProjectsCMS() {
     setEditingId(null);
     try {
       await projectsRepository.update(id, editForm as any);
-      await auditLogsRepository.create({ user_id: null, action: 'update', table_name: 'projects', record_id: id, old_data: JSON.parse(JSON.stringify(original)), new_data: JSON.parse(JSON.stringify(editForm)), module: 'projects' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'update', table_name: 'projects', record_id: id, old_data: JSON.parse(JSON.stringify(original)), new_data: JSON.parse(JSON.stringify(editForm)), module: 'projects' });
       showSuccess('Project updated');
     } catch { /* optimistic */ }
   };
@@ -444,7 +447,7 @@ function ProjectsCMS() {
     setDeleteConfirmId(null);
     try {
       await projectsRepository.softDelete(id);
-      await auditLogsRepository.create({ user_id: null, action: 'delete', table_name: 'projects', record_id: id, old_data: JSON.parse(JSON.stringify(item)), module: 'projects' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'delete', table_name: 'projects', record_id: id, old_data: JSON.parse(JSON.stringify(item)), module: 'projects' });
       showSuccess('Moved to trash');
     } catch { /* optimistic */ }
   };
@@ -566,6 +569,7 @@ function ProjectsCMS() {
 // Gallery CMS
 // ============================================================
 function GalleryCMS() {
+  const { user } = useAuth();
   const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -615,7 +619,7 @@ function GalleryCMS() {
       setPhotos(prev => [created as any, ...prev]);
       setShowAddForm(false);
       setAddForm({ src: '', alt: '', caption: '', category: 'portraits', photographer: '', featured: false });
-      await auditLogsRepository.create({ user_id: null, action: 'create', table_name: 'gallery_photos', record_id: created.id, new_data: JSON.parse(JSON.stringify(created)), module: 'gallery' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'create', table_name: 'gallery_photos', record_id: created.id, new_data: JSON.parse(JSON.stringify(created)), module: 'gallery' });
       showSuccess('Photo added');
     } catch { /* empty */ }
   };
@@ -626,7 +630,7 @@ function GalleryCMS() {
     setEditingId(null);
     try {
       await galleryRepository.updatePhoto(id, editForm as any);
-      await auditLogsRepository.create({ user_id: null, action: 'update', table_name: 'gallery_photos', record_id: id, old_data: JSON.parse(JSON.stringify(original)), new_data: JSON.parse(JSON.stringify(editForm)), module: 'gallery' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'update', table_name: 'gallery_photos', record_id: id, old_data: JSON.parse(JSON.stringify(original)), new_data: JSON.parse(JSON.stringify(editForm)), module: 'gallery' });
       showSuccess('Photo updated');
     } catch { /* optimistic */ }
   };
@@ -637,7 +641,7 @@ function GalleryCMS() {
     setDeleteConfirmId(null);
     try {
       await galleryRepository.softDeletePhoto(id);
-      await auditLogsRepository.create({ user_id: null, action: 'delete', table_name: 'gallery_photos', record_id: id, old_data: JSON.parse(JSON.stringify(photo)), module: 'gallery' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'delete', table_name: 'gallery_photos', record_id: id, old_data: JSON.parse(JSON.stringify(photo)), module: 'gallery' });
       showSuccess('Moved to trash');
     } catch { /* optimistic */ }
   };
@@ -760,6 +764,7 @@ function GalleryCMS() {
 // Media CMS (Videos, Podcasts, Press)
 // ============================================================
 function MediaCMS() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'videos' | 'podcasts' | 'press'>('videos');
   const [videos, setVideos] = useState<MediaVideo[]>([]);
   const [podcasts, setPodcasts] = useState<MediaPodcast[]>([]);
@@ -811,15 +816,15 @@ function MediaCMS() {
       if (activeTab === 'videos') {
         const created = await mediaRepository.createVideo({ title: addForm.title, url: addForm.url, description: addForm.description || null, thumbnail: addForm.thumbnail || null, source: null, category: addForm.category || null, duration: null, date: null, featured: false, sort_order: videos.length, status: 'published' });
         setVideos(prev => [created, ...prev]);
-        await auditLogsRepository.create({ user_id: null, action: 'create', table_name: 'media_videos', record_id: created.id, new_data: JSON.parse(JSON.stringify(created)), module: 'media' });
+        await auditLogsRepository.create({ user_id: user?.id || null, action: 'create', table_name: 'media_videos', record_id: created.id, new_data: JSON.parse(JSON.stringify(created)), module: 'media' });
       } else if (activeTab === 'podcasts') {
         const created = await mediaRepository.createPodcast({ episode_title: addForm.title, show_name: addForm.category || 'Unknown', url: addForm.url, description: addForm.description || null, cover_art: addForm.thumbnail || null, date: null, sort_order: podcasts.length, status: 'published' });
         setPodcasts(prev => [created, ...prev]);
-        await auditLogsRepository.create({ user_id: null, action: 'create', table_name: 'media_podcasts', record_id: created.id, new_data: JSON.parse(JSON.stringify(created)), module: 'media' });
+        await auditLogsRepository.create({ user_id: user?.id || null, action: 'create', table_name: 'media_podcasts', record_id: created.id, new_data: JSON.parse(JSON.stringify(created)), module: 'media' });
       } else {
         const created = await mediaRepository.createPress({ headline: addForm.title, publisher: addForm.category || 'Unknown', url: addForm.url, summary: addForm.description || null, image: addForm.thumbnail || null, date: null, sort_order: press.length, status: 'published' });
         setPress(prev => [created, ...prev]);
-        await auditLogsRepository.create({ user_id: null, action: 'create', table_name: 'media_press', record_id: created.id, new_data: JSON.parse(JSON.stringify(created)), module: 'media' });
+        await auditLogsRepository.create({ user_id: user?.id || null, action: 'create', table_name: 'media_press', record_id: created.id, new_data: JSON.parse(JSON.stringify(created)), module: 'media' });
       }
       setShowAddForm(false);
       setAddForm({ title: '', url: '', description: '', category: '', thumbnail: '' });
@@ -840,7 +845,7 @@ function MediaCMS() {
         await mediaRepository.updatePress(id, { headline: editForm.title, url: editForm.url, summary: editForm.description || null, image: editForm.thumbnail || null });
         setPress(prev => prev.map(p => p.id === id ? { ...p, headline: editForm.title, url: editForm.url, summary: editForm.description || null, image: editForm.thumbnail || null } : p));
       }
-      await auditLogsRepository.create({ user_id: null, action: 'update', table_name: activeTab === 'videos' ? 'media_videos' : activeTab === 'podcasts' ? 'media_podcasts' : 'media_press', record_id: id, new_data: JSON.parse(JSON.stringify(editForm)), module: 'media' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'update', table_name: activeTab === 'videos' ? 'media_videos' : activeTab === 'podcasts' ? 'media_podcasts' : 'media_press', record_id: id, new_data: JSON.parse(JSON.stringify(editForm)), module: 'media' });
       showSuccess('Updated');
     } catch { /* optimistic */ }
   };
@@ -851,7 +856,7 @@ function MediaCMS() {
       if (activeTab === 'videos') { await mediaRepository.softDeleteVideo(id); setVideos(prev => prev.filter(v => v.id !== id)); }
       else if (activeTab === 'podcasts') { await mediaRepository.softDeletePodcast(id); setPodcasts(prev => prev.filter(p => p.id !== id)); }
       else { await mediaRepository.softDeletePress(id); setPress(prev => prev.filter(p => p.id !== id)); }
-      await auditLogsRepository.create({ user_id: null, action: 'delete', table_name: activeTab === 'videos' ? 'media_videos' : activeTab === 'podcasts' ? 'media_podcasts' : 'media_press', record_id: id, module: 'media' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'delete', table_name: activeTab === 'videos' ? 'media_videos' : activeTab === 'podcasts' ? 'media_podcasts' : 'media_press', record_id: id, module: 'media' });
       showSuccess('Moved to trash');
     } catch { /* optimistic */ }
   };
@@ -964,6 +969,7 @@ function MediaCMS() {
 // Journal CMS
 // ============================================================
 function JournalCMS() {
+  const { user } = useAuth();
   const [articles, setArticles] = useState<JournalArticle[]>([]);
   const [deletedArticles, setDeletedArticles] = useState<JournalArticle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1025,7 +1031,7 @@ function JournalCMS() {
       setArticles(prev => [created, ...prev]);
       setShowAddForm(false);
       setAddForm({ title: '', excerpt: '', content: '', category: 'announcements', tags: '', status: 'draft', readTime: '5 min' });
-      await auditLogsRepository.create({ user_id: null, action: 'create', table_name: 'journal_articles', record_id: created.id, new_data: JSON.parse(JSON.stringify(created)), module: 'journal' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'create', table_name: 'journal_articles', record_id: created.id, new_data: JSON.parse(JSON.stringify(created)), module: 'journal' });
       showSuccess('Article created');
     } catch { /* empty */ }
   };
@@ -1036,7 +1042,7 @@ function JournalCMS() {
     setEditingId(null);
     try {
       await journalRepository.update(id, { title: editForm.title, excerpt: editForm.excerpt, content: editForm.content, category: editForm.category as any, status: editForm.status as any, tags: editForm.tags.split(',').map(t => t.trim()).filter(Boolean) as any });
-      await auditLogsRepository.create({ user_id: null, action: 'update', table_name: 'journal_articles', record_id: id, old_data: JSON.parse(JSON.stringify(original)), new_data: JSON.parse(JSON.stringify(editForm)), module: 'journal' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'update', table_name: 'journal_articles', record_id: id, old_data: JSON.parse(JSON.stringify(original)), new_data: JSON.parse(JSON.stringify(editForm)), module: 'journal' });
       showSuccess('Article updated');
     } catch { /* optimistic */ }
   };
@@ -1048,7 +1054,7 @@ function JournalCMS() {
     setDeleteConfirmId(null);
     try {
       await journalRepository.softDelete(id);
-      await auditLogsRepository.create({ user_id: null, action: 'delete', table_name: 'journal_articles', record_id: id, old_data: JSON.parse(JSON.stringify(article)), module: 'journal' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'delete', table_name: 'journal_articles', record_id: id, old_data: JSON.parse(JSON.stringify(article)), module: 'journal' });
       showSuccess('Moved to trash');
     } catch { /* optimistic */ }
   };
@@ -1198,6 +1204,7 @@ function JournalCMS() {
 // FAQ CMS
 // ============================================================
 function FaqCMS() {
+  const { user } = useAuth();
   const [faqs, setFaqs] = useState<Faq[]>([]);
   const [deletedFaqs, setDeletedFaqs] = useState<Faq[]>([]);
   const [loading, setLoading] = useState(true);
@@ -1251,7 +1258,7 @@ function FaqCMS() {
       setFaqs(prev => [...prev, created]);
       setShowAddForm(false);
       setAddForm({ question: '', answer: '', category: '', published: true });
-      await auditLogsRepository.create({ user_id: null, action: 'create', table_name: 'faqs', record_id: created.id, new_data: JSON.parse(JSON.stringify(created)), module: 'faqs' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'create', table_name: 'faqs', record_id: created.id, new_data: JSON.parse(JSON.stringify(created)), module: 'faqs' });
       showSuccess('FAQ created');
     } catch { /* empty */ }
   };
@@ -1262,7 +1269,7 @@ function FaqCMS() {
     setEditingId(null);
     try {
       await faqRepository.update(id, editForm);
-      await auditLogsRepository.create({ user_id: null, action: 'update', table_name: 'faqs', record_id: id, old_data: JSON.parse(JSON.stringify(original)), new_data: JSON.parse(JSON.stringify(editForm)), module: 'faqs' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'update', table_name: 'faqs', record_id: id, old_data: JSON.parse(JSON.stringify(original)), new_data: JSON.parse(JSON.stringify(editForm)), module: 'faqs' });
       showSuccess('FAQ updated');
     } catch { /* optimistic */ }
   };
@@ -1274,7 +1281,7 @@ function FaqCMS() {
     setDeleteConfirmId(null);
     try {
       await faqRepository.softDelete(id);
-      await auditLogsRepository.create({ user_id: null, action: 'delete', table_name: 'faqs', record_id: id, old_data: JSON.parse(JSON.stringify(faq)), module: 'faqs' });
+      await auditLogsRepository.create({ user_id: user?.id || null, action: 'delete', table_name: 'faqs', record_id: id, old_data: JSON.parse(JSON.stringify(faq)), module: 'faqs' });
       showSuccess('Moved to trash');
     } catch { /* optimistic */ }
   };

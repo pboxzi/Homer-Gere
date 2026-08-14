@@ -89,6 +89,11 @@ export default function ForgotPasswordPage() {
 
       <main className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-8">
         <div className="w-full max-w-md">
+          <div className="flex items-center gap-2 mb-4">
+            <button onClick={() => navigate(-1)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E8E5DF]/80 bg-white/60 hover:bg-[#F3F1ED] text-[#57534E] hover:text-[#A6852F] transition-all text-xs font-medium cursor-pointer shadow-sm shadow-black/3">
+              <span className="text-sm">←</span> Return
+            </button>
+          </div>
           <motion.div
             className="text-center mb-10"
             initial={{ opacity: 0, y: 20 }}
@@ -175,14 +180,7 @@ export default function ForgotPasswordPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <button
-              onClick={() => navigate('/')}
-              className="text-xs text-[#57534E]/70 hover:text-[#A6852F] transition-colors duration-300 cursor-pointer"
-            >
-              ← Back to Homer Gere
-            </button>
-          </motion.div>
+          />
         </div>
       </main>
     </div>
