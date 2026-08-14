@@ -344,14 +344,6 @@ export const emailService = {
     });
   },
 
-  async membershipExpiring(to: string, variables: { full_name: string; plan_name: string; expiry_date: string; days_remaining: string }) {
-    return sendEmail({
-      to,
-      templateName: 'membership_expiring',
-      variables,
-    });
-  },
-
   // --- Phase 4: Experience Workflow ---
   async experienceApproved(to: string, variables: { full_name: string; experience_type: string; event_date: string }) {
     return sendEmail({

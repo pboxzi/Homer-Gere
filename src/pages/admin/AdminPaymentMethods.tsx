@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Search, ChevronLeft, ChevronRight, Plus, Edit2, Trash2, ToggleLeft, ToggleRight, CreditCard, Smartphone, Building2, HandCoins, Globe } from 'lucide-react';
 import { paymentMethodsRepository } from '../../lib/repositories';
-import type { PaymentMethod } from '../../types/database';
+import type { PaymentMethod, PaymentMethodType } from '../../types/database';
 
 const TYPE_ICONS: Record<string, typeof CreditCard> = {
   bank_transfer: Building2,
@@ -66,7 +66,7 @@ export default function AdminPaymentMethods() {
     setActionLoading(true);
     try {
       const data = {
-        name: form.name, type: form.type, country: form.country || null, currency: form.currency,
+        name: form.name, type: form.type as PaymentMethodType, country: form.country || null, currency: form.currency,
         account_name: form.accountName || null, account_number: form.accountNumber || null, bank_name: form.bankName || null,
         swift_code: form.swiftCode || null, routing_code: form.routingCode || null, mobile_number: form.mobileNumber || null,
         instructions: form.instructions || null, is_active: form.isActive, sort_order: form.sortOrder,

@@ -5,11 +5,11 @@ import type { PaymentSubmission, PaymentRequest } from '../../types/database';
 
 const PAGE_SIZE = 10;
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: typeof Clock }> = {
-  pending: { label: 'Pending', color: 'text-amber-700', bg: 'bg-amber-100', icon: AlertCircle },
-  verified: { label: 'Verified', color: 'text-green-700', bg: 'bg-green-100', icon: CheckCircle },
-  rejected: { label: 'Rejected', color: 'text-red-700', bg: 'bg-red-100', icon: XCircle },
-  needs_info: { label: 'Needs Info', color: 'text-orange-700', bg: 'bg-orange-100', icon: HelpCircle },
+const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+  pending: { label: 'Pending', color: 'text-amber-700', bg: 'bg-amber-100' },
+  verified: { label: 'Verified', color: 'text-green-700', bg: 'bg-green-100' },
+  rejected: { label: 'Rejected', color: 'text-red-700', bg: 'bg-red-100' },
+  needs_info: { label: 'Needs Info', color: 'text-orange-700', bg: 'bg-orange-100' },
 };
 
 const FILTER_TABS = ['all', 'pending', 'verified', 'rejected', 'needs_info'];

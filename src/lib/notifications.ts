@@ -54,6 +54,7 @@ export async function notify(params: NotifyParams): Promise<void> {
       message,
       link: link || null,
       read: false,
+      read_at: null,
       priority,
       category: category || null,
       action_link: link || null,
