@@ -42,14 +42,14 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1C1917] text-white font-body antialiased flex flex-col">
+    <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased flex flex-col">
       <SEO title="Admin Login" />
       <header className="px-5 sm:px-8 py-5">
         <button
           onClick={() => navigate('/')}
           className="group flex flex-col text-left focus:outline-none cursor-pointer"
         >
-          <span className="font-editorial tracking-[0.06em] text-white group-hover:text-[#A6852F] transition-all duration-500 uppercase leading-none text-lg sm:text-xl">
+          <span className="font-editorial tracking-[0.06em] text-[#1C1917] group-hover:text-[#A6852F] transition-all duration-500 uppercase leading-none text-lg sm:text-xl">
             Homer Gere
           </span>
           <span className="font-medium tracking-[0.35em] text-[#A6852F]/70 uppercase text-[10px] sm:text-[11px] mt-1">
@@ -66,13 +66,13 @@ export default function AdminLoginPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="w-14 h-14 rounded-2xl bg-[#A6852F]/20 flex items-center justify-center mx-auto mb-6">
+            <div className="w-14 h-14 rounded-2xl bg-[#A6852F]/15 flex items-center justify-center mx-auto mb-6">
               <Shield className="w-6 h-6 text-[#A6852F]" />
             </div>
-            <h1 className="text-3xl sm:text-4xl font-editorial text-white tracking-tight mb-3">
+            <h1 className="text-3xl sm:text-4xl font-editorial text-[#1C1917] tracking-tight mb-3">
               Admin Access
             </h1>
-            <p className="text-sm text-white/50 leading-relaxed max-w-sm mx-auto">
+            <p className="text-sm text-[#57534E] leading-relaxed max-w-sm mx-auto">
               Authorized administrators only. All access is logged and monitored.
             </p>
           </motion.div>
@@ -85,21 +85,21 @@ export default function AdminLoginPage() {
             transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           >
             <div>
-              <label className="block text-xs font-medium text-white/50 uppercase tracking-[0.05em] mb-2">
+              <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">
                 Email Address
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setError(''); }}
-                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300"
+                className="w-full px-4 py-3 rounded-xl bg-white border border-[#E8E5DF] text-sm text-[#1C1917] placeholder:text-[#A8A29E] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F]/40 transition-all duration-300"
                 placeholder="admin@homergere.com"
                 autoComplete="email"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-white/50 uppercase tracking-[0.05em] mb-2">
+              <label className="block text-xs font-medium text-[#57534E] uppercase tracking-[0.05em] mb-2">
                 Password
               </label>
               <div className="relative">
@@ -107,14 +107,14 @@ export default function AdminLoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => { setPassword(e.target.value); setError(''); }}
-                  className="w-full px-4 py-3 pr-11 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 transition-all duration-300"
+                  className="w-full px-4 py-3 pr-11 rounded-xl bg-white border border-[#E8E5DF] text-sm text-[#1C1917] placeholder:text-[#A8A29E] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F]/40 transition-all duration-300"
                   placeholder="Enter your password"
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition-colors duration-200 cursor-pointer p-2.5"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#A8A29E] hover:text-[#57534E] transition-colors duration-200 cursor-pointer p-2.5"
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -124,7 +124,7 @@ export default function AdminLoginPage() {
 
             {error && (
               <motion.p
-                className="text-xs text-red-400"
+                className="text-xs text-red-500"
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
               >
@@ -149,13 +149,13 @@ export default function AdminLoginPage() {
           </motion.form>
 
           <motion.div
-            className="mt-8 flex items-start gap-3 p-4 rounded-xl bg-white/5 border border-white/10"
+            className="mt-8 flex items-start gap-3 p-4 rounded-xl bg-[#F3F1ED] border border-[#E8E5DF]/60"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
             <Shield className="w-4 h-4 text-[#A6852F] mt-0.5 shrink-0" />
-            <p className="text-xs text-white/40 leading-relaxed">
+            <p className="text-xs text-[#78716C] leading-relaxed">
               This portal is restricted to authorized administrators. Unauthorized access attempts are logged and reported.
             </p>
           </motion.div>
@@ -168,9 +168,9 @@ export default function AdminLoginPage() {
           >
             <button
               onClick={() => navigate('/')}
-              className="text-xs text-white/30 hover:text-white/60 transition-colors duration-300 cursor-pointer"
+              className="text-xs text-[#A8A29E] hover:text-[#57534E] transition-colors duration-300 cursor-pointer"
             >
-              ← Back to Homer Gere
+              &larr; Back to Homer Gere
             </button>
           </motion.div>
         </div>

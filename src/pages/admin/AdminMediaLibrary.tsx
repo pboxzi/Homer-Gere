@@ -575,16 +575,16 @@ export const AdminMediaLibrary: React.FC<Props> = ({ activeSection }) => {
               className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50" onClick={() => setPreviewItem(null)} />
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
               className="fixed inset-0 z-50 flex items-center justify-center p-4">
-              <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden" onClick={(e) => e.stopPropagation()}>
-                <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E5DF]/40">
-                  <p className="text-sm font-medium text-[#1C1917] truncate">{previewItem.filename}</p>
-                  <button onClick={() => setPreviewItem(null)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] cursor-pointer">
+              <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E5DF]/40 shrink-0">
+                  <p className="text-sm font-medium text-[#1C1917] truncate pr-3">{previewItem.filename}</p>
+                  <button onClick={() => setPreviewItem(null)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] shrink-0 cursor-pointer">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
-                <div className="bg-[#F3F1ED]/60 flex items-center justify-center min-h-[300px] max-h-[400px] overflow-hidden">
+                <div className="bg-[#F3F1ED]/60 flex items-center justify-center min-h-[200px] max-h-[50vh] overflow-hidden shrink-0">
                   {previewItem.file_type === 'image' ? (
-                    <img src={previewItem.public_url} alt={previewItem.filename} referrerPolicy="no-referrer" className="max-w-full max-h-[400px] object-contain" />
+                    <img src={previewItem.public_url} alt={previewItem.filename} referrerPolicy="no-referrer" className="max-w-full max-h-[50vh] object-contain" />
                   ) : (
                     <div className="py-20 text-center">
                       {previewItem.file_type === 'video' ? <Film className="w-16 h-16 text-[#8B5CF6]/30 mx-auto" /> : <FileText className="w-16 h-16 text-[#3B82F6]/30 mx-auto" />}
@@ -592,7 +592,7 @@ export const AdminMediaLibrary: React.FC<Props> = ({ activeSection }) => {
                     </div>
                   )}
                 </div>
-                <div className="px-5 py-4 border-t border-[#E8E5DF]/40">
+                <div className="px-5 py-4 border-t border-[#E8E5DF]/40 overflow-y-auto">
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                     <div>
                       <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Size</p>
@@ -641,21 +641,21 @@ export const AdminMediaLibrary: React.FC<Props> = ({ activeSection }) => {
               className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50" onClick={() => { setReplaceItem(null); setReplaceFile(null); }} />
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
               className="fixed inset-0 z-50 flex items-center justify-center p-4">
-              <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden" onClick={(e) => e.stopPropagation()}>
-                <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E5DF]/40">
+              <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E5DF]/40 shrink-0">
                   <p className="text-sm font-medium text-[#1C1917]">Replace Image</p>
-                  <button onClick={() => { setReplaceItem(null); setReplaceFile(null); }} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] cursor-pointer">
+                  <button onClick={() => { setReplaceItem(null); setReplaceFile(null); }} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] shrink-0 cursor-pointer">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
-                <div className="p-5 space-y-4">
+                <div className="p-5 space-y-4 overflow-y-auto">
                   <div className="aspect-video rounded-xl overflow-hidden bg-[#F3F1ED]">
                     <img src={replaceItem.public_url} alt="Current" referrerPolicy="no-referrer" className="w-full h-full object-contain" />
                   </div>
                   <div className="rounded-xl border border-dashed border-[#A6852F]/40 p-4 text-center">
                     {replaceFile ? (
                       <div className="space-y-2">
-                        <p className="text-xs text-[#1C1917]">{replaceFile.name}</p>
+                        <p className="text-xs text-[#1C1917] truncate">{replaceFile.name}</p>
                         <p className="text-[10px] text-[#57534E]">{(replaceFile.size / 1024).toFixed(0)} KB</p>
                       </div>
                     ) : (
@@ -692,9 +692,9 @@ export const AdminMediaLibrary: React.FC<Props> = ({ activeSection }) => {
               className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50" onClick={() => setDeleteConfirm(null)} />
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
               className="fixed inset-0 z-50 flex items-center justify-center p-4">
-              <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-5" onClick={(e) => e.stopPropagation()}>
+              <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full max-h-[90vh] overflow-y-auto p-5" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-[#DC2626]/10 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-[#DC2626]/10 flex items-center justify-center shrink-0">
                     <Trash2 className="w-5 h-5 text-[#DC2626]" />
                   </div>
                   <div>
