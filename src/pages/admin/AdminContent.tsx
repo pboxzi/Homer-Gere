@@ -106,7 +106,7 @@ function StatsBar({ total, published, draft, archived }: { total: number; publis
       ].map((stat) => (
         <div key={stat.label} className="rounded-xl border p-3 text-center transition-all duration-500 hover:shadow-lg hover:-translate-y-0.5" style={{ backgroundColor: `${stat.color}40`, borderColor: `${stat.color}90`, boxShadow: `0 0 40px ${stat.color}35` }}>
           <p className="text-lg font-medium" style={{ color: stat.color }}>{stat.value}</p>
-          <p className="text-[10px] text-[#57534E] uppercase tracking-wider">{stat.label}</p>
+          <p className="text-[10px] font-medium uppercase tracking-wider" style={{ color: stat.color, opacity: 0.7 }}>{stat.label}</p>
         </div>
       ))}
     </div>

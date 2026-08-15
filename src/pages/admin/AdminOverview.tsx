@@ -287,7 +287,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
               <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: card.color }} />
             </div>
             <p className="text-xl font-editorial leading-none" style={{ color: card.color }}>{card.value}</p>
-            <p className="text-[10px] text-[#57534E] mt-1 font-medium">{card.label}</p>
+            <p className="text-[10px] mt-1 font-medium" style={{ color: card.color, opacity: 0.7 }}>{card.label}</p>
           </motion.div>
         ))}
       </div>
@@ -423,7 +423,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
                   <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${item.color}45`, color: item.color }}>
                     <item.icon className="w-3.5 h-3.5" />
                   </div>
-                  <span className="text-[10px] font-medium text-[#57534E]">{item.label}</span>
+                  <span className="text-[10px] font-medium" style={{ color: item.color }}>{item.label}</span>
                 </div>
                 <p className="text-lg font-editorial leading-none" style={{ color: item.color }}>{item.value}</p>
               </div>

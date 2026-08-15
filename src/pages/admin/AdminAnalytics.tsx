@@ -131,7 +131,7 @@ function VisitorsSection() {
               </div>
             </div>
             <p className="text-xl font-bold" style={{ color: card.color }}>{card.value}</p>
-            <p className="text-[11px] text-[#57534E] mt-0.5">{card.label}</p>
+            <p className="text-[11px] mt-0.5 font-medium" style={{ color: card.color, opacity: 0.7 }}>{card.label}</p>
           </motion.div>
         ))}
       </div>
@@ -299,7 +299,7 @@ function MembershipStatsSection() {
               </div>
             </div>
             <p className="text-xl font-bold text-[#1C1917]">{card.value}</p>
-            <p className="text-[11px] text-[#57534E] mt-0.5">{card.label}</p>
+            <p className="text-[11px] mt-0.5 font-medium" style={{ color: card.color, opacity: 0.7 }}>{card.label}</p>
           </motion.div>
         ))}
       </div>
@@ -474,7 +474,7 @@ function ExperienceStatsSection() {
               </div>
             </div>
             <p className="text-xl font-bold text-[#1C1917]">{card.value}</p>
-            <p className="text-[11px] text-[#57534E] mt-0.5">{card.label}</p>
+            <p className="text-[11px] mt-0.5 font-medium" style={{ color: card.color, opacity: 0.7 }}>{card.label}</p>
           </motion.div>
         ))}
       </div>
@@ -604,7 +604,7 @@ function ChatStatsSection() {
               </div>
             </div>
             <p className="text-xl font-bold text-[#1C1917]">{card.value}</p>
-            <p className="text-[11px] text-[#57534E] mt-0.5">{card.label}</p>
+            <p className="text-[11px] mt-0.5 font-medium" style={{ color: card.color, opacity: 0.7 }}>{card.label}</p>
           </motion.div>
         ))}
       </div>
