@@ -119,7 +119,11 @@ export const DashboardChat: React.FC = () => {
         .update({ is_read: true, read_at: new Date().toISOString() })
         .eq('conversation_id', activeConvId)
         .eq('is_read', false)
-        .neq('sender', 'member');
+        .neq('sender', 'member')
+        .then(() => {
+          supabase.from('fan_conversations').update({ unread_count: 0 }).eq('id', activeConvId);
+          setConversations((prev) => prev.map((c) => c.id === activeConvId ? { ...c, unread_count: 0 } : c));
+        });
     }
   }, [activeConvId, loadMessages]);
 
