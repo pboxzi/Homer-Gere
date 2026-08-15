@@ -370,7 +370,7 @@ export default function AdminMembershipRequests() {
               <div><span className="text-[#6b7280]">Currency:</span> <span className="font-medium">{selected.currency}</span></div>
               <div><span className="text-[#6b7280]">Notes:</span> <span className="font-medium">{selected.notes || '—'}</span></div>
               <div><span className="text-[#6b7280]">Status:</span> <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${(STATUS_CONFIG[selected.status] || STATUS_CONFIG.pending).bg} ${(STATUS_CONFIG[selected.status] || STATUS_CONFIG.pending).color}`}>{(STATUS_CONFIG[selected.status] || STATUS_CONFIG.pending).label}</span></div>
-              <div><span className="text-[#6b7280]">Requested:</span> <span className="font-medium">{new Date(selected.requested_at).toLocaleString()}</span></div>
+              <div><span className="text-[#6b7280]">Requested:</span> <span className="font-medium">{formatDate(selected.requested_at)}</span></div>
               {selected.admin_notes && <div><span className="text-[#6b7280]">Admin Notes:</span> <span className="font-medium">{selected.admin_notes}</span></div>}
               {selected.rejection_reason && <div><span className="text-[#6b7280]">Rejection Reason:</span> <span className="font-medium text-red-600">{selected.rejection_reason}</span></div>}
             </div>

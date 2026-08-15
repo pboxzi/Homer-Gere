@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Clock, CheckCircle, XCircle, AlertCircle, CreditCard, ChevronDown, ChevronUp } from 'lucide-react';
 import { membershipRequestsRepository } from '../../lib/repositories';
 import { useAuth } from '../../context/AuthContext';
+import { formatDate } from '../../utils/formatDate';
 import type { MembershipRequest } from '../../types/database';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: typeof Clock; step: number }> = {
@@ -79,7 +80,7 @@ export default function DashboardMembershipRequests() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div><span className="text-[#6b7280]">Requested:</span><div className="font-medium">{new Date(activeRequest.requested_at).toLocaleDateString()}</div></div>
+                    <div><span className="text-[#6b7280]">Requested:</span><div className="font-medium">{formatDate(activeRequest.requested_at)}</div></div>
                     <div><span className="text-[#6b7280]">Currency:</span><div className="font-medium">{activeRequest.currency}</div></div>
                     {activeRequest.preferred_payment_method && <div><span className="text-[#6b7280]">Payment Method:</span><div className="font-medium">{activeRequest.preferred_payment_method}</div></div>}
                     {activeRequest.admin_notes && <div><span className="text-[#6b7280]">Admin Notes:</span><div className="font-medium">{activeRequest.admin_notes}</div></div>}
@@ -119,7 +120,7 @@ export default function DashboardMembershipRequests() {
                       {isExpanded && (
                         <div className="px-4 pb-4 border-t border-gray-100 pt-3 text-sm space-y-2">
                           <div><span className="text-[#6b7280]">Duration:</span> <span className="font-medium capitalize">{req.duration}</span></div>
-                          <div><span className="text-[#6b7280]">Requested:</span> <span className="font-medium">{new Date(req.requested_at).toLocaleDateString()}</span></div>
+                          <div><span className="text-[#6b7280]">Requested:</span> <span className="font-medium">{formatDate(req.requested_at)}</span></div>
                           {req.rejection_reason && <div><span className="text-[#6b7280]">Reason:</span> <span className="font-medium text-red-600">{req.rejection_reason}</span></div>}
                         </div>
                       )}
