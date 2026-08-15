@@ -203,7 +203,6 @@ export const ADMIN_SIDEBAR_GROUPS: { label: string; items: { id: AdminSection; l
     { id: 'plans', label: 'Membership Plans' },
     { id: 'applications', label: 'Applications' },
     { id: 'experiences', label: 'Experiences' },
-    { id: 'experience-requests', label: 'Experience Requests' },
   ]},
   { label: 'Communications', items: [
     { id: 'fan-chat', label: 'Fan Chat' },
@@ -217,9 +216,8 @@ export const ADMIN_SIDEBAR_GROUPS: { label: string; items: { id: AdminSection; l
     { id: 'documents', label: 'Documents' },
   ]},
   { label: 'Payments', items: [
-    { id: 'membership-payments', label: 'Membership Payments' },
-    { id: 'transactions', label: 'Transactions' },
     { id: 'membership-requests', label: 'Membership Requests' },
+    { id: 'experience-requests', label: 'Experience Requests' },
     { id: 'payment-methods', label: 'Payment Methods' },
     { id: 'payment-requests', label: 'Payment Requests' },
     { id: 'payment-submissions', label: 'Payment Submissions' },

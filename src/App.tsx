@@ -10,6 +10,7 @@ import { ExperiencesSection } from './components/ExperiencesSection';
 import { MembershipSection } from './components/MembershipSection';
 import { NewsletterBar } from './components/NewsletterBar';
 import { GallerySection } from './components/GallerySection';
+import { Footer } from './components/Footer';
 import { DetailModal } from './components/DetailModal';
 import { AuthModal } from './components/AuthModal';
 import { SectionFadeIn } from './components/SectionFadeIn';
@@ -138,6 +139,7 @@ function HomePage() {
         <SectionFadeIn><NewsletterBar /></SectionFadeIn>
       </main>
 
+      <Footer onNavigate={handleNavigate} onOpenChat={handleOpenChat} />
       <DetailModal modal={activeModal} onClose={() => setActiveModal(null)} onOpenChat={handleOpenChat} />
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} feature={authFeature} />
     </div>
