@@ -46,7 +46,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onNavigate
               <motion.div
                 key={tier.id}
                 onClick={() => onNavigate('membership')}
-                className="rounded-2xl p-5 sm:p-6 text-white relative overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] group"
+                className="rounded-2xl p-4 sm:p-6 text-white relative overflow-hidden cursor-pointer transition-all duration-500 hover:scale-[1.03] group"
                 style={{
                   background: `linear-gradient(135deg, ${tierColor}F5, ${tierColor}E8 50%, ${tierColor}D9 75%, ${tierColor}E6)`,
                   boxShadow: `0 10px 40px ${tierColor}65, 0 0 60px ${tierColor}40, inset 0 1px 0 rgba(255,255,255,0.15)`,
@@ -57,15 +57,14 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onNavigate
                 transition={{ duration: 0.5, delay: 0.1 + i * 0.1 }}
               >
                 {/* Decorative circles */}
-                <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(25%, -25%)' }} />
-                <div className="absolute bottom-0 left-0 w-32 h-32 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(-25%, 25%)' }} />
-                <div className="absolute top-1/2 left-1/2 w-full h-full opacity-5" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(-50%, -50%)' }} />
+                <div className="absolute top-0 right-0 w-24 h-24 sm:w-40 sm:h-40 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(25%, -25%)' }} />
+                <div className="absolute bottom-0 left-0 w-20 h-20 sm:w-32 sm:h-32 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(-25%, 25%)' }} />
 
                 <div className="relative z-10">
                   {/* Card top: chip + badge */}
-                  <div className="flex items-center justify-between mb-5">
-                    <div className="w-11 h-8 rounded-md border border-white/30 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))' }}>
-                      <div className="w-6 h-4 rounded-sm bg-white/40" />
+                  <div className="flex items-center justify-between mb-3 sm:mb-5">
+                    <div className="w-9 h-6 sm:w-11 sm:h-8 rounded-md border border-white/30 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))' }}>
+                      <div className="w-5 h-3 sm:w-6 sm:h-4 rounded-sm bg-white/40" />
                     </div>
                     <div className="flex items-center gap-1.5">
                       {tier.isPopular && tier.badge && <span className="text-[9px] px-2.5 py-1 rounded-full bg-white/25 font-bold backdrop-blur-sm border border-white/20">{tier.badge}</span>}
@@ -73,29 +72,29 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onNavigate
                   </div>
 
                   {/* Name + Price */}
-                  <div className="mb-4">
-                    <p className="text-[11px] uppercase tracking-widest opacity-80 mb-1 font-medium">{tier.name}</p>
-                    <p className="text-3xl font-editorial">${tier.price}<span className="text-sm font-normal opacity-70">/{tier.period}</span></p>
+                  <div className="mb-3 sm:mb-4">
+                    <p className="text-[10px] sm:text-[11px] uppercase tracking-widest opacity-80 mb-1 font-medium">{tier.name}</p>
+                    <p className="text-2xl sm:text-3xl font-editorial">${tier.price}<span className="text-xs sm:text-sm font-normal opacity-70">/{tier.period}</span></p>
                   </div>
 
                   {/* Features preview */}
-                  <ul className="space-y-2 mb-5">
+                  <ul className="space-y-1.5 sm:space-y-2 mb-4 sm:mb-5">
                     {tier.features.filter((f) => f.included).slice(0, 3).map((feature, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-[11px]">
-                        <Check className="w-3.5 h-3.5 shrink-0 mt-0.5 text-white/80" />
+                      <li key={idx} className="flex items-start gap-2 text-[10px] sm:text-[11px]">
+                        <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 mt-0.5 text-white/80" />
                         <span className="text-white/80">{feature.label}</span>
                       </li>
                     ))}
                     {tier.features.filter((f) => f.included).length > 3 && (
-                      <li className="text-[10px] text-white/50 pl-5.5">+{tier.features.filter((f) => f.included).length - 3} more</li>
+                      <li className="text-[9px] sm:text-[10px] text-white/50 pl-5">+{tier.features.filter((f) => f.included).length - 3} more</li>
                     )}
                   </ul>
 
                   {/* Footer */}
-                  <div className="flex items-center justify-between pt-3 border-t border-white/20">
-                    <p className="text-[10px] opacity-70">{tier.features.filter((f) => f.included).length} features</p>
+                  <div className="flex items-center justify-between pt-2.5 sm:pt-3 border-t border-white/20">
+                    <p className="text-[9px] sm:text-[10px] opacity-70">{tier.features.filter((f) => f.included).length} features</p>
                     <div className="flex items-center gap-1 opacity-80">
-                      {TIER_ICONS[tier.name.toLowerCase()] || TIER_ICONS[tier.id] || <Crown className="w-5 h-5" />}
+                      {TIER_ICONS[tier.name.toLowerCase()] || TIER_ICONS[tier.id] || <Crown className="w-4 h-4 sm:w-5 sm:h-5" />}
                     </div>
                   </div>
                 </div>
