@@ -50,7 +50,7 @@ export default function ArticleDetailPage() {
             title: dbArticle.title,
             excerpt: dbArticle.excerpt || '',
             content: dbArticle.content,
-            category: dbArticle.category,
+            category: dbArticle.category as unknown as JournalArticleExtended['category'],
             author: dbArticle.author,
             authorRole: '',
             date: dbArticle.published_date || dbArticle.created_at,
@@ -78,7 +78,7 @@ export default function ArticleDetailPage() {
                 if (r) {
                   related.push({
                     id: r.id, slug: r.slug, title: r.title, excerpt: r.excerpt || '', content: r.content,
-                    category: r.category, author: r.author, authorRole: '', date: r.published_date || r.created_at,
+                    category: r.category as unknown as JournalArticleExtended['category'], author: r.author, authorRole: '', date: r.published_date || r.created_at,
                     publishDate: r.published_date || r.created_at, readTime: r.read_time || '5 min read',
                     wordCount: r.content.split(/\s+/).length, image: r.cover_image || '', imageAlt: r.title,
                     featured: r.featured, trending: r.trending, status: r.status, tags: r.tags || [],
@@ -142,7 +142,7 @@ export default function ArticleDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased">
-      <SEO title={article.seoTitle || article.title} description={article.seoDescription || article.description} />
+      <SEO title={article.seoTitle || article.title} description={article.seoDescription || article.excerpt} />
       <Navbar
         activeSection={activeSection}
         onNavigate={handleNavigate}
@@ -157,7 +157,7 @@ export default function ArticleDetailPage() {
         {/* Open Graph */}
         <meta property="og:type" content="article" />
         <meta property="og:title" content={article.seoTitle || article.title} />
-        <meta property="og:description" content={article.seoDescription || article.description} />
+        <meta property="og:description" content={article.seoDescription || article.excerpt} />
         <meta property="og:image" content={ogImage} />
         <meta property="og:url" content={articleUrl} />
         <meta property="og:site_name" content="Homer Gere — Official Website" />
@@ -171,7 +171,7 @@ export default function ArticleDetailPage() {
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={article.seoTitle || article.title} />
-        <meta name="twitter:description" content={article.seoDescription || article.description} />
+        <meta name="twitter:description" content={article.seoDescription || article.excerpt} />
         <meta name="twitter:image" content={ogImage} />
 
         {/* Article Structured Data */}

@@ -5,7 +5,6 @@ export type DashboardSection =
   | 'membership-requests'
   | 'payments'
   | 'membership-card'
-  | 'chat'
   | 'messages'
   | 'experiences'
   | 'requests'
@@ -127,8 +126,7 @@ export const DASHBOARD_NAV_ITEMS: { id: DashboardSection; label: string; icon: s
   { id: 'membership-card', label: 'My Card', icon: 'CreditCard', group: 'main' },
   { id: 'membership-requests', label: 'Membership Requests', icon: 'FileText', group: 'main' },
   { id: 'payments', label: 'Payments', icon: 'DollarSign', group: 'main' },
-  { id: 'chat', label: 'Chat with Homer', icon: 'MessageSquare', group: 'main' },
-  { id: 'messages', label: 'My Messages', icon: 'Inbox', group: 'main' },
+  { id: 'messages', label: 'Messages', icon: 'MessageSquare', group: 'main' },
   { id: 'experiences', label: 'Experiences', icon: 'Sparkles', group: 'activity' },
   { id: 'requests', label: 'My Requests', icon: 'FileText', group: 'activity' },
   { id: 'downloads', label: 'Downloads', icon: 'Download', group: 'activity' },

@@ -56,7 +56,7 @@ export interface HelpTicket {
   subject: string;
   message: string;
   category: string;
-  status: 'open' | 'replied' | 'closed';
+  status: 'open' | 'in_progress' | 'replied' | 'resolved' | 'closed';
   date: string;
   replies: HelpReply[];
 }
@@ -303,7 +303,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           message: t.message,
           category: t.category,
           date: new Date(t.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-          status: t.status as 'open' | 'in_progress' | 'resolved' | 'closed' | 'replied',
+          status: t.status as HelpTicket['status'],
           replies,
         };
       }));
@@ -538,7 +538,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         message: created.message,
         category: created.category,
         date: new Date(created.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        status: created.status as 'open' | 'in_progress' | 'resolved' | 'closed',
+        status: created.status as HelpTicket['status'],
         replies: [],
       }, ...prev]);
     } catch { /* silent */ }

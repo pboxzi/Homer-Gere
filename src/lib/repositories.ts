@@ -3347,6 +3347,18 @@ export const paymentSubmissionsRepository = {
     return data;
   },
 
+  async update(id: string, updates: Record<string, unknown>): Promise<PaymentSubmission> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('payment_submissions')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
+  },
+
   async search(query: string): Promise<PaymentSubmission[]> {
     const client = getSupabaseClient();
     const { data, error } = await client

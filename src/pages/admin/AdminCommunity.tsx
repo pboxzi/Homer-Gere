@@ -4,9 +4,9 @@ import {
   Users, Crown, CheckCircle, XCircle, Clock, Ban, Edit, Eye, Plus,
   Trash2, Search, Filter, X, AlertTriangle, RotateCcw, ChevronLeft,
   ChevronRight, UserCheck, CreditCard, Sparkles, Shield, Mail,
-  Loader2, Download, Copy, RefreshCw,
+  Loader2, Download, Copy, RefreshCw, Send,
 } from 'lucide-react';
-import { type AdminSection } from '../../data/adminData';
+import { type AdminSection, type AdminExperienceRequest } from '../../data/adminData';
 import { useAdmin } from '../../context/AdminContext';
 import {
   profilesRepository,
@@ -1067,6 +1067,17 @@ const ExperienceRequestsSection: React.FC = () => {
   const [viewId, setViewId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [successMsg, setSuccessMsg] = useState('');
+  const [actionLoading, setActionLoading] = useState(false);
+
+  // Payment instruction modal state
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentTarget, setPaymentTarget] = useState<AdminExperienceRequest | null>(null);
+  const [paymentForm, setPaymentForm] = useState({ amount: '', currency: 'USD', paymentMethod: '', paymentInstructions: '', dueDate: '', internalNote: '' });
+
+  // Reject modal state
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectTarget, setRejectTarget] = useState<AdminExperienceRequest | null>(null);
+  const [rejectReason, setRejectReason] = useState('');
 
   const filtered = useMemo(() => {
     if (filterTab === 'all') return experienceRequests;
@@ -1090,34 +1101,73 @@ const ExperienceRequestsSection: React.FC = () => {
   const handleApprove = async (id: string) => {
     const req = experienceRequests.find((r) => r.id === id);
     if (!req) return;
-    const exp = experiences.find((e) => req.experience.toLowerCase().includes(e.title.toLowerCase()));
-    if (exp) updateExperience(exp.id, { requests: exp.requests + 1 });
-    updateExperienceRequest(id, 'approved');
-    showSuccess('Experience request approved');
+    setPaymentTarget(req);
+    setPaymentForm({ amount: '', currency: 'USD', paymentMethod: '', paymentInstructions: '', dueDate: '', internalNote: '' });
+    setShowPaymentModal(true);
+  };
+
+  const handleSendPaymentInstructions = async () => {
+    if (!paymentTarget || !paymentForm.amount || !paymentForm.paymentMethod || !paymentForm.paymentInstructions) return;
+    setActionLoading(true);
     try {
-      await notifyService.experienceApproved(req.user_id || '', {
-        email: req.email,
-        fullName: req.full_name,
-        experienceType: req.experience,
-        eventDate: req.preferred_date || req.event_date || 'TBD',
+      // Update experience request status
+      updateExperienceRequest(paymentTarget.id, 'approved');
+      const exp = experiences.find((e) => paymentTarget.experience.toLowerCase().includes(e.title.toLowerCase()));
+      if (exp) updateExperience(exp.id, { requests: exp.requests + 1 });
+
+      // Create payment request for the experience
+      const { paymentRequestsRepository } = await import('../../lib/repositories');
+      await paymentRequestsRepository.create({
+        user_id: paymentTarget.user_id || '',
+        payment_type: 'experience',
+        related_record_id: paymentTarget.id,
+        amount: parseFloat(paymentForm.amount),
+        currency: paymentForm.currency,
+        payment_method: paymentForm.paymentMethod,
+        due_date: paymentForm.dueDate ? new Date(paymentForm.dueDate).toISOString() : undefined,
+        admin_notes: paymentForm.internalNote || null,
+        payment_instructions: paymentForm.paymentInstructions,
       });
-    } catch { /* notification failed silently */ }
+
+      await notifyService.experienceApproved(paymentTarget.user_id || '', {
+        email: paymentTarget.email,
+        fullName: paymentTarget.full_name,
+        experienceType: paymentTarget.experience,
+        eventDate: paymentTarget.date || 'TBD',
+      });
+
+      showSuccess(`Payment instructions sent to ${paymentTarget.full_name}`);
+      setShowPaymentModal(false);
+      setPaymentTarget(null);
+    } catch (e) { console.error(e); showSuccess('Failed to send payment instructions'); }
+    setActionLoading(false);
   };
 
   const handleDecline = async (id: string) => {
     const req = experienceRequests.find((r) => r.id === id);
-    updateExperienceRequest(id, 'declined');
-    showSuccess('Experience request declined');
-    if (req) {
-      try {
-        await notifyService.experienceRejected(req.user_id || '', {
-          email: req.email,
-          fullName: req.full_name,
-          experienceType: req.experience,
-          rejectionReason: 'The experience is currently unavailable.',
-        });
-      } catch { /* notification failed silently */ }
-    }
+    if (!req) return;
+    setRejectTarget(req);
+    setRejectReason('');
+    setShowRejectModal(true);
+  };
+
+  const handleConfirmReject = async () => {
+    if (!rejectTarget || !rejectReason.trim()) return;
+    setActionLoading(true);
+    try {
+      updateExperienceRequest(rejectTarget.id, 'declined');
+      await notifyService.experienceRejected(rejectTarget.user_id || '', {
+        email: rejectTarget.email,
+        fullName: rejectTarget.full_name,
+        experienceType: rejectTarget.experience,
+        rejectionReason: rejectReason,
+      });
+      showSuccess('Experience request declined');
+      setShowRejectModal(false);
+      setRejectTarget(null);
+      setRejectReason('');
+    } catch { /* silent */ }
+    setActionLoading(false);
   };
 
   const viewedReq = viewId ? experienceRequests.find((r) => r.id === viewId) : null;
@@ -1148,8 +1198,8 @@ const ExperienceRequestsSection: React.FC = () => {
               <StatusBadge status={r.status} />
               <div className="flex items-center gap-1">
                 {r.status === 'pending' && (<>
-                  <button onClick={() => handleApprove(r.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#16A34A] hover:bg-[#16A34A]/10 transition-colors cursor-pointer" title="Approve"><CheckCircle className="w-3.5 h-3.5" /></button>
-                  <button onClick={() => handleDecline(r.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer" title="Decline"><XCircle className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => handleApprove(r.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#16A34A] hover:bg-[#16A34A]/10 transition-colors cursor-pointer" title="Approve & Send Payment"><CheckCircle className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => handleDecline(r.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer" title="Reject"><XCircle className="w-3.5 h-3.5" /></button>
                 </>)}
                 <button onClick={() => setViewId(r.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors cursor-pointer"><Eye className="w-3.5 h-3.5" /></button>
                 <button onClick={() => setDeleteId(r.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
@@ -1170,7 +1220,7 @@ const ExperienceRequestsSection: React.FC = () => {
               <div className="flex items-center gap-1 pt-2 border-t border-[#E8E5DF]/20">
                 {r.status === 'pending' && (<>
                   <button onClick={() => handleApprove(r.id)} className="flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#16A34A] hover:bg-[#16A34A]/10 transition-colors cursor-pointer"><CheckCircle className="w-3.5 h-3.5" /> Approve</button>
-                  <button onClick={() => handleDecline(r.id)} className="flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer"><XCircle className="w-3.5 h-3.5" /> Decline</button>
+                  <button onClick={() => handleDecline(r.id)} className="flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer"><XCircle className="w-3.5 h-3.5" /> Reject</button>
                 </>)}
                 <button onClick={() => setViewId(r.id)} className="py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><Eye className="w-3.5 h-3.5" /> View</button>
                 <button onClick={() => setDeleteId(r.id)} className="py-1.5 px-3 rounded-lg flex items-center justify-center text-xs text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
@@ -1192,6 +1242,89 @@ const ExperienceRequestsSection: React.FC = () => {
 
       <ConfirmDialog open={!!deleteId} title="Delete Request" message="Are you sure you want to delete this experience request? This action cannot be undone."
         onConfirm={() => { if (deleteId) { deleteExperienceRequest(deleteId); setDeleteId(null); showSuccess('Request deleted'); } }} onCancel={() => setDeleteId(null)} />
+
+      {/* Payment Instructions Modal */}
+      {showPaymentModal && paymentTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setShowPaymentModal(false)}>
+          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 border border-[#A6852F]/20 shadow-xl" onClick={e => e.stopPropagation()}>
+            <h2 className="text-lg font-bold text-[#1a1a1a] mb-1">Send Payment Instructions</h2>
+            <p className="text-sm text-[#6b7280] mb-4">Enter payment details for this experience request.</p>
+
+            <div className="p-3 bg-gray-50 rounded-lg text-sm mb-4">
+              <div className="font-medium">{paymentTarget.experience} — {paymentTarget.full_name}</div>
+              <div className="text-[#6b7280]">{paymentTarget.email}</div>
+              {paymentTarget.date && <div className="text-[#6b7280]">Date: {paymentTarget.date}</div>}
+            </div>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Amount *</label>
+                  <input type="number" step="0.01" value={paymentForm.amount} onChange={e => setPaymentForm(f => ({ ...f, amount: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" placeholder="0.00" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Currency</label>
+                  <select value={paymentForm.currency} onChange={e => setPaymentForm(f => ({ ...f, currency: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]">
+                    {['USD','EUR','GBP','NGN','GHS','KES','ZAR','CAD','AUD','JPY','INR','BRL'].map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Payment Method *</label>
+                <input type="text" value={paymentForm.paymentMethod} onChange={e => setPaymentForm(f => ({ ...f, paymentMethod: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" placeholder="e.g. Wire Transfer, Wise, Invoice, Cash..." />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Payment Instructions *</label>
+                <textarea value={paymentForm.paymentInstructions} onChange={e => setPaymentForm(f => ({ ...f, paymentInstructions: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F] min-h-[120px]"
+                  placeholder="Enter payment instructions for the member..." />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Payment Deadline</label>
+                <input type="date" value={paymentForm.dueDate} onChange={e => setPaymentForm(f => ({ ...f, dueDate: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Internal Note</label>
+                <textarea value={paymentForm.internalNote} onChange={e => setPaymentForm(f => ({ ...f, internalNote: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F] min-h-[60px]"
+                  placeholder="Visible only to administrators." />
+              </div>
+            </div>
+
+            <div className="flex gap-2 mt-6">
+              <button onClick={handleSendPaymentInstructions} disabled={actionLoading || !paymentForm.amount || !paymentForm.paymentMethod || !paymentForm.paymentInstructions}
+                className="flex-1 py-2.5 bg-[#A6852F] text-white rounded-lg hover:bg-[#8B6F24] text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2">
+                <Send className="w-4 h-4" /> {actionLoading ? 'Sending...' : 'Send Payment Instructions'}
+              </button>
+              <button onClick={() => { setShowPaymentModal(false); setPaymentTarget(null); }} className="flex-1 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reject Modal */}
+      {showRejectModal && rejectTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => { setShowRejectModal(false); setRejectTarget(null); setRejectReason(''); }}>
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 border border-[#A6852F]/20 shadow-xl" onClick={e => e.stopPropagation()}>
+            <h2 className="text-lg font-bold text-[#1a1a1a] mb-4">Reject Experience Request</h2>
+            <div className="p-3 bg-gray-50 rounded-lg text-sm mb-4">
+              <div className="font-medium">{rejectTarget.experience}</div>
+              <div className="text-[#6b7280]">{rejectTarget.full_name} · {rejectTarget.email}</div>
+            </div>
+            <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Rejection Reason *</label>
+            <textarea value={rejectReason} onChange={e => setRejectReason(e.target.value)} placeholder="Reason for rejection..."
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 min-h-[100px]" />
+            <div className="flex gap-2 mt-4">
+              <button onClick={handleConfirmReject} disabled={actionLoading || !rejectReason.trim()} className="flex-1 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium disabled:opacity-50">Reject</button>
+              <button onClick={() => { setShowRejectModal(false); setRejectTarget(null); setRejectReason(''); }} className="flex-1 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <AnimatePresence>
         {viewId && viewedReq && (

@@ -21,6 +21,7 @@ import {
 } from '../lib/repositories';
 import { supabase } from '../lib/supabase';
 import { emailService } from '../lib/email';
+import { notifyService } from '../lib/notifications';
 import {
   type AdminStats,
   type AdminMember,
@@ -328,6 +329,8 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setExperienceRequests(reqsRes.value.map((r) => ({
           id: r.id, requester: r.full_name, experience: r.experience_type || 'General',
           date: new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), status: r.status as AdminExperienceRequest['status'],
+          user_id: r.user_id, email: r.email, full_name: r.full_name,
+          preferred_date: r.preferred_date, event_date: r.event_date,
         })));
       }
 
@@ -338,6 +341,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           lastMessage: c.last_message || '', unreadCount: c.unread_count || 0,
           status: c.status as AdminConversation['status'],
           date: new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          userId: c.user_id || undefined,
         })));
       }
 
@@ -347,6 +351,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           participant: b.full_name, email: b.email, company: b.company,
           lastMessage: b.last_message || '', unreadCount: b.unread_count || 0,
           status: b.status, date: new Date(b.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+          userId: b.user_id || undefined,
         })));
       }
 
@@ -728,8 +733,18 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setConversations((prev) => prev.map((c) => (c.id === id ? { ...c, ...updates } : c)));
     if (updates.status !== undefined) {
       fanChatRepository.updateConversationStatus(id, updates.status || 'open').catch(() => {});
+      // Notify member when conversation is closed
+      if (updates.status === 'closed') {
+        const conv = conversations.find((c) => c.id === id);
+        if (conv?.userId) {
+          notifyService.fanChatConversationClosed(conv.userId, {
+            email: conv.email,
+            fullName: conv.participant,
+          }).catch(() => {});
+        }
+      }
     }
-  }, []);
+  }, [conversations]);
   const deleteConversation = useCallback((id: string, type: 'fan' | 'business' = 'fan') => {
     if (type === 'business') {
       setBusinessEnquiries((prev) => prev.filter((c) => c.id !== id));
@@ -753,10 +768,13 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         });
         // Update local state
         setBusinessEnquiries((prev) => prev.map((c) => c.id === conversationId ? { ...c, lastMessage: text } : c));
-        // Send email notification
+        // Notify member when admin replies
         const enquiry = businessEnquiries.find((c) => c.id === conversationId);
-        if (enquiry) {
-          emailService.businessEnquiryReply(enquiry.email, enquiry.participant).catch(() => {});
+        if (enquiry && validSender === 'admin' && enquiry.userId) {
+          notifyService.businessEnquiryReplyToMember(enquiry.userId, {
+            email: enquiry.email,
+            fullName: enquiry.participant,
+          }).catch(() => {});
         }
       } catch { /* silent */ }
     } else {
@@ -770,10 +788,13 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         });
         // Update local state
         setConversations((prev) => prev.map((c) => c.id === conversationId ? { ...c, lastMessage: text } : c));
-        // Send email notification
+        // Notify member when admin replies
         const conv = conversations.find((c) => c.id === conversationId);
-        if (conv) {
-          emailService.chatReplyFromHomer(conv.email, conv.participant).catch(() => {});
+        if (conv && validSender === 'admin' && conv.userId) {
+          notifyService.fanChatReplyToMember(conv.userId, {
+            email: conv.email,
+            fullName: conv.participant,
+          }).catch(() => {});
         }
       } catch { /* silent */ }
     }

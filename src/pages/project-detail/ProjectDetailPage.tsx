@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Navbar } from '../../components/Navbar';
 import { DetailModal } from '../../components/DetailModal';
 import { Footer } from '../../components/Footer';
-import { getProjectBySlug, type ProjectDetail } from '../../data/projectDetails';
+import { getProjectBySlug, type ProjectDetail, type ProjectMedia, type ProjectVideo, type Recognition } from '../../data/projectDetails';
 import { projectsRepository } from '../../lib/repositories';
 import { ProjectDetailHero } from './ProjectDetailHero';
 import { ProjectOverview } from './ProjectOverview';
@@ -69,9 +69,9 @@ export default function ProjectDetailPage() {
             },
             cast: [],
             crew: p.director ? [{ name: p.director, role: 'Director' }] : [],
-            media: result.media.map(m => ({ src: m.src, alt: m.alt || p.title, type: m.type || 'image' })),
-            videos: result.videos.map(v => ({ url: v.url, title: v.title || '', type: v.type || 'youtube' })),
-            recognition: result.recognition.map(r => ({ title: r.title, category: r.category || '', year: r.year ? String(r.year) : '', result: r.result || '' })),
+            media: (result.media || []).map(m => ({ id: m.id || '', src: m.src, alt: m.alt || p.title, type: (m.type || 'still') as ProjectMedia['type'] })),
+            videos: (result.videos || []).map(v => ({ id: v.id || '', url: v.url, title: v.title || '', type: (v.type || 'trailer') as ProjectVideo['type'] })),
+            recognition: (result.recognition || []).map(r => ({ id: r.id || '', award: r.award || '', category: r.category || '', year: r.year ? String(r.year) : '', result: (r.result || 'Nominated') as Recognition['result'] })),
             relatedSlugs: [],
           };
           setProject(mapped);

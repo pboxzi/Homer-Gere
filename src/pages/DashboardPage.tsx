@@ -8,8 +8,7 @@ import { DashboardMembership } from './dashboard/DashboardMembership';
 import DashboardMembershipRequests from './dashboard/DashboardMembershipRequests';
 import DashboardPayments from './dashboard/DashboardPayments';
 import DashboardMembershipCard from './dashboard/DashboardMembershipCard';
-import { DashboardChat } from './dashboard/DashboardChat';
-import { DashboardMessages } from './dashboard/DashboardMessages';
+import { DashboardMessagesPage } from './dashboard/DashboardMessagesPage';
 import { DashboardExperiences } from './dashboard/DashboardExperiences';
 import { DashboardRequests } from './dashboard/DashboardRequests';
 import { DashboardBookmarks } from './dashboard/DashboardBookmarks';
@@ -25,7 +24,7 @@ import { DashboardSection } from '../data/dashboardData';
 
 const VALID_SECTIONS: DashboardSection[] = [
   'home', 'profile', 'membership', 'membership-requests', 'payments',
-  'membership-card', 'chat', 'messages', 'experiences', 'requests',
+  'membership-card', 'messages', 'experiences', 'requests',
   'downloads', 'activity', 'bookmarks', 'favorites', 'notifications',
   'settings', 'security', 'help',
 ];
@@ -57,7 +56,7 @@ export default function DashboardPage() {
   };
 
   const handleOpenChat = () => {
-    navigate('/chat');
+    navigate('/dashboard?section=messages&tab=fan');
   };
 
   const handleRequestExperience = () => {
@@ -67,14 +66,13 @@ export default function DashboardPage() {
 
   const renderSection = () => {
     switch (activeSection) {
-      case 'home': return <DashboardHome onOpenChat={() => handleSectionChange('chat')} onRequestExperience={handleRequestExperience} onNavigate={handleSectionChange} />;
+      case 'home': return <DashboardHome onOpenChat={() => handleSectionChange('messages')} onRequestExperience={handleRequestExperience} onNavigate={handleSectionChange} />;
       case 'profile': return <DashboardProfile />;
       case 'membership': return <DashboardMembership onNavigate={handleSectionChange} initialTab={(searchParams.get('tab') as 'overview' | 'plans' | 'history') || 'overview'} />;
       case 'membership-requests': return <DashboardMembershipRequests />;
       case 'payments': return <DashboardPayments />;
       case 'membership-card': return <DashboardMembershipCard />;
-      case 'chat': return <DashboardChat />;
-      case 'messages': return <DashboardMessages />;
+      case 'messages': return <DashboardMessagesPage />;
       case 'experiences': return <DashboardExperiences openRequestForm={openRequestForm} onRequestFormOpened={() => setOpenRequestForm(false)} />;
       case 'requests': return <DashboardRequests />;
       case 'downloads': return <DashboardDownloads />;
@@ -85,7 +83,7 @@ export default function DashboardPage() {
       case 'settings': return <DashboardSettings />;
       case 'security': return <DashboardSecurity />;
       case 'help': return <DashboardHelp />;
-      default: return <DashboardHome onOpenChat={() => handleSectionChange('chat')} onRequestExperience={handleRequestExperience} onNavigate={handleSectionChange} />;
+      default: return <DashboardHome onOpenChat={() => handleSectionChange('messages')} onRequestExperience={handleRequestExperience} onNavigate={handleSectionChange} />;
     }
   };
 

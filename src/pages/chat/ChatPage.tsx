@@ -41,16 +41,16 @@ export default function ChatPage() {
       setAuthModalOpen(true);
       return;
     }
-    navigate('/dashboard?section=chat');
+    navigate('/dashboard?section=messages&tab=fan');
   }, [isAuthenticated, navigate]);
 
   const handleStartBusinessChat = useCallback(() => {
     if (!isAuthenticated) {
-      setAuthFeature('Chat with Homer');
+      setAuthFeature('Business Enquiries');
       setAuthModalOpen(true);
       return;
     }
-    navigate('/dashboard?section=messages');
+    navigate('/dashboard?section=messages&tab=business');
   }, [isAuthenticated, navigate]);
 
   return (

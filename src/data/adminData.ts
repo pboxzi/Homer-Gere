@@ -74,6 +74,11 @@ export interface AdminExperienceRequest {
   experience: string;
   date: string;
   status: 'pending' | 'approved' | 'declined' | 'completed';
+  user_id?: string;
+  email?: string;
+  full_name?: string;
+  preferred_date?: string;
+  event_date?: string;
 }
 
 export interface AdminConversationMessage {
@@ -92,6 +97,7 @@ export interface AdminConversation {
   unreadCount: number;
   status: 'open' | 'in_progress' | 'closed';
   date: string;
+  userId?: string;
   messages?: AdminConversationMessage[];
 }
 

@@ -128,7 +128,7 @@ export const notifyService = {
       type: 'membership',
       title: 'Membership Request Approved',
       message: `Your membership request for ${data.planName} has been approved. Please complete the payment.`,
-      link: '/dashboard/payments',
+      link: '/dashboard?section=membership-requests',
       priority: 'high',
       category: 'membership',
       emailTo: data.email,
@@ -146,7 +146,7 @@ export const notifyService = {
       type: 'membership',
       title: 'Membership Request Update',
       message: `Your membership request has been reviewed. Please check your email for details.`,
-      link: '/dashboard',
+      link: '/dashboard?section=membership-requests',
       category: 'membership',
       emailTo: data.email,
       emailTemplate: 'membership_request_rejected',
@@ -164,7 +164,7 @@ export const notifyService = {
       type: 'membership',
       title: 'Payment Request',
       message: `A payment request for ${data.amount} ${data.currency} has been created.`,
-      link: '/dashboard/payments',
+      link: '/dashboard?section=membership-requests',
       priority: 'high',
       category: 'payment',
       emailTo: data.email,
@@ -179,7 +179,7 @@ export const notifyService = {
       type: 'membership',
       title: 'Payment Instructions Available',
       message: `Payment instructions for ${data.amount} ${data.currency} are now available.`,
-      link: '/dashboard/payments',
+      link: '/dashboard?section=membership-requests',
       priority: 'high',
       category: 'payment',
       emailTo: data.email,
@@ -194,7 +194,7 @@ export const notifyService = {
       type: 'membership',
       title: 'Payment Submitted',
       message: `Your payment of ${data.amount} ${data.currency} has been submitted for review.`,
-      link: '/dashboard/payments',
+      link: '/dashboard?section=membership-requests',
       category: 'payment',
       emailTo: data.email,
       emailTemplate: 'payment_submitted',
@@ -226,7 +226,7 @@ export const notifyService = {
       type: 'membership',
       title: 'Payment Rejected',
       message: `Your payment has been rejected. Please check your email for details.`,
-      link: '/dashboard/payments',
+      link: '/dashboard?section=membership-requests',
       category: 'payment',
       emailTo: data.email,
       emailTemplate: 'membership_request_rejected',
@@ -244,7 +244,7 @@ export const notifyService = {
       type: 'membership',
       title: 'Membership Activated!',
       message: `Welcome! Your ${data.planName} membership is now active. Card: ${data.cardNumber}`,
-      link: '/dashboard/membership',
+      link: '/dashboard?section=membership',
       priority: 'high',
       category: 'membership',
       emailTo: data.email,
@@ -262,7 +262,7 @@ export const notifyService = {
       type: 'membership',
       title: 'Membership Expiring Soon',
       message: `Your ${data.planName} membership expires in ${data.daysRemaining} days. Please renew.`,
-      link: '/dashboard/membership',
+      link: '/dashboard?section=membership',
       priority: 'high',
       category: 'membership',
       emailTo: data.email,
@@ -331,7 +331,7 @@ export const notifyService = {
       type: 'experience',
       title: 'Payment Required for Experience',
       message: `To confirm your ${data.experienceType}, please complete the payment of ${data.amount} ${data.currency}.`,
-      link: '/dashboard/payments',
+      link: '/dashboard?section=experiences',
       priority: 'high',
       category: 'experience',
       emailTo: data.email,
@@ -364,7 +364,7 @@ export const notifyService = {
       type: 'membership',
       title: 'Payment Information Needed',
       message: `Additional information is required for your ${data.paymentType} payment of ${data.amount} ${data.currency}.`,
-      link: '/dashboard/payments',
+      link: '/dashboard?section=membership-requests',
       priority: 'high',
       category: 'payment',
       emailTo: data.email,
@@ -383,7 +383,7 @@ export const notifyService = {
       type: 'membership',
       title: `Membership Card ${data.action}`,
       message: `Your membership card ${data.cardNumber} has been ${data.action.toLowerCase()}. ${data.reason}`,
-      link: '/dashboard/membership-card',
+      link: '/dashboard?section=membership-card',
       priority: 'high',
       category: 'membership',
       emailTo: data.email,
@@ -410,6 +410,94 @@ export const notifyService = {
       emailVariables: { full_name: data.fullName, title: data.title, message: data.message },
       auditModule: 'system',
       auditAction: 'update',
+    });
+  },
+
+  // --- Communication: Fan Chat ---
+  async fanChatMessageFromMember(adminId: string, data: { memberName: string; memberEmail: string; messagePreview: string }) {
+    return notify({
+      userId: adminId,
+      type: 'system',
+      title: 'New Fan Chat Message',
+      message: `${data.memberName} sent a message: "${data.messagePreview.slice(0, 80)}${data.messagePreview.length > 80 ? '...' : ''}"`,
+      link: '/admin',
+      priority: 'normal',
+      category: 'communication',
+      auditModule: 'fan_messages',
+      auditAction: 'create',
+    });
+  },
+
+  async fanChatReplyToMember(userId: string, data: { email: string; fullName: string }) {
+    return notify({
+      userId,
+      type: 'system',
+      title: 'New Reply from Homer',
+      message: 'Homer has replied to your conversation. Check your messages.',
+      link: '/dashboard?section=messages&tab=fan',
+      priority: 'normal',
+      category: 'communication',
+      emailTo: data.email,
+      emailTemplate: 'chat-reply',
+      emailVariables: { name: data.fullName, sender: 'Homer Gere' },
+    });
+  },
+
+  async fanChatConversationClosed(userId: string, data: { email: string; fullName: string }) {
+    return notify({
+      userId,
+      type: 'system',
+      title: 'Conversation Closed',
+      message: 'Your conversation has been closed by the support team.',
+      link: '/dashboard?section=messages&tab=fan',
+      category: 'communication',
+      emailTo: data.email,
+      emailTemplate: 'chat-reply',
+      emailVariables: { name: data.fullName, sender: 'Homer Gere' },
+    });
+  },
+
+  // --- Communication: Business Enquiries ---
+  async businessEnquiryReceived(adminId: string, data: { memberName: string; subject: string; enquiryType: string }) {
+    return notify({
+      userId: adminId,
+      type: 'system',
+      title: 'New Business Enquiry',
+      message: `${data.memberName} submitted a ${data.enquiryType} enquiry: "${data.subject}"`,
+      link: '/admin',
+      priority: 'high',
+      category: 'communication',
+      auditModule: 'business_enquiries',
+      auditAction: 'create',
+    });
+  },
+
+  async businessEnquiryReplyToMember(userId: string, data: { email: string; fullName: string }) {
+    return notify({
+      userId,
+      type: 'system',
+      title: 'Business Enquiry Reply',
+      message: 'Your business enquiry has received a reply. Check your messages.',
+      link: '/dashboard?section=messages&tab=business',
+      priority: 'normal',
+      category: 'communication',
+      emailTo: data.email,
+      emailTemplate: 'business-enquiry-reply',
+      emailVariables: { name: data.fullName },
+    });
+  },
+
+  async businessEnquiryClosed(userId: string, data: { email: string; fullName: string }) {
+    return notify({
+      userId,
+      type: 'system',
+      title: 'Business Enquiry Closed',
+      message: 'Your business enquiry has been closed by the support team.',
+      link: '/dashboard?section=messages&tab=business',
+      category: 'communication',
+      emailTo: data.email,
+      emailTemplate: 'business-enquiry-reply',
+      emailVariables: { name: data.fullName },
     });
   },
 };

@@ -91,7 +91,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
                 {category}
               </h4>
               <ul className="space-y-2.5">
-                {links.map((link, idx) => (
+                {(links as Array<{ label: string; href: string }>).map((link, idx) => (
                   <li key={idx}>
                     <button
                       onClick={() => handleLinkClick(link.href)}

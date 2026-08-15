@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { fanChatRepository, businessEnquiriesRepository } from '../../lib/repositories';
+import { notifyService } from '../../lib/notifications';
 import { formatDate } from '../../utils/formatDate';
 import type { AdminSection, AdminConversation, AdminNotification } from '../../data/adminData';
 
@@ -545,6 +546,13 @@ const BusinessChatSection: React.FC<{
   const handleArchive = (id: string) => {
     updateConversation(id, { status: 'closed' });
     businessEnquiriesRepository.updateStatus(id, 'closed');
+    const enquiry = businessEnquiries.find((c) => c.id === id);
+    if (enquiry?.userId) {
+      notifyService.businessEnquiryClosed(enquiry.userId, {
+        email: enquiry.email,
+        fullName: enquiry.participant,
+      }).catch(() => {});
+    }
   };
 
   const handleReopen = (id: string) => {
@@ -555,6 +563,15 @@ const BusinessChatSection: React.FC<{
   const handleStatusChange = (id: string, status: 'open' | 'in_progress' | 'closed') => {
     updateConversation(id, { status });
     businessEnquiriesRepository.updateStatus(id, status);
+    if (status === 'closed') {
+      const enquiry = businessEnquiries.find((c) => c.id === id);
+      if (enquiry?.userId) {
+        notifyService.businessEnquiryClosed(enquiry.userId, {
+          email: enquiry.email,
+          fullName: enquiry.participant,
+        }).catch(() => {});
+      }
+    }
   };
 
   const handleForward = (id: string) => {
