@@ -901,7 +901,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const value: AdminContextType = useMemo(() => ({
     members, plans, applications, experiences, experienceRequests,
-    conversations, contactMessages, notifications, media, payments, pages,
+    conversations, contactMessages, notifications, media, pages,
     emailTemplates,
     stats, websiteSettings, branding, securitySettings, backupSettings,
     emailSettings, seoSettings, integrations, loading,

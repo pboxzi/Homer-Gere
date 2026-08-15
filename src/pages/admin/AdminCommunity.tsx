@@ -246,7 +246,7 @@ const MemberProfileModal: React.FC<MemberProfileModalProps> = ({ open, memberId,
                         </div>
                         <div className="rounded-xl border border-[#E8E5DF]/60 bg-[#F3F1ED]/20 p-4">
                           <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Phone</p>
-                          <p className="text-sm text-[#1C1917] font-medium mt-1">{profile?.phone || '—'}</p>
+                          <p className="text-sm text-[#1C1917] font-medium mt-1">{profile?.phone && profile.phone !== 'N/A' ? profile.phone : '—'}</p>
                         </div>
                         <div className="rounded-xl border border-[#E8E5DF]/60 bg-[#F3F1ED]/20 p-4">
                           <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Country</p>

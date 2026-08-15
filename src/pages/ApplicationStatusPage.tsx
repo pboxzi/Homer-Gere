@@ -58,7 +58,7 @@ export default function ApplicationStatusPage() {
           color: 'text-[#F59E0B]',
           bg: 'bg-[#F59E0B]/10',
           label: 'Pending Review',
-          description: 'Your application is being reviewed by our team.',
+          description: 'Your application is in the review queue — we\'re almost there.',
         };
       case 'approved':
         return {
@@ -66,7 +66,7 @@ export default function ApplicationStatusPage() {
           color: 'text-[#16A34A]',
           bg: 'bg-[#16A34A]/10',
           label: 'Approved',
-          description: 'Your application has been approved. You can now sign in.',
+          description: 'Welcome to the inner circle. Your membership is ready to unlock.',
         };
       case 'rejected':
         return {
@@ -74,7 +74,7 @@ export default function ApplicationStatusPage() {
           color: 'text-[#DC2626]',
           bg: 'bg-[#DC2626]/10',
           label: 'Not Approved',
-          description: 'Your application was not approved at this time.',
+          description: 'This time wasn\'t the one — but the door isn\'t closed forever.',
         };
       default:
         return {
@@ -209,8 +209,7 @@ export default function ApplicationStatusPage() {
             {application?.status === 'pending' && (
               <div className="p-4 rounded-xl bg-[#F59E0B]/5 border border-[#F59E0B]/10">
                 <p className="text-sm text-[#57534E] leading-relaxed">
-                  <span className="font-medium text-[#1C1917]">Estimated review time:</span> 1–2 business days.
-                  You will receive an email once your application has been reviewed.
+                  <span className="font-medium text-[#1C1917]">What happens next?</span> Our team reviews every application personally — no bots, no auto-approvals. You'll hear back within 24 hours with a decision and next steps.
                 </p>
               </div>
             )}
@@ -218,7 +217,7 @@ export default function ApplicationStatusPage() {
             {application?.status === 'approved' && (
               <div className="p-4 rounded-xl bg-[#16A34A]/5 border border-[#16A34A]/10">
                 <p className="text-sm text-[#57534E] leading-relaxed">
-                  Your account is ready. <span className="font-medium text-[#1C1917]">Sign in</span> to access your dashboard.
+                  You're in. <span className="font-medium text-[#1C1917]">Sign in</span> to access your dashboard, exclusive content, and everything the community has to offer.
                 </p>
               </div>
             )}

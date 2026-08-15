@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Search, ChevronLeft, ChevronRight, CheckCircle, XCircle, Eye, Download, DollarSign, Send } from 'lucide-react';
 import { membershipRequestsRepository, paymentRequestsRepository, auditLogsRepository } from '../../lib/repositories';
 import { notifyService } from '../../lib/notifications';
+import { formatDate } from '../../utils/formatDate';
 import type { MembershipRequest } from '../../types/database';
 
 const PAGE_SIZE = 10;
@@ -298,7 +299,7 @@ export default function AdminMembershipRequests() {
                       <td className="px-4 py-3">{req.membership_plan_name}</td>
                       <td className="px-4 py-3 capitalize">{req.duration}</td>
                       <td className="px-4 py-3"><span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${sc.bg} ${sc.color}`}>{sc.label}</span></td>
-                      <td className="px-4 py-3 text-xs text-[#6b7280]">{new Date(req.requested_at).toLocaleDateString()}</td>
+                      <td className="px-4 py-3 text-xs text-[#6b7280]">{formatDate(req.requested_at)}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1">
                           <button onClick={() => { setSelected(req); setShowDetail(true); }} className="p-1.5 rounded-lg hover:bg-gray-100 text-[#6b7280]" title="View"><Eye className="w-4 h-4" /></button>
@@ -361,7 +362,7 @@ export default function AdminMembershipRequests() {
             <div className="space-y-3 text-sm">
               <div><span className="text-[#6b7280]">Name:</span> <span className="font-medium">{selected.full_name}</span></div>
               <div><span className="text-[#6b7280]">Email:</span> <span className="font-medium">{selected.email}</span></div>
-              <div><span className="text-[#6b7280]">Phone:</span> <span className="font-medium">{selected.phone || '—'}</span></div>
+              <div><span className="text-[#6b7280]">Phone:</span> <span className="font-medium">{selected.phone && selected.phone !== 'N/A' ? selected.phone : '—'}</span></div>
               <div><span className="text-[#6b7280]">Country:</span> <span className="font-medium">{selected.country || '—'}</span></div>
               <div><span className="text-[#6b7280]">Plan:</span> <span className="font-medium">{selected.membership_plan_name}</span></div>
               <div><span className="text-[#6b7280]">Duration:</span> <span className="font-medium capitalize">{selected.duration}</span></div>
