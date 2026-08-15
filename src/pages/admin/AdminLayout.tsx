@@ -94,6 +94,8 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
     const target = navTargetRef.current;
     navTargetRef.current = null;
     el.scrollTop = target;
+    const timer = setTimeout(() => { el.scrollTop = target; }, 300);
+    return () => clearTimeout(timer);
   });
 
   useEffect(() => {

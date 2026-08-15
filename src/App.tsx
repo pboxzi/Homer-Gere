@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useEffect } from 'react';
+import React, { Suspense, useState, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { Navbar } from './components/Navbar';
@@ -47,37 +47,65 @@ const AdminLoginPage = React.lazy(() => import('./pages/admin/AdminLoginPage'));
 const ApplicationStatusPage = React.lazy(() => import('./pages/ApplicationStatusPage'));
 const AccessDeniedPage = React.lazy(() => import('./pages/AccessDeniedPage'));
 
-function PageLoader() {
+function PageLoader({ progress }: { progress?: number }) {
   return (
     <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
-      <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-col items-center gap-5">
         <div className="relative">
-          <div className="w-16 h-16 border-2 border-[#A6852F]/20 rounded-full" />
-          <div className="absolute inset-0 w-16 h-16 border-2 border-[#A6852F] border-t-transparent rounded-full animate-spin" />
+          <div className="w-20 h-20 border-[3px] border-[#A6852F]/15 rounded-full" />
+          <div className="absolute inset-0 w-20 h-20 border-[3px] border-[#A6852F] border-t-transparent rounded-full animate-spin" />
+          <div className="absolute inset-0 w-20 h-20 border-[3px] border-[#A6852F]/30 border-b-transparent rounded-full animate-spin" style={{ animationDuration: '1.5s', animationDirection: 'reverse' }} />
         </div>
-        <div className="text-center">
-          <p className="text-sm font-editorial text-[#1C1917]">Homer Gere</p>
-          <p className="text-[10px] text-[#57534E] mt-1">Loading page...</p>
+        <div className="text-center space-y-3">
+          <p className="font-editorial text-xl text-[#1C1917] tracking-[0.08em]">Homer Gere</p>
+          <p className="text-[10px] text-[#57534E] uppercase tracking-[0.2em]">Loading experience...</p>
+          {progress !== undefined && (
+            <div className="w-48 mx-auto">
+              <div className="h-[2px] bg-[#A6852F]/15 rounded-full overflow-hidden">
+                <div className="h-full bg-[#A6852F] rounded-full transition-all duration-300 ease-out" style={{ width: `${Math.min(progress, 100)}%` }} />
+              </div>
+              <p className="text-[9px] text-[#A6852F]/60 mt-1.5 font-medium">{Math.round(Math.min(progress, 100))}%</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
+const INITIAL_LOAD_DURATION = 10000;
+
 function RouteLoader({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const isInitialLoad = useRef(!sessionStorage.getItem('hg-loaded'));
 
   useEffect(() => {
-    setLoading(true);
-    requestAnimationFrame(() => {
+    if (isInitialLoad.current) {
+      sessionStorage.setItem('hg-loaded', '1');
+      const start = Date.now();
+      const interval = setInterval(() => {
+        const elapsed = Date.now() - start;
+        setProgress((elapsed / INITIAL_LOAD_DURATION) * 100);
+        if (elapsed >= INITIAL_LOAD_DURATION) {
+          clearInterval(interval);
+          setLoading(false);
+        }
+      }, 50);
+      return () => clearInterval(interval);
+    } else {
+      setLoading(true);
+      setProgress(100);
       requestAnimationFrame(() => {
-        setLoading(false);
+        requestAnimationFrame(() => {
+          setLoading(false);
+        });
       });
-    });
+    }
   }, [location.pathname]);
 
-  if (loading) return <PageLoader />;
+  if (loading) return <PageLoader progress={isInitialLoad.current ? progress : undefined} />;
   return <>{children}</>;
 }
 
