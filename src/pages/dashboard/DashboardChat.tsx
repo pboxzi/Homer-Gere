@@ -178,7 +178,6 @@ export const DashboardChat: React.FC = () => {
   }, [user?.id, activeConvId]);
 
   const filteredConversations = conversations.filter((c) => {
-    if (!c.last_message && c.status === 'open') return false;
     return (
       c.participant.toLowerCase().includes(searchQuery.toLowerCase()) ||
       c.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -222,7 +221,12 @@ export const DashboardChat: React.FC = () => {
         media_type: mediaType || null,
         media_url: mediaUrl,
       });
-      if (sendError) console.error('Send error:', sendError);
+      if (sendError) {
+        setError(`Failed to send: ${sendError.message}`);
+        setNewMessage(msgText);
+        setUploading(false);
+        return;
+      }
 
       setPendingFile(null);
       setPreviewUrl(null);

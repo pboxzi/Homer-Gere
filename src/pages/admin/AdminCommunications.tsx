@@ -6,7 +6,7 @@ import {
   ChevronLeft, ChevronRight, RotateCcw, Paperclip,
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
-import { fanChatRepository, businessEnquiriesRepository, getSupabaseClient } from '../../lib/repositories';
+import { getSupabaseClient } from '../../lib/repositories';
 import { supabase } from '../../lib/supabase';
 import { notifyService } from '../../lib/notifications';
 import { formatDate } from '../../utils/formatDate';
@@ -220,14 +220,30 @@ const FanChatSection: React.FC<{
         if (!mediaUrl) { setUploading(false); return; }
         mediaType = pendingFile.type.startsWith('video') ? 'video' : 'image';
       }
-      sendConversationMessage(selectedId, 'admin', replyText.trim(), 'fan', mediaUrl, mediaType);
+      await sendConversationMessage(selectedId, 'admin', replyText.trim(), 'fan', mediaUrl, mediaType);
       setReplyText('');
       setPendingFile(null);
       setPreviewUrl(null);
-      setTimeout(() => loadMessages(selectedId), 500);
+      await loadMessages(selectedId);
     } catch { /* silent */ }
     setUploading(false);
   };
+
+  useEffect(() => {
+    if (!selectedId) return;
+    const channel = supabase
+      .channel(`admin-fan-msg-${selectedId}`)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'fan_messages', filter: `conversation_id=eq.${selectedId}` }, (payload) => {
+        const newMsg = payload.new as any;
+        setLoadedMessages((prev) => {
+          const existing = prev[selectedId] || [];
+          if (existing.some((m: any) => m.id === newMsg.id)) return prev;
+          return { ...prev, [selectedId]: [...existing, newMsg] };
+        });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [selectedId]);
 
   if (selectedConversation) {
     return (
@@ -674,14 +690,30 @@ const BusinessChatSection: React.FC<{
         if (!mediaUrl) { setUploading(false); return; }
         mediaType = pendingFile.type.startsWith('video') ? 'video' : 'image';
       }
-      sendConversationMessage(selectedId, 'admin', replyText.trim(), 'business', mediaUrl, mediaType);
+      await sendConversationMessage(selectedId, 'admin', replyText.trim(), 'business', mediaUrl, mediaType);
       setReplyText('');
       setPendingFile(null);
       setPreviewUrl(null);
-      setTimeout(() => loadMessages(selectedId), 500);
+      await loadMessages(selectedId);
     } catch { /* silent */ }
     setUploading(false);
   };
+
+  useEffect(() => {
+    if (!selectedId) return;
+    const channel = supabase
+      .channel(`admin-biz-msg-${selectedId}`)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'business_messages', filter: `enquiry_id=eq.${selectedId}` }, (payload) => {
+        const newMsg = payload.new as any;
+        setLoadedMessages((prev) => {
+          const existing = prev[selectedId] || [];
+          if (existing.some((m: any) => m.id === newMsg.id)) return prev;
+          return { ...prev, [selectedId]: [...existing, newMsg] };
+        });
+      })
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [selectedId]);
 
   if (selectedConversation) {
     return (
