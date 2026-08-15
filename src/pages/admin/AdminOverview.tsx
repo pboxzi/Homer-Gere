@@ -126,8 +126,8 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
     return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
   };
 
-  const liveFanChatCount = useMemo(() => conversations.filter((c) => c.type === 'fan' && c.status === 'open').length, [conversations]);
-  const liveBizEnqCount = useMemo(() => businessEnquiries.filter((c) => c.type === 'business' && c.status === 'open').length, [businessEnquiries]);
+  const liveFanChatCount = useMemo(() => conversations.filter((c) => c.type === 'fan' && c.status === 'open' && (c.unreadCount || 0) > 0).length, [conversations]);
+  const liveBizEnqCount = useMemo(() => businessEnquiries.filter((c) => c.type === 'business' && c.status === 'open' && (c.unreadCount || 0) > 0).length, [businessEnquiries]);
 
   const statCards = [
     { label: 'Total Members', value: liveStats.totalMembers.toLocaleString(), icon: Users, color: '#A6852F', target: 'members' as AdminSection },
