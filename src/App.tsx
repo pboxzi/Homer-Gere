@@ -9,7 +9,7 @@ import { JournalSection } from './components/JournalSection';
 import { ExperiencesSection } from './components/ExperiencesSection';
 import { MembershipSection } from './components/MembershipSection';
 import { NewsletterBar } from './components/NewsletterBar';
-import { GallerySection } from './components/GallerySection';
+import { MediaSection } from './components/MediaSection';
 import { Footer } from './components/Footer';
 import { DetailModal } from './components/DetailModal';
 import { AuthModal } from './components/AuthModal';
@@ -134,7 +134,7 @@ function HomePage() {
 
         <SectionFadeIn><MembershipSection onNavigate={handleNavigate} /></SectionFadeIn>
 
-        <SectionFadeIn><GallerySection onSelectImage={(item: GalleryItem) => setActiveModal({ type: 'gallery', item })} onNavigate={handleNavigate} /></SectionFadeIn>
+        <SectionFadeIn><MediaSection onNavigate={handleNavigate} /></SectionFadeIn>
 
         <SectionFadeIn><NewsletterBar /></SectionFadeIn>
       </main>
