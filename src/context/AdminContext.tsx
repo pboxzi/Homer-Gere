@@ -147,6 +147,7 @@ interface AdminContextType {
   deleteExperienceRequest: (id: string) => void;
   updateExperienceRequest: (id: string, status: 'approved' | 'declined' | 'completed') => void;
   addConversation: (conv: Omit<AdminConversation, 'id'>) => void;
+  initiateConversationForMember: (userId: string, participant: string, email: string, membershipTier: string | null, firstMessage: string, sender: 'homer' | 'admin') => Promise<void>;
   updateConversation: (id: string, updates: Partial<AdminConversation>) => void;
   deleteConversation: (id: string) => void;
   sendConversationMessage: (conversationId: string, sender: string, text: string) => void;
@@ -715,6 +716,31 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       });
     }).catch(() => {});
   }, []);
+  const initiateConversationForMember = useCallback(async (userId: string, participant: string, email: string, membershipTier: string | null, firstMessage: string, sender: 'homer' | 'admin') => {
+    try {
+      const conv = await fanChatRepository.createConversation({
+        participant,
+        email,
+        user_id: userId,
+        status: 'open',
+        phone: null,
+        membership_tier: membershipTier,
+        method: 'website',
+      });
+      setConversations((prev) => [{
+        id: conv.id, type: 'fan' as const, participant, email,
+        lastMessage: firstMessage, status: 'open', date: conv.created_at,
+        messages: [],
+      }, ...prev]);
+      await fanChatRepository.sendMessage({
+        conversation_id: conv.id,
+        sender,
+        text: firstMessage,
+        media_type: null,
+        media_url: null,
+      });
+    } catch { /* silent */ }
+  }, []);
   const updateConversation = useCallback((id: string, updates: Partial<AdminConversation>) => {
     setConversations((prev) => prev.map((c) => (c.id === id ? { ...c, ...updates } : c)));
     if (updates.status !== undefined) {
@@ -736,7 +762,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     Promise.resolve(
       fanChatRepository.sendMessage({
         conversation_id: conversationId,
-        sender: sender as any,
+        sender: sender === 'Admin' ? 'homer' : sender as any,
         text: text,
         media_type: null,
         media_url: null,
@@ -918,7 +944,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     addPlan, updatePlan, deletePlan,
     addApplication, updateApplication, deleteApplication,
     addExperience, updateExperience, deleteExperience, deleteExperienceRequest, updateExperienceRequest,
-    addConversation, updateConversation, deleteConversation, sendConversationMessage,
+    addConversation, initiateConversationForMember, updateConversation, deleteConversation, sendConversationMessage,
     addContactMessage, updateContactMessage, deleteContactMessage,
     addNotification, updateNotification, deleteNotification,
     addMedia, updateMedia, deleteMedia,
@@ -936,7 +962,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     addPlan, updatePlan, deletePlan,
     addApplication, updateApplication, deleteApplication,
     addExperience, updateExperience, deleteExperience, deleteExperienceRequest, updateExperienceRequest,
-    addConversation, updateConversation, deleteConversation, sendConversationMessage,
+    addConversation, initiateConversationForMember, updateConversation, deleteConversation, sendConversationMessage,
     addContactMessage, updateContactMessage, deleteContactMessage,
     addNotification, updateNotification, deleteNotification,
     addMedia, updateMedia, deleteMedia,

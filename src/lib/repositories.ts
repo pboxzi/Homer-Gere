@@ -1451,6 +1451,18 @@ export const fanChatRepository = {
     return data;
   },
 
+  async getConversationByUserId(userId: string): Promise<FanConversation | null> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('fan_conversations')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
   async updateConversationStatus(id: string, status: ConversationStatus): Promise<FanConversation> {
     const client = getSupabaseClient();
     const { data, error } = await client

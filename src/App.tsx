@@ -47,33 +47,37 @@ const AdminLoginPage = React.lazy(() => import('./pages/admin/AdminLoginPage'));
 const ApplicationStatusPage = React.lazy(() => import('./pages/ApplicationStatusPage'));
 const AccessDeniedPage = React.lazy(() => import('./pages/AccessDeniedPage'));
 
+function PageLoader() {
+  return (
+    <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
+      <div className="flex flex-col items-center gap-4">
+        <div className="relative">
+          <div className="w-16 h-16 border-2 border-[#A6852F]/20 rounded-full" />
+          <div className="absolute inset-0 w-16 h-16 border-2 border-[#A6852F] border-t-transparent rounded-full animate-spin" />
+        </div>
+        <div className="text-center">
+          <p className="text-sm font-editorial text-[#1C1917]">Homer Gere</p>
+          <p className="text-[10px] text-[#57534E] mt-1">Loading page...</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function RouteLoader({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
-    const timer = setTimeout(() => setLoading(false), 400);
-    return () => clearTimeout(timer);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setLoading(false);
+      });
+    });
   }, [location.pathname]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="relative">
-            <div className="w-16 h-16 border-2 border-[#A6852F]/20 rounded-full" />
-            <div className="absolute inset-0 w-16 h-16 border-2 border-[#A6852F] border-t-transparent rounded-full animate-spin" />
-          </div>
-          <div className="text-center">
-            <p className="text-sm font-editorial text-[#1C1917]">Homer Gere</p>
-            <p className="text-[10px] text-[#57534E] mt-1">Loading page...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+  if (loading) return <PageLoader />;
   return <>{children}</>;
 }
 
@@ -153,20 +157,7 @@ export default function App() {
         <SiteContentProvider>
         <BrowserRouter>
           <ScrollToTop />
-          <Suspense fallback={
-            <div className="min-h-screen bg-[#FAF9F7] flex items-center justify-center">
-              <div className="flex flex-col items-center gap-4">
-                <div className="relative">
-                  <div className="w-16 h-16 border-2 border-[#A6852F]/20 rounded-full" />
-                  <div className="absolute inset-0 w-16 h-16 border-2 border-[#A6852F] border-t-transparent rounded-full animate-spin" />
-                </div>
-                <div className="text-center">
-                  <p className="text-sm font-editorial text-[#1C1917]">Homer Gere</p>
-                  <p className="text-[10px] text-[#57534E] mt-1">Loading page...</p>
-                </div>
-              </div>
-            </div>
-          }>
+          <Suspense fallback={<PageLoader />          }>
             <RouteLoader>
               <Routes>
               {/* Public Routes */}

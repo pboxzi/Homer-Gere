@@ -92,6 +92,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   const handleNavClick = (id: string) => {
+    setMobileMenuOpen(false);
     if (id === 'journey') {
       routerNavigate('/journey');
     } else if (id === 'projects') {
@@ -115,7 +116,6 @@ export const Navbar: React.FC<NavbarProps> = ({
     } else {
       onNavigate(id);
     }
-    setMobileMenuOpen(false);
   };
 
   return (

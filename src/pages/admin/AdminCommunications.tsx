@@ -53,9 +53,11 @@ export const AdminCommunications: React.FC<AdminCommunicationsProps> = ({ active
     conversations,
     contactMessages,
     notifications,
+    members,
     updateConversation,
     deleteConversation,
     sendConversationMessage,
+    initiateConversationForMember,
     updateContactMessage,
     deleteContactMessage,
     updateNotification,
@@ -65,7 +67,7 @@ export const AdminCommunications: React.FC<AdminCommunicationsProps> = ({ active
 
   switch (activeSection) {
     case 'fan-chat':
-      return <FanChatSection conversations={conversations} updateConversation={updateConversation} deleteConversation={deleteConversation} sendConversationMessage={sendConversationMessage} />;
+      return <FanChatSection conversations={conversations} members={members} updateConversation={updateConversation} deleteConversation={deleteConversation} sendConversationMessage={sendConversationMessage} initiateConversationForMember={initiateConversationForMember} />;
     case 'business-chat':
       return <BusinessChatSection conversations={conversations} updateConversation={updateConversation} deleteConversation={deleteConversation} sendConversationMessage={sendConversationMessage} />;
     case 'contact-messages':
@@ -90,14 +92,21 @@ export const AdminCommunications: React.FC<AdminCommunicationsProps> = ({ active
 
 const FanChatSection: React.FC<{
   conversations: AdminConversation[];
+  members: any[];
   updateConversation: (id: string, updates: Partial<AdminConversation>) => void;
   deleteConversation: (id: string) => void;
   sendConversationMessage: (conversationId: string, sender: string, text: string) => void;
-}> = ({ conversations, updateConversation, deleteConversation, sendConversationMessage }) => {
+  initiateConversationForMember: (userId: string, participant: string, email: string, membershipTier: string | null, firstMessage: string, sender: 'homer' | 'admin') => Promise<void>;
+}> = ({ conversations, members, updateConversation, deleteConversation, sendConversationMessage, initiateConversationForMember }) => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
+  const [showNewConversation, setShowNewConversation] = useState(false);
+  const [selectedMemberId, setSelectedMemberId] = useState('');
+  const [newMessage, setNewMessage] = useState('');
+  const [senderType, setSenderType] = useState<'homer' | 'admin'>('homer');
+  const [initiating, setInitiating] = useState(false);
 
   const fanConversations = useMemo(() => {
     return conversations.filter((c) => {
