@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -31,90 +31,18 @@ const SECTION_MAP: Record<string, AdminSection> = {
   membershipCard: 'membership-cards',
 };
 
-interface AdminLayoutProps {
+interface SidebarContentProps {
   activeSection: AdminSection;
-  onSectionChange: (section: AdminSection) => void;
-  children: React.ReactNode;
+  onNav: (id: AdminSection) => void;
+  expandedGroups: Record<string, boolean>;
+  onToggleGroup: (label: string) => void;
 }
 
-export const AdminLayout: React.FC<AdminLayoutProps> = ({
-  activeSection,
-  onSectionChange,
-  children,
-}) => {
+const SidebarContent = React.memo<SidebarContentProps>(({ activeSection, onNav, expandedGroups, onToggleGroup }) => {
   const navigate = useNavigate();
-  const { globalAdminSearch } = useAdmin();
   const { signOut } = useAuth();
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const searchRef = useRef<HTMLDivElement>(null);
-  const mainRef = useRef<HTMLDivElement>(null);
-  const scrollPosRef = useRef(0);
-  const navTargetRef = useRef<number | null>(null);
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
-    Object.fromEntries(ADMIN_SIDEBAR_GROUPS.filter((g) => g.label).map((g) => [g.label, true]))
-  );
 
-  useEffect(() => {
-    if (searchQuery.trim()) {
-      const results = globalAdminSearch(searchQuery);
-      setSearchResults(results);
-      setSearchOpen(true);
-    } else {
-      setSearchResults([]);
-      setSearchOpen(false);
-    }
-  }, [searchQuery, globalAdminSearch]);
-
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
-        setSearchOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
-
-  const toggleGroup = (label: string) => {
-    setExpandedGroups((prev) => ({ ...prev, [label]: !prev[label] }));
-  };
-
-  const handleNav = (id: AdminSection) => {
-    navTargetRef.current = mainRef.current?.scrollTop || 0;
-    onSectionChange(id);
-    setMobileOpen(false);
-  };
-
-  useLayoutEffect(() => {
-    const el = mainRef.current;
-    if (!el || navTargetRef.current === null) return;
-    const target = navTargetRef.current;
-    navTargetRef.current = null;
-    el.scrollTop = target;
-    const timer = setTimeout(() => { el.scrollTop = target; }, 300);
-    return () => clearTimeout(timer);
-  });
-
-  useEffect(() => {
-    const el = mainRef.current;
-    if (!el) return;
-    const onScroll = () => { scrollPosRef.current = el.scrollTop; };
-    el.addEventListener('scroll', onScroll, { passive: true });
-    return () => el.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const handleSearchSelect = (result: SearchResult) => {
-    navTargetRef.current = mainRef.current?.scrollTop || 0;
-    const section = SECTION_MAP[result.type];
-    if (section) onSectionChange(section);
-    setSearchQuery('');
-    setSearchOpen(false);
-  };
-
-  const SidebarContent = () => (
+  return (
     <div className="flex flex-col h-full">
       <div className="px-5 py-5 border-b border-[#A6852F]/15 bg-gradient-to-b from-[#A6852F]/5 to-transparent">
         <button onClick={() => navigate('/')} className="group flex flex-col text-left focus:outline-none cursor-pointer">
@@ -136,7 +64,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               return (
                 <button
                   key={item.id}
-                  onClick={() => handleNav(item.id)}
+                  onClick={() => onNav(item.id)}
                   className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all duration-300 cursor-pointer ${
                     isActive ? 'bg-[#A6852F]/20 text-[#A6852F] font-medium shadow-md shadow-[#A6852F]/20 border border-[#A6852F]/30' : 'text-[#57534E] hover:bg-[#A6852F]/8 hover:text-[#1C1917] border border-transparent'
                   }`}
@@ -154,7 +82,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           return (
             <div key={group.label}>
               <button
-                onClick={() => toggleGroup(group.label)}
+                onClick={() => onToggleGroup(group.label)}
                 className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-medium uppercase tracking-[0.1em] transition-colors cursor-pointer ${
                   hasActive ? 'text-[#A6852F]' : 'text-[#57534E]/60 hover:text-[#57534E]'
                 }`}
@@ -180,7 +108,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                         return (
                           <button
                             key={item.id}
-                            onClick={() => handleNav(item.id)}
+                            onClick={() => onNav(item.id)}
                             className={`w-full flex items-center gap-2.5 pl-7 pr-3 py-1.5 rounded-xl text-sm transition-all duration-300 cursor-pointer ${
                               isActive ? 'bg-[#A6852F]/20 text-[#A6852F] font-medium shadow-md shadow-[#A6852F]/20 border border-[#A6852F]/30' : 'text-[#57534E] hover:bg-[#A6852F]/8 hover:text-[#1C1917] border border-transparent'
                             }`}
@@ -217,11 +145,78 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       </div>
     </div>
   );
+});
+SidebarContent.displayName = 'SidebarContent';
+
+interface AdminLayoutProps {
+  activeSection: AdminSection;
+  onSectionChange: (section: AdminSection) => void;
+  children: React.ReactNode;
+}
+
+export const AdminLayout: React.FC<AdminLayoutProps> = ({
+  activeSection,
+  onSectionChange,
+  children,
+}) => {
+  const { globalAdminSearch } = useAdmin();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    Object.fromEntries(ADMIN_SIDEBAR_GROUPS.filter((g) => g.label).map((g) => [g.label, true]))
+  );
+
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const results = globalAdminSearch(searchQuery);
+      setSearchResults(results);
+      setSearchOpen(true);
+    } else {
+      setSearchResults([]);
+      setSearchOpen(false);
+    }
+  }, [searchQuery, globalAdminSearch]);
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  const handleNav = useCallback((id: AdminSection) => {
+    onSectionChange(id);
+    setMobileOpen(false);
+  }, [onSectionChange]);
+
+  const toggleGroup = useCallback((label: string) => {
+    setExpandedGroups((prev) => ({ ...prev, [label]: !prev[label] }));
+  }, []);
+
+  const handleSearchSelect = useCallback((result: SearchResult) => {
+    const section = SECTION_MAP[result.type];
+    if (section) onSectionChange(section);
+    setSearchQuery('');
+    setSearchOpen(false);
+  }, [onSectionChange]);
+
+  const sidebarProps = useMemo(() => ({
+    activeSection,
+    onNav: handleNav,
+    expandedGroups,
+    onToggleGroup: toggleGroup,
+  }), [activeSection, handleNav, expandedGroups, toggleGroup]);
 
   return (
     <div className="h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased flex overflow-hidden">
       <aside className="hidden lg:flex w-60 bg-white border-r border-[#A6852F]/20 flex-col fixed inset-y-0 left-0 z-30 shadow-lg shadow-[#A6852F]/5">
-        <SidebarContent />
+        <SidebarContent {...sidebarProps} />
       </aside>
 
       <AnimatePresence>
@@ -247,7 +242,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
               >
                 <X className="w-4 h-4" />
               </button>
-              <SidebarContent />
+              <SidebarContent {...sidebarProps} />
             </motion.aside>
           </>
         )}
@@ -321,7 +316,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           </div>
         </header>
 
-        <main ref={mainRef} className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
           {children}
         </main>
       </div>

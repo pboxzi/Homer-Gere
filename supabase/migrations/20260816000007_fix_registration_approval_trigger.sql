@@ -1,34 +1,41 @@
--- Fix: handle_registration_approval trigger
--- Approved users get member role but NO membership — they must purchase a plan
+-- Fix: Registration approval workflow
+-- 1. Trigger: Only update profile role, no auth user creation, no membership
+-- 2. RLS: Allow users to read their own registration application
 
+BEGIN;
+
+-- ============================================================
+-- 1. Fix trigger: Only update profile role on approval
+-- ============================================================
 CREATE OR REPLACE FUNCTION handle_registration_approval()
 RETURNS TRIGGER AS $$
 BEGIN
-  -- When application is approved
+  -- When application is approved, update the user's profile role
   IF NEW.status = 'approved' AND OLD.status = 'pending' THEN
-    -- Upsert profile with member role, no membership tier
-    -- User must purchase a membership plan separately
-    INSERT INTO profiles (id, first_name, last_name, email, role, membership_tier, email_verified)
-    VALUES (
-      NEW.user_id,
-      NEW.first_name,
-      NEW.last_name,
-      NEW.email,
-      'member',
-      'none',
-      true
-    )
-    ON CONFLICT (id) DO UPDATE SET
-      role = 'member',
-      membership_tier = 'none',
-      email_verified = true;
+    -- Update the existing profile's role from pending to member
+    -- The auth user and profile already exist from registration
+    UPDATE profiles SET role = 'member' WHERE id = NEW.user_id;
+    -- Record approval details
+    NEW.approved_at = NOW();
   END IF;
 
   -- When rejected, add rejection reason
   IF NEW.status = 'rejected' AND OLD.status = 'pending' THEN
     NEW.rejection_reason := COALESCE(NEW.rejection_reason, 'Application rejected by admin');
+    NEW.rejected_at = NOW();
   END IF;
 
+  NEW.reviewed_at := NOW();
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+-- ============================================================
+-- 2. RLS: Allow users to read their own registration application
+-- ============================================================
+CREATE POLICY "Users can read own registration application"
+  ON registration_applications FOR SELECT
+  TO authenticated
+  USING (user_id = auth.uid());
+
+COMMIT;

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { profilesRepository } from '../lib/repositories';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -8,8 +9,24 @@ interface ProtectedRouteProps {
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin = false }) => {
-  const { isAuthenticated, isAdmin, user, loading } = useAuth();
+  const { isAuthenticated, isAdmin, user, loading, refreshProfile } = useAuth();
   const location = useLocation();
+  const [freshRole, setFreshRole] = useState<string | null>(null);
+
+  // Re-fetch profile from DB to get the latest role (in case admin just approved)
+  useEffect(() => {
+    if (!loading && isAuthenticated && user?.id) {
+      profilesRepository.getById(user.id).then((profile) => {
+        if (profile) {
+          setFreshRole(profile.role);
+          // If role changed, refresh the auth context
+          if (profile.role !== user.role) {
+            refreshProfile();
+          }
+        }
+      }).catch(() => {});
+    }
+  }, [loading, isAuthenticated, user?.id, user?.role, refreshProfile]);
 
   if (loading) {
     return (
@@ -33,7 +50,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requir
     return <Navigate to="/access-denied" replace />;
   }
 
-  if (user?.role === 'pending') {
+  // Use fresh role if available, otherwise fall back to cached user.role
+  const effectiveRole = freshRole || user?.role;
+  if (effectiveRole === 'pending') {
     if (requireAdmin) {
       return <Navigate to="/access-denied" replace />;
     }

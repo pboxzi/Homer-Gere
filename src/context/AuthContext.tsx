@@ -129,9 +129,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (data.user) {
         const u = await buildUser(data.user);
-        setUser(u);
         setLoading(false);
-        if (!u) return { error: 'Account not found or pending approval. Please register and wait for admin approval.' };
+        if (!u) {
+          await supabase.auth.signOut();
+          return { error: 'Account not found or pending approval. Please register and wait for admin approval.' };
+        }
+        if (u.role === 'pending') {
+          await supabase.auth.signOut();
+          return { error: 'Your account is awaiting administrator approval.' };
+        }
+        setUser(u);
         supabase.from('profiles').update({ last_login: new Date().toISOString() }).eq('id', data.user.id).catch(() => {});
         return {};
       }

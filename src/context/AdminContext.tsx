@@ -546,10 +546,28 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
           if (!regRecord) return;
 
-          // Update registration_application status (reviewed_at is set by DB trigger)
+          // Get current admin user for reviewed_by
+          const { data: { user: adminUser } } = await supabase.auth.getUser();
+
+          const now = new Date().toISOString();
+
+          // Update registration_application status
+          const updateData: Record<string, unknown> = {
+            status: updates.status,
+            reviewed_by: adminUser?.id || null,
+            reviewed_at: now,
+          };
+          if (updates.status === 'approved') {
+            updateData.approved_at = now;
+          }
+          if (updates.status === 'declined') {
+            updateData.rejection_reason = (updates as any).rejectionReason || 'Application rejected by admin';
+            updateData.rejected_at = now;
+          }
+
           const { error: statusError } = await supabase
             .from('registration_applications')
-            .update({ status: updates.status })
+            .update(updateData)
             .eq('id', id);
 
           if (statusError) {
@@ -558,9 +576,20 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             return;
           }
 
-          // Notify
+          // On approval: update the user's profile role to member
+          if (updates.status === 'approved' && regRecord.user_id) {
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .update({ role: 'member' })
+              .eq('id', regRecord.user_id);
+            if (profileError) {
+              console.error('Failed to update profile role:', profileError);
+            }
+          }
+
+          // Create in-app notification (type is required by DB schema)
           const { error: notifError } = await supabase.from('notifications').insert({
-            user_id: null,
+            user_id: regRecord.user_id || null,
             type: 'system',
             title: updates.status === 'approved' ? 'Member Approved' : 'Member Rejected',
             message: updates.status === 'approved'
@@ -572,11 +601,23 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             console.error('Failed to create notification:', notifError);
           }
 
-          if (updates.status === 'approved') {
-            emailService.registrationApproved(regRecord.email, regRecord.first_name).catch(() => {});
-            emailService.membershipApproved(regRecord.email, regRecord.first_name, regRecord.membership_tier || 'silver').catch(() => {});
+          // Create audit log
+          const { error: auditError } = await supabase.from('audit_logs').insert({
+            user_id: adminUser?.id || null,
+            action: updates.status === 'approved' ? 'registration_approved' : 'registration_rejected',
+            table_name: 'registration_applications',
+            record_id: id,
+            old_data: { status: 'pending' },
+            new_data: { status: updates.status, reviewed_by: adminUser?.id },
+          });
+          if (auditError) {
+            console.error('Failed to create audit log:', auditError);
           }
 
+          // Send emails (fire and forget)
+          if (updates.status === 'approved') {
+            emailService.registrationApproved(regRecord.email, regRecord.first_name).catch(() => {});
+          }
           if (updates.status === 'declined') {
             emailService.registrationRejected(regRecord.email, regRecord.first_name, (updates as any).rejectionReason).catch(() => {});
           }

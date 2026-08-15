@@ -42,8 +42,8 @@ export default function MemberRegister() {
   useEffect(() => {
     if (isAuthenticated && user) {
       if (user.role === 'admin' || user.role === 'super_admin') navigate('/admin');
-      else if (user.role === 'pending') navigate('/application-status');
-      else navigate('/dashboard');
+      else if (user.role === 'member') navigate('/dashboard');
+      // pending users stay on this page — the success step is shown below
     }
   }, [isAuthenticated, user, navigate]);
 
@@ -86,9 +86,9 @@ export default function MemberRegister() {
           <div className="w-16 h-16 rounded-full bg-[#F59E0B]/10 flex items-center justify-center mx-auto mb-6">
             <Shield className="w-8 h-8 text-[#F59E0B]" />
           </div>
-          <h1 className="text-2xl font-editorial text-[#1C1917] tracking-tight mb-3">Application Submitted</h1>
+          <h1 className="text-2xl font-editorial text-[#1C1917] tracking-tight mb-3">Registration Received</h1>
           <p className="text-sm text-[#57534E] leading-relaxed mb-6">
-            Your application is <span className="font-medium text-[#F59E0B]">pending review</span>. We'll email you at <span className="font-medium text-[#1C1917]">{email}</span> once approved.
+            Your registration has been received and is awaiting administrator review. You will receive an email once your account has been approved.
           </p>
           <div className="flex flex-col gap-2.5">
             <button onClick={() => navigate('/')} className="w-full py-2.5 bg-[#1C1917] hover:bg-[#292524] text-white text-sm font-medium rounded-xl transition-all cursor-pointer">Return Home</button>

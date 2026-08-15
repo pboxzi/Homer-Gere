@@ -536,28 +536,28 @@ const MembersSection: React.FC = () => {
         </select>
       </div>
 
-      <div className="rounded-2xl border border-[#E8E5DF]/50 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div className="rounded-2xl border border-[#A6852F]/15 bg-white overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-500" style={{ boxShadow: '0 0 30px #A6852F08' }}>
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#E8E5DF]/40">
-                <th className="text-left px-5 py-3.5 text-[10px] font-semibold text-[#57534E] uppercase tracking-wider">Member</th>
-                <th className="text-left px-5 py-3.5 text-[10px] font-semibold text-[#57534E] uppercase tracking-wider">Status</th>
-                <th className="text-left px-5 py-3.5 text-[10px] font-semibold text-[#57534E] uppercase tracking-wider">Joined</th>
-                <th className="text-right px-5 py-3.5 text-[10px] font-semibold text-[#57534E] uppercase tracking-wider">Actions</th>
+              <tr className="bg-gradient-to-r from-[#A6852F]/5 via-[#C9A84C]/3 to-[#FAF9F7] border-b border-[#A6852F]/15">
+                <th className="text-left px-5 py-3.5 text-[10px] font-bold text-[#A6852F] uppercase tracking-wider">Member</th>
+                <th className="text-left px-5 py-3.5 text-[10px] font-bold text-[#A6852F] uppercase tracking-wider">Status</th>
+                <th className="text-left px-5 py-3.5 text-[10px] font-bold text-[#A6852F] uppercase tracking-wider">Joined</th>
+                <th className="text-right px-5 py-3.5 text-[10px] font-bold text-[#A6852F] uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody>
               {paginated.map((m) => (
-                <tr key={m.id} className="border-b border-[#E8E5DF]/20 last:border-0 hover:bg-[#F3F1ED]/20 transition-colors">
+                <tr key={m.id} className="border-b border-[#E8E5DF]/20 last:border-0 hover:bg-gradient-to-r hover:from-[#A6852F]/5 hover:to-transparent transition-all duration-300 group">
                   {editingId === m.id ? (
                     <>
                       <td className="px-5 py-3.5">
-                        <input value={editData.name} onChange={(e) => setEditData({ ...editData, name: e.target.value })} className="w-full px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F]/40 mb-1" />
-                        <input value={editData.email} onChange={(e) => setEditData({ ...editData, email: e.target.value })} className="w-full px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 bg-white text-[11px] text-[#57534E] focus:outline-none focus:border-[#A6852F]/40" />
+                        <input value={editData.name} onChange={(e) => setEditData({ ...editData, name: e.target.value })} className="w-full px-3 py-1.5 rounded-lg border border-[#A6852F]/30 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F]/60 focus:ring-1 focus:ring-[#A6852F]/20 mb-1" />
+                        <input value={editData.email} onChange={(e) => setEditData({ ...editData, email: e.target.value })} className="w-full px-3 py-1.5 rounded-lg border border-[#A6852F]/30 bg-white text-[11px] text-[#57534E] focus:outline-none focus:border-[#A6852F]/60 focus:ring-1 focus:ring-[#A6852F]/20" />
                       </td>
                       <td className="px-5 py-3.5">
-                        <select value={editData.status} onChange={(e) => setEditData({ ...editData, status: e.target.value as MemberStatus })} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 bg-white text-xs text-[#57534E] focus:outline-none focus:border-[#A6852F]/40 cursor-pointer"><option value="active">Active</option><option value="pending">Pending</option><option value="suspended">Suspended</option></select>
+                        <select value={editData.status} onChange={(e) => setEditData({ ...editData, status: e.target.value as MemberStatus })} className="px-3 py-1.5 rounded-lg border border-[#A6852F]/30 bg-white text-xs text-[#57534E] focus:outline-none focus:border-[#A6852F]/60 cursor-pointer"><option value="active">Active</option><option value="pending">Pending</option><option value="suspended">Suspended</option></select>
                       </td>
                       <td className="px-5 py-3.5 text-xs text-[#57534E]">{formatDate(m.joinDate)}</td>
                       <td className="px-5 py-3.5">
@@ -571,22 +571,22 @@ const MembersSection: React.FC = () => {
                     <>
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-full bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] text-sm font-medium shrink-0">
+                          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#A6852F] to-[#8B6F1F] flex items-center justify-center text-white text-xs font-bold shrink-0 shadow-md shadow-[#A6852F]/20 group-hover:shadow-lg group-hover:shadow-[#A6852F]/30 transition-shadow">
                             {m.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-[#1C1917]">{m.name}</p>
+                            <p className="text-sm font-semibold text-[#1C1917]">{m.name}</p>
                             <p className="text-[11px] text-[#57534E]">{m.email}</p>
-                            {m.membership !== 'None' && <span className="inline-block mt-0.5 text-[10px] font-medium text-[#A6852F] bg-[#A6852F]/8 px-2 py-0.5 rounded-full">{m.membership}</span>}
+                            {m.membership !== 'None' && <span className="inline-block mt-0.5 text-[10px] font-semibold text-[#A6852F] bg-[#A6852F]/10 border border-[#A6852F]/15 px-2 py-0.5 rounded-full">{m.membership}</span>}
                           </div>
                         </div>
                       </td>
                       <td className="px-5 py-3.5"><StatusBadge status={m.status} /></td>
-                      <td className="px-5 py-3.5 text-xs text-[#57534E]">{formatDate(m.joinDate)}</td>
+                      <td className="px-5 py-3.5 text-xs text-[#57534E] font-medium">{formatDate(m.joinDate)}</td>
                       <td className="px-5 py-3.5">
                         <div className="flex items-center justify-end gap-1">
-                          <button onClick={() => setProfileMemberId(m.id)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors cursor-pointer" title="View Profile"><Eye className="w-4 h-4" /></button>
-                          <button onClick={() => handleStartEdit(m)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors cursor-pointer" title="Edit"><Edit className="w-4 h-4" /></button>
+                          <button onClick={() => setProfileMemberId(m.id)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#A6852F] hover:bg-[#A6852F]/10 transition-colors cursor-pointer" title="View Profile"><Eye className="w-4 h-4" /></button>
+                          <button onClick={() => handleStartEdit(m)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#A6852F] hover:bg-[#A6852F]/10 transition-colors cursor-pointer" title="Edit"><Edit className="w-4 h-4" /></button>
                           <button onClick={() => handleToggleSuspend(m)} className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${m.status === 'active' ? 'text-[#DC2626] hover:bg-[#DC2626]/10' : 'text-[#16A34A] hover:bg-[#16A34A]/10'}`} title={m.status === 'active' ? 'Suspend' : 'Reactivate'}>{m.status === 'active' ? <Ban className="w-4 h-4" /> : <RotateCcw className="w-4 h-4" />}</button>
                           <button onClick={() => setDeleteId(m.id)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer" title="Delete"><Trash2 className="w-4 h-4" /></button>
                         </div>
@@ -599,26 +599,26 @@ const MembersSection: React.FC = () => {
           </table>
         </div>
 
-        <div className="md:hidden divide-y divide-[#E8E5DF]/20">
+        <div className="md:hidden divide-y divide-[#A6852F]/10">
           {paginated.map((m) => (
-            <div key={m.id} className="p-4 space-y-3">
+            <div key={m.id} className="p-4 space-y-3 hover:bg-gradient-to-r hover:from-[#A6852F]/5 hover:to-transparent transition-all duration-300">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F] text-sm font-medium shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A6852F] to-[#8B6F1F] flex items-center justify-center text-white text-xs font-bold shrink-0 shadow-md shadow-[#A6852F]/20">
                     {m.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-[#1C1917]">{m.name}</p>
+                    <p className="text-sm font-semibold text-[#1C1917]">{m.name}</p>
                     <p className="text-[11px] text-[#57534E]">{m.email}</p>
-                    {m.membership !== 'None' && <span className="inline-block mt-0.5 text-[10px] font-medium text-[#A6852F] bg-[#A6852F]/8 px-2 py-0.5 rounded-full">{m.membership}</span>}
+                    {m.membership !== 'None' && <span className="inline-block mt-0.5 text-[10px] font-semibold text-[#A6852F] bg-[#A6852F]/10 border border-[#A6852F]/15 px-2 py-0.5 rounded-full">{m.membership}</span>}
                   </div>
                 </div>
                 <StatusBadge status={m.status} />
               </div>
-              <div className="flex items-center gap-1 pt-2 border-t border-[#E8E5DF]/20">
-                <button onClick={() => setProfileMemberId(m.id)} className="flex-1 py-2 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><Eye className="w-3.5 h-3.5" /> Profile</button>
-                <button onClick={() => handleStartEdit(m)} className="flex-1 py-2 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><Edit className="w-3.5 h-3.5" /> Edit</button>
-                <button onClick={() => handleToggleSuspend(m)} className={`py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 text-xs transition-colors cursor-pointer ${m.status === 'active' ? 'text-[#DC2626] hover:bg-[#DC2626]/10' : 'text-[#16A34A] hover:bg-[#16A34A]/10'}`}>{m.status === 'active' ? <Ban className="w-3.5 h-3.5" /> : <RotateCcw className="w-3.5 h-3.5" />}</button>
+              <div className="flex items-center gap-1 pt-2 border-t border-[#A6852F]/10">
+                <button onClick={() => setProfileMemberId(m.id)} className="flex-1 py-2 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#A6852F] hover:bg-[#A6852F]/10 transition-colors cursor-pointer font-medium"><Eye className="w-3.5 h-3.5" /> Profile</button>
+                <button onClick={() => handleStartEdit(m)} className="flex-1 py-2 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#A6852F] hover:bg-[#A6852F]/10 transition-colors cursor-pointer font-medium"><Edit className="w-3.5 h-3.5" /> Edit</button>
+                <button onClick={() => handleToggleSuspend(m)} className={`py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 text-xs transition-colors cursor-pointer font-medium ${m.status === 'active' ? 'text-[#DC2626] hover:bg-[#DC2626]/10' : 'text-[#16A34A] hover:bg-[#16A34A]/10'}`}>{m.status === 'active' ? <Ban className="w-3.5 h-3.5" /> : <RotateCcw className="w-3.5 h-3.5" />}</button>
                 <button onClick={() => setDeleteId(m.id)} className="py-2 px-3 rounded-lg flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
               </div>
             </div>
@@ -626,11 +626,11 @@ const MembersSection: React.FC = () => {
         </div>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-5 py-3.5 border-t border-[#E8E5DF]/40">
-            <span className="text-xs text-[#57534E]">{filtered.length} members · Page {page}/{totalPages}</span>
+          <div className="flex items-center justify-between px-5 py-3.5 border-t border-[#A6852F]/15 bg-gradient-to-r from-[#A6852F]/5 to-[#FAF9F7]/50">
+            <span className="text-xs text-[#57534E] font-medium">{filtered.length} members · Page {page}/{totalPages}</span>
             <div className="flex items-center gap-2">
-              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
-              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#A6852F] hover:bg-[#A6852F]/10 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
+              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#A6852F] hover:bg-[#A6852F]/10 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
             </div>
           </div>
         )}
@@ -865,23 +865,91 @@ const ApplicationsSection: React.FC = () => {
         {viewId && viewedApp && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setViewId(null)}>
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-xl border border-[#A6852F]/10 p-6 w-full max-w-md shadow-xl shadow-[#A6852F]/5" onClick={(e) => e.stopPropagation()}>
-              <div className="flex items-center justify-between mb-5">
-                <h4 className="text-sm font-medium text-[#1C1917]">Application Details</h4>
-                <button onClick={() => setViewId(null)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><X className="w-4 h-4" /></button>
+              className="bg-white rounded-xl border border-[#A6852F]/15 w-full max-w-md shadow-xl shadow-[#A6852F]/10 overflow-hidden max-h-[85vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
+              {/* Header */}
+              <div className="px-6 pt-5 pb-4 bg-gradient-to-br from-[#A6852F]/10 via-[#C9A84C]/5 to-[#FAF9F7] border-b border-[#A6852F]/20">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#A6852F] to-[#8B6F1F] flex items-center justify-center shadow-lg shadow-[#A6852F]/25">
+                      <Users className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-[#1C1917]">{viewedApp.name}</h4>
+                      <p className="text-[10px] text-[#A6852F] font-medium mt-0.5">Registration Application</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <StatusBadge status={viewedApp.status} />
+                    <button onClick={() => setViewId(null)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#A6852F]/10 hover:text-[#A6852F] transition-colors cursor-pointer"><X className="w-4 h-4" /></button>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-3">
-                {[{ label: 'Name', value: viewedApp.name }, { label: 'Email', value: viewedApp.email }, { label: 'Plan', value: viewedApp.plan }, { label: 'Date', value: formatDate(viewedApp.date) }, { label: 'Status', value: viewedApp.status },
-                  viewedApp.country ? { label: 'Country (Selected)', value: viewedApp.country, highlight: false } : null,
-                  viewedApp.country_detected ? { label: 'Country (Detected)', value: viewedApp.city_detected ? `${viewedApp.city_detected}, ${viewedApp.country_detected}` : viewedApp.country_detected, highlight: viewedApp.country && viewedApp.country_detected && viewedApp.country !== viewedApp.country_detected } : null,
-                  viewedApp.device_type ? { label: 'Device', value: viewedApp.device_type } : null,
-                  viewedApp.browser && viewedApp.operating_system ? { label: 'Browser / OS', value: `${viewedApp.browser} / ${viewedApp.operating_system}` } : null,
-                  viewedApp.referral_source ? { label: 'Found via', value: viewedApp.referral_source } : null,
-                ].filter(Boolean).map((f) => (
-                  <div key={f!.label} className="flex items-center justify-between"><span className="text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">{f!.label}</span><span className={`text-xs ${f!.highlight ? 'text-red-600 font-medium' : 'text-[#1C1917]'}`}>{f!.value}{f!.highlight ? ' ⚠' : ''}</span></div>
-                ))}
+
+              {/* Content */}
+              <div className="px-6 py-4 overflow-y-auto flex-1 space-y-4">
+                {/* Contact */}
+                <div>
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <div className="w-5 h-5 rounded-md bg-[#A6852F]/10 flex items-center justify-center"><Mail className="w-3 h-3 text-[#A6852F]" /></div>
+                    <h5 className="text-[10px] font-semibold text-[#A6852F] uppercase tracking-[0.06em]">Contact</h5>
+                  </div>
+                  <div className="rounded-xl bg-gradient-to-r from-[#A6852F]/5 to-[#FAF9F7] border border-[#A6852F]/15 divide-y divide-[#A6852F]/10">
+                    <div className="flex items-center justify-between px-3 py-2.5"><span className="text-[10px] text-[#57534E] font-medium">Email</span><span className="text-xs text-[#1C1917] font-medium">{viewedApp.email}</span></div>
+                    <div className="flex items-center justify-between px-3 py-2.5"><span className="text-[10px] text-[#57534E] font-medium">Plan</span><span className="text-xs text-[#1C1917] font-medium">{viewedApp.plan || 'N/A'}</span></div>
+                    <div className="flex items-center justify-between px-3 py-2.5"><span className="text-[10px] text-[#57534E] font-medium">Date</span><span className="text-xs text-[#1C1917] font-medium">{formatDate(viewedApp.date)}</span></div>
+                  </div>
+                </div>
+
+                {/* Location */}
+                {(viewedApp.country || viewedApp.country_detected) && (
+                  <div>
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <div className="w-5 h-5 rounded-md bg-[#C9A84C]/10 flex items-center justify-center"><svg className="w-3 h-3 text-[#C9A84C]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div>
+                      <h5 className="text-[10px] font-semibold text-[#C9A84C] uppercase tracking-[0.06em]">Location</h5>
+                    </div>
+                    <div className="rounded-xl bg-gradient-to-r from-[#C9A84C]/5 to-[#FAF9F7] border border-[#C9A84C]/15 divide-y divide-[#C9A84C]/10">
+                      {viewedApp.country && (
+                        <div className="flex items-center justify-between px-3 py-2.5"><span className="text-[10px] text-[#57534E] font-medium">Selected</span><span className="text-xs text-[#1C1917] font-medium">{viewedApp.country}</span></div>
+                      )}
+                      {viewedApp.country_detected && (
+                        <div className="flex items-center justify-between px-3 py-2.5">
+                          <span className="text-[10px] text-[#57534E] font-medium">Detected</span>
+                          <span className={`text-xs font-medium ${viewedApp.country && viewedApp.country_detected && viewedApp.country !== viewedApp.country_detected ? 'text-[#DC2626]' : 'text-[#1C1917]'}`}>
+                            {viewedApp.city_detected ? `${viewedApp.city_detected}, ${viewedApp.country_detected}` : viewedApp.country_detected}
+                            {viewedApp.country && viewedApp.country_detected && viewedApp.country !== viewedApp.country_detected && ' ⚠'}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Device & Source */}
+                {(viewedApp.device_type || (viewedApp.browser && viewedApp.operating_system) || viewedApp.referral_source) && (
+                  <div>
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <div className="w-5 h-5 rounded-md bg-[#A6852F]/10 flex items-center justify-center"><svg className="w-3 h-3 text-[#A6852F]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg></div>
+                      <h5 className="text-[10px] font-semibold text-[#A6852F] uppercase tracking-[0.06em]">Device & Source</h5>
+                    </div>
+                    <div className="rounded-xl bg-gradient-to-r from-[#A6852F]/5 to-[#FAF9F7] border border-[#A6852F]/15 divide-y divide-[#A6852F]/10">
+                      {viewedApp.device_type && (
+                        <div className="flex items-center justify-between px-3 py-2.5"><span className="text-[10px] text-[#57534E] font-medium">Device</span><span className="text-xs text-[#1C1917] font-medium">{viewedApp.device_type}</span></div>
+                      )}
+                      {viewedApp.browser && viewedApp.operating_system && (
+                        <div className="flex items-center justify-between px-3 py-2.5"><span className="text-[10px] text-[#57534E] font-medium">Browser / OS</span><span className="text-xs text-[#1C1917] font-medium">{viewedApp.browser} / {viewedApp.operating_system}</span></div>
+                      )}
+                      {viewedApp.referral_source && (
+                        <div className="flex items-center justify-between px-3 py-2.5"><span className="text-[10px] text-[#57534E] font-medium">Found via</span><span className="text-xs text-[#1C1917] font-medium">{viewedApp.referral_source}</span></div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className="mt-5 flex justify-end"><button onClick={() => setViewId(null)} className="px-3 py-1.5 rounded-xl text-xs font-medium text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">Close</button></div>
+
+              {/* Footer */}
+              <div className="px-6 py-3 border-t border-[#A6852F]/15 bg-gradient-to-r from-[#A6852F]/5 to-[#FAF9F7]/50 flex items-center justify-end">
+                <button onClick={() => setViewId(null)} className="px-4 py-1.5 rounded-xl text-xs font-medium text-[#A6852F] border border-[#A6852F]/30 hover:bg-[#A6852F]/10 transition-colors cursor-pointer">Close</button>
+              </div>
             </motion.div>
           </motion.div>
         )}
