@@ -221,15 +221,11 @@ export const emailService = {
   },
 
   // --- Chat ---
-  async chatReplyFromHomer(to: string, firstName: string, messagePreview: string) {
+  async chatReplyFromHomer(to: string, name: string) {
     return sendEmail({
       to,
-      templateName: 'chat-reply-homer',
-      variables: {
-        first_name: firstName,
-        message_preview: messagePreview,
-        chat_url: `${window.location.origin}/dashboard/chat`,
-      },
+      templateName: 'chat-reply',
+      variables: { name, sender: 'Homer Gere' },
     });
   },
 
@@ -265,6 +261,14 @@ export const emailService = {
         name,
         enquiry_type: enquiryType,
       },
+    });
+  },
+
+  async businessEnquiryReply(to: string, name: string) {
+    return sendEmail({
+      to,
+      templateName: 'business-enquiry-reply',
+      variables: { name },
     });
   },
 

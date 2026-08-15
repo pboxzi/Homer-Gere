@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Calendar, Check, X, Star, Clock, Users, Heart, Mic, Briefcase, Sparkles, Video, Play } from 'lucide-react';
+import { Calendar, Check, X, Star, Clock, Users, Heart, Mic, Briefcase, Sparkles, Video, Play, Send, AlertCircle } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import { useSiteContent } from '../../context/SiteContentContext';
 import { useAuth } from '../../context/AuthContext';
@@ -41,12 +41,14 @@ const TIER_ACCESS: Record<string, string[]> = {
   'video-greeting': ['Silver', 'Gold', 'Platinum'],
 };
 
+type ModalStep = 'form' | 'confirm' | 'submitted';
+
 export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onRequestFormOpened?: () => void }> = ({ openRequestForm, onRequestFormOpened }) => {
   const { user, profile } = useAuth();
   const { experienceRequests, membershipPlan, refreshExperiences, logActivity } = useDashboard();
   const { experiences } = useSiteContent();
   const [selectedExp, setSelectedExp] = useState<Experience | null>(null);
-  const [submitted, setSubmitted] = useState(false);
+  const [modalStep, setModalStep] = useState<ModalStep>('form');
   const [submitting, setSubmitting] = useState(false);
   const [requestForm, setRequestForm] = useState({
     preferredDate: '',
@@ -59,6 +61,7 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
   React.useEffect(() => {
     if (openRequestForm) {
       setSelectedExp(experiences[0]);
+      setModalStep('form');
       onRequestFormOpened?.();
     }
   }, [openRequestForm, onRequestFormOpened]);
@@ -70,7 +73,18 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
     return requiredTiers.includes(membershipPlan?.name || '');
   };
 
+  const handleSelectExperience = (exp: Experience) => {
+    if (!canAccess(exp) || exp.availability === 'unavailable') return;
+    setSelectedExp(exp);
+    setModalStep('form');
+  };
+
   const handleSubmit = async () => {
+    if (!selectedExp || !user?.id || !profile) return;
+    setModalStep('confirm');
+  };
+
+  const handleConfirmSubmit = async () => {
     if (!selectedExp || !user?.id || !profile) return;
     setSubmitting(true);
     try {
@@ -93,7 +107,7 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
         timeline: null,
         status: 'pending',
       });
-      setSubmitted(true);
+      setModalStep('submitted');
       refreshExperiences();
       logActivity('create', 'experience', `Experience request submitted: ${selectedExp.type}`, { experience_type: selectedExp.type });
       await notifyService.experienceRequestSubmitted(user.id, {
@@ -102,9 +116,14 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
         experienceType: selectedExp.type,
         preferredDate: requestForm.preferredDate || 'TBD',
       });
-      setTimeout(() => { setSubmitted(false); setSelectedExp(null); setRequestForm({ preferredDate: '', location: '', guests: '1', specialRequirements: '', notes: '' }); }, 2000);
     } catch { /* silent */ }
     setSubmitting(false);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedExp(null);
+    setModalStep('form');
+    setRequestForm({ preferredDate: '', location: '', guests: '1', specialRequirements: '', notes: '' });
   };
 
   return (
@@ -135,12 +154,13 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
           {experiences.map((exp, i) => {
             const accessible = canAccess(exp);
             const color = CATEGORY_COLORS[exp.type] || '#57534E';
+            const hasActiveRequest = experienceRequestsList.some(r => r.experience_type === exp.type && r.status !== 'completed' && r.status !== 'declined');
             return (
               <motion.div
                 key={exp.id}
-                className={`rounded-2xl p-5 transition-all duration-500 border bg-white ${accessible ? 'hover:scale-[1.01] cursor-pointer' : 'opacity-60'}`}
+                className={`rounded-2xl p-5 transition-all duration-500 border bg-white ${accessible && exp.availability !== 'unavailable' && !hasActiveRequest ? 'hover:scale-[1.01] cursor-pointer' : 'opacity-60'}`}
                 style={{ borderColor: `${color}45`, boxShadow: `0 0 40px ${color}40, 0 8px 25px ${color}30, inset 0 1px 0 ${color}15` }}
-                onClick={() => accessible && setSelectedExp(exp)}
+                onClick={() => handleSelectExperience(exp)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.15 + i * 0.05 }}
@@ -159,8 +179,10 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
                     <span className="flex items-center gap-1"><Star className="w-3 h-3" /> {exp.price}</span>
                     <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {exp.duration}</span>
                   </div>
-                  {accessible && exp.availability !== 'unavailable' ? (
-                    <span className="text-[10px] font-medium px-2.5 py-1 rounded-full" style={{ backgroundColor: `${color}15`, color }}>Request Pricing</span>
+                  {accessible && exp.availability !== 'unavailable' && !hasActiveRequest ? (
+                    <span className="text-[10px] font-medium px-2.5 py-1 rounded-full" style={{ backgroundColor: `${color}15`, color }}>Request Experience</span>
+                  ) : hasActiveRequest ? (
+                    <span className="text-[10px] text-[#57534E]/60">Active request</span>
                   ) : (
                     <span className="text-[10px] text-[#57534E]/60">{!accessible ? 'Upgrade required' : 'Unavailable'}</span>
                   )}
@@ -177,7 +199,7 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
           <h3 className="text-sm font-medium text-[#1C1917] mb-4">Your Requests</h3>
           <div className="space-y-2">
             {experienceRequestsList.map((r, i) => {
-              const reqColor = r.status === 'approved' ? '#16A34A' : r.status === 'completed' ? '#57534E' : '#F59E0B';
+              const reqColor = r.status === 'approved' ? '#16A34A' : r.status === 'completed' ? '#57534E' : r.status === 'declined' ? '#DC2626' : '#F59E0B';
               return (
                 <motion.div key={r.id} className="flex items-center gap-4 p-4 rounded-2xl border bg-white transition-all duration-500" style={{ borderColor: `${reqColor}40`, boxShadow: `0 0 30px ${reqColor}25, 0 6px 20px ${reqColor}18` }} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 + i * 0.04 }}>
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center shadow-sm" style={{ backgroundColor: `${reqColor}15`, color: reqColor, boxShadow: `0 0 12px ${reqColor}1B` }}>
@@ -187,7 +209,7 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
                     <p className="text-sm font-medium text-[#1C1917]">{r.experience_type}</p>
                     <p className="text-[10px] text-[#57534E] mt-0.5">{r.request_number} · {new Date(r.created_at).toLocaleDateString()}</p>
                   </div>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full font-medium capitalize shadow-sm" style={{ backgroundColor: `${reqColor}12`, color: reqColor, boxShadow: `0 0 8px ${reqColor}0C` }}>{r.status.replace('_', ' ')}</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full font-medium capitalize shadow-sm" style={{ backgroundColor: `${reqColor}12`, color: reqColor, boxShadow: `0 0 8px ${reqColor}0C` }}>{r.status.replace(/_/g, ' ')}</span>
                 </motion.div>
               );
             })}
@@ -199,26 +221,22 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
       <AnimatePresence>
         {selectedExp && (
           <motion.div className="fixed inset-0 z-50 flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setSelectedExp(null)} />
-            <motion.div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4" initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}>
-              {submitted ? (
-                <div className="text-center py-8">
-                  <div className="w-12 h-12 rounded-full bg-[#16A34A]/22 flex items-center justify-center mx-auto mb-3"><Check className="w-6 h-6 text-[#16A34A]" /></div>
-                  <p className="text-sm font-medium text-[#1C1917]">Request Submitted!</p>
-                  <p className="text-xs text-[#57534E] mt-1">We'll review your request shortly.</p>
-                </div>
-              ) : (
+            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => !submitting && handleCloseModal()} />
+            <motion.div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto" initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}>
+
+              {/* Step: Form */}
+              {modalStep === 'form' && (
                 <>
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-editorial text-[#1C1917]">{selectedExp.title}</h3>
-                    <button onClick={() => setSelectedExp(null)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] cursor-pointer"><X className="w-4 h-4" /></button>
+                    <button onClick={handleCloseModal} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] cursor-pointer"><X className="w-4 h-4" /></button>
                   </div>
                   <p className="text-sm text-[#57534E]">{selectedExp.description}</p>
                   <div className="flex items-center gap-4 text-xs text-[#57534E]">
                     <span className="flex items-center gap-1"><Star className="w-3 h-3" /> {selectedExp.price}</span>
                     <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {selectedExp.duration}</span>
                   </div>
-                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-medium text-[#1C1917] mb-1">Preferred Date</label>
                       <input type="date" value={requestForm.preferredDate} onChange={e => setRequestForm(f => ({ ...f, preferredDate: e.target.value }))}
@@ -245,10 +263,66 @@ export const DashboardExperiences: React.FC<{ openRequestForm?: boolean; onReque
                     <textarea value={requestForm.notes} onChange={e => setRequestForm(f => ({ ...f, notes: e.target.value }))}
                       className="w-full px-3 py-2 border border-[#A6852F]/20 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F] min-h-[60px]" placeholder="Any additional details..." />
                   </div>
-                  <button onClick={handleSubmit} disabled={submitting} className="w-full bg-[#1C1917] hover:bg-[#292524] text-white text-sm font-medium py-3 rounded-2xl transition-all cursor-pointer disabled:opacity-50">
-                    {submitting ? 'Submitting...' : 'Submit Request'}
+                  <button onClick={handleSubmit} className="w-full bg-[#1C1917] hover:bg-[#292524] text-white text-sm font-medium py-3 rounded-2xl transition-all cursor-pointer flex items-center justify-center gap-2">
+                    <Send className="w-4 h-4" /> Review Request
                   </button>
                 </>
+              )}
+
+              {/* Step: Confirm */}
+              {modalStep === 'confirm' && (
+                <>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-editorial text-[#1C1917]">Confirm Request</h3>
+                    <button onClick={handleCloseModal} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] cursor-pointer"><X className="w-4 h-4" /></button>
+                  </div>
+
+                  <div className="rounded-xl border border-[#A6852F]/20 p-4 bg-[#FAF9F7]">
+                    <p className="text-sm font-medium text-[#1C1917]">{selectedExp.title}</p>
+                    <div className="mt-2 space-y-1 text-xs text-[#57534E]">
+                      {requestForm.preferredDate && <p>Date: {requestForm.preferredDate}</p>}
+                      {requestForm.location && <p>Location: {requestForm.location}</p>}
+                      <p>Guests: {requestForm.guests}</p>
+                      {requestForm.specialRequirements && <p>Requirements: {requestForm.specialRequirements}</p>}
+                    </div>
+                  </div>
+
+                  <div className="bg-[#F59E0B]/8 border border-[#F59E0B]/30 rounded-xl p-4">
+                    <div className="flex gap-3">
+                      <AlertCircle className="w-5 h-5 text-[#F59E0B] shrink-0 mt-0.5" />
+                      <div className="text-sm text-[#1C1917]">
+                        <p className="font-medium mb-1">You are about to submit this request.</p>
+                        <p className="text-xs text-[#57534E]">After approval you will receive payment instructions if applicable. Our team will review your request shortly.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2.5 pt-1">
+                    <button onClick={handleConfirmSubmit} disabled={submitting}
+                      className="flex-1 py-3 bg-[#A6852F] hover:bg-[#8B6F1F] text-white rounded-xl shadow-md shadow-[#A6852F]/25 text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-[0.98]">
+                      {submitting ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Send className="w-4 h-4" />}
+                      {submitting ? 'Submitting...' : 'Submit Request'}
+                    </button>
+                    <button onClick={() => setModalStep('form')} disabled={submitting} className="px-5 py-3 bg-[#F3F1ED] text-[#57534E] rounded-xl hover:bg-[#E8E5DF] text-sm font-medium disabled:opacity-50 transition-all cursor-pointer">Back</button>
+                  </div>
+                </>
+              )}
+
+              {/* Step: Submitted */}
+              {modalStep === 'submitted' && (
+                <div className="text-center py-8">
+                  <div className="w-14 h-14 rounded-full bg-[#16A34A]/22 flex items-center justify-center mx-auto mb-4">
+                    <Check className="w-7 h-7 text-[#16A34A]" />
+                  </div>
+                  <p className="text-lg font-editorial text-[#1C1917] mb-2">Request Submitted!</p>
+                  <div className="space-y-2 text-sm text-[#57534E] max-w-xs mx-auto">
+                    <p>Your <strong className="text-[#1C1917]">{selectedExp.title}</strong> request has been submitted successfully.</p>
+                    <p>Our team is reviewing your request. You will receive an email and dashboard notification once a decision has been made.</p>
+                  </div>
+                  <button onClick={handleCloseModal} className="mt-6 px-8 py-2.5 bg-[#A6852F] text-white rounded-xl text-sm font-medium hover:bg-[#8B6F1F] transition-all cursor-pointer">
+                    Close
+                  </button>
+                </div>
               )}
             </motion.div>
           </motion.div>

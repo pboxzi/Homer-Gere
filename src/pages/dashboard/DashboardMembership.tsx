@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Crown, Check, Shield, Zap, ArrowRight, Calendar, CreditCard, Clock, Star, X, Send } from 'lucide-react';
+import { Crown, Check, Shield, Zap, Calendar, CreditCard, Clock, Star, X, Send, AlertCircle } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import { useSiteContent } from '../../context/SiteContentContext';
 import { useAuth } from '../../context/AuthContext';
-import { membershipRequestsRepository, paymentMethodsRepository, profilesRepository } from '../../lib/repositories';
+import { membershipRequestsRepository } from '../../lib/repositories';
 import { notifyService } from '../../lib/notifications';
 import type { DashboardSection } from '../../data/dashboardData';
-import type { PaymentMethod, Profile } from '../../types/database';
 import type { MembershipTier } from '../../types';
 
 const TIER_ICONS: Record<string, React.ReactNode> = {
@@ -23,20 +21,17 @@ const TIER_COLORS: Record<string, string> = {
   platinum: '#8B5CF6',
 };
 
+type ModalStep = 'select' | 'confirm' | 'submitted';
+
 export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSection) => void; initialTab?: 'overview' | 'plans' | 'history' }> = ({ onNavigate, initialTab }) => {
-  const navigate = useNavigate();
   const { user, profile } = useAuth();
   const { membership, membershipPlan, membershipRequests, logActivity } = useDashboard();
   const { membershipTiers } = useSiteContent();
   const [activeTab, setActiveTab] = useState<'overview' | 'plans' | 'history'>(initialTab || 'overview');
 
-  // Request form state
-  const [showRequestModal, setShowRequestModal] = useState(false);
+  const [modalStep, setModalStep] = useState<ModalStep>('select');
   const [selectedPlan, setSelectedPlan] = useState<MembershipTier | null>(null);
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
-  const [requestForm, setRequestForm] = useState({ preferredPaymentMethod: '', country: '', currency: 'USD', notes: '' });
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
 
   const activeRequest = membershipRequests.find((r) => !['rejected', 'membership_active'].includes(r.status));
@@ -46,21 +41,10 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
     ? Math.ceil((new Date(membership.end_date).getTime() - Date.now()) / 86400000)
     : null;
 
-  useEffect(() => {
-    paymentMethodsRepository.getActive().then(setPaymentMethods).catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    if (user?.id && profile?.country) {
-      setRequestForm(f => ({ ...f, country: profile.country || '' }));
-    }
-  }, [user?.id, profile?.country]);
-
   const handleRequestMembership = (plan: MembershipTier) => {
     setSelectedPlan(plan);
-    setSubmitted(false);
-    setRequestForm(f => ({ ...f, preferredPaymentMethod: '', notes: '' }));
-    setShowRequestModal(true);
+    setModalStep('confirm');
+    setShowModal(true);
   };
 
   const handleSubmitRequest = async () => {
@@ -72,13 +56,13 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
         full_name: `${profile.first_name} ${profile.last_name}`.trim(),
         email: profile.email,
         phone: profile.phone || null,
-        country: requestForm.country || profile.country || null,
+        country: profile.country || null,
         membership_plan_id: selectedPlan.id,
         membership_plan_name: selectedPlan.name,
         duration: selectedPlan.period || 'monthly',
-        preferred_payment_method: requestForm.preferredPaymentMethod || null,
-        currency: requestForm.currency || 'USD',
-        notes: requestForm.notes || null,
+        preferred_payment_method: null,
+        currency: 'USD',
+        notes: null,
       };
       const created = await membershipRequestsRepository.create(requestData);
       await notifyService.membershipRequestReceived(user.id, {
@@ -88,9 +72,15 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
         requestNumber: created.request_number,
       });
       await logActivity('create', 'membership', `Membership request submitted: ${selectedPlan.name}`, { membership_plan_id: selectedPlan.id, request_number: created.request_number });
-      setSubmitted(true);
+      setModalStep('submitted');
     } catch (e) { console.error(e); }
     setActionLoading(false);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalStep('select');
+    setSelectedPlan(null);
   };
 
   return (
@@ -221,7 +211,6 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
                       {TIER_ICONS[tier.name.toLowerCase()] || TIER_ICONS[tier.id] || <Crown className="w-4 h-4" />}
                     </div>
                   </div>
-                  {/* Request Membership Button */}
                   {!isCurrent && !hasActiveRequest && (
                     <button onClick={() => handleRequestMembership(tier)} className="w-full py-2.5 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center justify-center gap-2 border border-white/20">
                       <Send className="w-3.5 h-3.5" /> Request Membership
@@ -268,97 +257,65 @@ export const DashboardMembership: React.FC<{ onNavigate?: (section: DashboardSec
           )}
         </div>
       )}
+
       {/* Request Membership Modal */}
       <AnimatePresence>
-        {showRequestModal && selectedPlan && (
+        {showModal && selectedPlan && (
           <motion.div className="fixed inset-0 z-50 flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => !submitting && setShowRequestModal(false)} />
+            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={() => !actionLoading && handleCloseModal()} />
             <motion.div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-5 space-y-4" initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}>
-              {submitted ? (
-                <div className="text-center py-8">
-                  <div className="w-12 h-12 rounded-full bg-[#16A34A]/22 flex items-center justify-center mx-auto mb-3"><Check className="w-6 h-6 text-[#16A34A]" /></div>
-                  <p className="text-sm font-medium text-[#1C1917]">Request Submitted!</p>
-                  <p className="text-xs text-[#57534E] mt-1">Your membership request has been sent for review. You'll be notified once it's processed.</p>
-                  <button onClick={() => { setShowRequestModal(false); setSelectedPlan(null); }} className="mt-4 px-6 py-2 bg-[#A6852F] text-white rounded-lg text-sm font-medium hover:bg-[#8B6F1F]">Close</button>
-                </div>
-              ) : (
+
+              {/* Step: Confirm */}
+              {modalStep === 'confirm' && (
                 <>
-                  {/* Tier-colored header */}
-                  <div className="relative rounded-xl p-4 text-white overflow-hidden" style={{ background: `linear-gradient(135deg, ${TIER_COLORS[selectedPlan.name.toLowerCase()] || TIER_COLORS[selectedPlan.id] || '#A6852F'}F5, ${TIER_COLORS[selectedPlan.name.toLowerCase()] || TIER_COLORS[selectedPlan.id] || '#A6852F'}E8 50%, ${TIER_COLORS[selectedPlan.name.toLowerCase()] || TIER_COLORS[selectedPlan.id] || '#A6852F'}D9 75%, ${TIER_COLORS[selectedPlan.name.toLowerCase()] || TIER_COLORS[selectedPlan.id] || '#A6852F'}E6)`, boxShadow: `0 4px 18px ${TIER_COLORS[selectedPlan.name.toLowerCase()] || TIER_COLORS[selectedPlan.id] || '#A6852F'}35` }}>
-                    <div className="absolute top-0 right-0 w-20 h-20 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(25%, -25%)' }} />
-                    <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full opacity-15" style={{ background: 'radial-gradient(circle, white, transparent)', transform: 'translate(-25%, 25%)' }} />
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-editorial text-[#1C1917]">Confirm Request</h3>
+                    <button onClick={handleCloseModal} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] cursor-pointer"><X className="w-4 h-4" /></button>
+                  </div>
+
+                  <div className="rounded-xl p-4 text-white overflow-hidden" style={{ background: `linear-gradient(135deg, ${TIER_COLORS[selectedPlan.name.toLowerCase()] || '#A6852F'}F5, ${TIER_COLORS[selectedPlan.name.toLowerCase()] || '#A6852F'}E8)` }}>
                     <div className="relative z-10">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="w-10 h-7 rounded border border-white/30 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))' }}>
-                          <div className="w-5 h-3.5 rounded-sm bg-white/40" />
-                        </div>
-                        <button onClick={() => setShowRequestModal(false)} className="w-7 h-7 rounded-lg flex items-center justify-center text-white/80 hover:bg-white/15 cursor-pointer transition-colors"><X className="w-3.5 h-3.5" /></button>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-[10px] uppercase tracking-widest opacity-70 mb-0.5">{selectedPlan.name} Plan</p>
-                          <p className="text-2xl font-editorial">${selectedPlan.price}<span className="text-xs opacity-60">/{selectedPlan.period}</span></p>
-                        </div>
-                        <div className="opacity-80">{TIER_ICONS[selectedPlan.name.toLowerCase()] || TIER_ICONS[selectedPlan.id] || <Crown className="w-5 h-5" />}</div>
-                      </div>
-                      {selectedPlan.features && selectedPlan.features.length > 0 && (
-                        <ul className="mt-2.5 space-y-1 border-t border-white/20 pt-2.5">
-                          {selectedPlan.features.slice(0, 3).map((f, i) => (
-                            <li key={i} className="flex items-center gap-1.5 text-[10px] text-white/80">
-                              <Check className="w-2.5 h-2.5 shrink-0" />
-                              <span>{f.label}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                      <p className="text-[10px] uppercase tracking-widest opacity-70 mb-0.5">{selectedPlan.name} Plan</p>
+                      <p className="text-2xl font-editorial">${selectedPlan.price}<span className="text-xs opacity-60">/{selectedPlan.period}</span></p>
                     </div>
                   </div>
 
-                  {/* Form */}
-                  <div className="space-y-3">
-                    <div>
-                      <label className="block text-[10px] font-bold text-[#57534E] uppercase tracking-wider mb-1.5">Preferred Payment Method</label>
-                      <select value={requestForm.preferredPaymentMethod} onChange={e => setRequestForm(f => ({ ...f, preferredPaymentMethod: e.target.value }))}
-                        className="w-full px-3.5 py-2.5 border border-[#E8E5DF]/80 rounded-xl text-sm bg-[#FAF9F7] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F]/50 transition-all cursor-pointer shadow-sm shadow-black/3">
-                        <option value="">Select method...</option>
-                        {paymentMethods.map(m => <option key={m.id} value={m.name}>{m.name} ({m.type.replace(/_/g, ' ')})</option>)}
-                      </select>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-[10px] font-bold text-[#57534E] uppercase tracking-wider mb-1.5">Country</label>
-                        <input value={requestForm.country} onChange={e => setRequestForm(f => ({ ...f, country: e.target.value }))}
-                          className="w-full px-3.5 py-2.5 border border-[#E8E5DF]/80 rounded-xl text-sm bg-[#FAF9F7] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F]/50 transition-all shadow-sm shadow-black/3" placeholder="Your country" />
+                  <div className="bg-[#F59E0B]/8 border border-[#F59E0B]/30 rounded-xl p-4">
+                    <div className="flex gap-3">
+                      <AlertCircle className="w-5 h-5 text-[#F59E0B] shrink-0 mt-0.5" />
+                      <div className="text-sm text-[#1C1917]">
+                        <p className="font-medium mb-1">You are about to submit this request.</p>
+                        <p className="text-xs text-[#57534E]">After approval you will receive payment instructions. No payment information is required at this time.</p>
                       </div>
-                      <div>
-                        <label className="block text-[10px] font-bold text-[#57534E] uppercase tracking-wider mb-1.5">Currency</label>
-                        <select value={requestForm.currency} onChange={e => setRequestForm(f => ({ ...f, currency: e.target.value }))}
-                          className="w-full px-3.5 py-2.5 border border-[#E8E5DF]/80 rounded-xl text-sm bg-[#FAF9F7] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F]/50 transition-all cursor-pointer shadow-sm shadow-black/3">
-                          <option value="USD">USD ($)</option>
-                          <option value="EUR">EUR (€)</option>
-                          <option value="GBP">GBP (£)</option>
-                          <option value="NGN">NGN (₦)</option>
-                          <option value="GHS">GHS (GH₵)</option>
-                          <option value="KES">KES (KSh)</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-bold text-[#57534E] uppercase tracking-wider mb-1.5">Notes</label>
-                      <textarea value={requestForm.notes} onChange={e => setRequestForm(f => ({ ...f, notes: e.target.value }))}
-                        className="w-full px-3.5 py-2.5 border border-[#E8E5DF]/80 rounded-xl text-sm bg-[#FAF9F7] focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 focus:border-[#A6852F]/50 transition-all min-h-[70px] resize-none shadow-sm shadow-black/3" placeholder="Any additional notes (optional)..." />
                     </div>
                   </div>
 
-                  {/* Actions */}
                   <div className="flex gap-2.5 pt-1">
-                    <button onClick={handleSubmitRequest} disabled={actionLoading || submitting}
+                    <button onClick={handleSubmitRequest} disabled={actionLoading}
                       className="flex-1 py-3 bg-[#A6852F] hover:bg-[#8B6F1F] text-white rounded-xl shadow-md shadow-[#A6852F]/25 text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-[0.98]">
-                      <Send className="w-4 h-4" /> {submitting ? 'Submitting...' : 'Submit Request'}
+                      {actionLoading ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Send className="w-4 h-4" />}
+                      {actionLoading ? 'Submitting...' : 'Submit Request'}
                     </button>
-                    <button onClick={() => setShowRequestModal(false)} disabled={submitting} className="px-5 py-3 bg-[#F3F1ED] text-[#57534E] rounded-xl hover:bg-[#E8E5DF] text-sm font-medium disabled:opacity-50 transition-all cursor-pointer">Cancel</button>
+                    <button onClick={handleCloseModal} disabled={actionLoading} className="px-5 py-3 bg-[#F3F1ED] text-[#57534E] rounded-xl hover:bg-[#E8E5DF] text-sm font-medium disabled:opacity-50 transition-all cursor-pointer">Cancel</button>
                   </div>
                 </>
+              )}
+
+              {/* Step: Submitted */}
+              {modalStep === 'submitted' && (
+                <div className="text-center py-8">
+                  <div className="w-14 h-14 rounded-full bg-[#16A34A]/22 flex items-center justify-center mx-auto mb-4">
+                    <Check className="w-7 h-7 text-[#16A34A]" />
+                  </div>
+                  <p className="text-lg font-editorial text-[#1C1917] mb-2">Request Submitted!</p>
+                  <div className="space-y-2 text-sm text-[#57534E] max-w-xs mx-auto">
+                    <p>Your <strong className="text-[#1C1917]">{selectedPlan.name}</strong> membership request has been submitted successfully.</p>
+                    <p>Our team is reviewing your request. You will receive an email and dashboard notification once a decision has been made.</p>
+                  </div>
+                  <button onClick={handleCloseModal} className="mt-6 px-8 py-2.5 bg-[#A6852F] text-white rounded-xl text-sm font-medium hover:bg-[#8B6F1F] transition-all cursor-pointer">
+                    Close
+                  </button>
+                </div>
               )}
             </motion.div>
           </motion.div>

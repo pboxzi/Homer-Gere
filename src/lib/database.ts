@@ -45,25 +45,6 @@ export interface DBExperienceRequest {
   updated_at: string;
 }
 
-export interface DBChatMessage {
-  id: string;
-  conversation_id: string;
-  sender: 'user' | 'homer' | 'system';
-  text: string;
-  created_at: string;
-}
-
-export interface DBContactMessage {
-  id: string;
-  name: string;
-  email: string;
-  department: string;
-  subject: string;
-  message: string;
-  status: 'unread' | 'read' | 'replied';
-  created_at: string;
-}
-
 // Database helpers
 export const db = {
   members: {
@@ -100,27 +81,6 @@ export const db = {
     },
     async getByMember(memberId: string) {
       const { data, error } = await supabase.from('experience_requests').select('*').eq('member_id', memberId).order('created_at', { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  },
-
-  chatMessages: {
-    async getByConversation(conversationId: string) {
-      const { data, error } = await supabase.from('chat_messages').select('*').eq('conversation_id', conversationId).order('created_at', { ascending: true });
-      if (error) throw error;
-      return data as DBChatMessage[];
-    },
-    async create(message: Omit<DBChatMessage, 'id' | 'created_at'>) {
-      const { data, error } = await supabase.from('chat_messages').insert(message).select().single();
-      if (error) throw error;
-      return data;
-    },
-  },
-
-  contactMessages: {
-    async create(message: Omit<DBContactMessage, 'id' | 'created_at' | 'status'>) {
-      const { data, error } = await supabase.from('contact_messages').insert({ ...message, status: 'unread' }).select().single();
       if (error) throw error;
       return data;
     },

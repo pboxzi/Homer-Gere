@@ -4,6 +4,7 @@ import { Send, CheckCircle, ArrowRight, AlertCircle, Loader2 } from 'lucide-reac
 import { ENQUIRY_TYPES } from '../../data/chatSettings';
 import { sanitizeInput, sanitizeEmail } from '../../lib/security';
 import { businessEnquiriesRepository } from '../../lib/repositories';
+import { emailService } from '../../lib/email';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -97,11 +98,11 @@ export const ContactBusinessEnquiry: React.FC = () => {
         user_id: null,
       });
 
-      const subject = encodeURIComponent(`Business Enquiry from ${sanitizeInput(formData.fullName)}`);
-      const body = encodeURIComponent(
-        `Name: ${sanitizeInput(formData.fullName)}\nEmail: ${sanitizeInput(formData.email)}\nCompany: ${sanitizeInput(formData.company)}\nEnquiry Type: ${formData.enquiryType}\n\nMessage:\n${sanitizeInput(formData.message)}`
-      );
-      window.open(`mailto:management@homergere.com?subject=${subject}&body=${body}`, '_blank');
+      await emailService.businessEnquiryAcknowledgement(
+        formData.email,
+        sanitizeInput(formData.fullName),
+        formData.enquiryType
+      ).catch(() => {});
 
       setSubmitted(true);
     } catch {
@@ -128,8 +129,7 @@ export const ContactBusinessEnquiry: React.FC = () => {
             </div>
             <h2 className="text-3xl sm:text-4xl font-editorial text-[#1C1917] tracking-tight mb-4">Enquiry Sent</h2>
             <p className="text-[#57534E] leading-relaxed mb-8 max-w-md mx-auto">
-              Your enquiry has been recorded. Your email client has also opened with your message.
-              Homer's management team will respond within 5–10 business days.
+              Your enquiry has been received. Homer's management team will respond within 5–10 business days.
             </p>
             <button onClick={handleReset} className="inline-flex items-center gap-2 text-sm font-medium text-[#A6852F] hover:text-[#8B6F1F] transition-colors cursor-pointer">
               Send another enquiry

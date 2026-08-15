@@ -11,7 +11,7 @@ export type ApplicationStatus = 'pending' | 'approved' | 'rejected';
 export type ExperienceStatus = 'pending' | 'under_review' | 'approved' | 'declined' | 'completed';
 export type ChatType = 'fan' | 'business';
 export type ConversationStatus = 'open' | 'in_progress' | 'closed';
-export type MessageSender = 'user' | 'member' | 'homer' | 'system' | 'admin';
+export type MessageSender = 'member' | 'admin';
 export type ContentStatus = 'draft' | 'published' | 'archived' | 'scheduled';
 export type PaymentStatus = 'pending' | 'completed' | 'failed' | 'refunded';
 export type NotificationType = 'membership' | 'reply' | 'experience' | 'journal' | 'system' | 'message' | 'booking';
@@ -431,6 +431,11 @@ export interface FanConversation {
   status: ConversationStatus;
   method: string | null;
   user_id: string | null;
+  last_message: string | null;
+  last_message_at: string | null;
+  unread_count: number;
+  deleted_at: string | null;
+  deleted_by: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -442,6 +447,8 @@ export interface FanMessage {
   text: string;
   media_type: MediaType | null;
   media_url: string | null;
+  is_read: boolean;
+  read_at: string | null;
   created_at: string;
 }
 
@@ -456,6 +463,11 @@ export interface BusinessEnquiry {
   message: string;
   status: ConversationStatus;
   user_id: string | null;
+  last_message: string | null;
+  last_message_at: string | null;
+  unread_count: number;
+  deleted_at: string | null;
+  deleted_by: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -467,6 +479,8 @@ export interface BusinessMessage {
   text: string;
   media_type: MediaType | null;
   media_url: string | null;
+  is_read: boolean;
+  read_at: string | null;
   created_at: string;
 }
 
@@ -819,6 +833,7 @@ export interface PaymentRequest {
   payment_type: string;
   related_record_id: string;
   payment_method_id: string | null;
+  payment_method: string | null;
   amount: number;
   currency: string;
   status: PaymentRequestStatus;

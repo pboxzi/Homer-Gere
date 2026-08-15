@@ -29,7 +29,6 @@ import {
   type AdminExperience,
   type AdminExperienceRequest,
   type AdminConversation,
-  type AdminContactMessage,
   type AdminNotification,
   type AdminMediaItem,
   type AdminPage,
@@ -117,7 +116,7 @@ interface AdminContextType {
   experiences: AdminExperience[];
   experienceRequests: AdminExperienceRequest[];
   conversations: AdminConversation[];
-  contactMessages: AdminContactMessage[];
+  businessEnquiries: AdminConversation[];
   notifications: AdminNotification[];
   media: AdminMediaItem[];
   pages: AdminPage[];
@@ -147,14 +146,11 @@ interface AdminContextType {
   deleteExperienceRequest: (id: string) => void;
   updateExperienceRequest: (id: string, status: 'approved' | 'declined' | 'completed') => void;
   addConversation: (conv: Omit<AdminConversation, 'id'>) => void;
-  initiateConversationForMember: (userId: string, participant: string, email: string, membershipTier: string | null, firstMessage: string, sender: 'homer' | 'admin') => Promise<void>;
+  initiateConversationForMember: (userId: string, participant: string, email: string, membershipTier: string | null, firstMessage: string, sender: 'member' | 'admin') => Promise<void>;
   updateConversation: (id: string, updates: Partial<AdminConversation>) => void;
-  deleteConversation: (id: string) => void;
-  sendConversationMessage: (conversationId: string, sender: string, text: string) => void;
-  addContactMessage: (msg: Omit<AdminContactMessage, 'id'>) => void;
-  updateContactMessage: (id: string, updates: Partial<AdminContactMessage>) => void;
-  deleteContactMessage: (id: string) => void;
-  addNotification: (notif: Omit<AdminNotification, 'id'>) => void;
+  deleteConversation: (id: string, type?: 'fan' | 'business') => void;
+  sendConversationMessage: (conversationId: string, sender: string, text: string, type?: 'fan' | 'business') => void;
+  addNotification: (notif: Omit<AdminNotification, 'id'>, userId?: string | null) => void;
   updateNotification: (id: string, updates: Partial<AdminNotification>) => void;
   deleteNotification: (id: string) => void;
   addMedia: (item: Omit<AdminMediaItem, 'id'>) => void;
@@ -251,7 +247,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [experiences, setExperiences] = useState<AdminExperience[]>([]);
   const [experienceRequests, setExperienceRequests] = useState<AdminExperienceRequest[]>([]);
   const [conversations, setConversations] = useState<AdminConversation[]>([]);
-  const [contactMessages, setContactMessages] = useState<AdminContactMessage[]>([]);
+  const [businessEnquiries, setBusinessEnquiries] = useState<AdminConversation[]>([]);
   const [notifications, setNotifications] = useState<AdminNotification[]>([]);
   const [media, setMedia] = useState<AdminMediaItem[]>([]);
   const [pages, setPages] = useState<AdminPage[]>([]);
@@ -293,7 +289,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           email: p.email,
           membership: p.membership_tier || 'None',
           status: p.role === 'pending' ? 'pending' as const : 'active' as const,
-          joinDate: p.created_at,
+          joinDate: new Date(p.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
           lastActive: p.last_login || p.updated_at,
         })));
       }
@@ -308,7 +304,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (appsRes.status === 'fulfilled') {
         setApplications(appsRes.value.map((a) => ({
           id: a.id, name: `${a.first_name} ${a.last_name}`, email: a.email,
-          plan: a.membership_tier || 'N/A', date: a.created_at, status: a.status as AdminApplication['status'],
+          plan: a.membership_tier || 'N/A', date: new Date(a.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), status: a.status as AdminApplication['status'],
           country: a.country,
           country_detected: a.country_detected,
           city_detected: a.city_detected,
@@ -331,7 +327,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (reqsRes.status === 'fulfilled') {
         setExperienceRequests(reqsRes.value.map((r) => ({
           id: r.id, requester: r.full_name, experience: r.experience_type || 'General',
-          date: r.created_at, status: r.status as AdminExperienceRequest['status'],
+          date: new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), status: r.status as AdminExperienceRequest['status'],
         })));
       }
 
@@ -339,23 +335,25 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setConversations(fanChatRes.value.map((c) => ({
           id: c.id, type: 'fan' as const,
           participant: c.participant || 'Member', email: c.email || '',
-          lastMessage: '', status: c.status as AdminConversation['status'],
-          date: c.created_at,
+          lastMessage: c.last_message || '', unreadCount: c.unread_count || 0,
+          status: c.status as AdminConversation['status'],
+          date: new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
         })));
       }
 
       if (bizChatRes.status === 'fulfilled') {
-        setContactMessages(bizChatRes.value.map((b) => ({
-          id: b.id, name: b.full_name, email: b.email,
-          department: (b as any).department || 'general', subject: b.subject || '',
-          message: b.message || '', date: b.created_at, read: false,
+        setBusinessEnquiries(bizChatRes.value.map((b) => ({
+          id: b.id, type: 'business' as const,
+          participant: b.full_name, email: b.email, company: b.company,
+          lastMessage: b.last_message || '', unreadCount: b.unread_count || 0,
+          status: b.status, date: new Date(b.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
         })));
       }
 
       if (notifRes.status === 'fulfilled') {
         setNotifications(notifRes.value.map((n) => ({
           id: n.id, title: n.title, message: n.message,
-          date: n.created_at, read: n.read,
+          date: new Date(n.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), read: n.read,
         })));
       }
 
@@ -380,7 +378,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setMedia((totalMedia as any[]).map((m) => ({
           id: m.id as string, name: (m.title as string) || 'Untitled',
           type: 'video' as const, size: '', uploadedBy: 'Admin',
-          date: (m.created_at as string) || '', url: (m.url as string) || '',
+          date: m.created_at ? new Date(m.created_at as string).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '', url: (m.url as string) || '',
         })));
       }
 
@@ -431,7 +429,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setMembers(fresh.map(m => ({
           id: m.id, name: `${m.first_name} ${m.last_name}`.trim(),
           email: m.email, status: 'active',
-          membership: m.membership_tier || 'None', joinDate: m.created_at, lastActive: m.updated_at,
+          membership: m.membership_tier || 'None', joinDate: new Date(m.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), lastActive: m.updated_at,
         })));
       });
     }).catch(() => {});
@@ -696,12 +694,12 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setConversations(fresh.map(c => ({
           id: c.id, type: 'fan' as const, participant: c.participant, email: c.email,
           lastMessage: '', status: c.status as any, date: c.updated_at,
-          messages: [],
+          unreadCount: 0, messages: [],
         })));
       });
     }).catch(() => {});
   }, []);
-  const initiateConversationForMember = useCallback(async (userId: string, participant: string, email: string, membershipTier: string | null, firstMessage: string, sender: 'homer' | 'admin') => {
+  const initiateConversationForMember = useCallback(async (userId: string, participant: string, email: string, membershipTier: string | null, firstMessage: string, sender: 'member' | 'admin') => {
     try {
       const conv = await fanChatRepository.createConversation({
         participant,
@@ -714,8 +712,8 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       });
       setConversations((prev) => [{
         id: conv.id, type: 'fan' as const, participant, email,
-        lastMessage: firstMessage, status: 'open', date: conv.created_at,
-        messages: [],
+        lastMessage: firstMessage, status: 'open', date: new Date(conv.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        unreadCount: 0, messages: [],
       }, ...prev]);
       await fanChatRepository.sendMessage({
         conversation_id: conv.id,
@@ -732,46 +730,63 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       fanChatRepository.updateConversationStatus(id, updates.status || 'open').catch(() => {});
     }
   }, []);
-  const deleteConversation = useCallback((id: string) => {
-    setConversations((prev) => prev.filter((c) => c.id !== id));
-    Promise.resolve(
-      supabase.from('fan_conversations').delete().eq('id', id)
-    ).catch(() => {});
+  const deleteConversation = useCallback((id: string, type: 'fan' | 'business' = 'fan') => {
+    if (type === 'business') {
+      setBusinessEnquiries((prev) => prev.filter((c) => c.id !== id));
+      businessEnquiriesRepository.delete(id).catch(() => {});
+    } else {
+      setConversations((prev) => prev.filter((c) => c.id !== id));
+      fanChatRepository.deleteConversation(id).catch(() => {});
+    }
   }, []);
-  const sendConversationMessage = useCallback((conversationId: string, sender: string, text: string) => {
-    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    setConversations((prev) => prev.map((c) => {
-      if (c.id !== conversationId) return c;
-      return { ...c, lastMessage: text, messages: [...(c.messages || []), { sender, text, time }] };
-    }));
-    Promise.resolve(
-      fanChatRepository.sendMessage({
-        conversation_id: conversationId,
-        sender: sender === 'Admin' ? 'homer' : sender as any,
-        text: text,
-        media_type: null,
-        media_url: null,
-      })
-    ).catch(() => {});
-  }, []);
+  const sendConversationMessage = useCallback(async (conversationId: string, sender: string, text: string, type: 'fan' | 'business' = 'fan') => {
+    const validSender: 'member' | 'admin' = sender === 'Admin' || sender === 'admin' ? 'admin' : 'member';
 
-  // ----- CRUD: Contact Messages -----
-  const addContactMessage = useCallback((msg: Omit<AdminContactMessage, 'id'>) => {
-    setContactMessages((prev) => [{ ...msg, id: generateId() }, ...prev]);
-  }, []);
-  const updateContactMessage = useCallback((id: string, updates: Partial<AdminContactMessage>) => {
-    setContactMessages((prev) => prev.map((m) => (m.id === id ? { ...m, ...updates } : m)));
-  }, []);
-  const deleteContactMessage = useCallback((id: string) => {
-    setContactMessages((prev) => prev.filter((m) => m.id !== id));
-  }, []);
+    if (type === 'business') {
+      try {
+        await businessEnquiriesRepository.sendMessage({
+          enquiry_id: conversationId,
+          sender: validSender,
+          text,
+          media_type: null,
+          media_url: null,
+        });
+        // Update local state
+        setBusinessEnquiries((prev) => prev.map((c) => c.id === conversationId ? { ...c, lastMessage: text } : c));
+        // Send email notification
+        const enquiry = businessEnquiries.find((c) => c.id === conversationId);
+        if (enquiry) {
+          emailService.businessEnquiryReply(enquiry.email, enquiry.participant).catch(() => {});
+        }
+      } catch { /* silent */ }
+    } else {
+      try {
+        await fanChatRepository.sendMessage({
+          conversation_id: conversationId,
+          sender: validSender,
+          text,
+          media_type: null,
+          media_url: null,
+        });
+        // Update local state
+        setConversations((prev) => prev.map((c) => c.id === conversationId ? { ...c, lastMessage: text } : c));
+        // Send email notification
+        const conv = conversations.find((c) => c.id === conversationId);
+        if (conv) {
+          emailService.chatReplyFromHomer(conv.email, conv.participant).catch(() => {});
+        }
+      } catch { /* silent */ }
+    }
+  }, [conversations, businessEnquiries]);
 
   // ----- CRUD: Notifications -----
-  const addNotification = useCallback((notif: Omit<AdminNotification, 'id'>) => {
+  const addNotification = useCallback(async (notif: Omit<AdminNotification, 'id'>, userId?: string | null) => {
     const id = generateId();
     setNotifications((prev) => [{ ...notif, id }, ...prev]);
+    // Get current admin user for the notification
+    const { data: { user: adminUser } } = await supabase.auth.getUser();
     supabase.from('notifications').insert({
-      user_id: null,
+      user_id: userId || adminUser?.id || null,
       type: 'system',
       title: notif.title,
       message: notif.message,
@@ -858,13 +873,13 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     activeMemberships: members.filter((m) => m.status === 'active').length,
     pendingApplications: applications.filter((a) => a.status === 'pending').length,
     fanChatMessages: fanMessageCount,
-    businessEnquiries: contactMessages.length,
+    businessEnquiries: businessEnquiries.length,
     experienceRequests: experienceRequests.length,
     journalArticles: journalArticleCount,
     galleryImages: galleryCount,
     mediaItems: media.length,
     websiteVisitors: 45230,
-  }), [members, applications, experienceRequests, contactMessages, media, fanMessageCount, journalArticleCount, galleryCount]);
+  }), [members, applications, experienceRequests, businessEnquiries, media, fanMessageCount, journalArticleCount, galleryCount]);
 
   // ----- Global admin search -----
   const globalAdminSearch = useCallback((query: string): SearchResult[] => {
@@ -901,9 +916,9 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         results.push({ id: c.id, type: 'conversation', title: c.participant, description: `${c.type} chat — ${c.status}`, section: 'Fan Chat' });
       }
     });
-    contactMessages.forEach((cm) => {
-      if (cm.name?.toLowerCase().includes(q) || cm.email?.toLowerCase().includes(q) || cm.subject?.toLowerCase().includes(q)) {
-        results.push({ id: cm.id, type: 'contactMessage', title: cm.subject || cm.name, description: `${cm.name} — ${cm.department || ''}`, section: 'Contact Messages' });
+    businessEnquiries.forEach((be) => {
+      if (be.participant?.toLowerCase().includes(q) || be.email?.toLowerCase().includes(q)) {
+        results.push({ id: be.id, type: 'businessEnquiry', title: be.participant, description: `${be.company || ''} — ${be.status}`, section: 'Business Enquiries' });
       }
     });
     notifications.forEach((n) => {
@@ -917,11 +932,11 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     });
     return results.slice(0, 20);
-  }, [members, plans, applications, experiences, experienceRequests, conversations, contactMessages, notifications, media]);
+  }, [members, plans, applications, experiences, experienceRequests, conversations, businessEnquiries, notifications, media]);
 
   const value: AdminContextType = useMemo(() => ({
     members, plans, applications, experiences, experienceRequests,
-    conversations, contactMessages, notifications, media, pages,
+    conversations, businessEnquiries, notifications, media, pages,
     emailTemplates,
     stats, websiteSettings, branding, securitySettings, backupSettings,
     emailSettings, seoSettings, integrations, loading,
@@ -930,7 +945,6 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     addApplication, updateApplication, deleteApplication,
     addExperience, updateExperience, deleteExperience, deleteExperienceRequest, updateExperienceRequest,
     addConversation, initiateConversationForMember, updateConversation, deleteConversation, sendConversationMessage,
-    addContactMessage, updateContactMessage, deleteContactMessage,
     addNotification, updateNotification, deleteNotification,
     addMedia, updateMedia, deleteMedia,
     addPage, updatePage, deletePage,
@@ -939,7 +953,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     globalAdminSearch, refreshData: loadData,
   }), [
     members, plans, applications, experiences, experienceRequests,
-    conversations, contactMessages, notifications, media, pages,
+    conversations, businessEnquiries, notifications, media, pages,
     emailTemplates,
     stats, websiteSettings, branding, securitySettings, backupSettings,
     emailSettings, seoSettings, integrations, loading,
@@ -948,7 +962,6 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     addApplication, updateApplication, deleteApplication,
     addExperience, updateExperience, deleteExperience, deleteExperienceRequest, updateExperienceRequest,
     addConversation, initiateConversationForMember, updateConversation, deleteConversation, sendConversationMessage,
-    addContactMessage, updateContactMessage, deleteContactMessage,
     addNotification, updateNotification, deleteNotification,
     addMedia, updateMedia, deleteMedia,
     addPage, updatePage, deletePage,

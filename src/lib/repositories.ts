@@ -1386,11 +1386,18 @@ export const galleryRepository = {
 // ============================================================
 
 export const fanChatRepository = {
-  async createConversation(conversation: Omit<FanConversation, 'id' | 'created_at' | 'updated_at'>): Promise<FanConversation> {
+  async createConversation(conversation: Omit<FanConversation, 'id' | 'created_at' | 'updated_at' | 'last_message' | 'last_message_at' | 'unread_count' | 'deleted_at' | 'deleted_by'> & { last_message?: string | null; last_message_at?: string | null; unread_count?: number; deleted_at?: string | null; deleted_by?: string | null }): Promise<FanConversation> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('fan_conversations')
-      .insert(conversation)
+      .insert({
+        ...conversation,
+        last_message: conversation.last_message ?? null,
+        last_message_at: conversation.last_message_at ?? null,
+        unread_count: conversation.unread_count ?? 0,
+        deleted_at: conversation.deleted_at ?? null,
+        deleted_by: conversation.deleted_by ?? null,
+      })
       .select()
       .single();
     if (error) throw error;
@@ -1402,7 +1409,8 @@ export const fanChatRepository = {
     const { data, error } = await client
       .from('fan_conversations')
       .select('*')
-      .order('created_at', { ascending: false });
+      .is('deleted_at', null)
+      .order('last_message_at', { ascending: false, nullsFirst: false });
     if (error) throw error;
     return data || [];
   },
@@ -1413,7 +1421,8 @@ export const fanChatRepository = {
       .from('fan_conversations')
       .select('*')
       .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+      .is('deleted_at', null)
+      .order('last_message_at', { ascending: false, nullsFirst: false });
     if (error) throw error;
     return data || [];
   },
@@ -1429,38 +1438,64 @@ export const fanChatRepository = {
     return data;
   },
 
-  async getMessages(conversationId: string): Promise<FanMessage[]> {
+  async getMessages(conversationId: string, limit?: number, offset?: number): Promise<FanMessage[]> {
     const client = getSupabaseClient();
-    const { data, error } = await client
+    let query = client
       .from('fan_messages')
       .select('*')
       .eq('conversation_id', conversationId)
       .order('created_at', { ascending: true });
+    if (limit) query = query.range(offset || 0, (offset || 0) + limit - 1);
+    const { data, error } = await query;
     if (error) throw error;
     return data || [];
   },
 
-  async sendMessage(message: Omit<FanMessage, 'id' | 'created_at'>): Promise<FanMessage> {
+  async markMessagesAsRead(conversationId: string, sender: 'member' | 'admin'): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('fan_messages')
+      .update({ is_read: true, read_at: new Date().toISOString() })
+      .eq('conversation_id', conversationId)
+      .eq('is_read', false)
+      .neq('sender', sender);
+    if (error) throw error;
+  },
+
+  async sendMessage(message: Omit<FanMessage, 'id' | 'created_at' | 'is_read' | 'read_at'> & { is_read?: boolean; read_at?: string | null }): Promise<FanMessage> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('fan_messages')
-      .insert(message)
+      .insert({
+        ...message,
+        is_read: message.is_read ?? false,
+        read_at: message.read_at ?? null,
+      })
       .select()
       .single();
     if (error) throw error;
     return data;
   },
 
-  async getConversationByUserId(userId: string): Promise<FanConversation | null> {
+  async getUnreadCount(conversationId: string, sender: 'member' | 'admin'): Promise<number> {
     const client = getSupabaseClient();
-    const { data, error } = await client
-      .from('fan_conversations')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .maybeSingle();
+    const { count, error } = await client
+      .from('fan_messages')
+      .select('*', { count: 'exact', head: true })
+      .eq('conversation_id', conversationId)
+      .neq('sender', sender)
+      .eq('is_read', false);
     if (error) throw error;
-    return data;
+    return count || 0;
+  },
+
+  async deleteConversation(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('fan_conversations')
+      .update({ deleted_at: new Date().toISOString(), deleted_by: (await client.auth.getUser()).data.user?.id || null })
+      .eq('id', id);
+    if (error) throw error;
   },
 
   async updateConversationStatus(id: string, status: ConversationStatus): Promise<FanConversation> {
@@ -1481,11 +1516,18 @@ export const fanChatRepository = {
 // ============================================================
 
 export const businessEnquiriesRepository = {
-  async create(enquiry: Omit<BusinessEnquiry, 'id' | 'created_at' | 'updated_at'>): Promise<BusinessEnquiry> {
+  async create(enquiry: Omit<BusinessEnquiry, 'id' | 'created_at' | 'updated_at' | 'last_message' | 'last_message_at' | 'unread_count' | 'deleted_at' | 'deleted_by'> & { last_message?: string | null; last_message_at?: string | null; unread_count?: number; deleted_at?: string | null; deleted_by?: string | null }): Promise<BusinessEnquiry> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('business_enquiries')
-      .insert(enquiry)
+      .insert({
+        ...enquiry,
+        last_message: enquiry.last_message ?? null,
+        last_message_at: enquiry.last_message_at ?? null,
+        unread_count: enquiry.unread_count ?? 0,
+        deleted_at: enquiry.deleted_at ?? null,
+        deleted_by: enquiry.deleted_by ?? null,
+      })
       .select()
       .single();
     if (error) throw error;
@@ -1497,31 +1539,93 @@ export const businessEnquiriesRepository = {
     const { data, error } = await client
       .from('business_enquiries')
       .select('*')
-      .order('created_at', { ascending: false });
+      .is('deleted_at', null)
+      .order('last_message_at', { ascending: false, nullsFirst: false });
     if (error) throw error;
     return data || [];
   },
 
-  async getMessages(enquiryId: string): Promise<BusinessMessage[]> {
+  async getById(id: string): Promise<BusinessEnquiry | null> {
     const client = getSupabaseClient();
     const { data, error } = await client
+      .from('business_enquiries')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  },
+
+  async getByUserId(userId: string): Promise<BusinessEnquiry[]> {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('business_enquiries')
+      .select('*')
+      .eq('user_id', userId)
+      .is('deleted_at', null)
+      .order('last_message_at', { ascending: false, nullsFirst: false });
+    if (error) throw error;
+    return data || [];
+  },
+
+  async getMessages(enquiryId: string, limit?: number, offset?: number): Promise<BusinessMessage[]> {
+    const client = getSupabaseClient();
+    let query = client
       .from('business_messages')
       .select('*')
       .eq('enquiry_id', enquiryId)
       .order('created_at', { ascending: true });
+    if (limit) query = query.range(offset || 0, (offset || 0) + limit - 1);
+    const { data, error } = await query;
     if (error) throw error;
     return data || [];
   },
 
-  async sendMessage(message: Omit<BusinessMessage, 'id' | 'created_at'>): Promise<BusinessMessage> {
+  async markMessagesAsRead(enquiryId: string, sender: 'member' | 'admin'): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('business_messages')
+      .update({ is_read: true, read_at: new Date().toISOString() })
+      .eq('enquiry_id', enquiryId)
+      .eq('is_read', false)
+      .neq('sender', sender);
+    if (error) throw error;
+  },
+
+  async sendMessage(message: Omit<BusinessMessage, 'id' | 'created_at' | 'is_read' | 'read_at'> & { is_read?: boolean; read_at?: string | null }): Promise<BusinessMessage> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('business_messages')
-      .insert(message)
+      .insert({
+        ...message,
+        is_read: message.is_read ?? false,
+        read_at: message.read_at ?? null,
+      })
       .select()
       .single();
     if (error) throw error;
     return data;
+  },
+
+  async getUnreadCount(enquiryId: string, sender: 'member' | 'admin'): Promise<number> {
+    const client = getSupabaseClient();
+    const { count, error } = await client
+      .from('business_messages')
+      .select('*', { count: 'exact', head: true })
+      .eq('enquiry_id', enquiryId)
+      .neq('sender', sender)
+      .eq('is_read', false);
+    if (error) throw error;
+    return count || 0;
+  },
+
+  async delete(id: string): Promise<void> {
+    const client = getSupabaseClient();
+    const { error } = await client
+      .from('business_enquiries')
+      .update({ deleted_at: new Date().toISOString(), deleted_by: (await client.auth.getUser()).data.user?.id || null })
+      .eq('id', id);
+    if (error) throw error;
   },
 
   async updateStatus(id: string, status: BusinessEnquiry['status']): Promise<BusinessEnquiry> {
@@ -3027,7 +3131,7 @@ export const paymentMethodsRepository = {
 // ============================================================
 
 export const paymentRequestsRepository = {
-  async create(request: { user_id: string; payment_type: string; related_record_id: string; payment_method_id?: string | null; amount: number; currency?: string; due_date?: string | null; admin_notes?: string | null; payment_instructions?: string | null }): Promise<PaymentRequest> {
+  async create(request: { user_id: string; payment_type: string; related_record_id: string; payment_method_id?: string | null; payment_method?: string | null; amount: number; currency?: string; due_date?: string | null; admin_notes?: string | null; payment_instructions?: string | null }): Promise<PaymentRequest> {
     const client = getSupabaseClient();
     const { data, error } = await client
       .from('payment_requests')

@@ -139,7 +139,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return { error: 'Your account is awaiting administrator approval.' };
         }
         setUser(u);
-        supabase.from('profiles').update({ last_login: new Date().toISOString() }).eq('id', data.user.id).catch(() => {});
+        supabase.from('profiles').update({ last_login: new Date().toISOString() }).eq('id', data.user.id).then(() => {}).catch(() => {});
         return {};
       }
       setLoading(false);
@@ -169,7 +169,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email: data.email,
         password: data.password,
         options: {
-          email_confirm: false,
           data: { first_name: data.firstName, last_name: data.lastName },
         },
       });

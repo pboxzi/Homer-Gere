@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -16,32 +16,20 @@ const ICON_MAP: Record<string, React.FC<{ className?: string }>> = {
   CreditCard, DollarSign, Download, Clock,
 };
 
-interface DashboardLayoutProps {
+const mainItems = DASHBOARD_NAV_ITEMS.filter((i) => i.group === 'main');
+const activityItems = DASHBOARD_NAV_ITEMS.filter((i) => i.group === 'activity');
+const accountItems = DASHBOARD_NAV_ITEMS.filter((i) => i.group === 'account');
+
+interface SidebarContentProps {
   activeSection: DashboardSection;
-  onSectionChange: (section: DashboardSection) => void;
-  children: React.ReactNode;
+  onNav: (id: DashboardSection) => void;
 }
 
-export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
-  activeSection,
-  onSectionChange,
-  children,
-}) => {
+const SidebarContent = React.memo<SidebarContentProps>(({ activeSection, onNav }) => {
   const navigate = useNavigate();
   const { profile } = useDashboard();
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const mainRef = useRef<HTMLDivElement>(null);
 
-  const mainItems = DASHBOARD_NAV_ITEMS.filter((i) => i.group === 'main');
-  const activityItems = DASHBOARD_NAV_ITEMS.filter((i) => i.group === 'activity');
-  const accountItems = DASHBOARD_NAV_ITEMS.filter((i) => i.group === 'account');
-
-  const handleNav = (id: DashboardSection) => {
-    onSectionChange(id);
-    setMobileOpen(false);
-  };
-
-  const SidebarContent = () => (
+  return (
     <div className="flex flex-col h-full">
       {/* Brand */}
       <div className="px-5 py-5 border-b border-[#A6852F]/25 bg-gradient-to-b from-[#A6852F]/8 to-transparent">
@@ -68,9 +56,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
-        <NavGroup label="Main" items={mainItems} active={activeSection} onSelect={handleNav} />
-        <NavGroup label="Activity" items={activityItems} active={activeSection} onSelect={handleNav} />
-        <NavGroup label="Account" items={accountItems} active={activeSection} onSelect={handleNav} />
+        <NavGroup label="Main" items={mainItems} active={activeSection} onSelect={onNav} />
+        <NavGroup label="Activity" items={activityItems} active={activeSection} onSelect={onNav} />
+        <NavGroup label="Account" items={accountItems} active={activeSection} onSelect={onNav} />
       </nav>
 
       {/* User + Logout */}
@@ -94,12 +82,38 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       </div>
     </div>
   );
+});
+SidebarContent.displayName = 'SidebarContent';
+
+interface DashboardLayoutProps {
+  activeSection: DashboardSection;
+  onSectionChange: (section: DashboardSection) => void;
+  children: React.ReactNode;
+}
+
+export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
+  activeSection,
+  onSectionChange,
+  children,
+}) => {
+  const navigate = useNavigate();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleNav = useCallback((id: DashboardSection) => {
+    onSectionChange(id);
+    setMobileOpen(false);
+  }, [onSectionChange]);
+
+  const sidebarProps = useMemo(() => ({
+    activeSection,
+    onNav: handleNav,
+  }), [activeSection, handleNav]);
 
   return (
     <div className="h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased flex overflow-hidden">
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex w-64 bg-white border-r border-[#A6852F]/20 flex-col fixed inset-y-0 left-0 z-30 shadow-lg shadow-[#A6852F]/5">
-        <SidebarContent />
+        <SidebarContent {...sidebarProps} />
       </aside>
 
       {/* Mobile Overlay */}
@@ -126,7 +140,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               >
                 <X className="w-4 h-4" />
               </button>
-              <SidebarContent />
+              <SidebarContent {...sidebarProps} />
             </motion.aside>
           </>
         )}
@@ -145,7 +159,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           <span className="font-editorial text-sm text-[#1C1917] uppercase tracking-[0.06em]">Dashboard</span>
         </header>
 
-        <main ref={mainRef} className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-6xl w-full mx-auto">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-6xl w-full mx-auto">
           {children}
         </main>
       </div>

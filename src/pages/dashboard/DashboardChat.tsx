@@ -4,9 +4,26 @@ import { MessageSquare, ArrowRight, Phone, Send, Search, Archive, Image as Image
 import { useDashboard } from '../../context/DashboardContext';
 import { useAuth } from '../../context/AuthContext';
 import { fanChatRepository, getSupabaseClient } from '../../lib/repositories';
+import { supabase } from '../../lib/supabase';
 import type { FanConversation, FanMessage, MediaType } from '../../types/database';
 
 const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '1234567890';
+
+function formatTimestamp(dateStr: string | null): string {
+  if (!dateStr) return '';
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return 'now';
+  if (diffMins < 60) return `${diffMins}m`;
+  if (diffHours < 24) return `${diffHours}h`;
+  if (diffDays < 7) return `${diffDays}d`;
+  return date.toLocaleDateString();
+}
 
 export const DashboardChat: React.FC = () => {
   const { user, profile } = useAuth();
@@ -46,16 +63,59 @@ export const DashboardChat: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (activeConvId) loadMessages(activeConvId);
+    if (activeConvId) {
+      loadMessages(activeConvId);
+      fanChatRepository.markMessagesAsRead(activeConvId, 'member').catch(() => {});
+    }
   }, [activeConvId, loadMessages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Real-time subscription for incoming messages
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const channel = supabase
+      .channel('fan-chat-realtime')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'fan_messages' },
+        (payload) => {
+          const newMsg = payload.new as FanMessage;
+          // Update messages if viewing the conversation
+          if (activeConvId && newMsg.conversation_id === activeConvId) {
+            setMessages((prev) => {
+              if (prev.some((m) => m.id === newMsg.id)) return prev;
+              return [...prev, newMsg];
+            });
+          }
+          // Update conversation last_message fields
+          setConversations((prev) =>
+            prev.map((c) => {
+              if (c.id !== newMsg.conversation_id) return c;
+              return {
+                ...c,
+                last_message: newMsg.text || (newMsg.media_type ? `[${newMsg.media_type}]` : ''),
+                last_message_at: newMsg.created_at,
+                unread_count: newMsg.sender === 'admin' ? (c.id === activeConvId ? 0 : (c.unread_count || 0) + 1) : c.unread_count,
+              };
+            })
+          );
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id, activeConvId]);
+
   const filteredConversations = conversations.filter((c) =>
     c.participant.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.email.toLowerCase().includes(searchQuery.toLowerCase())
+    c.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (c.last_message || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const uploadImage = async (file: File): Promise<string | null> => {
@@ -96,7 +156,8 @@ export const DashboardChat: React.FC = () => {
       setNewMessage('');
       setPendingFile(null);
       setPreviewImage(null);
-      loadMessages(activeConvId);
+      await loadMessages(activeConvId);
+      await loadConversations();
     } catch { /* silent */ }
     setUploading(false);
   };
@@ -179,7 +240,6 @@ export const DashboardChat: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Messages */}
         <div className="rounded-2xl border border-[#A6852F]/45 bg-white p-4 max-h-[500px] overflow-y-auto space-y-4 shadow-md shadow-[#A6852F]/18">
           {messages.length === 0 ? (
             <div className="text-center py-8">
@@ -197,14 +257,10 @@ export const DashboardChat: React.FC = () => {
               <div className={`max-w-[80%] rounded-2xl px-5 py-3 ${
                 msg.sender === 'member'
                   ? 'bg-[#1C1917] text-white'
-                  : msg.sender === 'homer'
-                    ? 'bg-[#A6852F]/22 border border-[#A6852F]/45'
-                    : msg.sender === 'admin'
-                      ? 'bg-[#3B82F6]/10 border border-[#3B82F6]/30'
-                      : 'bg-[#F3F1ED] border border-[#E8E5DF]/60'
+                  : 'bg-[#A6852F]/22 border border-[#A6852F]/45'
               }`}>
                 {msg.sender !== 'member' && (
-                  <p className={`text-[10px] font-medium mb-1 ${msg.sender === 'homer' ? 'text-[#A6852F]' : msg.sender === 'admin' ? 'text-[#3B82F6]' : 'text-[#57534E]'}`}>{msg.sender === 'homer' ? 'Homer Gere' : msg.sender === 'admin' ? 'Admin Support' : 'System'}</p>
+                  <p className="text-[10px] font-medium text-[#A6852F] mb-1">Support</p>
                 )}
                 {msg.media_url && msg.media_type === 'image' && (
                   <img src={msg.media_url} alt="Shared image" className="rounded-xl mb-2 max-w-full max-h-64 object-cover cursor-pointer" onClick={() => window.open(msg.media_url!, '_blank')} />
@@ -220,10 +276,8 @@ export const DashboardChat: React.FC = () => {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Reply input */}
         {activeConv.status === 'open' && (
           <div className="space-y-2">
-            {/* Image preview */}
             {previewImage && (
               <div className="relative inline-block">
                 <img src={previewImage} alt="Preview" className="h-24 rounded-xl border border-[#E8E5DF]" />
@@ -255,7 +309,6 @@ export const DashboardChat: React.FC = () => {
     );
   }
 
-  // Conversation list view
   return (
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
@@ -263,7 +316,6 @@ export const DashboardChat: React.FC = () => {
         <p className="text-sm text-[#57534E] mt-1">Your conversations and message history.</p>
       </motion.div>
 
-      {/* New Chat */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
         <button onClick={handleStartChat} disabled={creating} className="w-full flex items-center gap-4 p-5 rounded-2xl border border-dashed border-[#A6852F]/90 hover:border-[#A6852F]/90 hover:bg-[#A6852F]/8 transition-all duration-500 cursor-pointer group shadow-md shadow-[#A6852F]/22 hover:shadow-lg hover:shadow-[#A6852F]/22 disabled:opacity-50 disabled:cursor-not-allowed">
           <div className="w-12 h-12 rounded-2xl bg-[#A6852F]/22 flex items-center justify-center text-[#A6852F] group-hover:bg-[#A6852F] group-hover:text-white transition-all duration-500 shadow-sm shadow-[#A6852F]/22"><MessageSquare className="w-5 h-5" /></div>
@@ -281,7 +333,6 @@ export const DashboardChat: React.FC = () => {
         </motion.div>
       )}
 
-      {/* WhatsApp - Gold/Platinum only */}
       {canOpenWhatsApp && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
           <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className="w-full flex items-center gap-4 p-5 rounded-2xl border border-[#25D366]/53 hover:border-[#25D366]/60 hover:bg-[#25D366]/8 transition-all duration-500 cursor-pointer group shadow-md shadow-[#25D366]/22 hover:shadow-lg hover:shadow-[#25D366]/22">
@@ -295,7 +346,6 @@ export const DashboardChat: React.FC = () => {
         </motion.div>
       )}
 
-      {/* Search */}
       {conversations.length > 0 && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.18 }}>
           <div className="relative">
@@ -305,7 +355,6 @@ export const DashboardChat: React.FC = () => {
         </motion.div>
       )}
 
-      {/* Conversations */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
         <h3 className="text-sm font-medium text-[#1C1917] mb-4">Conversation History</h3>
         <div className="space-y-3">
@@ -321,14 +370,21 @@ export const DashboardChat: React.FC = () => {
             filteredConversations.map((c) => (
               <div key={c.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/45 bg-white hover:border-[#A6852F]/55 transition-all duration-500 shadow-md shadow-[#A6852F]/18 hover:shadow-lg hover:shadow-[#A6852F]/18">
                 <button onClick={() => setActiveConvId(c.id)} className="flex-1 flex items-center gap-4 text-left cursor-pointer">
-                  <div className="w-10 h-10 rounded-xl bg-[#A6852F]/22 flex items-center justify-center text-[#A6852F] shadow-sm shadow-[#A6852F]/22"><MessageSquare className="w-4 h-4" /></div>
+                  <div className="w-10 h-10 rounded-xl bg-[#A6852F]/22 flex items-center justify-center text-[#A6852F] shadow-sm shadow-[#A6852F]/22 relative">
+                    <MessageSquare className="w-4 h-4" />
+                    {(c.unread_count || 0) > 0 && (
+                      <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] rounded-full bg-[#A6852F] text-white text-[9px] font-bold flex items-center justify-center px-1">
+                        {c.unread_count > 99 ? '99+' : c.unread_count}
+                      </span>
+                    )}
+                  </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-[11px] font-medium text-[#1C1917] truncate">{c.participant}</span>
                       <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${c.status === 'open' ? 'bg-[#16A34A]/22 text-[#16A34A]' : c.status === 'in_progress' ? 'bg-[#3B82F6]/15 text-[#3B82F6]' : 'bg-[#57534E]/15 text-[#57534E]'}`}>{c.status}</span>
                     </div>
-                    <p className="text-xs text-[#57534E] truncate mt-0.5">{c.email}</p>
-                    <p className="text-[10px] text-[#57534E]/60 mt-0.5">{new Date(c.created_at).toLocaleDateString()}</p>
+                    <p className="text-xs text-[#57534E] truncate mt-0.5">{c.last_message || c.email}</p>
+                    <p className="text-[10px] text-[#57534E]/60 mt-0.5">{formatTimestamp(c.last_message_at || c.created_at)}</p>
                   </div>
                 </button>
               </div>

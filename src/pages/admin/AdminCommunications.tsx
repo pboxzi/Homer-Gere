@@ -3,12 +3,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import {
   MessageSquare, Building2, Mail, Bell, Search, Eye, Trash2, Archive,
   ArrowLeft, Send, CheckCheck, MailOpen, MailCheck, Plus, X, Forward,
-  ChevronLeft, ChevronRight,
+  ChevronLeft, ChevronRight, RotateCcw,
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
 import { fanChatRepository, businessEnquiriesRepository } from '../../lib/repositories';
 import { formatDate } from '../../utils/formatDate';
-import type { AdminSection, AdminConversation, AdminContactMessage, AdminNotification } from '../../data/adminData';
+import type { AdminSection, AdminConversation, AdminNotification } from '../../data/adminData';
 
 interface AdminCommunicationsProps {
   activeSection: AdminSection;
@@ -46,22 +46,33 @@ function hashColor(str: string): string {
   return colors[Math.abs(h) % colors.length];
 }
 
-const FAN_MESSAGES: Record<string, { sender: string; text: string; time: string }[]> = {};
-
-const BUSINESS_MESSAGES: Record<string, { sender: string; text: string; time: string }[]> = {};
+function formatMessageTime(dateStr: string): string {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+  } catch {
+    return dateStr;
+  }
+}
 
 export const AdminCommunications: React.FC<AdminCommunicationsProps> = ({ activeSection }) => {
   const {
     conversations,
-    contactMessages,
+    businessEnquiries,
     notifications,
     members,
     updateConversation,
     deleteConversation,
     sendConversationMessage,
     initiateConversationForMember,
-    updateContactMessage,
-    deleteContactMessage,
     updateNotification,
     deleteNotification,
     addNotification,
@@ -71,9 +82,7 @@ export const AdminCommunications: React.FC<AdminCommunicationsProps> = ({ active
     case 'fan-chat':
       return <FanChatSection conversations={conversations} members={members} updateConversation={updateConversation} deleteConversation={deleteConversation} sendConversationMessage={sendConversationMessage} initiateConversationForMember={initiateConversationForMember} />;
     case 'business-chat':
-      return <BusinessChatSection conversations={conversations} updateConversation={updateConversation} deleteConversation={deleteConversation} sendConversationMessage={sendConversationMessage} />;
-    case 'contact-messages':
-      return <ContactMessagesSection messages={contactMessages} updateMessage={updateContactMessage} deleteMessage={deleteContactMessage} />;
+      return <BusinessChatSection businessEnquiries={businessEnquiries} updateConversation={updateConversation} deleteConversation={deleteConversation} sendConversationMessage={sendConversationMessage} />;
     case 'admin-notifications':
       return (
         <NotificationsSection
@@ -98,7 +107,7 @@ const FanChatSection: React.FC<{
   updateConversation: (id: string, updates: Partial<AdminConversation>) => void;
   deleteConversation: (id: string) => void;
   sendConversationMessage: (conversationId: string, sender: string, text: string) => void;
-  initiateConversationForMember: (userId: string, participant: string, email: string, membershipTier: string | null, firstMessage: string, sender: 'homer' | 'admin') => Promise<void>;
+  initiateConversationForMember: (userId: string, participant: string, email: string, membershipTier: string | null, firstMessage: string, sender: 'member' | 'admin') => Promise<void>;
 }> = ({ conversations, members, updateConversation, deleteConversation, sendConversationMessage, initiateConversationForMember }) => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -107,7 +116,6 @@ const FanChatSection: React.FC<{
   const [showNewConversation, setShowNewConversation] = useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState('');
   const [newMessage, setNewMessage] = useState('');
-  const [senderType, setSenderType] = useState<'homer' | 'admin'>('homer');
   const [initiating, setInitiating] = useState(false);
   const [loadedMessages, setLoadedMessages] = useState<Record<string, any[]>>({});
 
@@ -131,7 +139,7 @@ const FanChatSection: React.FC<{
     const member = members.find((m) => m.id === selectedMemberId);
     if (!member) return;
     setInitiating(true);
-    await initiateConversationForMember(member.id, member.name, member.email, member.membership !== 'None' ? member.membership : null, newMessage.trim(), senderType);
+    await initiateConversationForMember(member.id, member.name, member.email, member.membership !== 'None' ? member.membership : null, newMessage.trim(), 'admin');
     setShowNewConversation(false);
     setSelectedMemberId('');
     setNewMessage('');
@@ -159,6 +167,17 @@ const FanChatSection: React.FC<{
 
   const handleArchive = (id: string) => {
     updateConversation(id, { status: 'closed' });
+    fanChatRepository.updateConversationStatus(id, 'closed');
+  };
+
+  const handleReopen = (id: string) => {
+    updateConversation(id, { status: 'open' });
+    fanChatRepository.updateConversationStatus(id, 'open');
+  };
+
+  const handleStatusChange = (id: string, status: 'open' | 'in_progress' | 'closed') => {
+    updateConversation(id, { status });
+    fanChatRepository.updateConversationStatus(id, status);
   };
 
   const handleView = (id: string) => {
@@ -167,7 +186,7 @@ const FanChatSection: React.FC<{
 
   const handleSendReply = () => {
     if (!replyText.trim() || !selectedId) return;
-    sendConversationMessage(selectedId, 'homer', replyText.trim());
+    sendConversationMessage(selectedId, 'admin', replyText.trim());
     setReplyText('');
     setTimeout(() => loadMessages(selectedId), 500);
   };
@@ -204,31 +223,46 @@ const FanChatSection: React.FC<{
               <p className="text-sm font-medium text-[#1C1917]">{selectedConversation.participant}</p>
               <p className="text-[10px] text-[#57534E]">{selectedConversation.email}</p>
             </div>
-            <span className={`${badgeCls} ${STATUS_COLORS[selectedConversation.status]}`}>
-              {STATUS_LABELS[selectedConversation.status]}
-            </span>
+            <div className="flex items-center gap-2">
+              <select
+                value={selectedConversation.status}
+                onChange={(e) => handleStatusChange(selectedConversation.id, e.target.value as 'open' | 'in_progress' | 'closed')}
+                className={`${inputCls} w-auto text-[10px] px-2 py-1 rounded-lg cursor-pointer`}
+              >
+                <option value="open">Open</option>
+                <option value="in_progress">In Progress</option>
+                <option value="closed">Closed</option>
+              </select>
+              {selectedConversation.status === 'closed' && (
+                <button
+                  onClick={() => handleReopen(selectedConversation.id)}
+                  className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium bg-[#16A34A]/10 text-[#16A34A] hover:bg-[#16A34A]/20 transition-colors cursor-pointer"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  Reopen
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="p-4 space-y-4 max-h-96 overflow-y-auto">
             {messages.length === 0 ? (
               <p className="text-sm text-[#57534E] text-center py-8">No messages in this conversation yet.</p>
             ) : (
-              messages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.sender === 'homer' || msg.sender === 'admin' || msg.sender === 'Admin' ? 'justify-end' : 'justify-start'}`}>
+              messages.map((msg: any, i: number) => (
+                <div key={msg.id || i} className={`flex ${msg.sender === 'admin' ? 'justify-end' : 'justify-start'}`}>
                   <div
                     className={`max-w-[70%] rounded-2xl px-4 py-3 ${
-                      msg.sender === 'homer' || msg.sender === 'admin' || msg.sender === 'Admin'
+                      msg.sender === 'admin'
                         ? 'bg-[#A6852F]/10 text-[#1C1917]'
                         : 'bg-[#F3F1ED] text-[#1C1917]'
                     }`}
                   >
-                    {msg.sender !== 'member' && msg.sender !== 'user' && (
-                      <p className="text-[10px] font-medium text-[#A6852F] mb-1">
-                        {msg.sender === 'homer' ? 'Homer Gere' : 'Admin'}
-                      </p>
-                    )}
+                    <p className="text-[10px] font-medium text-[#A6852F] mb-1">
+                      {msg.sender === 'admin' ? 'Admin' : 'Member'}
+                    </p>
                     <p className="text-sm">{msg.text}</p>
-                    <p className="text-[10px] text-[#57534E] mt-1">{msg.time}</p>
+                    <p className="text-[10px] text-[#57534E] mt-1">{formatMessageTime(msg.created_at)}</p>
                   </div>
                 </div>
               ))
@@ -322,6 +356,15 @@ const FanChatSection: React.FC<{
                 </span>
                 <span className="text-[10px] text-[#57534E] shrink-0 hidden sm:block">{formatDate(c.date)}</span>
                 <div className="flex items-center gap-1 shrink-0">
+                  {c.status === 'closed' && (
+                    <button
+                      onClick={() => handleReopen(c.id)}
+                      title="Reopen"
+                      className="w-7 h-7 rounded-lg flex items-center justify-center text-[#16A34A] hover:bg-[#16A34A]/10 transition-colors cursor-pointer"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                   <button
                     onClick={() => handleView(c.id)}
                     title="View"
@@ -364,16 +407,9 @@ const FanChatSection: React.FC<{
               <label className="text-xs font-medium text-[#57534E] mb-1 block">Send As</label>
               <div className="flex gap-2">
                 <button
-                  onClick={() => setSenderType('homer')}
-                  className={`flex-1 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${senderType === 'homer' ? 'bg-[#A6852F] text-white' : 'bg-[#F3F1ED] text-[#57534E] hover:bg-[#E8E5DF]'}`}
+                  className="flex-1 py-2 rounded-xl text-xs font-medium bg-[#A6852F] text-white cursor-pointer"
                 >
-                  Homer Gere
-                </button>
-                <button
-                  onClick={() => setSenderType('admin')}
-                  className={`flex-1 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${senderType === 'admin' ? 'bg-[#A6852F] text-white' : 'bg-[#F3F1ED] text-[#57534E] hover:bg-[#E8E5DF]'}`}
-                >
-                  Admin Support
+                  Admin
                 </button>
               </div>
             </div>
@@ -465,11 +501,11 @@ const FanChatSection: React.FC<{
 // ─────────────────────────────────────────────────────────────
 
 const BusinessChatSection: React.FC<{
-  conversations: AdminConversation[];
+  businessEnquiries: AdminConversation[];
   updateConversation: (id: string, updates: Partial<AdminConversation>) => void;
-  deleteConversation: (id: string) => void;
-  sendConversationMessage: (conversationId: string, sender: string, text: string) => void;
-}> = ({ conversations, updateConversation, deleteConversation, sendConversationMessage }) => {
+  deleteConversation: (id: string, type?: 'fan' | 'business') => void;
+  sendConversationMessage: (conversationId: string, sender: string, text: string, type?: 'fan' | 'business') => void;
+}> = ({ businessEnquiries, updateConversation, deleteConversation, sendConversationMessage }) => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -485,8 +521,7 @@ const BusinessChatSection: React.FC<{
   }, []);
 
   const businessConversations = useMemo(() => {
-    return conversations.filter((c) => {
-      if (c.type !== 'business') return false;
+    return businessEnquiries.filter((c) => {
       if (statusFilter !== 'all' && c.status !== statusFilter) return false;
       if (search) {
         const q = search.toLowerCase();
@@ -498,9 +533,9 @@ const BusinessChatSection: React.FC<{
       }
       return true;
     });
-  }, [conversations, search, statusFilter]);
+  }, [businessEnquiries, search, statusFilter]);
 
-  const selectedConversation = conversations.find((c) => c.id === selectedId);
+  const selectedConversation = businessEnquiries.find((c) => c.id === selectedId);
   const messages = selectedId ? (loadedMessages[selectedId] || selectedConversation?.messages || []) : [];
 
   useEffect(() => {
@@ -509,6 +544,17 @@ const BusinessChatSection: React.FC<{
 
   const handleArchive = (id: string) => {
     updateConversation(id, { status: 'closed' });
+    businessEnquiriesRepository.updateStatus(id, 'closed');
+  };
+
+  const handleReopen = (id: string) => {
+    updateConversation(id, { status: 'open' });
+    businessEnquiriesRepository.updateStatus(id, 'open');
+  };
+
+  const handleStatusChange = (id: string, status: 'open' | 'in_progress' | 'closed') => {
+    updateConversation(id, { status });
+    businessEnquiriesRepository.updateStatus(id, status);
   };
 
   const handleForward = (id: string) => {
@@ -521,7 +567,7 @@ const BusinessChatSection: React.FC<{
 
   const handleSendReply = () => {
     if (!replyText.trim() || !selectedId) return;
-    sendConversationMessage(selectedId, 'admin', replyText.trim());
+    sendConversationMessage(selectedId, 'admin', replyText.trim(), 'business');
     setReplyText('');
     setTimeout(() => loadMessages(selectedId), 500);
   };
@@ -572,26 +618,46 @@ const BusinessChatSection: React.FC<{
                 {selectedConversation.company} — {selectedConversation.email}
               </p>
             </div>
-            <span className={`${badgeCls} ${STATUS_COLORS[selectedConversation.status]}`}>
-              {STATUS_LABELS[selectedConversation.status]}
-            </span>
+            <div className="flex items-center gap-2">
+              <select
+                value={selectedConversation.status}
+                onChange={(e) => handleStatusChange(selectedConversation.id, e.target.value as 'open' | 'in_progress' | 'closed')}
+                className={`${inputCls} w-auto text-[10px] px-2 py-1 rounded-lg cursor-pointer`}
+              >
+                <option value="open">Open</option>
+                <option value="in_progress">In Progress</option>
+                <option value="closed">Closed</option>
+              </select>
+              {selectedConversation.status === 'closed' && (
+                <button
+                  onClick={() => handleReopen(selectedConversation.id)}
+                  className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium bg-[#16A34A]/10 text-[#16A34A] hover:bg-[#16A34A]/20 transition-colors cursor-pointer"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  Reopen
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="p-4 space-y-4 max-h-96 overflow-y-auto">
             {messages.length === 0 ? (
               <p className="text-sm text-[#57534E] text-center py-8">No messages in this conversation yet.</p>
             ) : (
-              messages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.sender === 'admin' || msg.sender === 'Admin' ? 'justify-end' : 'justify-start'}`}>
+              messages.map((msg: any, i: number) => (
+                <div key={msg.id || i} className={`flex ${msg.sender === 'admin' ? 'justify-end' : 'justify-start'}`}>
                   <div
                     className={`max-w-[70%] rounded-2xl px-4 py-3 ${
-                      msg.sender === 'admin' || msg.sender === 'Admin'
+                      msg.sender === 'admin'
                         ? 'bg-[#A6852F]/10 text-[#1C1917]'
                         : 'bg-[#F3F1ED] text-[#1C1917]'
                     }`}
                   >
+                    <p className="text-[10px] font-medium text-[#A6852F] mb-1">
+                      {msg.sender === 'admin' ? 'Admin' : 'Member'}
+                    </p>
                     <p className="text-sm">{msg.text}</p>
-                    <p className="text-[10px] text-[#57534E] mt-1">{msg.time}</p>
+                    <p className="text-[10px] text-[#57534E] mt-1">{formatMessageTime(msg.created_at)}</p>
                   </div>
                 </div>
               ))
@@ -677,6 +743,15 @@ const BusinessChatSection: React.FC<{
                 </span>
                 <span className="text-[10px] text-[#57534E] shrink-0 hidden sm:block">{formatDate(c.date)}</span>
                 <div className="flex items-center gap-1 shrink-0">
+                  {c.status === 'closed' && (
+                    <button
+                      onClick={() => handleReopen(c.id)}
+                      title="Reopen"
+                      className="w-7 h-7 rounded-lg flex items-center justify-center text-[#16A34A] hover:bg-[#16A34A]/10 transition-colors cursor-pointer"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                   <button
                     onClick={() => setSelectedId(c.id)}
                     title="View"
@@ -701,201 +776,7 @@ const BusinessChatSection: React.FC<{
                     <Archive className="w-3.5 h-3.5" />
                   </button>
                   <button
-                    onClick={() => deleteConversation(c.id)}
-                    title="Delete"
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] transition-colors cursor-pointer"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </motion.div>
-    </div>
-  );
-};
-
-// ─────────────────────────────────────────────────────────────
-// Contact Messages
-// ─────────────────────────────────────────────────────────────
-
-const DEPARTMENTS = ['All', 'Media & Press', 'Brand Partnerships', 'General Enquiries', 'Technical Support'];
-
-const ContactMessagesSection: React.FC<{
-  messages: AdminContactMessage[];
-  updateMessage: (id: string, updates: Partial<AdminContactMessage>) => void;
-  deleteMessage: (id: string) => void;
-}> = ({ messages, updateMessage, deleteMessage }) => {
-  const [search, setSearch] = useState('');
-  const [deptFilter, setDeptFilter] = useState('All');
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-
-  const filteredMessages = useMemo(() => {
-    return messages.filter((m) => {
-      if (deptFilter !== 'All' && m.department !== deptFilter) return false;
-      if (search) {
-        const q = search.toLowerCase();
-        return (
-          m.name.toLowerCase().includes(q) ||
-          m.subject.toLowerCase().includes(q) ||
-          m.message.toLowerCase().includes(q)
-        );
-      }
-      return true;
-    });
-  }, [messages, search, deptFilter]);
-
-  const selectedMessage = messages.find((m) => m.id === selectedId);
-
-  const handleToggleRead = (id: string) => {
-    const msg = messages.find((m) => m.id === id);
-    if (msg) updateMessage(id, { read: !msg.read });
-  };
-
-  if (selectedMessage) {
-    return (
-      <div className="space-y-6">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <button
-            onClick={() => setSelectedId(null)}
-            className="flex items-center gap-2 text-sm text-[#57534E] hover:text-[#1C1917] transition-colors mb-4 cursor-pointer"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Contact Messages
-          </button>
-          <h1 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight">Contact Message</h1>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="rounded-xl border border-[#A6852F]/20 bg-white overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500"
-        >
-          <div className="p-5 border-b border-[#E8E5DF]/40 space-y-3">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-lg font-medium text-[#1C1917]">{selectedMessage.subject}</h2>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-[#57534E]">From: <span className="text-[#1C1917] font-medium">{selectedMessage.name}</span></span>
-                  <span className="text-[10px] text-[#57534E]">({selectedMessage.email})</span>
-                </div>
-              </div>
-              <span className={`${badgeCls} bg-[#A6852F]/10 text-[#A6852F]`}>{selectedMessage.department}</span>
-            </div>
-            <p className="text-[10px] text-[#57534E]/60">{selectedMessage.date}</p>
-          </div>
-          <div className="p-5">
-            <p className="text-sm text-[#1C1917] leading-relaxed">{selectedMessage.message}</p>
-          </div>
-          <div className="p-4 border-t border-[#E8E5DF]/40 flex items-center gap-3">
-            <button
-              onClick={() => handleToggleRead(selectedMessage.id)}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[#E8E5DF]/60 text-xs text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"
-            >
-              {selectedMessage.read ? <MailOpen className="w-3.5 h-3.5" /> : <MailCheck className="w-3.5 h-3.5" />}
-              Mark as {selectedMessage.read ? 'Unread' : 'Read'}
-            </button>
-            <button
-              onClick={() => {
-                deleteMessage(selectedMessage.id);
-                setSelectedId(null);
-              }}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[#DC2626]/20 text-xs text-[#DC2626] hover:bg-[#DC2626]/5 transition-colors cursor-pointer"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-              Delete
-            </button>
-          </div>
-        </motion.div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-6">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <h1 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight">Contact Messages</h1>
-        <p className="text-sm text-[#57534E] mt-1">Review and manage incoming contact form submissions.</p>
-      </motion.div>
-
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-        <div className="flex flex-col sm:flex-row gap-3 mb-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#57534E]/60" />
-            <input
-              type="text"
-              placeholder="Search messages..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className={`${inputCls} pl-9`}
-            />
-          </div>
-          <select
-            value={deptFilter}
-            onChange={(e) => setDeptFilter(e.target.value)}
-            className={`${inputCls} w-auto sm:w-48 cursor-pointer`}
-          >
-            {DEPARTMENTS.map((d) => (
-              <option key={d} value={d}>{d}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="space-y-2">
-          {filteredMessages.length === 0 ? (
-            <p className="text-sm text-[#57534E] text-center py-8">No messages found.</p>
-          ) : (
-            filteredMessages.map((m) => (
-              <div
-                key={m.id}
-                onClick={() => {
-                  setSelectedId(m.id);
-                  if (!m.read) updateMessage(m.id, { read: true });
-                }}
-                className={`flex items-start gap-4 p-4 rounded-xl border bg-white hover:border-[#A6852F]/20 transition-all cursor-pointer ${
-                  !m.read ? 'border-l-4 border-l-[#A6852F] bg-[#A6852F]/[0.02]' : 'border-[#E8E5DF]/80'
-                }`}
-              >
-                <div className="w-10 h-10 rounded-xl bg-[#3B82F6]/10 flex items-center justify-center text-[#3B82F6] shrink-0">
-                  <Mail className="w-4 h-4" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-[#1C1917]">{m.name}</p>
-                    {!m.read && <div className="w-2 h-2 rounded-full bg-[#A6852F] shrink-0" />}
-                  </div>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#A6852F]/10 text-[#A6852F] font-medium">
-                      {m.department}
-                    </span>
-                    <span className="text-[10px] text-[#57534E]">{m.subject}</span>
-                  </div>
-                  <p className="text-xs text-[#57534E] truncate mt-0.5">{m.message}</p>
-                  <p className="text-[10px] text-[#57534E]/60 mt-1">{m.date}</p>
-                </div>
-                <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
-                  <button
-                    onClick={() => {
-                      setSelectedId(m.id);
-                      if (!m.read) updateMessage(m.id, { read: true });
-                    }}
-                    title="View"
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"
-                  >
-                    <Eye className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    onClick={() => handleToggleRead(m.id)}
-                    title={m.read ? 'Mark as Unread' : 'Mark as Read'}
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"
-                  >
-                    {m.read ? <MailOpen className="w-3.5 h-3.5" /> : <MailCheck className="w-3.5 h-3.5" />}
-                  </button>
-                  <button
-                    onClick={() => deleteMessage(m.id)}
+                    onClick={() => deleteConversation(c.id, 'business')}
                     title="Delete"
                     className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] transition-colors cursor-pointer"
                   >

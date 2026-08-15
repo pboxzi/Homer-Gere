@@ -75,11 +75,14 @@ function PageLoader({ progress }: { progress?: number }) {
 
 const INITIAL_LOAD_DURATION = 10000;
 
+const APP_SHELL_ROUTES = ['/admin', '/dashboard'];
+
 function RouteLoader({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const isInitialLoad = useRef(!sessionStorage.getItem('hg-loaded'));
+  const isAppShell = useRef(APP_SHELL_ROUTES.some((r) => location.pathname.startsWith(r)));
 
   useEffect(() => {
     if (isInitialLoad.current) {
@@ -95,6 +98,10 @@ function RouteLoader({ children }: { children: React.ReactNode }) {
       }, 50);
       return () => clearInterval(interval);
     } else {
+      if (isAppShell.current) {
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       setProgress(100);
       requestAnimationFrame(() => {
@@ -107,6 +114,24 @@ function RouteLoader({ children }: { children: React.ReactNode }) {
 
   if (loading) return <PageLoader progress={isInitialLoad.current ? progress : undefined} />;
   return <>{children}</>;
+}
+
+function BodyScrollLock() {
+  const { pathname } = useLocation();
+  const isAppShell = APP_SHELL_ROUTES.some((r) => pathname.startsWith(r));
+
+  useEffect(() => {
+    if (isAppShell) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+      };
+    }
+  }, [isAppShell]);
+
+  return null;
 }
 
 function HomePage() {
@@ -185,6 +210,7 @@ export default function App() {
         <SiteContentProvider>
         <BrowserRouter>
           <ScrollToTop />
+          <BodyScrollLock />
           <Suspense fallback={<PageLoader />          }>
             <RouteLoader>
               <Routes>

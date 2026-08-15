@@ -4,6 +4,7 @@ import { Inbox, Send, ArrowLeft, Plus } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useDashboard } from '../../context/DashboardContext';
 import { businessEnquiriesRepository } from '../../lib/repositories';
+import { supabase } from '../../lib/supabase';
 import type { BusinessEnquiry, BusinessMessage } from '../../types/database';
 
 export const DashboardMessages: React.FC = () => {
@@ -22,8 +23,8 @@ export const DashboardMessages: React.FC = () => {
     if (!user?.id) return;
     setLoading(true);
     try {
-      const data = await businessEnquiriesRepository.getAll();
-      setEnquiries(data.filter((e) => e.user_id === user.id));
+      const data = await businessEnquiriesRepository.getByUserId(user.id);
+      setEnquiries(data);
     } catch { /* silent */ }
     setLoading(false);
   }, [user?.id]);
@@ -38,8 +39,56 @@ export const DashboardMessages: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedId) loadMessages(selectedId);
+    if (selectedId) {
+      loadMessages(selectedId);
+      businessEnquiriesRepository.markMessagesAsRead(selectedId, 'member').catch(() => {});
+    }
   }, [selectedId, loadMessages]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const enquiryIds = enquiries.map((e) => e.id);
+    if (enquiryIds.length === 0) return;
+
+    const channel = supabase
+      .channel('business_messages_live')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'business_messages',
+          filter: `enquiry_id=in.(${enquiryIds.join(',')})`,
+        },
+        (payload) => {
+          const newMsg = payload.new as BusinessMessage;
+          if (newMsg.sender !== 'member') {
+            if (selectedId && newMsg.enquiry_id === selectedId) {
+              setMessages((prev) => [...prev, newMsg]);
+              businessEnquiriesRepository.markMessagesAsRead(newMsg.enquiry_id, 'member').catch(() => {});
+            }
+            setEnquiries((prev) =>
+              prev.map((enq) =>
+                enq.id === newMsg.enquiry_id
+                  ? {
+                      ...enq,
+                      last_message: newMsg.text,
+                      last_message_at: newMsg.created_at,
+                      unread_count: selectedId === newMsg.enquiry_id ? 0 : (enq.unread_count ?? 0) + 1,
+                    }
+                  : enq
+              )
+            );
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id, enquiries, selectedId]);
 
   const handleSendReply = async () => {
     if (!selectedId || !replyText.trim() || !user?.id) return;
@@ -112,10 +161,14 @@ export const DashboardMessages: React.FC = () => {
                   : 'bg-[#A6852F]/22 border border-[#A6852F]/45'
               }`}>
                 {msg.sender !== 'member' && (
-                  <p className="text-[10px] font-medium text-[#A6852F] mb-1">{msg.sender === 'admin' ? 'Support Team' : 'System'}</p>
+                  <p className="text-[10px] font-medium text-[#A6852F] mb-1">
+                    {msg.sender === 'admin' ? 'Support Team' : 'System'}
+                  </p>
                 )}
                 <p className={`text-sm ${msg.sender === 'member' ? 'text-white' : 'text-[#1C1917]'}`}>{msg.text}</p>
-                <p className={`text-[10px] mt-1 ${msg.sender === 'member' ? 'text-white/50' : 'text-[#57534E]/60'}`}>{new Date(msg.created_at).toLocaleString()}</p>
+                <p className={`text-[10px] mt-1 ${msg.sender === 'member' ? 'text-white/50' : 'text-[#57534E]/60'}`}>
+                  {msg.created_at ? new Date(msg.created_at).toLocaleString() : ''}
+                </p>
               </div>
             </motion.div>
           ))}
@@ -187,14 +240,21 @@ export const DashboardMessages: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1 + i * 0.04 }}
             >
-              <div className="w-10 h-10 rounded-xl bg-[#8B5CF6]/22 shadow-sm shadow-[#8B5CF6]/15 flex items-center justify-center text-[#8B5CF6]"><Inbox className="w-4 h-4" /></div>
+              <div className="w-10 h-10 rounded-xl bg-[#8B5CF6]/22 shadow-sm shadow-[#8B5CF6]/15 flex items-center justify-center text-[#8B5CF6] relative">
+                <Inbox className="w-4 h-4" />
+                {(enq.unread_count ?? 0) > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#DC2626] text-white text-[9px] font-bold flex items-center justify-center">
+                    {enq.unread_count > 9 ? '9+' : enq.unread_count}
+                  </span>
+                )}
+              </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium text-[#1C1917] truncate">{enq.subject || 'Business Enquiry'}</p>
                   <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${enq.status === 'open' ? 'bg-[#16A34A]/22 text-[#16A34A]' : enq.status === 'in_progress' ? 'bg-[#3B82F6]/15 text-[#3B82F6]' : 'bg-[#57534E]/15 text-[#57534E]'}`}>{enq.status}</span>
                 </div>
-                <p className="text-xs text-[#57534E] truncate mt-0.5">{enq.message}</p>
-                <p className="text-[10px] text-[#57534E]/60 mt-0.5">{new Date(enq.created_at).toLocaleDateString()}</p>
+                <p className="text-xs text-[#57534E] truncate mt-0.5">{enq.last_message || enq.message}</p>
+                <p className="text-[10px] text-[#57534E]/60 mt-0.5">{enq.last_message_at ? new Date(enq.last_message_at).toLocaleString() : new Date(enq.created_at).toLocaleDateString()}</p>
               </div>
             </motion.button>
           ))

@@ -11,6 +11,7 @@ import {
   paymentMethodsRepository,
   experienceRequestsRepository,
   fanChatRepository,
+  businessEnquiriesRepository,
   notificationsRepository,
   activityLogsRepository,
   helpDeskTicketsRepository,
@@ -54,7 +55,7 @@ export interface HelpTicket {
   id: string;
   subject: string;
   message: string;
-  category: 'account' | 'membership' | 'billing' | 'technical' | 'other';
+  category: string;
   status: 'open' | 'replied' | 'closed';
   date: string;
   replies: HelpReply[];
@@ -62,7 +63,7 @@ export interface HelpTicket {
 
 export interface HelpReply {
   id: string;
-  sender: 'member' | 'support';
+  sender: 'member' | 'support' | 'admin';
   text: string;
   date: string;
 }
@@ -241,7 +242,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         type: (n.type as DashboardNotification['type']) || 'system',
         title: n.title,
         message: n.message,
-        date: n.created_at,
+        date: new Date(n.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
         read: n.read,
       })));
     } catch { /* silent */ }
@@ -349,7 +350,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, (payload) => {
         if (payload.eventType === 'INSERT') {
           const n = payload.new as Notification;
-          setNotifications((prev) => [{ id: n.id, type: (n.type as DashboardNotification['type']) || 'system', title: n.title, message: n.message, date: n.created_at, read: n.read }, ...prev]);
+          setNotifications((prev) => [{ id: n.id, type: (n.type as DashboardNotification['type']) || 'system', title: n.title, message: n.message, date: new Date(n.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), read: n.read }, ...prev]);
         } else if (payload.eventType === 'UPDATE') {
           const n = payload.new as Notification;
           setNotifications((prev) => prev.map((item) => item.id === n.id ? { ...item, read: n.read, title: n.title, message: n.message } : item));
@@ -363,10 +364,13 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     // Subscribe to fan chat messages
     const fanChatChannel = supabase
       .channel('dashboard-fan-chat')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'fan_messages' }, (payload) => {
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'fan_messages' }, async (payload) => {
         const newMsg = payload.new as FanMessage;
+        // Check if the conversation belongs to current user
+        const convs = await fanChatRepository.getConversationsByUserId(user.id).catch(() => []);
+        const belongsToUser = convs.some((c) => c.id === newMsg.conversation_id);
+        if (!belongsToUser) return;
         setFanMessages((prev) => {
-          // Only add if we're already tracking this conversation's messages
           if (prev.some((m) => m.id === newMsg.id)) return prev;
           return [...prev, newMsg];
         });
@@ -376,8 +380,13 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     // Subscribe to business messages
     const bizChatChannel = supabase
       .channel('dashboard-biz-chat')
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'business_messages' }, () => {
-        // Reload enquiries when new message arrives (simple approach)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'business_messages' }, async (payload) => {
+        const newMsg = payload.new as { enquiry_id: string };
+        // Check if the enquiry belongs to current user
+        const enqs = await businessEnquiriesRepository.getByUserId(user.id).catch(() => []);
+        const belongsToUser = enqs.some((e) => e.id === newMsg.enquiry_id);
+        if (!belongsToUser) return;
+        // Reload enquiries when new message arrives
       })
       .subscribe();
 

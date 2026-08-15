@@ -120,7 +120,7 @@ export interface ChatMessage {
 }
 
 export interface ChatMedia {
-  type: 'image' | 'video';
+  type: 'image' | 'video' | 'document';
   url: string;
   thumbnail?: string;
   name?: string;

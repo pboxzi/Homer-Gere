@@ -89,6 +89,7 @@ export interface AdminConversation {
   email: string;
   company?: string;
   lastMessage: string;
+  unreadCount: number;
   status: 'open' | 'in_progress' | 'closed';
   date: string;
   messages?: AdminConversationMessage[];
@@ -204,10 +205,10 @@ export const ADMIN_SIDEBAR_GROUPS: { label: string; items: { id: AdminSection; l
     { id: 'experiences', label: 'Experiences' },
   ]},
   { label: 'Communications', items: [
-    { id: 'fan-chat', label: 'Fan Chat' },
-    { id: 'business-chat', label: 'Business Chat' },
-    { id: 'contact-messages', label: 'Contact Messages' },
+    { id: 'fan-chat', label: 'Fan Conversations' },
+    { id: 'business-chat', label: 'Business Enquiries' },
     { id: 'admin-notifications', label: 'Notifications' },
+    { id: 'email-templates', label: 'Email Templates' },
   ]},
   { label: 'Media Library', items: [
     { id: 'images', label: 'Images' },
