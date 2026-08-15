@@ -196,7 +196,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   );
 
   return (
-    <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased flex overflow-x-hidden">
+    <div className="h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased flex overflow-hidden">
       <aside className="hidden lg:flex w-60 bg-white border-r border-[#A6852F]/20 flex-col fixed inset-y-0 left-0 z-30 shadow-lg shadow-[#A6852F]/5">
         <SidebarContent />
       </aside>
@@ -232,7 +232,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 
       <div className="flex-1 lg:ml-60 h-screen flex flex-col overflow-hidden">
         {/* Top bar with search */}
-        <header className="sticky top-0 z-20 bg-[#FAF9F7]/90 backdrop-blur-xl border-b border-[#A6852F]/10 px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-4">
+        <header className="z-20 bg-[#FAF9F7]/90 backdrop-blur-xl border-b border-[#A6852F]/10 px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-4 shrink-0">
           <button onClick={() => setMobileOpen(true)} className="lg:hidden w-9 h-9 rounded-xl flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
             <Menu className="w-5 h-5" />
           </button>
