@@ -6,6 +6,7 @@ import { CHAT_SETTINGS } from '../../data/chatSettings';
 import { IMAGES } from '../../data/images';
 import { useAuth } from '../../context/AuthContext';
 import { fanChatRepository } from '../../lib/repositories';
+import { supabase } from '../../lib/supabase';
 import type { FanConversation } from '../../types/database';
 import { checkRateLimit, sanitizeInput } from '../../lib/security';
 
@@ -22,6 +23,15 @@ const RATE_LIMIT_WINDOW = 60000;
 const RATE_LIMIT_MAX = 10;
 const MAX_MESSAGE_LENGTH = 2000;
 
+async function uploadChatMedia(file: File): Promise<string | null> {
+  const ext = file.name.split('.').pop() || 'jpg';
+  const path = `fan-chat/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  const { error } = await supabase.storage.from('chat-media').upload(path, file, { upsert: false });
+  if (error) return null;
+  const { data } = supabase.storage.from('chat-media').getPublicUrl(path);
+  return data?.publicUrl || null;
+}
+
 export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -35,6 +45,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const messageTimestampsRef = useRef<number[]>([]);
   const conversationIdRef = useRef<string | null>(null);
+  const mediaFileRef = useRef<File | null>(null);
   const settings = CHAT_SETTINGS.fanChat;
   const { user } = useAuth();
   const hasMembership = user?.membershipTier === 'Gold' || user?.membershipTier === 'Platinum';
@@ -62,6 +73,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
               sender: m.sender === 'admin' ? 'homer' as const : 'user' as const,
               text: m.text,
               timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              media: m.media_type && m.media_url ? { type: m.media_type, url: m.media_url } : undefined,
             }));
             setMessages(loaded);
           } else {
@@ -105,6 +117,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
               sender: 'homer' as const,
               text: m.text,
               timestamp: new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              media: m.media_type && m.media_url ? { type: m.media_type, url: m.media_url } : undefined,
             }));
             setMessages((prev) => [...prev, ...newChatMsgs]);
           }
@@ -125,6 +138,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
     const isVideo = file.type.startsWith('video/');
     if (!isImage && !isVideo) return;
     const url = URL.createObjectURL(file);
+    mediaFileRef.current = file;
     setMediaPreview({ type: isImage ? 'image' : 'video', url, name: file.name });
     e.target.value = '';
   };
@@ -132,6 +146,7 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
   const removeMediaPreview = () => {
     if (mediaPreview?.url) URL.revokeObjectURL(mediaPreview.url);
     setMediaPreview(null);
+    mediaFileRef.current = null;
   };
 
   const handleSend = async (e?: React.FormEvent) => {
@@ -186,12 +201,20 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
 
     const displayText = sanitizedText || (attachedMedia ? `Sent a ${attachedMedia.type}` : '');
 
+    let uploadedMediaUrl: string | null = null;
+    let uploadedMediaType: 'image' | 'video' | null = null;
+    if (attachedMedia && mediaFileRef.current) {
+      uploadedMediaUrl = await uploadChatMedia(mediaFileRef.current);
+      uploadedMediaType = attachedMedia.type;
+      mediaFileRef.current = null;
+    }
+
     const userMsg: ChatMessage = {
       id: Date.now().toString(),
       sender: 'user',
       text: displayText,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      media: attachedMedia,
+      media: uploadedMediaUrl && uploadedMediaType ? { type: uploadedMediaType, url: uploadedMediaUrl } : undefined,
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -225,14 +248,12 @@ export const FanChat: React.FC<FanChatProps> = ({ onBack }) => {
 
       conversationIdRef.current = conversation.id;
 
-      const mediaType = attachedMedia?.type === 'image' ? 'image' as const : attachedMedia?.type === 'video' ? 'video' as const : null;
-
       await fanChatRepository.sendMessage({
         conversation_id: conversation.id,
         sender: 'user',
         text: displayText,
-        media_type: mediaType,
-        media_url: attachedMedia?.url || null,
+        media_type: uploadedMediaType,
+        media_url: uploadedMediaUrl,
       });
     } catch {
       // Silently handle errors to avoid breaking UX
