@@ -81,12 +81,12 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
         </div>
 
         {/* Photo Grid — 6 items only */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
           {galleryItems.slice(0, 6).map((item) => (
             <div
               key={item.id}
               onClick={() => onSelectImage(item)}
-              className="group relative rounded-2xl overflow-hidden aspect-[4/3] cursor-pointer transition-all duration-500"
+              className="group relative rounded-lg overflow-hidden aspect-[3/4] cursor-pointer transition-all duration-500"
             >
               <img 
                 src={item.image}
@@ -96,19 +96,19 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
                 loading="lazy" />
 
               {/* Hover Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/80 via-[#111827]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-4 sm:p-6 flex flex-col justify-end text-white">
-                <span className="text-[10px] font-medium tracking-widest text-[#A6852F] uppercase">
+              <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/80 via-[#111827]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 p-3 flex flex-col justify-end text-white">
+                <span className="text-[8px] font-medium tracking-widest text-[#A6852F] uppercase">
                   {item.category}
                 </span>
-                <h4 className="text-base font-editorial text-white mt-1">
+                <h4 className="text-xs font-editorial text-white mt-0.5">
                   {item.title}
                 </h4>
-                <p className="text-xs text-gray-300 line-clamp-1 mt-0.5">
+                <p className="text-[10px] text-gray-300 line-clamp-1 mt-0.5">
                   {item.caption}
                 </p>
 
-                <div className="absolute top-5 right-5 w-9 h-9 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center text-white">
-                  <Maximize2 className="w-4 h-4" />
+                <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-white/15 backdrop-blur-md flex items-center justify-center text-white">
+                  <Maximize2 className="w-3 h-3" />
                 </div>
               </div>
             </div>
