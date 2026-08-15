@@ -48,6 +48,13 @@ export interface AdminApplication {
   plan: string;
   date: string;
   status: 'pending' | 'approved' | 'declined';
+  country?: string | null;
+  device_type?: string | null;
+  browser?: string | null;
+  operating_system?: string | null;
+  referral_source?: string | null;
+  timezone?: string | null;
+  screen_resolution?: string | null;
 }
 
 export interface AdminExperience {

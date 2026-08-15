@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { supabase } from '../lib/supabase';
 import { profilesRepository, adminsRepository, registrationRepository } from '../lib/repositories';
 import { emailService } from '../lib/email';
+import { detectDeviceInfo } from '../utils/deviceInfo';
 import type { Profile, Admin } from '../types/database';
 
 interface User {
@@ -174,6 +175,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userId = authData?.user?.id || null;
 
       // Create the registration application with the auth user's ID
+      const deviceInfo = detectDeviceInfo();
       await registrationRepository.create({
         user_id: userId,
         first_name: data.firstName,
@@ -191,15 +193,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         application_number: null,
         membership_plan_requested: null,
         reason_for_joining: null,
-        referral_source: null,
-        device_type: null,
-        browser: null,
-        operating_system: null,
-        preferred_language: 'en',
-        user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+        referral_source: deviceInfo.referrer_source,
+        device_type: deviceInfo.device_type,
+        browser: deviceInfo.browser,
+        operating_system: deviceInfo.operating_system,
+        preferred_language: deviceInfo.preferred_language,
+        user_agent: deviceInfo.user_agent,
         ip_address: null,
-        city_detected: null,
-        country_detected: null,
+        city_detected: deviceInfo.city_detected,
+        country_detected: deviceInfo.country_detected,
         review_notes: null,
         status_history: [],
         assigned_admin: null,

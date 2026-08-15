@@ -811,7 +811,7 @@ const ApplicationsSection: React.FC = () => {
           </div>
           {paginated.map((a) => (
             <div key={a.id} className="grid grid-cols-[1fr_100px_100px_100px_140px] gap-4 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
-              <div><p className="text-sm text-[#1C1917]">{a.name}</p><p className="text-[10px] text-[#57534E]">{a.email}</p></div>
+              <div><p className="text-sm text-[#1C1917]">{a.name}</p><p className="text-[10px] text-[#57534E]">{a.email}</p>{a.device_type && <p className="text-[9px] text-[#57534E]/60 mt-0.5">{a.device_type} · {a.browser}</p>}</div>
               <span className="text-xs text-[#57534E]">{a.plan}</span>
               <span className="text-xs text-[#57534E]">{formatDate(a.date)}</span>
               <StatusBadge status={a.status} />
@@ -831,10 +831,10 @@ const ApplicationsSection: React.FC = () => {
           {paginated.map((a) => (
             <div key={a.id} className="p-4 space-y-2">
               <div className="flex items-start justify-between">
-                <div><p className="text-sm font-medium text-[#1C1917]">{a.name}</p><p className="text-[11px] text-[#57534E]">{a.email}</p></div>
+                <div><p className="text-sm font-medium text-[#1C1917]">{a.name}</p><p className="text-[11px] text-[#57534E]">{a.email}</p>{a.device_type && <p className="text-[9px] text-[#57534E]/60 mt-0.5">{a.device_type} · {a.browser}</p>}</div>
                 <StatusBadge status={a.status} />
               </div>
-              <div className="flex items-center gap-3 text-[11px] text-[#57534E]"><span>{a.plan}</span><span className="text-[#E8E5DF]">·</span><span>{formatDate(a.date)}</span></div>
+              <div className="flex items-center gap-3 text-[11px] text-[#57534E]"><span>{a.plan}</span><span className="text-[#E8E5DF]">·</span><span>{formatDate(a.date)}</span>{a.referral_source && <><span className="text-[#E8E5DF]">·</span><span>{a.referral_source}</span></>}</div>
               <div className="flex items-center gap-1 pt-2 border-t border-[#E8E5DF]/20">
                 {a.status === 'pending' && (<>
                   <button onClick={() => { updateApplication(a.id, { status: 'approved' }); showSuccess('Approved'); }} className="flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#16A34A] hover:bg-[#16A34A]/10 transition-colors cursor-pointer"><CheckCircle className="w-3.5 h-3.5" /> Approve</button>
@@ -871,8 +871,13 @@ const ApplicationsSection: React.FC = () => {
                 <button onClick={() => setViewId(null)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><X className="w-4 h-4" /></button>
               </div>
               <div className="space-y-3">
-                {[{ label: 'Name', value: viewedApp.name }, { label: 'Email', value: viewedApp.email }, { label: 'Plan', value: viewedApp.plan }, { label: 'Date', value: formatDate(viewedApp.date) }, { label: 'Status', value: viewedApp.status }].map((f) => (
-                  <div key={f.label} className="flex items-center justify-between"><span className="text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">{f.label}</span><span className="text-xs text-[#1C1917]">{f.value}</span></div>
+                {[{ label: 'Name', value: viewedApp.name }, { label: 'Email', value: viewedApp.email }, { label: 'Plan', value: viewedApp.plan }, { label: 'Date', value: formatDate(viewedApp.date) }, { label: 'Status', value: viewedApp.status },
+                  viewedApp.country ? { label: 'Country', value: viewedApp.country } : null,
+                  viewedApp.device_type ? { label: 'Device', value: viewedApp.device_type } : null,
+                  viewedApp.browser && viewedApp.operating_system ? { label: 'Browser / OS', value: `${viewedApp.browser} / ${viewedApp.operating_system}` } : null,
+                  viewedApp.referral_source ? { label: 'Found via', value: viewedApp.referral_source } : null,
+                ].filter(Boolean).map((f) => (
+                  <div key={f!.label} className="flex items-center justify-between"><span className="text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">{f!.label}</span><span className="text-xs text-[#1C1917]">{f!.value}</span></div>
                 ))}
               </div>
               <div className="mt-5 flex justify-end"><button onClick={() => setViewId(null)} className="px-3 py-1.5 rounded-xl text-xs font-medium text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">Close</button></div>
