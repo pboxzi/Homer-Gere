@@ -95,7 +95,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   );
 
   return (
-    <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased flex overflow-x-hidden">
+    <div className="h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased flex overflow-hidden">
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex w-64 bg-white border-r border-[#A6852F]/20 flex-col fixed inset-y-0 left-0 z-30 shadow-lg shadow-[#A6852F]/5">
         <SidebarContent />
@@ -132,9 +132,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       </AnimatePresence>
 
       {/* Main Content */}
-      <div className="flex-1 lg:ml-64 min-h-screen flex flex-col">
+      <div className="flex-1 lg:ml-64 h-screen flex flex-col overflow-hidden">
         {/* Mobile Top Bar */}
-        <header className="lg:hidden sticky top-0 z-20 bg-[#FAF9F7]/90 backdrop-blur-xl border-b border-[#A6852F]/20 px-4 py-3 flex items-center gap-3 shadow-sm shadow-[#A6852F]/5">
+        <header className="lg:hidden z-20 bg-[#FAF9F7]/90 backdrop-blur-xl border-b border-[#A6852F]/20 px-4 py-3 flex items-center gap-3 shadow-sm shadow-[#A6852F]/5 shrink-0">
           <button onClick={() => navigate('/')} className="w-9 h-9 rounded-xl flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer" title="Back to Homepage">
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -144,7 +144,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           <span className="font-editorial text-sm text-[#1C1917] uppercase tracking-[0.06em]">Dashboard</span>
         </header>
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-6xl w-full mx-auto">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-6xl w-full mx-auto">
           {children}
         </main>
       </div>
