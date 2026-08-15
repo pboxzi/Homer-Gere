@@ -199,10 +199,12 @@ export const DashboardChat: React.FC = () => {
                   ? 'bg-[#1C1917] text-white'
                   : msg.sender === 'homer'
                     ? 'bg-[#A6852F]/22 border border-[#A6852F]/45'
-                    : 'bg-[#F3F1ED] border border-[#E8E5DF]/60'
+                    : msg.sender === 'admin'
+                      ? 'bg-[#3B82F6]/10 border border-[#3B82F6]/30'
+                      : 'bg-[#F3F1ED] border border-[#E8E5DF]/60'
               }`}>
                 {msg.sender !== 'member' && (
-                  <p className="text-[10px] font-medium text-[#A6852F] mb-1">{msg.sender === 'homer' ? 'Homer Gere' : 'System'}</p>
+                  <p className={`text-[10px] font-medium mb-1 ${msg.sender === 'homer' ? 'text-[#A6852F]' : msg.sender === 'admin' ? 'text-[#3B82F6]' : 'text-[#57534E]'}`}>{msg.sender === 'homer' ? 'Homer Gere' : msg.sender === 'admin' ? 'Admin Support' : 'System'}</p>
                 )}
                 {msg.media_url && msg.media_type === 'image' && (
                   <img src={msg.media_url} alt="Shared image" className="rounded-xl mb-2 max-w-full max-h-64 object-cover cursor-pointer" onClick={() => window.open(msg.media_url!, '_blank')} />

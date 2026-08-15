@@ -108,6 +108,26 @@ const FanChatSection: React.FC<{
   const [senderType, setSenderType] = useState<'homer' | 'admin'>('homer');
   const [initiating, setInitiating] = useState(false);
 
+  const memberSearchResults = useMemo(() => {
+    if (!search && selectedMemberId) return [];
+    const q = (search || selectedMemberId).toLowerCase();
+    return members.filter((m) => {
+      return m.name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q);
+    }).slice(0, 10);
+  }, [members, search, selectedMemberId]);
+
+  const handleInitiateConversation = async () => {
+    if (!selectedMemberId || !newMessage.trim()) return;
+    const member = members.find((m) => m.id === selectedMemberId);
+    if (!member) return;
+    setInitiating(true);
+    await initiateConversationForMember(member.id, member.name, member.email, member.membership !== 'None' ? member.membership : null, newMessage.trim(), senderType);
+    setShowNewConversation(false);
+    setSelectedMemberId('');
+    setNewMessage('');
+    setInitiating(false);
+  };
+
   const fanConversations = useMemo(() => {
     return conversations.filter((c) => {
       if (c.type !== 'fan') return false;
@@ -133,7 +153,7 @@ const FanChatSection: React.FC<{
 
   const handleSendReply = () => {
     if (!replyText.trim() || !selectedId) return;
-    sendConversationMessage(selectedId, 'Admin', replyText.trim());
+    sendConversationMessage(selectedId, 'homer', replyText.trim());
     setReplyText('');
   };
 
@@ -179,14 +199,19 @@ const FanChatSection: React.FC<{
               <p className="text-sm text-[#57534E] text-center py-8">No messages in this conversation yet.</p>
             ) : (
               messages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.sender === 'Admin' ? 'justify-end' : 'justify-start'}`}>
+                <div key={i} className={`flex ${msg.sender === 'homer' || msg.sender === 'admin' || msg.sender === 'Admin' ? 'justify-end' : 'justify-start'}`}>
                   <div
                     className={`max-w-[70%] rounded-2xl px-4 py-3 ${
-                      msg.sender === 'Admin'
+                      msg.sender === 'homer' || msg.sender === 'admin' || msg.sender === 'Admin'
                         ? 'bg-[#A6852F]/10 text-[#1C1917]'
                         : 'bg-[#F3F1ED] text-[#1C1917]'
                     }`}
                   >
+                    {msg.sender !== 'member' && msg.sender !== 'user' && (
+                      <p className="text-[10px] font-medium text-[#A6852F] mb-1">
+                        {msg.sender === 'homer' ? 'Homer Gere' : 'Admin'}
+                      </p>
+                    )}
                     <p className="text-sm">{msg.text}</p>
                     <p className="text-[10px] text-[#57534E] mt-1">{msg.time}</p>
                   </div>
@@ -219,8 +244,19 @@ const FanChatSection: React.FC<{
   return (
     <div className="space-y-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <h1 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight">Fan Chat</h1>
-        <p className="text-sm text-[#57534E] mt-1">Manage conversations with fans and supporters.</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight">Fan Chat</h1>
+            <p className="text-sm text-[#57534E] mt-1">Manage conversations with fans and supporters.</p>
+          </div>
+          <button
+            onClick={() => setShowNewConversation(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#A6852F] text-white text-xs font-medium hover:bg-[#8B6F1F] transition-colors cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            New Conversation
+          </button>
+        </div>
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
@@ -298,6 +334,113 @@ const FanChatSection: React.FC<{
           )}
         </div>
       </motion.div>
+
+      {showNewConversation && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-[#1C1917]">Start New Conversation</h3>
+              <button onClick={() => setShowNewConversation(false)} className="text-[#57534E] hover:text-[#1C1917] cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-[#57534E] mb-1 block">Send As</label>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setSenderType('homer')}
+                  className={`flex-1 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${senderType === 'homer' ? 'bg-[#A6852F] text-white' : 'bg-[#F3F1ED] text-[#57534E] hover:bg-[#E8E5DF]'}`}
+                >
+                  Homer Gere
+                </button>
+                <button
+                  onClick={() => setSenderType('admin')}
+                  className={`flex-1 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer ${senderType === 'admin' ? 'bg-[#A6852F] text-white' : 'bg-[#F3F1ED] text-[#57534E] hover:bg-[#E8E5DF]'}`}
+                >
+                  Admin Support
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-[#57534E] mb-1 block">Select Member</label>
+              {selectedMemberId ? (
+                <div className="flex items-center gap-2 p-2 rounded-xl border border-[#E8E5DF] bg-[#F3F1ED]/50">
+                  <div className="w-8 h-8 rounded-full bg-[#A6852F] flex items-center justify-center text-white text-xs font-medium">
+                    {getInitials(members.find((m) => m.id === selectedMemberId)?.name || '')}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-[#1C1917]">
+                      {members.find((m) => m.id === selectedMemberId)?.name}
+                    </p>
+                    <p className="text-[10px] text-[#57534E]">{members.find((m) => m.id === selectedMemberId)?.email}</p>
+                  </div>
+                  <button onClick={() => setSelectedMemberId('')} className="text-[#57534E] hover:text-[#DC2626] cursor-pointer">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    placeholder="Search by name or email..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className={inputCls}
+                  />
+                  {search && memberSearchResults.length > 0 && (
+                    <div className="max-h-48 overflow-y-auto rounded-xl border border-[#E8E5DF] bg-white">
+                      {memberSearchResults.map((m) => (
+                        <button
+                          key={m.id}
+                          onClick={() => { setSelectedMemberId(m.id); setSearch(''); }}
+                          className="w-full flex items-center gap-3 p-3 hover:bg-[#F3F1ED] transition-colors text-left cursor-pointer"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-[#A6852F] flex items-center justify-center text-white text-xs font-medium">
+                            {getInitials(m.name)}
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-[#1C1917]">{m.name}</p>
+                            <p className="text-[10px] text-[#57534E]">{m.email}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="text-xs font-medium text-[#57534E] mb-1 block">First Message</label>
+              <textarea
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type your message..."
+                rows={3}
+                className={`${inputCls} resize-none`}
+              />
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowNewConversation(false)}
+                className="flex-1 py-2 rounded-xl border border-[#E8E5DF] text-sm text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleInitiateConversation}
+                disabled={!selectedMemberId || !newMessage.trim() || initiating}
+                className="flex-1 py-2 rounded-xl bg-[#A6852F] text-white text-sm font-medium hover:bg-[#8B6F1F] transition-colors cursor-pointer disabled:opacity-50"
+              >
+                {initiating ? 'Sending...' : 'Start Conversation'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -351,7 +494,7 @@ const BusinessChatSection: React.FC<{
 
   const handleSendReply = () => {
     if (!replyText.trim() || !selectedId) return;
-    sendConversationMessage(selectedId, 'Admin', replyText.trim());
+    sendConversationMessage(selectedId, 'admin', replyText.trim());
     setReplyText('');
   };
 
@@ -411,10 +554,10 @@ const BusinessChatSection: React.FC<{
               <p className="text-sm text-[#57534E] text-center py-8">No messages in this conversation yet.</p>
             ) : (
               messages.map((msg, i) => (
-                <div key={i} className={`flex ${msg.sender === 'Admin' ? 'justify-end' : 'justify-start'}`}>
+                <div key={i} className={`flex ${msg.sender === 'admin' || msg.sender === 'Admin' ? 'justify-end' : 'justify-start'}`}>
                   <div
                     className={`max-w-[70%] rounded-2xl px-4 py-3 ${
-                      msg.sender === 'Admin'
+                      msg.sender === 'admin' || msg.sender === 'Admin'
                         ? 'bg-[#A6852F]/10 text-[#1C1917]'
                         : 'bg-[#F3F1ED] text-[#1C1917]'
                     }`}

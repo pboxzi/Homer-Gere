@@ -230,7 +230,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         )}
       </AnimatePresence>
 
-      <div className="flex-1 lg:ml-60 min-h-screen flex flex-col">
+      <div className="flex-1 lg:ml-60 h-screen flex flex-col overflow-hidden">
         {/* Top bar with search */}
         <header className="sticky top-0 z-20 bg-[#FAF9F7]/90 backdrop-blur-xl border-b border-[#A6852F]/10 px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-4">
           <button onClick={() => setMobileOpen(true)} className="lg:hidden w-9 h-9 rounded-xl flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
@@ -298,7 +298,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           </div>
         </header>
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
           {children}
         </main>
       </div>
