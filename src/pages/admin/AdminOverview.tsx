@@ -70,6 +70,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
         pendingPayReqRes,
         pendingPaySubRes,
         fanChatsRes,
+        fanMessagesRes,
         bizEnqRes,
         profilesRes,
         activeMemsRes,
@@ -80,7 +81,8 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
         client.from('membership_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
         client.from('payment_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
         client.from('payment_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-        client.from('fan_conversations').select('id', { count: 'exact', head: true }).eq('status', 'open'),
+        client.from('fan_conversations').select('id').eq('status', 'open'),
+        client.from('fan_messages').select('conversation_id, sender').order('created_at', { ascending: false }),
         client.from('business_enquiries').select('id', { count: 'exact', head: true }).eq('status', 'open'),
         client.from('profiles').select('id', { count: 'exact', head: true }),
         client.from('memberships').select('id', { count: 'exact', head: true }).eq('status', 'active'),
@@ -98,7 +100,19 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
         pendingMembershipRequests: pendingMemReqRes.status === 'fulfilled' ? (pendingMemReqRes.value as { count: number } | null)?.count || 0 : 0,
         pendingPaymentRequests: pendingPayReqRes.status === 'fulfilled' ? (pendingPayReqRes.value as { count: number } | null)?.count || 0 : 0,
         pendingPaymentSubmissions: pendingPaySubRes.status === 'fulfilled' ? (pendingPaySubRes.value as { count: number } | null)?.count || 0 : 0,
-        unreadFanChats: fanChatsRes.status === 'fulfilled' ? (fanChatsRes.value as { count: number } | null)?.count || 0 : 0,
+        unreadFanChats: (() => {
+          if (fanChatsRes.status !== 'fulfilled' || fanMessagesRes.status !== 'fulfilled') return 0;
+          const openConvs = ((fanChatsRes.value as any)?.data || []) as { id: string }[];
+          const allMessages = ((fanMessagesRes.value as any)?.data || []) as { conversation_id: string; sender: string }[];
+          const lastMsgByConv = new Map<string, string>();
+          for (const m of allMessages) {
+            if (!lastMsgByConv.has(m.conversation_id)) lastMsgByConv.set(m.conversation_id, m.sender);
+          }
+          return openConvs.filter((c) => {
+            const lastSender = lastMsgByConv.get(c.id);
+            return !lastSender || lastSender === 'user' || lastSender === 'member';
+          }).length;
+        })(),
         unreadBusinessEnquiries: bizEnqRes.status === 'fulfilled' ? (bizEnqRes.value as { count: number } | null)?.count || 0 : 0,
         totalMembers: profilesRes.status === 'fulfilled' ? (profilesRes.value as { count: number } | null)?.count || 0 : 0,
         activeMembers: activeMemsRes.status === 'fulfilled' ? (activeMemsRes.value as { count: number } | null)?.count || 0 : 0,

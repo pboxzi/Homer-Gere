@@ -27,6 +27,16 @@ const FILTER_TABS = [
   { key: 'rejected', label: 'Rejected' },
 ];
 
+const STAT_STYLES: Record<string, { color: string }> = {
+  total: { color: '#A6852F' },
+  pending: { color: '#F59E0B' },
+  approved_for_payment: { color: '#3B82F6' },
+  payment_submitted: { color: '#8B5CF6' },
+  payment_under_review: { color: '#F97316' },
+  membership_active: { color: '#16A34A' },
+  rejected: { color: '#DC2626' },
+};
+
 const CURRENCIES = [
   { code: 'USD', symbol: '$', label: 'USD ($)' },
   { code: 'EUR', symbol: '€', label: 'EUR (€)' },
@@ -239,12 +249,15 @@ export default function AdminMembershipRequests() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-        {['total', 'pending', 'approved_for_payment', 'payment_submitted', 'payment_under_review', 'membership_active', 'rejected'].map(key => (
-          <div key={key} className="bg-white rounded-lg border border-gray-200 p-3 text-center">
-            <div className="text-2xl font-bold text-[#1a1a1a]">{stats[key] || 0}</div>
-            <div className="text-xs text-[#6b7280] mt-1">{key === 'total' ? 'Total' : STATUS_CONFIG[key]?.label || key}</div>
-          </div>
-        ))}
+        {['total', 'pending', 'approved_for_payment', 'payment_submitted', 'payment_under_review', 'membership_active', 'rejected'].map(key => {
+          const s = STAT_STYLES[key] || { color: '#A6852F' };
+          return (
+            <div key={key} className="rounded-xl border p-3 text-center transition-all duration-500 hover:shadow-lg hover:-translate-y-0.5" style={{ backgroundColor: `${s.color}40`, borderColor: `${s.color}90`, boxShadow: `0 0 50px ${s.color}50` }}>
+              <div className="text-2xl font-bold" style={{ color: s.color }}>{stats[key] || 0}</div>
+              <div className="text-[10px] font-medium uppercase tracking-wider mt-1" style={{ color: s.color, opacity: 0.7 }}>{key === 'total' ? 'Total' : STATUS_CONFIG[key]?.label || key}</div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Filters */}
@@ -263,7 +276,7 @@ export default function AdminMembershipRequests() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
           placeholder="Search by name, email, or request number..."
-          className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" />
+          className="w-full pl-10 pr-4 py-2 border border-[#E8E5DF]/60 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" />
       </div>
 
       {/* Table */}
@@ -273,9 +286,9 @@ export default function AdminMembershipRequests() {
         <div className="text-center py-12 text-[#6b7280]">No membership requests found</div>
       ) : (
         <>
-          <div className="hidden md:block bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="hidden md:block bg-white rounded-xl border border-[#A6852F]/20 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-[#A6852F]/5 border-b border-[#A6852F]/15">
                 <tr>
                   <th className="text-left px-4 py-3 font-medium text-[#6b7280]">Request #</th>
                   <th className="text-left px-4 py-3 font-medium text-[#6b7280]">Member</th>
@@ -286,11 +299,11 @@ export default function AdminMembershipRequests() {
                   <th className="text-left px-4 py-3 font-medium text-[#6b7280]">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-[#A6852F]/10">
                 {paged.map(req => {
                   const sc = STATUS_CONFIG[req.status] || STATUS_CONFIG.pending;
                   return (
-                    <tr key={req.id} className="hover:bg-gray-50">
+                    <tr key={req.id} className="hover:bg-[#A6852F]/5 transition-colors">
                       <td className="px-4 py-3 font-mono text-xs">{req.request_number}</td>
                       <td className="px-4 py-3">
                         <div className="font-medium text-[#1a1a1a]">{req.full_name}</div>
@@ -320,7 +333,7 @@ export default function AdminMembershipRequests() {
             {paged.map(req => {
               const sc = STATUS_CONFIG[req.status] || STATUS_CONFIG.pending;
               return (
-                <div key={req.id} className="bg-white rounded-xl border border-gray-200 p-4">
+                <div key={req.id} className="bg-white rounded-xl border border-[#A6852F]/20 p-4 shadow-sm hover:shadow-lg transition-all duration-500">
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="font-mono text-xs text-[#6b7280]">{req.request_number}</div>
@@ -354,7 +367,7 @@ export default function AdminMembershipRequests() {
       {/* Detail Modal */}
       {showDetail && selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setShowDetail(false)}>
-          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto p-6 border border-[#A6852F]/20 shadow-xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-[#1a1a1a]">{selected.request_number}</h2>
               <button onClick={() => setShowDetail(false)} className="text-gray-400 hover:text-gray-600">✕</button>
@@ -396,7 +409,7 @@ export default function AdminMembershipRequests() {
       {/* Reject Modal */}
       {showRejectModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setShowRejectModal(false)}>
-          <div className="bg-white rounded-2xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 border border-[#A6852F]/20 shadow-xl" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-bold text-[#1a1a1a] mb-4">Reject Request</h2>
             <textarea value={rejectReason} onChange={e => setRejectReason(e.target.value)} placeholder="Reason for rejection..."
               className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 min-h-[100px]" />
@@ -411,7 +424,7 @@ export default function AdminMembershipRequests() {
       {/* Send Payment Instructions Modal */}
       {showPaymentModal && paymentTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setShowPaymentModal(false)}>
-          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 border border-[#A6852F]/20 shadow-xl" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-bold text-[#1a1a1a] mb-1">Send Payment Instructions</h2>
             <p className="text-sm text-[#6b7280] mb-4">Manually enter payment details for this membership request.</p>
 

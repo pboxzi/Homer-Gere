@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -31,10 +31,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const { profile } = useDashboard();
   const [mobileOpen, setMobileOpen] = useState(false);
   const mainRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    mainRef.current?.scrollTo({ top: 0 });
-  }, [activeSection]);
+  const scrollPosRef = useRef(0);
 
   const mainItems = DASHBOARD_NAV_ITEMS.filter((i) => i.group === 'main');
   const activityItems = DASHBOARD_NAV_ITEMS.filter((i) => i.group === 'activity');
@@ -43,6 +40,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const handleNav = (id: DashboardSection) => {
     onSectionChange(id);
     setMobileOpen(false);
+    mainRef.current?.scrollTo({ top: 0 });
   };
 
   const SidebarContent = () => (

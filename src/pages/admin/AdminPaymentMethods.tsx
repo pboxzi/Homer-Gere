@@ -99,7 +99,7 @@ export default function AdminPaymentMethods() {
     setShowForm(true);
   };
 
-  const inputCls = 'w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]';
+  const inputCls = 'w-full px-3 py-2 border border-[#E8E5DF]/60 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]';
   const labelCls = 'block text-sm font-medium text-[#1a1a1a] mb-1';
 
   return (
@@ -121,7 +121,7 @@ export default function AdminPaymentMethods() {
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Search methods..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" />
+            className="w-full pl-10 pr-4 py-2 border border-[#E8E5DF]/60 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" />
         </div>
         <select value={typeFilter} onChange={e => { setTypeFilter(e.target.value); setPage(1); }} className="px-3 py-2 border border-gray-200 rounded-lg text-sm">
           <option value="all">All Types</option>
@@ -141,9 +141,9 @@ export default function AdminPaymentMethods() {
         <div className="text-center py-12 text-[#6b7280]">No payment methods found</div>
       ) : (
         <>
-          <div className="hidden md:block bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="hidden md:block bg-white rounded-xl border border-[#A6852F]/20 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-[#A6852F]/5 border-b border-[#A6852F]/15">
                 <tr>
                   <th className="text-left px-4 py-3 font-medium text-[#6b7280]">Method</th>
                   <th className="text-left px-4 py-3 font-medium text-[#6b7280]">Type</th>
@@ -153,11 +153,11 @@ export default function AdminPaymentMethods() {
                   <th className="text-left px-4 py-3 font-medium text-[#6b7280]">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-[#A6852F]/10">
                 {paged.map(m => {
                   const Icon = TYPE_ICONS[m.type] || CreditCard;
                   return (
-                    <tr key={m.id} className="hover:bg-gray-50">
+                    <tr key={m.id} className="hover:bg-[#A6852F]/5 transition-colors">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <Icon className="w-4 h-4 text-[#A6852F]" />
@@ -192,7 +192,7 @@ export default function AdminPaymentMethods() {
             {paged.map(m => {
               const Icon = TYPE_ICONS[m.type] || CreditCard;
               return (
-                <div key={m.id} className="bg-white rounded-xl border border-gray-200 p-4">
+                <div key={m.id} className="bg-white rounded-xl border border-[#A6852F]/20 p-4 shadow-sm hover:shadow-lg transition-all duration-500">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
                       <Icon className="w-5 h-5 text-[#A6852F]" />
@@ -229,7 +229,7 @@ export default function AdminPaymentMethods() {
       {/* Form Modal */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={resetForm}>
-          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto p-6" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto p-6 border border-[#A6852F]/20 shadow-xl" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-bold text-[#1a1a1a] mb-4">{editing ? 'Edit' : 'Add'} Payment Method</h2>
             <div className="space-y-4">
               <div><label className={labelCls}>Name *</label><input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className={inputCls} placeholder="e.g. Chase Bank" /></div>

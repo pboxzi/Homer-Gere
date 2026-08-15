@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -51,6 +51,8 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   const [searchOpen, setSearchOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLDivElement>(null);
+  const scrollPosRef = useRef(0);
+  const navTargetRef = useRef<number | null>(null);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
     Object.fromEntries(ADMIN_SIDEBAR_GROUPS.filter((g) => g.label).map((g) => [g.label, true]))
   );
@@ -67,10 +69,6 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   }, [searchQuery, globalAdminSearch]);
 
   useEffect(() => {
-    mainRef.current?.scrollTo({ top: 0 });
-  }, [activeSection]);
-
-  useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
         setSearchOpen(false);
@@ -85,11 +83,29 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   };
 
   const handleNav = (id: AdminSection) => {
+    navTargetRef.current = mainRef.current?.scrollTop || 0;
     onSectionChange(id);
     setMobileOpen(false);
   };
 
+  useLayoutEffect(() => {
+    const el = mainRef.current;
+    if (!el || navTargetRef.current === null) return;
+    const target = navTargetRef.current;
+    navTargetRef.current = null;
+    el.scrollTop = target;
+  });
+
+  useEffect(() => {
+    const el = mainRef.current;
+    if (!el) return;
+    const onScroll = () => { scrollPosRef.current = el.scrollTop; };
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => el.removeEventListener('scroll', onScroll);
+  }, []);
+
   const handleSearchSelect = (result: SearchResult) => {
+    navTargetRef.current = mainRef.current?.scrollTop || 0;
     const section = SECTION_MAP[result.type];
     if (section) onSectionChange(section);
     setSearchQuery('');

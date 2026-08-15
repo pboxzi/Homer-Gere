@@ -15,6 +15,14 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
 
 const FILTER_TABS = ['all', 'active', 'expired', 'deactivated', 'replaced'];
 
+const STAT_STYLES: Record<string, { color: string }> = {
+  total: { color: '#A6852F' },
+  active: { color: '#16A34A' },
+  expired: { color: '#F59E0B' },
+  deactivated: { color: '#DC2626' },
+  replaced: { color: '#8B5CF6' },
+};
+
 export default function AdminMembershipCards() {
   const [cards, setCards] = useState<MembershipCard[]>([]);
   const [loading, setLoading] = useState(true);
@@ -117,12 +125,15 @@ export default function AdminMembershipCards() {
       {successMsg && <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm">{successMsg}</div>}
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        {['total', 'active', 'expired', 'deactivated', 'replaced'].map(key => (
-          <div key={key} className="bg-white rounded-lg border border-gray-200 p-3 text-center">
-            <div className="text-2xl font-bold text-[#1a1a1a]">{stats[key] || 0}</div>
-            <div className="text-xs text-[#6b7280] mt-1 capitalize">{key}</div>
-          </div>
-        ))}
+        {['total', 'active', 'expired', 'deactivated', 'replaced'].map(key => {
+          const s = STAT_STYLES[key] || { color: '#A6852F' };
+          return (
+            <div key={key} className="rounded-xl border p-3 text-center transition-all duration-500 hover:shadow-lg hover:-translate-y-0.5" style={{ backgroundColor: `${s.color}40`, borderColor: `${s.color}90`, boxShadow: `0 0 50px ${s.color}50` }}>
+              <div className="text-2xl font-bold" style={{ color: s.color }}>{stats[key] || 0}</div>
+              <div className="text-[10px] font-medium uppercase tracking-wider mt-1 capitalize" style={{ color: s.color, opacity: 0.7 }}>{key}</div>
+            </div>
+          );
+        })}
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -138,7 +149,7 @@ export default function AdminMembershipCards() {
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Search by card number..."
-          className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" />
+          className="w-full pl-10 pr-4 py-2 border border-[#E8E5DF]/60 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" />
       </div>
 
       {loading ? (
@@ -147,9 +158,9 @@ export default function AdminMembershipCards() {
         <div className="text-center py-12 text-[#6b7280]">No membership cards found</div>
       ) : (
         <>
-          <div className="hidden md:block bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="hidden md:block bg-white rounded-xl border border-[#A6852F]/20 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-[#A6852F]/5 border-b border-[#A6852F]/15">
                 <tr>
                   <th className="text-left px-4 py-3 font-medium text-[#6b7280]">Card Number</th>
                   <th className="text-left px-4 py-3 font-medium text-[#6b7280]">Issue Date</th>
@@ -158,11 +169,11 @@ export default function AdminMembershipCards() {
                   <th className="text-left px-4 py-3 font-medium text-[#6b7280]">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-[#A6852F]/10">
                 {paged.map(card => {
                   const sc = STATUS_CONFIG[card.status] || STATUS_CONFIG.active;
                   return (
-                    <tr key={card.id} className="hover:bg-gray-50">
+                    <tr key={card.id} className="hover:bg-[#A6852F]/5 transition-colors">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <CreditCard className="w-4 h-4 text-[#A6852F]" />
@@ -190,7 +201,7 @@ export default function AdminMembershipCards() {
             {paged.map(card => {
               const sc = STATUS_CONFIG[card.status] || STATUS_CONFIG.active;
               return (
-                <div key={card.id} className="bg-white rounded-xl border border-gray-200 p-4">
+                <div key={card.id} className="bg-white rounded-xl border border-[#A6852F]/20 p-4 shadow-sm hover:shadow-lg transition-all duration-500">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2">
                       <CreditCard className="w-5 h-5 text-[#A6852F]" />
@@ -225,7 +236,7 @@ export default function AdminMembershipCards() {
       {/* Detail Modal */}
       {showDetail && selected && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setShowDetail(false)}>
-          <div className="bg-white rounded-2xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 border border-[#A6852F]/20 shadow-xl" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-[#1a1a1a]">Card Details</h2>
               <button onClick={() => setShowDetail(false)} className="text-gray-400 hover:text-gray-600">✕</button>
