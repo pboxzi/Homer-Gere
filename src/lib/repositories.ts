@@ -1404,25 +1404,29 @@ export const fanChatRepository = {
     return data;
   },
 
-  async getConversations(): Promise<FanConversation[]> {
+  async getConversations(limit?: number, offset?: number): Promise<FanConversation[]> {
     const client = getSupabaseClient();
-    const { data, error } = await client
+    let query = client
       .from('fan_conversations')
       .select('*')
       .is('deleted_at', null)
       .order('last_message_at', { ascending: false, nullsFirst: false });
+    if (limit) query = query.range(offset || 0, (offset || 0) + limit - 1);
+    const { data, error } = await query;
     if (error) throw error;
     return data || [];
   },
 
-  async getConversationsByUserId(userId: string): Promise<FanConversation[]> {
+  async getConversationsByUserId(userId: string, limit?: number, offset?: number): Promise<FanConversation[]> {
     const client = getSupabaseClient();
-    const { data, error } = await client
+    let query = client
       .from('fan_conversations')
       .select('*')
       .eq('user_id', userId)
       .is('deleted_at', null)
       .order('last_message_at', { ascending: false, nullsFirst: false });
+    if (limit) query = query.range(offset || 0, (offset || 0) + limit - 1);
+    const { data, error } = await query;
     if (error) throw error;
     return data || [];
   },
@@ -1534,13 +1538,15 @@ export const businessEnquiriesRepository = {
     return data;
   },
 
-  async getAll(): Promise<BusinessEnquiry[]> {
+  async getAll(limit?: number, offset?: number): Promise<BusinessEnquiry[]> {
     const client = getSupabaseClient();
-    const { data, error } = await client
+    let query = client
       .from('business_enquiries')
       .select('*')
       .is('deleted_at', null)
       .order('last_message_at', { ascending: false, nullsFirst: false });
+    if (limit) query = query.range(offset || 0, (offset || 0) + limit - 1);
+    const { data, error } = await query;
     if (error) throw error;
     return data || [];
   },
@@ -1556,14 +1562,16 @@ export const businessEnquiriesRepository = {
     return data;
   },
 
-  async getByUserId(userId: string): Promise<BusinessEnquiry[]> {
+  async getByUserId(userId: string, limit?: number, offset?: number): Promise<BusinessEnquiry[]> {
     const client = getSupabaseClient();
-    const { data, error } = await client
+    let query = client
       .from('business_enquiries')
       .select('*')
       .eq('user_id', userId)
       .is('deleted_at', null)
       .order('last_message_at', { ascending: false, nullsFirst: false });
+    if (limit) query = query.range(offset || 0, (offset || 0) + limit - 1);
+    const { data, error } = await query;
     if (error) throw error;
     return data || [];
   },

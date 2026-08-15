@@ -22,13 +22,13 @@ const SECTION_ICONS: Record<string, React.FC<{ className?: string }>> = {
 
 const SECTION_MAP: Record<string, AdminSection> = {
   member: 'members', plan: 'plans', application: 'applications',
-  experience: 'experiences', experienceRequest: 'experience-requests',
+  experience: 'experiences', experienceRequest: 'experience-management',
   conversation: 'fan-chat', contactMessage: 'contact-messages',
   notification: 'admin-notifications', media: 'images',
   page: 'homepage',
-  membershipRequest: 'membership-requests', paymentMethod: 'payment-methods',
-  paymentRequest: 'payment-requests', paymentSubmission: 'payment-submissions',
-  membershipCard: 'membership-cards',
+  membershipRequest: 'membership-management', paymentMethod: 'membership-management',
+  paymentRequest: 'membership-management', paymentSubmission: 'membership-management',
+  membershipCard: 'membership-management',
 };
 
 interface SidebarContentProps {

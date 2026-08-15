@@ -4,25 +4,22 @@ import {
   Users, Crown, CheckCircle, XCircle, Clock, Ban, Edit, Eye, Plus,
   Trash2, Search, Filter, X, AlertTriangle, RotateCcw, ChevronLeft,
   ChevronRight, UserCheck, CreditCard, Sparkles, Shield, Mail,
-  Loader2, Download, Copy, RefreshCw, Send,
+  Loader2, Download, Copy, RefreshCw, Send, MessageCircle, Check,
 } from 'lucide-react';
-import { type AdminSection, type AdminExperienceRequest } from '../../data/adminData';
+import { type AdminSection } from '../../data/adminData';
 import { useAdmin } from '../../context/AdminContext';
 import {
   profilesRepository,
   membershipsRepository,
   membershipPlansRepository,
-  experienceRequestsRepository,
   auditLogsRepository,
 } from '../../lib/repositories';
 import { getSupabaseClient } from '../../lib/repositories';
-import { notifyService } from '../../lib/notifications';
 import { formatDate } from '../../utils/formatDate';
 
 type MemberStatus = 'active' | 'suspended' | 'pending';
 type ApplicationStatus = 'pending' | 'approved' | 'declined';
 type ExperienceAvailability = 'available' | 'limited' | 'unavailable';
-type ExperienceRequestStatus = 'pending' | 'approved' | 'declined' | 'completed';
 
 const PAGE_SIZE = 10;
 
@@ -1057,299 +1054,6 @@ const ExperiencesSection: React.FC = () => {
 };
 
 // ────────────────────────────────────────────────────────────
-// Experience Requests Sub-Section
-// ────────────────────────────────────────────────────────────
-
-const ExperienceRequestsSection: React.FC = () => {
-  const { experienceRequests, experiences, updateExperience, deleteExperienceRequest, updateExperienceRequest } = useAdmin();
-  const [filterTab, setFilterTab] = useState<ExperienceRequestStatus | 'all'>('all');
-  const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [viewId, setViewId] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
-  const [successMsg, setSuccessMsg] = useState('');
-  const [actionLoading, setActionLoading] = useState(false);
-
-  // Payment instruction modal state
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [paymentTarget, setPaymentTarget] = useState<AdminExperienceRequest | null>(null);
-  const [paymentForm, setPaymentForm] = useState({ amount: '', currency: 'USD', paymentMethod: '', paymentInstructions: '', dueDate: '', internalNote: '' });
-
-  // Reject modal state
-  const [showRejectModal, setShowRejectModal] = useState(false);
-  const [rejectTarget, setRejectTarget] = useState<AdminExperienceRequest | null>(null);
-  const [rejectReason, setRejectReason] = useState('');
-
-  const filtered = useMemo(() => {
-    if (filterTab === 'all') return experienceRequests;
-    return experienceRequests.filter((r) => r.status === filterTab);
-  }, [experienceRequests, filterTab]);
-
-  const paginated = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE;
-    return filtered.slice(start, start + PAGE_SIZE);
-  }, [filtered, page]);
-
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
-  const pendingCount = experienceRequests.filter((r) => r.status === 'pending').length;
-
-  const showSuccess = (msg: string) => { setSuccessMsg(msg); setTimeout(() => setSuccessMsg(''), 3000); };
-
-  const tabs: { key: ExperienceRequestStatus | 'all'; label: string }[] = [
-    { key: 'all', label: 'All' }, { key: 'pending', label: 'Pending' }, { key: 'approved', label: 'Approved' }, { key: 'declined', label: 'Declined' }, { key: 'completed', label: 'Completed' },
-  ];
-
-  const handleApprove = async (id: string) => {
-    const req = experienceRequests.find((r) => r.id === id);
-    if (!req) return;
-    setPaymentTarget(req);
-    setPaymentForm({ amount: '', currency: 'USD', paymentMethod: '', paymentInstructions: '', dueDate: '', internalNote: '' });
-    setShowPaymentModal(true);
-  };
-
-  const handleSendPaymentInstructions = async () => {
-    if (!paymentTarget || !paymentForm.amount || !paymentForm.paymentMethod || !paymentForm.paymentInstructions) return;
-    setActionLoading(true);
-    try {
-      // Update experience request status
-      updateExperienceRequest(paymentTarget.id, 'approved');
-      const exp = experiences.find((e) => paymentTarget.experience.toLowerCase().includes(e.title.toLowerCase()));
-      if (exp) updateExperience(exp.id, { requests: exp.requests + 1 });
-
-      // Create payment request for the experience
-      const { paymentRequestsRepository } = await import('../../lib/repositories');
-      await paymentRequestsRepository.create({
-        user_id: paymentTarget.user_id || '',
-        payment_type: 'experience',
-        related_record_id: paymentTarget.id,
-        amount: parseFloat(paymentForm.amount),
-        currency: paymentForm.currency,
-        payment_method: paymentForm.paymentMethod,
-        due_date: paymentForm.dueDate ? new Date(paymentForm.dueDate).toISOString() : undefined,
-        admin_notes: paymentForm.internalNote || null,
-        payment_instructions: paymentForm.paymentInstructions,
-      });
-
-      await notifyService.experienceApproved(paymentTarget.user_id || '', {
-        email: paymentTarget.email,
-        fullName: paymentTarget.full_name,
-        experienceType: paymentTarget.experience,
-        eventDate: paymentTarget.date || 'TBD',
-      });
-
-      showSuccess(`Payment instructions sent to ${paymentTarget.full_name}`);
-      setShowPaymentModal(false);
-      setPaymentTarget(null);
-    } catch (e) { console.error(e); showSuccess('Failed to send payment instructions'); }
-    setActionLoading(false);
-  };
-
-  const handleDecline = async (id: string) => {
-    const req = experienceRequests.find((r) => r.id === id);
-    if (!req) return;
-    setRejectTarget(req);
-    setRejectReason('');
-    setShowRejectModal(true);
-  };
-
-  const handleConfirmReject = async () => {
-    if (!rejectTarget || !rejectReason.trim()) return;
-    setActionLoading(true);
-    try {
-      updateExperienceRequest(rejectTarget.id, 'declined');
-      await notifyService.experienceRejected(rejectTarget.user_id || '', {
-        email: rejectTarget.email,
-        fullName: rejectTarget.full_name,
-        experienceType: rejectTarget.experience,
-        rejectionReason: rejectReason,
-      });
-      showSuccess('Experience request declined');
-      setShowRejectModal(false);
-      setRejectTarget(null);
-      setRejectReason('');
-    } catch { /* silent */ }
-    setActionLoading(false);
-  };
-
-  const viewedReq = viewId ? experienceRequests.find((r) => r.id === viewId) : null;
-
-  return (
-    <Section title="Experience Requests" subtitle={`${experienceRequests.length} total requests`}
-      action={pendingCount > 0 ? <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#F59E0B]/10 text-[#F59E0B] font-medium">{pendingCount} pending</span> : undefined}>
-      {successMsg && <div className="px-4 py-2 rounded-xl bg-[#16A34A]/10 text-[#16A34A] text-xs font-medium mb-3">{successMsg}</div>}
-      <div className="flex items-center gap-1 mb-4 border-b border-[#E8E5DF]/40">
-        {tabs.map((tab) => (
-          <button key={tab.key} onClick={() => { setFilterTab(tab.key); setPage(1); }}
-            className={`px-3 py-2 text-[10px] font-medium uppercase tracking-[0.05em] transition-colors cursor-pointer ${filterTab === tab.key ? 'text-[#A6852F] border-b-2 border-[#A6852F]' : 'text-[#57534E] hover:text-[#1C1917]'}`}>
-            {tab.label}{tab.key === 'pending' && pendingCount > 0 && <span className="ml-1 text-[9px] px-1.5 py-0.5 rounded-full bg-[#F59E0B]/10 text-[#F59E0B]">{pendingCount}</span>}
-          </button>
-        ))}
-      </div>
-
-      <div className="rounded-xl border border-[#A6852F]/20 bg-white overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500">
-        <div className="hidden md:block">
-          <div className="grid grid-cols-[1fr_1fr_100px_100px_140px] gap-4 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
-            <span>Requester</span><span>Experience</span><span>Date</span><span>Status</span><span>Actions</span>
-          </div>
-          {paginated.map((r) => (
-            <div key={r.id} className="grid grid-cols-[1fr_1fr_100px_100px_140px] gap-4 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
-              <div><p className="text-sm text-[#1C1917]">{r.requester}</p></div>
-              <span className="text-xs text-[#57534E] truncate">{r.experience}</span>
-              <span className="text-xs text-[#57534E]">{r.date}</span>
-              <StatusBadge status={r.status} />
-              <div className="flex items-center gap-1">
-                {r.status === 'pending' && (<>
-                  <button onClick={() => handleApprove(r.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#16A34A] hover:bg-[#16A34A]/10 transition-colors cursor-pointer" title="Approve & Send Payment"><CheckCircle className="w-3.5 h-3.5" /></button>
-                  <button onClick={() => handleDecline(r.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer" title="Reject"><XCircle className="w-3.5 h-3.5" /></button>
-                </>)}
-                <button onClick={() => setViewId(r.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors cursor-pointer"><Eye className="w-3.5 h-3.5" /></button>
-                <button onClick={() => setDeleteId(r.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="md:hidden divide-y divide-[#E8E5DF]/20">
-          {paginated.map((r) => (
-            <div key={r.id} className="p-4 space-y-2">
-              <div className="flex items-start justify-between">
-                <p className="text-sm font-medium text-[#1C1917]">{r.requester}</p>
-                <StatusBadge status={r.status} />
-              </div>
-              <p className="text-[11px] text-[#57534E] truncate">{r.experience}</p>
-              <p className="text-[11px] text-[#57534E]">{r.date}</p>
-              <div className="flex items-center gap-1 pt-2 border-t border-[#E8E5DF]/20">
-                {r.status === 'pending' && (<>
-                  <button onClick={() => handleApprove(r.id)} className="flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#16A34A] hover:bg-[#16A34A]/10 transition-colors cursor-pointer"><CheckCircle className="w-3.5 h-3.5" /> Approve</button>
-                  <button onClick={() => handleDecline(r.id)} className="flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer"><XCircle className="w-3.5 h-3.5" /> Reject</button>
-                </>)}
-                <button onClick={() => setViewId(r.id)} className="py-1.5 px-3 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><Eye className="w-3.5 h-3.5" /> View</button>
-                <button onClick={() => setDeleteId(r.id)} className="py-1.5 px-3 rounded-lg flex items-center justify-center text-xs text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between px-5 py-3 border-t border-[#E8E5DF]/40">
-            <span className="text-xs text-[#57534E]">{filtered.length} requests · Page {page}/{totalPages}</span>
-            <div className="flex items-center gap-2">
-              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
-              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <ConfirmDialog open={!!deleteId} title="Delete Request" message="Are you sure you want to delete this experience request? This action cannot be undone."
-        onConfirm={() => { if (deleteId) { deleteExperienceRequest(deleteId); setDeleteId(null); showSuccess('Request deleted'); } }} onCancel={() => setDeleteId(null)} />
-
-      {/* Payment Instructions Modal */}
-      {showPaymentModal && paymentTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setShowPaymentModal(false)}>
-          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 border border-[#A6852F]/20 shadow-xl" onClick={e => e.stopPropagation()}>
-            <h2 className="text-lg font-bold text-[#1a1a1a] mb-1">Send Payment Instructions</h2>
-            <p className="text-sm text-[#6b7280] mb-4">Enter payment details for this experience request.</p>
-
-            <div className="p-3 bg-gray-50 rounded-lg text-sm mb-4">
-              <div className="font-medium">{paymentTarget.experience} — {paymentTarget.full_name}</div>
-              <div className="text-[#6b7280]">{paymentTarget.email}</div>
-              {paymentTarget.date && <div className="text-[#6b7280]">Date: {paymentTarget.date}</div>}
-            </div>
-
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Amount *</label>
-                  <input type="number" step="0.01" value={paymentForm.amount} onChange={e => setPaymentForm(f => ({ ...f, amount: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" placeholder="0.00" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Currency</label>
-                  <select value={paymentForm.currency} onChange={e => setPaymentForm(f => ({ ...f, currency: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]">
-                    {['USD','EUR','GBP','NGN','GHS','KES','ZAR','CAD','AUD','JPY','INR','BRL'].map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Payment Method *</label>
-                <input type="text" value={paymentForm.paymentMethod} onChange={e => setPaymentForm(f => ({ ...f, paymentMethod: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" placeholder="e.g. Wire Transfer, Wise, Invoice, Cash..." />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Payment Instructions *</label>
-                <textarea value={paymentForm.paymentInstructions} onChange={e => setPaymentForm(f => ({ ...f, paymentInstructions: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F] min-h-[120px]"
-                  placeholder="Enter payment instructions for the member..." />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Payment Deadline</label>
-                <input type="date" value={paymentForm.dueDate} onChange={e => setPaymentForm(f => ({ ...f, dueDate: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F]" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Internal Note</label>
-                <textarea value={paymentForm.internalNote} onChange={e => setPaymentForm(f => ({ ...f, internalNote: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A6852F]/20 focus:border-[#A6852F] min-h-[60px]"
-                  placeholder="Visible only to administrators." />
-              </div>
-            </div>
-
-            <div className="flex gap-2 mt-6">
-              <button onClick={handleSendPaymentInstructions} disabled={actionLoading || !paymentForm.amount || !paymentForm.paymentMethod || !paymentForm.paymentInstructions}
-                className="flex-1 py-2.5 bg-[#A6852F] text-white rounded-lg hover:bg-[#8B6F24] text-sm font-medium disabled:opacity-50 flex items-center justify-center gap-2">
-                <Send className="w-4 h-4" /> {actionLoading ? 'Sending...' : 'Send Payment Instructions'}
-              </button>
-              <button onClick={() => { setShowPaymentModal(false); setPaymentTarget(null); }} className="flex-1 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Reject Modal */}
-      {showRejectModal && rejectTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => { setShowRejectModal(false); setRejectTarget(null); setRejectReason(''); }}>
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 border border-[#A6852F]/20 shadow-xl" onClick={e => e.stopPropagation()}>
-            <h2 className="text-lg font-bold text-[#1a1a1a] mb-4">Reject Experience Request</h2>
-            <div className="p-3 bg-gray-50 rounded-lg text-sm mb-4">
-              <div className="font-medium">{rejectTarget.experience}</div>
-              <div className="text-[#6b7280]">{rejectTarget.full_name} · {rejectTarget.email}</div>
-            </div>
-            <label className="block text-sm font-medium text-[#1a1a1a] mb-1">Rejection Reason *</label>
-            <textarea value={rejectReason} onChange={e => setRejectReason(e.target.value)} placeholder="Reason for rejection..."
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 min-h-[100px]" />
-            <div className="flex gap-2 mt-4">
-              <button onClick={handleConfirmReject} disabled={actionLoading || !rejectReason.trim()} className="flex-1 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium disabled:opacity-50">Reject</button>
-              <button onClick={() => { setShowRejectModal(false); setRejectTarget(null); setRejectReason(''); }} className="flex-1 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <AnimatePresence>
-        {viewId && viewedReq && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setViewId(null)}>
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-xl border border-[#A6852F]/10 p-6 w-full max-w-md shadow-xl shadow-[#A6852F]/5" onClick={(e) => e.stopPropagation()}>
-              <div className="flex items-center justify-between mb-5">
-                <h4 className="text-sm font-medium text-[#1C1917]">Experience Request Details</h4>
-                <button onClick={() => setViewId(null)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><X className="w-4 h-4" /></button>
-              </div>
-              <div className="space-y-3">
-                {[{ label: 'Requester', value: viewedReq.requester }, { label: 'Experience', value: viewedReq.experience }, { label: 'Date', value: viewedReq.date }, { label: 'Status', value: viewedReq.status }].map((f) => (
-                  <div key={f.label} className="flex items-center justify-between"><span className="text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">{f.label}</span><span className="text-xs text-[#1C1917]">{f.value}</span></div>
-                ))}
-              </div>
-              <div className="mt-5 flex justify-end"><button onClick={() => setViewId(null)} className="px-3 py-1.5 rounded-xl text-xs font-medium text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">Close</button></div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </Section>
-  );
-};
-
-// ────────────────────────────────────────────────────────────
 // Main Component
 // ────────────────────────────────────────────────────────────
 
@@ -1364,7 +1068,6 @@ export const AdminCommunity: React.FC<AdminCommunityProps> = ({ activeSection })
       case 'plans': return <PlansSection />;
       case 'applications': return <ApplicationsSection />;
       case 'experiences': return <ExperiencesSection />;
-      case 'experience-requests': return <ExperienceRequestsSection />;
       default: return <MembersSection />;
     }
   };

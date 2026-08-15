@@ -5,12 +5,8 @@ import { DashboardLayout } from './dashboard/DashboardLayout';
 import { DashboardHome } from './dashboard/DashboardHome';
 import { DashboardProfile } from './dashboard/DashboardProfile';
 import { DashboardMembership } from './dashboard/DashboardMembership';
-import DashboardMembershipRequests from './dashboard/DashboardMembershipRequests';
-import DashboardPayments from './dashboard/DashboardPayments';
-import DashboardMembershipCard from './dashboard/DashboardMembershipCard';
 import { DashboardMessagesPage } from './dashboard/DashboardMessagesPage';
 import { DashboardExperiences } from './dashboard/DashboardExperiences';
-import { DashboardRequests } from './dashboard/DashboardRequests';
 import { DashboardBookmarks } from './dashboard/DashboardBookmarks';
 import { DashboardFavorites } from './dashboard/DashboardFavorites';
 import { DashboardNotifications } from './dashboard/DashboardNotifications';
@@ -23,11 +19,18 @@ import { SEO } from '../components/SEO';
 import { DashboardSection } from '../data/dashboardData';
 
 const VALID_SECTIONS: DashboardSection[] = [
-  'home', 'profile', 'membership', 'membership-requests', 'payments',
-  'membership-card', 'messages', 'experiences', 'requests',
+  'home', 'profile', 'membership', 'messages', 'experiences',
   'downloads', 'activity', 'bookmarks', 'favorites', 'notifications',
   'settings', 'security', 'help',
 ];
+
+const SECTION_REDIRECTS: Record<string, DashboardSection> = {
+  'membership-requests': 'membership',
+  'payments': 'membership',
+  'membership-card': 'membership',
+  'requests': 'experiences',
+  'chat': 'messages',
+};
 
 export default function DashboardPage() {
   const { isAuthenticated } = useAuth();
@@ -45,7 +48,14 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const s = searchParams.get('section') as DashboardSection;
-    if (s && VALID_SECTIONS.includes(s) && s !== activeSection) {
+    if (!s) return;
+    const redirect = SECTION_REDIRECTS[s];
+    if (redirect) {
+      setActiveSection(redirect);
+      setSearchParams({ section: redirect }, { replace: true });
+      return;
+    }
+    if (VALID_SECTIONS.includes(s) && s !== activeSection) {
       setActiveSection(s);
     }
   }, [searchParams]);
@@ -68,13 +78,9 @@ export default function DashboardPage() {
     switch (activeSection) {
       case 'home': return <DashboardHome onOpenChat={() => handleSectionChange('messages')} onRequestExperience={handleRequestExperience} onNavigate={handleSectionChange} />;
       case 'profile': return <DashboardProfile />;
-      case 'membership': return <DashboardMembership onNavigate={handleSectionChange} initialTab={(searchParams.get('tab') as 'overview' | 'plans' | 'history') || 'overview'} />;
-      case 'membership-requests': return <DashboardMembershipRequests />;
-      case 'payments': return <DashboardPayments />;
-      case 'membership-card': return <DashboardMembershipCard />;
+      case 'membership': return <DashboardMembership />;
       case 'messages': return <DashboardMessagesPage />;
       case 'experiences': return <DashboardExperiences openRequestForm={openRequestForm} onRequestFormOpened={() => setOpenRequestForm(false)} />;
-      case 'requests': return <DashboardRequests />;
       case 'downloads': return <DashboardDownloads />;
       case 'activity': return <DashboardActivity />;
       case 'bookmarks': return <DashboardBookmarks />;

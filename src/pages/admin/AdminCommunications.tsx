@@ -1,12 +1,13 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   MessageSquare, Building2, Mail, Bell, Search, Eye, Trash2, Archive,
   ArrowLeft, Send, CheckCheck, MailOpen, MailCheck, Plus, X, Forward,
-  ChevronLeft, ChevronRight, RotateCcw,
+  ChevronLeft, ChevronRight, RotateCcw, Paperclip,
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
-import { fanChatRepository, businessEnquiriesRepository } from '../../lib/repositories';
+import { fanChatRepository, businessEnquiriesRepository, getSupabaseClient } from '../../lib/repositories';
+import { supabase } from '../../lib/supabase';
 import { notifyService } from '../../lib/notifications';
 import { formatDate } from '../../utils/formatDate';
 import type { AdminSection, AdminConversation, AdminNotification } from '../../data/adminData';
@@ -107,7 +108,7 @@ const FanChatSection: React.FC<{
   members: any[];
   updateConversation: (id: string, updates: Partial<AdminConversation>) => void;
   deleteConversation: (id: string) => void;
-  sendConversationMessage: (conversationId: string, sender: string, text: string) => void;
+  sendConversationMessage: (conversationId: string, sender: string, text: string, type?: 'fan' | 'business', mediaUrl?: string | null, mediaType?: string | null) => void;
   initiateConversationForMember: (userId: string, participant: string, email: string, membershipTier: string | null, firstMessage: string, sender: 'member' | 'admin') => Promise<void>;
 }> = ({ conversations, members, updateConversation, deleteConversation, sendConversationMessage, initiateConversationForMember }) => {
   const [search, setSearch] = useState('');
@@ -119,11 +120,15 @@ const FanChatSection: React.FC<{
   const [newMessage, setNewMessage] = useState('');
   const [initiating, setInitiating] = useState(false);
   const [loadedMessages, setLoadedMessages] = useState<Record<string, any[]>>({});
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const loadMessages = useCallback(async (convId: string) => {
     try {
-      const msgs = await fanChatRepository.getMessages(convId);
-      setLoadedMessages((prev) => ({ ...prev, [convId]: msgs }));
+      const { data } = await supabase.from('fan_messages').select('*').eq('conversation_id', convId).order('created_at', { ascending: true });
+      setLoadedMessages((prev) => ({ ...prev, [convId]: data || [] }));
     } catch { /* silent */ }
   }, []);
 
@@ -134,6 +139,25 @@ const FanChatSection: React.FC<{
       return m.name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q);
     }).slice(0, 10);
   }, [members, search, selectedMemberId]);
+
+  const uploadFile = async (file: File): Promise<string | null> => {
+    const client = getSupabaseClient();
+    const path = `admin/${Date.now()}_${file.name}`;
+    const { data, error } = await client.storage.from('chat-media').upload(path, file, { contentType: file.type });
+    if (error) return null;
+    const { data: urlData } = client.storage.from('chat-media').getPublicUrl(data.path);
+    return urlData?.publicUrl || null;
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) return;
+    if (file.size > 10 * 1024 * 1024) return;
+    setPendingFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const handleInitiateConversation = async () => {
     if (!selectedMemberId || !newMessage.trim()) return;
@@ -168,28 +192,41 @@ const FanChatSection: React.FC<{
 
   const handleArchive = (id: string) => {
     updateConversation(id, { status: 'closed' });
-    fanChatRepository.updateConversationStatus(id, 'closed');
+    supabase.from('fan_conversations').update({ status: 'closed' }).eq('id', id);
   };
 
   const handleReopen = (id: string) => {
     updateConversation(id, { status: 'open' });
-    fanChatRepository.updateConversationStatus(id, 'open');
+    supabase.from('fan_conversations').update({ status: 'open' }).eq('id', id);
   };
 
   const handleStatusChange = (id: string, status: 'open' | 'in_progress' | 'closed') => {
     updateConversation(id, { status });
-    fanChatRepository.updateConversationStatus(id, status);
+    supabase.from('fan_conversations').update({ status }).eq('id', id);
   };
 
   const handleView = (id: string) => {
     setSelectedId(id);
   };
 
-  const handleSendReply = () => {
-    if (!replyText.trim() || !selectedId) return;
-    sendConversationMessage(selectedId, 'admin', replyText.trim());
-    setReplyText('');
-    setTimeout(() => loadMessages(selectedId), 500);
+  const handleSendReply = async () => {
+    if ((!replyText.trim() && !pendingFile) || !selectedId) return;
+    setUploading(true);
+    try {
+      let mediaUrl: string | null = null;
+      let mediaType: string | null = null;
+      if (pendingFile) {
+        mediaUrl = await uploadFile(pendingFile);
+        if (!mediaUrl) { setUploading(false); return; }
+        mediaType = pendingFile.type.startsWith('video') ? 'video' : 'image';
+      }
+      sendConversationMessage(selectedId, 'admin', replyText.trim(), 'fan', mediaUrl, mediaType);
+      setReplyText('');
+      setPendingFile(null);
+      setPreviewUrl(null);
+      setTimeout(() => loadMessages(selectedId), 500);
+    } catch { /* silent */ }
+    setUploading(false);
   };
 
   if (selectedConversation) {
@@ -262,7 +299,13 @@ const FanChatSection: React.FC<{
                     <p className="text-[10px] font-medium text-[#A6852F] mb-1">
                       {msg.sender === 'admin' ? 'Admin' : 'Member'}
                     </p>
-                    <p className="text-sm">{msg.text}</p>
+                    {msg.media_url && msg.media_type === 'image' && (
+                      <img src={msg.media_url} alt="Shared" className="rounded-xl mb-2 max-w-full max-h-60 object-cover cursor-pointer" onClick={() => window.open(msg.media_url!, '_blank')} />
+                    )}
+                    {msg.media_url && msg.media_type === 'video' && (
+                      <video src={msg.media_url} controls className="rounded-xl mb-2 max-w-full max-h-60" />
+                    )}
+                    {msg.text && <p className="text-sm">{msg.text}</p>}
                     <p className="text-[10px] text-[#57534E] mt-1">{formatMessageTime(msg.created_at)}</p>
                   </div>
                 </div>
@@ -270,21 +313,36 @@ const FanChatSection: React.FC<{
             )}
           </div>
 
-          <div className="p-4 border-t border-[#E8E5DF]/40 flex items-center gap-3">
-            <input
-              type="text"
-              value={replyText}
-              onChange={(e) => setReplyText(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSendReply()}
-              placeholder="Type a reply..."
-              className={inputCls}
-            />
-            <button
-              onClick={handleSendReply}
-              className="w-9 h-9 rounded-xl bg-[#A6852F] text-white flex items-center justify-center hover:bg-[#8B6F1F] transition-colors cursor-pointer shrink-0"
-            >
-              <Send className="w-4 h-4" />
-            </button>
+          <div className="p-4 border-t border-[#E8E5DF]/40">
+            {previewUrl && (
+              <div className="relative inline-block mb-2">
+                <img src={previewUrl} alt="Preview" className="h-20 rounded-xl border border-[#E8E5DF] object-cover" />
+                <button onClick={() => { setPreviewUrl(null); setPendingFile(null); }} className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#DC2626] text-white flex items-center justify-center cursor-pointer">
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            )}
+            <div className="flex items-center gap-3">
+              <input ref={fileInputRef} type="file" accept="image/*,video/*" onChange={handleFileSelect} className="hidden" />
+              <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="w-9 h-9 rounded-xl border border-[#E8E5DF]/60 flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#A6852F] transition-colors cursor-pointer disabled:opacity-50 shrink-0">
+                <Paperclip className="w-4 h-4" />
+              </button>
+              <input
+                type="text"
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSendReply()}
+                placeholder="Type a reply..."
+                className={inputCls}
+              />
+              <button
+                onClick={handleSendReply}
+                disabled={uploading || (!replyText.trim() && !pendingFile)}
+                className="w-9 h-9 rounded-xl bg-[#A6852F] text-white flex items-center justify-center hover:bg-[#8B6F1F] transition-colors cursor-pointer shrink-0 disabled:opacity-50"
+              >
+                {uploading ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Send className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
         </motion.div>
       </div>
@@ -505,7 +563,7 @@ const BusinessChatSection: React.FC<{
   businessEnquiries: AdminConversation[];
   updateConversation: (id: string, updates: Partial<AdminConversation>) => void;
   deleteConversation: (id: string, type?: 'fan' | 'business') => void;
-  sendConversationMessage: (conversationId: string, sender: string, text: string, type?: 'fan' | 'business') => void;
+  sendConversationMessage: (conversationId: string, sender: string, text: string, type?: 'fan' | 'business', mediaUrl?: string | null, mediaType?: string | null) => void;
 }> = ({ businessEnquiries, updateConversation, deleteConversation, sendConversationMessage }) => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -513,13 +571,36 @@ const BusinessChatSection: React.FC<{
   const [replyText, setReplyText] = useState('');
   const [forwardedIds, setForwardedIds] = useState<Set<string>>(new Set());
   const [loadedMessages, setLoadedMessages] = useState<Record<string, any[]>>({});
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const loadMessages = useCallback(async (convId: string) => {
     try {
-      const msgs = await businessEnquiriesRepository.getMessages(convId);
-      setLoadedMessages((prev) => ({ ...prev, [convId]: msgs }));
+      const { data } = await supabase.from('business_messages').select('*').eq('enquiry_id', convId).order('created_at', { ascending: true });
+      setLoadedMessages((prev) => ({ ...prev, [convId]: data || [] }));
     } catch { /* silent */ }
   }, []);
+
+  const uploadFile = async (file: File): Promise<string | null> => {
+    const client = getSupabaseClient();
+    const path = `admin/${Date.now()}_${file.name}`;
+    const { data, error } = await client.storage.from('chat-media').upload(path, file, { contentType: file.type });
+    if (error) return null;
+    const { data: urlData } = client.storage.from('chat-media').getPublicUrl(data.path);
+    return urlData?.publicUrl || null;
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) return;
+    if (file.size > 10 * 1024 * 1024) return;
+    setPendingFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
 
   const businessConversations = useMemo(() => {
     return businessEnquiries.filter((c) => {
@@ -545,7 +626,7 @@ const BusinessChatSection: React.FC<{
 
   const handleArchive = (id: string) => {
     updateConversation(id, { status: 'closed' });
-    businessEnquiriesRepository.updateStatus(id, 'closed');
+    supabase.from('business_enquiries').update({ status: 'closed' }).eq('id', id);
     const enquiry = businessEnquiries.find((c) => c.id === id);
     if (enquiry?.userId) {
       notifyService.businessEnquiryClosed(enquiry.userId, {
@@ -557,12 +638,12 @@ const BusinessChatSection: React.FC<{
 
   const handleReopen = (id: string) => {
     updateConversation(id, { status: 'open' });
-    businessEnquiriesRepository.updateStatus(id, 'open');
+    supabase.from('business_enquiries').update({ status: 'open' }).eq('id', id);
   };
 
   const handleStatusChange = (id: string, status: 'open' | 'in_progress' | 'closed') => {
     updateConversation(id, { status });
-    businessEnquiriesRepository.updateStatus(id, status);
+    supabase.from('business_enquiries').update({ status }).eq('id', id);
     if (status === 'closed') {
       const enquiry = businessEnquiries.find((c) => c.id === id);
       if (enquiry?.userId) {
@@ -582,11 +663,24 @@ const BusinessChatSection: React.FC<{
     });
   };
 
-  const handleSendReply = () => {
-    if (!replyText.trim() || !selectedId) return;
-    sendConversationMessage(selectedId, 'admin', replyText.trim(), 'business');
-    setReplyText('');
-    setTimeout(() => loadMessages(selectedId), 500);
+  const handleSendReply = async () => {
+    if ((!replyText.trim() && !pendingFile) || !selectedId) return;
+    setUploading(true);
+    try {
+      let mediaUrl: string | null = null;
+      let mediaType: string | null = null;
+      if (pendingFile) {
+        mediaUrl = await uploadFile(pendingFile);
+        if (!mediaUrl) { setUploading(false); return; }
+        mediaType = pendingFile.type.startsWith('video') ? 'video' : 'image';
+      }
+      sendConversationMessage(selectedId, 'admin', replyText.trim(), 'business', mediaUrl, mediaType);
+      setReplyText('');
+      setPendingFile(null);
+      setPreviewUrl(null);
+      setTimeout(() => loadMessages(selectedId), 500);
+    } catch { /* silent */ }
+    setUploading(false);
   };
 
   if (selectedConversation) {
@@ -673,7 +767,13 @@ const BusinessChatSection: React.FC<{
                     <p className="text-[10px] font-medium text-[#A6852F] mb-1">
                       {msg.sender === 'admin' ? 'Admin' : 'Member'}
                     </p>
-                    <p className="text-sm">{msg.text}</p>
+                    {msg.media_url && msg.media_type === 'image' && (
+                      <img src={msg.media_url} alt="Shared" className="rounded-xl mb-2 max-w-full max-h-60 object-cover cursor-pointer" onClick={() => window.open(msg.media_url!, '_blank')} />
+                    )}
+                    {msg.media_url && msg.media_type === 'video' && (
+                      <video src={msg.media_url} controls className="rounded-xl mb-2 max-w-full max-h-60" />
+                    )}
+                    {msg.text && <p className="text-sm">{msg.text}</p>}
                     <p className="text-[10px] text-[#57534E] mt-1">{formatMessageTime(msg.created_at)}</p>
                   </div>
                 </div>
@@ -681,21 +781,36 @@ const BusinessChatSection: React.FC<{
             )}
           </div>
 
-          <div className="p-4 border-t border-[#E8E5DF]/40 flex items-center gap-3">
-            <input
-              type="text"
-              value={replyText}
-              onChange={(e) => setReplyText(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSendReply()}
-              placeholder="Type a reply..."
-              className={inputCls}
-            />
-            <button
-              onClick={handleSendReply}
-              className="w-9 h-9 rounded-xl bg-[#A6852F] text-white flex items-center justify-center hover:bg-[#8B6F1F] transition-colors cursor-pointer shrink-0"
-            >
-              <Send className="w-4 h-4" />
-            </button>
+          <div className="p-4 border-t border-[#E8E5DF]/40">
+            {previewUrl && (
+              <div className="relative inline-block mb-2">
+                <img src={previewUrl} alt="Preview" className="h-20 rounded-xl border border-[#E8E5DF] object-cover" />
+                <button onClick={() => { setPreviewUrl(null); setPendingFile(null); }} className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#DC2626] text-white flex items-center justify-center cursor-pointer">
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            )}
+            <div className="flex items-center gap-3">
+              <input ref={fileInputRef} type="file" accept="image/*,video/*" onChange={handleFileSelect} className="hidden" />
+              <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="w-9 h-9 rounded-xl border border-[#E8E5DF]/60 flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#A6852F] transition-colors cursor-pointer disabled:opacity-50 shrink-0">
+                <Paperclip className="w-4 h-4" />
+              </button>
+              <input
+                type="text"
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSendReply()}
+                placeholder="Type a reply..."
+                className={inputCls}
+              />
+              <button
+                onClick={handleSendReply}
+                disabled={uploading || (!replyText.trim() && !pendingFile)}
+                className="w-9 h-9 rounded-xl bg-[#A6852F] text-white flex items-center justify-center hover:bg-[#8B6F1F] transition-colors cursor-pointer shrink-0 disabled:opacity-50"
+              >
+                {uploading ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <Send className="w-4 h-4" />}
+              </button>
+            </div>
           </div>
         </motion.div>
       </div>

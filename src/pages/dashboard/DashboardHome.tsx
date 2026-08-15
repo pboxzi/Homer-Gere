@@ -169,11 +169,11 @@ export const DashboardHome: React.FC<{
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.55 }}>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-semibold text-[#1C1917] uppercase tracking-[0.05em]">Active Requests</h2>
-            <button onClick={() => onNavigate('requests')} className="text-[9px] text-[#A6852F] font-bold hover:text-[#8B6F1F] transition-colors cursor-pointer">View All</button>
+            <button onClick={() => onNavigate('experiences')} className="text-[9px] text-[#A6852F] font-bold hover:text-[#8B6F1F] transition-colors cursor-pointer">View All</button>
           </div>
           <div className="space-y-2">
             {activeMemReqs.slice(0, 2).map((r) => (
-              <button key={r.id} onClick={() => onNavigate('membership-requests')} className="w-full flex items-center gap-3 p-3 rounded-xl border border-[#E8E5DF]/80 bg-white hover:border-[#A6852F]/20 transition-all cursor-pointer text-left">
+              <button key={r.id} onClick={() => onNavigate('membership')} className="w-full flex items-center gap-3 p-3 rounded-xl border border-[#E8E5DF]/80 bg-white hover:border-[#A6852F]/20 transition-all cursor-pointer text-left">
                 <div className="w-8 h-8 rounded-lg bg-[#A6852F]/10 flex items-center justify-center text-[#A6852F]"><Crown className="w-4 h-4" /></div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[11px] font-semibold text-[#1C1917]">{r.membership_plan_name}</p>
@@ -183,7 +183,7 @@ export const DashboardHome: React.FC<{
               </button>
             ))}
             {activePayReqs.slice(0, 2).map((r) => (
-              <button key={r.id} onClick={() => onNavigate('payments')} className="w-full flex items-center gap-3 p-3 rounded-xl border border-[#E8E5DF]/80 bg-white hover:border-[#16A34A]/20 transition-all cursor-pointer text-left">
+              <button key={r.id} onClick={() => onNavigate('membership')} className="w-full flex items-center gap-3 p-3 rounded-xl border border-[#E8E5DF]/80 bg-white hover:border-[#16A34A]/20 transition-all cursor-pointer text-left">
                 <div className="w-8 h-8 rounded-lg bg-[#16A34A]/10 flex items-center justify-center text-[#16A34A]"><DollarSign className="w-4 h-4" /></div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[11px] font-semibold text-[#1C1917]">{r.amount} {r.currency}</p>

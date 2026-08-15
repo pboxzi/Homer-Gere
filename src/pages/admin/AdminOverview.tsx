@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion } from 'motion/react';
 import {
   Users, Crown, Clock, MessageSquare, Building2, Sparkles, FileText,
@@ -24,8 +24,6 @@ interface LiveStats {
   pendingMembershipRequests: number;
   pendingPaymentRequests: number;
   pendingPaymentSubmissions: number;
-  unreadFanChats: number;
-  unreadBusinessEnquiries: number;
   totalMembers: number;
   activeMembers: number;
   totalMedia: number;
@@ -43,14 +41,12 @@ interface AuditLogEntry {
 }
 
 export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
-  const { stats, notifications } = useAdmin();
+  const { stats, notifications, conversations, businessEnquiries } = useAdmin();
   const [liveStats, setLiveStats] = useState<LiveStats>({
     pendingRegistrations: 0,
     pendingMembershipRequests: 0,
     pendingPaymentRequests: 0,
     pendingPaymentSubmissions: 0,
-    unreadFanChats: 0,
-    unreadBusinessEnquiries: 0,
     totalMembers: 0,
     activeMembers: 0,
     totalMedia: 0,
@@ -69,9 +65,6 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
         pendingMemReqRes,
         pendingPayReqRes,
         pendingPaySubRes,
-        fanChatsRes,
-        fanMessagesRes,
-        bizEnqRes,
         profilesRes,
         activeMemsRes,
         mediaRes,
@@ -81,9 +74,6 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
         client.from('membership_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
         client.from('payment_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
         client.from('payment_submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-        client.from('fan_conversations').select('id').eq('status', 'open'),
-        client.from('fan_messages').select('conversation_id, sender').order('created_at', { ascending: false }),
-        client.from('business_enquiries').select('id', { count: 'exact', head: true }).eq('status', 'open'),
         client.from('profiles').select('id', { count: 'exact', head: true }),
         client.from('memberships').select('id', { count: 'exact', head: true }).eq('status', 'active'),
         client.from('site_media').select('id, file_size'),
@@ -100,20 +90,6 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
         pendingMembershipRequests: pendingMemReqRes.status === 'fulfilled' ? (pendingMemReqRes.value as { count: number } | null)?.count || 0 : 0,
         pendingPaymentRequests: pendingPayReqRes.status === 'fulfilled' ? (pendingPayReqRes.value as { count: number } | null)?.count || 0 : 0,
         pendingPaymentSubmissions: pendingPaySubRes.status === 'fulfilled' ? (pendingPaySubRes.value as { count: number } | null)?.count || 0 : 0,
-        unreadFanChats: (() => {
-          if (fanChatsRes.status !== 'fulfilled' || fanMessagesRes.status !== 'fulfilled') return 0;
-          const openConvs = ((fanChatsRes.value as any)?.data || []) as { id: string }[];
-          const allMessages = ((fanMessagesRes.value as any)?.data || []) as { conversation_id: string; sender: string }[];
-          const lastMsgByConv = new Map<string, string>();
-          for (const m of allMessages) {
-            if (!lastMsgByConv.has(m.conversation_id)) lastMsgByConv.set(m.conversation_id, m.sender);
-          }
-          return openConvs.filter((c) => {
-            const lastSender = lastMsgByConv.get(c.id);
-            return !lastSender || lastSender === 'user' || lastSender === 'member';
-          }).length;
-        })(),
-        unreadBusinessEnquiries: bizEnqRes.status === 'fulfilled' ? (bizEnqRes.value as { count: number } | null)?.count || 0 : 0,
         totalMembers: profilesRes.status === 'fulfilled' ? (profilesRes.value as { count: number } | null)?.count || 0 : 0,
         activeMembers: activeMemsRes.status === 'fulfilled' ? (activeMemsRes.value as { count: number } | null)?.count || 0 : 0,
         totalMedia: totalMediaCount,
@@ -146,9 +122,12 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
   const formatBytes = (bytes: number) => {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} MB`;
     return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
   };
+
+  const liveFanChatCount = useMemo(() => conversations.filter((c) => c.type === 'fan' && c.status === 'open').length, [conversations]);
+  const liveBizEnqCount = useMemo(() => businessEnquiries.filter((c) => c.type === 'business' && c.status === 'open').length, [businessEnquiries]);
 
   const statCards = [
     { label: 'Total Members', value: liveStats.totalMembers.toLocaleString(), icon: Users, color: '#A6852F', target: 'members' as AdminSection },
@@ -157,8 +136,8 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
     { label: 'Membership Requests', value: liveStats.pendingMembershipRequests, icon: Crown, color: '#8B5CF6', target: 'membership-requests' as AdminSection },
     { label: 'Payment Requests', value: liveStats.pendingPaymentRequests, icon: DollarSign, color: '#EC4899', target: 'payment-requests' as AdminSection },
     { label: 'Payment Submissions', value: liveStats.pendingPaymentSubmissions, icon: CreditCard, color: '#F97316', target: 'payment-submissions' as AdminSection },
-    { label: 'Fan Chat Open', value: liveStats.unreadFanChats, icon: MessageSquare, color: '#3B82F6', target: 'fan-chat' as AdminSection },
-    { label: 'Business Enquiries', value: liveStats.unreadBusinessEnquiries, icon: Building2, color: '#6366F1', target: 'business-chat' as AdminSection },
+    { label: 'Fan Chat Open', value: liveFanChatCount, icon: MessageSquare, color: '#3B82F6', target: 'fan-chat' as AdminSection },
+    { label: 'Business Enquiries', value: liveBizEnqCount, icon: Building2, color: '#6366F1', target: 'business-chat' as AdminSection },
     { label: 'Experience Requests', value: stats.experienceRequests, icon: Sparkles, color: '#EC4899', target: 'experience-requests' as AdminSection },
     { label: 'Media Assets', value: liveStats.totalMedia, icon: Film, color: '#14B8A6', target: 'images' as AdminSection },
   ];
@@ -168,8 +147,8 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
     { label: 'Membership Requests', count: liveStats.pendingMembershipRequests, icon: Crown, color: '#8B5CF6', target: 'membership-requests' as AdminSection },
     { label: 'Payment Requests', count: liveStats.pendingPaymentRequests, icon: DollarSign, color: '#EC4899', target: 'payment-requests' as AdminSection },
     { label: 'Payment Submissions', count: liveStats.pendingPaymentSubmissions, icon: CreditCard, color: '#F97316', target: 'payment-submissions' as AdminSection },
-    { label: 'Open Fan Chats', count: liveStats.unreadFanChats, icon: MessageSquare, color: '#3B82F6', target: 'fan-chat' as AdminSection },
-    { label: 'Business Enquiries', count: liveStats.unreadBusinessEnquiries, icon: Building2, color: '#6366F1', target: 'business-chat' as AdminSection },
+    { label: 'Open Fan Chats', count: liveFanChatCount, icon: MessageSquare, color: '#3B82F6', target: 'fan-chat' as AdminSection },
+    { label: 'Business Enquiries', count: liveBizEnqCount, icon: Building2, color: '#6366F1', target: 'business-chat' as AdminSection },
   ];
 
   const quickActions = [

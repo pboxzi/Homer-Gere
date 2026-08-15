@@ -2,12 +2,8 @@ export type DashboardSection =
   | 'home'
   | 'profile'
   | 'membership'
-  | 'membership-requests'
-  | 'payments'
-  | 'membership-card'
   | 'messages'
   | 'experiences'
-  | 'requests'
   | 'bookmarks'
   | 'favorites'
   | 'downloads'
@@ -123,12 +119,8 @@ export const DASHBOARD_NAV_ITEMS: { id: DashboardSection; label: string; icon: s
   { id: 'home', label: 'Dashboard', icon: 'LayoutDashboard', group: 'main' },
   { id: 'profile', label: 'My Profile', icon: 'User', group: 'main' },
   { id: 'membership', label: 'Membership', icon: 'Crown', group: 'main' },
-  { id: 'membership-card', label: 'My Card', icon: 'CreditCard', group: 'main' },
-  { id: 'membership-requests', label: 'Membership Requests', icon: 'FileText', group: 'main' },
-  { id: 'payments', label: 'Payments', icon: 'DollarSign', group: 'main' },
   { id: 'messages', label: 'Messages', icon: 'MessageSquare', group: 'main' },
   { id: 'experiences', label: 'Experiences', icon: 'Sparkles', group: 'activity' },
-  { id: 'requests', label: 'My Requests', icon: 'FileText', group: 'activity' },
   { id: 'downloads', label: 'Downloads', icon: 'Download', group: 'activity' },
   { id: 'activity', label: 'Activity Timeline', icon: 'Clock', group: 'activity' },
   { id: 'bookmarks', label: 'Journal Bookmarks', icon: 'Bookmark', group: 'activity' },

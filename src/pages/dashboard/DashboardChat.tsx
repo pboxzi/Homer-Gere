@@ -1,15 +1,12 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { motion } from 'motion/react';
-import { MessageSquare, ArrowRight, Phone, Send, Search, Archive, Image as ImageIcon, X, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { MessageSquare, Send, Search, Image as ImageIcon, X, Loader2, CheckCheck, Check, ArrowLeft, SmilePlus, Paperclip } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import { useAuth } from '../../context/AuthContext';
-import { fanChatRepository, getSupabaseClient } from '../../lib/repositories';
 import { supabase } from '../../lib/supabase';
 import type { FanConversation, FanMessage, MediaType } from '../../types/database';
 
-const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || '1234567890';
-
-function formatTimestamp(dateStr: string | null): string {
+function formatConvTime(dateStr: string | null): string {
   if (!dateStr) return '';
   const date = new Date(dateStr);
   const now = new Date();
@@ -17,18 +14,39 @@ function formatTimestamp(dateStr: string | null): string {
   const diffMins = Math.floor(diffMs / 60000);
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
-
   if (diffMins < 1) return 'now';
   if (diffMins < 60) return `${diffMins}m`;
   if (diffHours < 24) return `${diffHours}h`;
-  if (diffDays < 7) return `${diffDays}d`;
-  return date.toLocaleDateString();
+  if (diffDays === 1) return 'Yesterday';
+  if (diffDays < 7) return date.toLocaleDateString('en-US', { weekday: 'short' });
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function formatMsgTime(dateStr: string): string {
+  return new Date(dateStr).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+}
+
+function formatDateSeparator(dateStr: string): string {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const msgDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const diffDays = Math.floor((today.getTime() - msgDate.getTime()) / 86400000);
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Yesterday';
+  return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+}
+
+function shouldShowDateSep(messages: FanMessage[], index: number): boolean {
+  if (index === 0) return true;
+  const prev = new Date(messages[index - 1].created_at);
+  const curr = new Date(messages[index].created_at);
+  return prev.toDateString() !== curr.toDateString();
 }
 
 export const DashboardChat: React.FC = () => {
   const { user, profile } = useAuth();
-  const { membershipPlan, logActivity } = useDashboard();
-  const canOpenWhatsApp = membershipPlan?.name === 'Gold' || membershipPlan?.name === 'Platinum';
+  const { logActivity } = useDashboard();
   const [conversations, setConversations] = useState<FanConversation[]>([]);
   const [activeConvId, setActiveConvId] = useState<string | null>(null);
   const [messages, setMessages] = useState<FanMessage[]>([]);
@@ -38,34 +56,70 @@ export const DashboardChat: React.FC = () => {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [hasMoreMessages, setHasMoreMessages] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const loadConversations = useCallback(async () => {
+  const CONV_PAGE_SIZE = 20;
+  const MSG_PAGE_SIZE = 50;
+
+  const loadConversations = useCallback(async (append = false) => {
     if (!user?.id) return;
-    setLoading(true);
+    if (!append) setLoading(true);
     try {
-      const userConvs = await fanChatRepository.getConversationsByUserId(user.id);
-      setConversations(userConvs);
+      const offset = append ? conversations.length : 0;
+      const { data } = await supabase
+        .from('fan_conversations')
+        .select('*')
+        .eq('user_id', user.id)
+        .is('deleted_at', null)
+        .order('last_message_at', { ascending: false, nullsFirst: false })
+        .range(offset, offset + CONV_PAGE_SIZE - 1);
+      const userConvs = (data || []) as FanConversation[];
+      if (append) {
+        setConversations((prev) => [...prev, ...userConvs]);
+      } else {
+        setConversations(userConvs);
+      }
+      setHasMore(userConvs.length === CONV_PAGE_SIZE);
     } catch { /* silent */ }
     setLoading(false);
   }, [user?.id]);
 
   useEffect(() => { loadConversations(); }, [loadConversations]);
 
-  const loadMessages = useCallback(async (convId: string) => {
+  const loadMessages = useCallback(async (convId: string, append = false) => {
     try {
-      const msgs = await fanChatRepository.getMessages(convId);
-      setMessages(msgs);
+      const offset = append ? messages.length : 0;
+      const { data } = await supabase
+        .from('fan_messages')
+        .select('*')
+        .eq('conversation_id', convId)
+        .order('created_at', { ascending: true })
+        .range(offset, offset + MSG_PAGE_SIZE - 1);
+      const msgs = (data || []) as FanMessage[];
+      if (append) {
+        setMessages((prev) => [...msgs, ...prev]);
+      } else {
+        setMessages(msgs);
+      }
+      setHasMoreMessages(msgs.length === MSG_PAGE_SIZE);
     } catch { /* silent */ }
   }, []);
 
   useEffect(() => {
     if (activeConvId) {
       loadMessages(activeConvId);
-      fanChatRepository.markMessagesAsRead(activeConvId, 'member').catch(() => {});
+      supabase.from('fan_messages')
+        .update({ is_read: true, read_at: new Date().toISOString() })
+        .eq('conversation_id', activeConvId)
+        .eq('is_read', false)
+        .neq('sender', 'member');
     }
   }, [activeConvId, loadMessages]);
 
@@ -73,10 +127,22 @@ export const DashboardChat: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Real-time subscription for incoming messages
+  useEffect(() => {
+    if (activeConvId && !hasMoreMessages) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+    }
+  }, [activeConvId]);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [activeConvId]);
+
+  useEffect(() => {
+    return () => { if (previewUrl) URL.revokeObjectURL(previewUrl); };
+  }, [previewUrl]);
+
   useEffect(() => {
     if (!user?.id) return;
-
     const channel = supabase
       .channel('fan-chat-realtime')
       .on(
@@ -84,14 +150,12 @@ export const DashboardChat: React.FC = () => {
         { event: 'INSERT', schema: 'public', table: 'fan_messages' },
         (payload) => {
           const newMsg = payload.new as FanMessage;
-          // Update messages if viewing the conversation
           if (activeConvId && newMsg.conversation_id === activeConvId) {
             setMessages((prev) => {
               if (prev.some((m) => m.id === newMsg.id)) return prev;
               return [...prev, newMsg];
             });
           }
-          // Update conversation last_message fields
           setConversations((prev) =>
             prev.map((c) => {
               if (c.id !== newMsg.conversation_id) return c;
@@ -99,63 +163,69 @@ export const DashboardChat: React.FC = () => {
                 ...c,
                 last_message: newMsg.text || (newMsg.media_type ? `[${newMsg.media_type}]` : ''),
                 last_message_at: newMsg.created_at,
-                unread_count: newMsg.sender === 'admin' ? (c.id === activeConvId ? 0 : (c.unread_count || 0) + 1) : c.unread_count,
+                unread_count: newMsg.sender === 'admin' && c.id !== activeConvId
+                  ? (c.unread_count || 0) + 1
+                  : newMsg.sender === 'admin' && c.id === activeConvId
+                    ? 0
+                    : c.unread_count,
               };
             })
           );
         }
       )
       .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   }, [user?.id, activeConvId]);
 
-  const filteredConversations = conversations.filter((c) =>
-    c.participant.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (c.last_message || '').toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredConversations = conversations.filter((c) => {
+    if (!c.last_message && c.status === 'open') return false;
+    return (
+      c.participant.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (c.last_message || '').toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
 
-  const uploadImage = async (file: File): Promise<string | null> => {
+  const uploadFile = async (file: File): Promise<string | null> => {
     if (!user?.id) return null;
-    const client = getSupabaseClient();
     const ext = file.name.split('.').pop() || 'jpg';
     const path = `${user.id}/${Date.now()}.${ext}`;
-    const { data, error } = await client.storage.from('chat-media').upload(path, file, { contentType: file.type });
+    const { data, error } = await supabase.storage.from('chat-media').upload(path, file, { contentType: file.type });
     if (error) { console.error('Upload error:', error); return null; }
-    const { data: urlData } = client.storage.from('chat-media').getPublicUrl(data.path);
+    const { data: urlData } = supabase.storage.from('chat-media').getPublicUrl(data.path);
     return urlData?.publicUrl || null;
   };
 
   const handleSend = async () => {
     if (!activeConvId || !user?.id) return;
     const hasText = newMessage.trim().length > 0;
-    const hasImage = pendingFile !== null;
-    if (!hasText && !hasImage) return;
+    const hasFile = pendingFile !== null;
+    if (!hasText && !hasFile) return;
 
+    const msgText = newMessage.trim();
+    setNewMessage('');
     setUploading(true);
     try {
       let mediaUrl: string | null = null;
       let mediaType: string | null = null;
 
-      if (hasImage && pendingFile) {
-        mediaUrl = await uploadImage(pendingFile);
-        if (!mediaUrl) { setError('Failed to upload image.'); setUploading(false); return; }
+      if (hasFile && pendingFile) {
+        mediaUrl = await uploadFile(pendingFile);
+        if (!mediaUrl) { setError('Failed to upload file.'); setUploading(false); return; }
         mediaType = pendingFile.type.startsWith('video') ? 'video' : 'image';
       }
 
-      await fanChatRepository.sendMessage({
+      const { error: sendError } = await supabase.from('fan_messages').insert({
         conversation_id: activeConvId,
         sender: 'member',
-        text: newMessage.trim() || '',
-        media_type: mediaType as MediaType,
+        text: msgText || '',
+        media_type: mediaType || null,
         media_url: mediaUrl,
       });
-      setNewMessage('');
+      if (sendError) console.error('Send error:', sendError);
+
       setPendingFile(null);
-      setPreviewImage(null);
+      setPreviewUrl(null);
       await loadMessages(activeConvId);
       await loadConversations();
     } catch { /* silent */ }
@@ -175,8 +245,7 @@ export const DashboardChat: React.FC = () => {
     }
     setError(null);
     setPendingFile(file);
-    const url = URL.createObjectURL(file);
-    setPreviewImage(url);
+    setPreviewUrl(URL.createObjectURL(file));
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -188,210 +257,358 @@ export const DashboardChat: React.FC = () => {
     setCreating(true);
     setError(null);
     try {
-      const conv = await fanChatRepository.createConversation({
-        participant: `${profile.first_name} ${profile.last_name}`,
-        email: profile.email,
-        phone: profile.phone || null,
-        membership_tier: membershipPlan?.name || null,
-        status: 'open',
-        method: 'website',
-        user_id: user.id,
-      });
+      const existingOpen = conversations.find((c) => c.status === 'open');
+      if (existingOpen) {
+        setActiveConvId(existingOpen.id);
+        setCreating(false);
+        return;
+      }
+      const { data: convData, error: convError } = await supabase
+        .from('fan_conversations')
+        .insert({
+          participant: `${profile.first_name} ${profile.last_name}`,
+          email: profile.email,
+          phone: profile.phone || null,
+          membership_tier: null,
+          status: 'open',
+          method: 'website',
+          user_id: user.id,
+        })
+        .select()
+        .single();
+      if (convError) throw convError;
+      const conv = convData as FanConversation;
       setConversations((prev) => [conv, ...prev]);
       setActiveConvId(conv.id);
+      logActivity('create', 'chat', 'New fan chat conversation started', {}).catch(() => {});
     } catch (e: any) {
-      console.error('Failed to create conversation:', e);
-      setError(e?.message || 'Failed to start conversation. Please try again.');
-      setCreating(false);
-      return;
+      setError(e?.message || 'Failed to start conversation.');
     }
-    try {
-      logActivity('create', 'chat', 'New fan chat conversation started', {});
-    } catch { /* non-critical */ }
     setCreating(false);
   };
 
   const handleClose = async (convId: string) => {
     try {
-      await fanChatRepository.updateConversationStatus(convId, 'closed');
+      await supabase.from('fan_conversations').update({ status: 'closed' }).eq('id', convId);
       setConversations((prev) => prev.map((c) => c.id === convId ? { ...c, status: 'closed' } : c));
     } catch { /* silent */ }
   };
 
   const activeConv = conversations.find((c) => c.id === activeConvId);
 
-  if (activeConvId && activeConv) {
+  // ── Conversation List View ──
+  if (!activeConvId || !activeConv) {
     return (
-      <div className="space-y-4">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <button onClick={() => setActiveConvId(null)} className="flex items-center gap-2 text-sm text-[#57534E] hover:text-[#1C1917] transition-colors mb-3 cursor-pointer">
-            ← Back to conversations
-          </button>
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight">{activeConv.participant}</h1>
-              <p className="text-xs text-[#57534E]">{activeConv.email} · {activeConv.status}</p>
-            </div>
-            {activeConv.status === 'open' && (
-              <button onClick={() => handleClose(activeConvId)} className="text-xs text-[#57534E] hover:text-[#1C1917] px-3 py-1.5 rounded-lg border border-[#E8E5DF] hover:bg-[#F3F1ED] transition-colors cursor-pointer">
-                <Archive className="w-3.5 h-3.5 inline mr-1" /> Archive
-              </button>
-            )}
+      <div className="relative flex flex-col h-[calc(100dvh-12rem)] lg:h-[calc(100dvh-10rem)] bg-white rounded-2xl border border-[#E8E5DF]/60 overflow-hidden shadow-sm">
+        {/* Header */}
+        <div className="px-5 py-4 border-b border-[#E8E5DF]/40 flex items-center justify-between shrink-0">
+          <div>
+            <h2 className="text-lg font-editorial text-[#1C1917] tracking-tight">Chat with Homer</h2>
+            <p className="text-xs text-[#57534E] mt-0.5">Your conversations</p>
           </div>
-        </motion.div>
-
-        <div className="rounded-2xl border border-[#A6852F]/45 bg-white p-4 max-h-[500px] overflow-y-auto space-y-4 shadow-md shadow-[#A6852F]/18">
-          {messages.length === 0 ? (
-            <div className="text-center py-8">
-              <MessageSquare className="w-6 h-6 text-[#57534E]/20 mx-auto mb-2" />
-              <p className="text-xs text-[#57534E]/60">No messages yet. Start the conversation!</p>
-            </div>
-          ) : messages.map((msg, i) => (
-            <motion.div
-              key={msg.id}
-              className={`flex ${msg.sender === 'member' ? 'justify-end' : 'justify-start'}`}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: i * 0.05 }}
-            >
-              <div className={`max-w-[80%] rounded-2xl px-5 py-3 ${
-                msg.sender === 'member'
-                  ? 'bg-[#1C1917] text-white'
-                  : 'bg-[#A6852F]/22 border border-[#A6852F]/45'
-              }`}>
-                {msg.sender !== 'member' && (
-                  <p className="text-[10px] font-medium text-[#A6852F] mb-1">Support</p>
-                )}
-                {msg.media_url && msg.media_type === 'image' && (
-                  <img src={msg.media_url} alt="Shared image" className="rounded-xl mb-2 max-w-full max-h-64 object-cover cursor-pointer" onClick={() => window.open(msg.media_url!, '_blank')} />
-                )}
-                {msg.media_url && msg.media_type === 'video' && (
-                  <video src={msg.media_url} controls className="rounded-xl mb-2 max-w-full max-h-64" />
-                )}
-                {msg.text && <p className={`text-sm ${msg.sender === 'member' ? 'text-white' : 'text-[#1C1917]'}`}>{msg.text}</p>}
-                <p className={`text-[10px] mt-1 ${msg.sender === 'member' ? 'text-white/50' : 'text-[#57534E]/60'}`}>{new Date(msg.created_at).toLocaleString()}</p>
-              </div>
-            </motion.div>
-          ))}
-          <div ref={messagesEndRef} />
         </div>
 
-        {activeConv.status === 'open' && (
-          <div className="space-y-2">
-            {previewImage && (
-              <div className="relative inline-block">
-                <img src={previewImage} alt="Preview" className="h-24 rounded-xl border border-[#E8E5DF]" />
-                <button onClick={() => { setPreviewImage(null); setPendingFile(null); }} className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center cursor-pointer">
-                  <X className="w-3 h-3" />
-                </button>
-              </div>
-            )}
-            <div className="flex items-center gap-2">
-              <input ref={fileInputRef} type="file" accept="image/*,video/*" onChange={handleFileSelect} className="hidden" />
-              <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="w-11 h-11 rounded-xl border border-[#A6852F]/45 bg-white flex items-center justify-center text-[#A6852F] hover:bg-[#A6852F]/10 transition-colors cursor-pointer disabled:opacity-50 shrink-0">
-                <ImageIcon className="w-4 h-4" />
-              </button>
+        {error && (
+          <div className="mx-5 mt-3 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5">
+            <p className="text-xs text-red-600">{error}</p>
+          </div>
+        )}
+
+        {/* Search */}
+        {conversations.length > 0 && (
+          <div className="px-5 py-3 shrink-0">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#57534E]/40" />
               <input
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && !uploading && handleSend()}
-                placeholder="Type your message..."
-                disabled={uploading}
-                className="flex-1 min-w-0 px-4 py-3 rounded-xl bg-white border border-[#A6852F]/45 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 disabled:opacity-50"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search conversations..."
+                className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#F3F1ED]/60 border border-transparent text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:border-[#A6852F]/30 focus:bg-white transition-all"
               />
-              <button onClick={handleSend} disabled={uploading || (!newMessage.trim() && !pendingFile)} className="w-11 h-11 rounded-xl bg-[#A6852F] text-white flex items-center justify-center hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/30 transition-colors cursor-pointer disabled:opacity-50">
-                {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-              </button>
             </div>
           </div>
         )}
+
+        {/* Conversation List */}
+        <div className="flex-1 overflow-y-auto">
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-5 h-5 text-[#A6852F] animate-spin" />
+            </div>
+          ) : filteredConversations.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 px-6">
+              <div className="w-16 h-16 rounded-full bg-[#A6852F]/10 flex items-center justify-center mb-4">
+                <MessageSquare className="w-7 h-7 text-[#A6852F]/40" />
+              </div>
+              <p className="text-sm font-medium text-[#1C1917] text-center">
+                {searchQuery ? 'No matching conversations' : 'No conversations yet'}
+              </p>
+              <p className="text-xs text-[#57534E] mt-1 text-center max-w-[240px]">
+                {searchQuery ? 'Try a different search term' : 'Tap the button below to start chatting with Homer'}
+              </p>
+            </div>
+          ) : (
+            <div>
+              {filteredConversations.map((c) => {
+                const isActive = c.id === activeConvId;
+                const unread = c.unread_count || 0;
+                return (
+                  <button
+                    key={c.id}
+                    onClick={() => { setActiveConvId(c.id); setError(null); }}
+                    className={`w-full flex items-center gap-3.5 px-5 py-3.5 text-left transition-colors cursor-pointer border-b border-[#E8E5DF]/30 ${
+                      isActive ? 'bg-[#A6852F]/8' : 'hover:bg-[#F3F1ED]/60'
+                    }`}
+                  >
+                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#A6852F] to-[#8B6F1F] flex items-center justify-center text-white text-sm font-semibold shrink-0 shadow-sm shadow-[#A6852F]/20">
+                      HG
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className={`text-sm truncate ${unread > 0 ? 'font-semibold text-[#1C1917]' : 'font-medium text-[#1C1917]'}`}>
+                          Homer Gere
+                        </span>
+                        <span className={`text-[10px] shrink-0 ${unread > 0 ? 'text-[#A6852F] font-medium' : 'text-[#57534E]/60'}`}>
+                          {formatConvTime(c.last_message_at || c.created_at)}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between gap-2 mt-0.5">
+                        <p className={`text-xs truncate ${unread > 0 ? 'text-[#1C1917] font-medium' : 'text-[#57534E]'}`}>
+                          {c.last_message || 'Tap to start chatting'}
+                        </p>
+                        {unread > 0 && (
+                          <span className="shrink-0 min-w-[18px] h-[18px] rounded-full bg-[#A6852F] text-white text-[9px] font-bold flex items-center justify-center px-1">
+                            {unread > 99 ? '99+' : unread}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+              {hasMore && filteredConversations.length > 0 && !searchQuery && (
+                <button
+                  onClick={() => loadConversations(true)}
+                  disabled={loading}
+                  className="w-full py-3.5 text-xs text-[#A6852F] hover:text-[#8B6F1F] font-medium transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {loading ? 'Loading...' : 'Load More'}
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* FAB - WhatsApp style */}
+        <button
+          onClick={handleStartChat}
+          disabled={creating}
+          className="absolute bottom-5 right-5 w-14 h-14 rounded-full bg-[#A6852F] text-white flex items-center justify-center shadow-lg shadow-[#A6852F]/40 hover:bg-[#8B6F1F] hover:shadow-xl hover:shadow-[#A6852F]/50 transition-all cursor-pointer disabled:opacity-50 active:scale-95 z-10"
+        >
+          {creating ? <Loader2 className="w-5 h-5 animate-spin" /> : <MessageSquare className="w-5 h-5" />}
+        </button>
       </div>
     );
   }
 
+  // ── Active Chat View ──
   return (
-    <div className="space-y-6">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <h1 className="text-2xl sm:text-3xl font-editorial text-[#1C1917] tracking-tight">Chat with Homer</h1>
-        <p className="text-sm text-[#57534E] mt-1">Your conversations and message history.</p>
-      </motion.div>
-
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-        <button onClick={handleStartChat} disabled={creating} className="w-full flex items-center gap-4 p-5 rounded-2xl border border-dashed border-[#A6852F]/90 hover:border-[#A6852F]/90 hover:bg-[#A6852F]/8 transition-all duration-500 cursor-pointer group shadow-md shadow-[#A6852F]/22 hover:shadow-lg hover:shadow-[#A6852F]/22 disabled:opacity-50 disabled:cursor-not-allowed">
-          <div className="w-12 h-12 rounded-2xl bg-[#A6852F]/22 flex items-center justify-center text-[#A6852F] group-hover:bg-[#A6852F] group-hover:text-white transition-all duration-500 shadow-sm shadow-[#A6852F]/22"><MessageSquare className="w-5 h-5" /></div>
-          <div className="flex-1 text-left">
-            <p className="text-sm font-medium text-[#1C1917] group-hover:text-[#A6852F] transition-colors">{creating ? 'Starting conversation...' : 'Start a New Conversation'}</p>
-            <p className="text-xs text-[#57534E]">{creating ? 'Please wait...' : 'Send a message directly to Homer'}</p>
-          </div>
-          <ArrowRight className="w-4 h-4 text-[#A6852F]/40 group-hover:text-[#A6852F] group-hover:translate-x-1 transition-all" />
+    <div className="flex flex-col h-[calc(100dvh-12rem)] lg:h-[calc(100dvh-10rem)] bg-white rounded-2xl border border-[#E8E5DF]/60 overflow-hidden shadow-sm">
+      {/* Chat Header */}
+      <div className="px-4 py-3 border-b border-[#E8E5DF]/40 flex items-center gap-3 shrink-0 bg-white">
+        <button
+          onClick={() => { setActiveConvId(null); }}
+          className="w-9 h-9 rounded-full flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer lg:hidden"
+        >
+          <ArrowLeft className="w-5 h-5" />
         </button>
-      </motion.div>
+        <button
+          onClick={() => { setActiveConvId(null); }}
+          className="hidden lg:flex w-9 h-9 rounded-full items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#A6852F] to-[#8B6F1F] flex items-center justify-center text-white text-sm font-semibold shadow-sm shadow-[#A6852F]/20">
+          HG
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-[#1C1917] truncate">Homer Gere</p>
+          <p className="text-[11px] text-[#57534E] truncate">
+            {activeConv.status === 'open' ? (
+              <span className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] inline-block" />
+                Online
+              </span>
+            ) : (
+              <span className="capitalize">{activeConv.status}</span>
+            )}
+          </p>
+        </div>
+        {activeConv.status === 'open' && (
+          <button
+            onClick={() => handleClose(activeConvId)}
+            className="text-[11px] text-[#57534E] hover:text-[#DC2626] px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors cursor-pointer font-medium"
+          >
+            End Chat
+          </button>
+        )}
+      </div>
 
-      {error && (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl border border-red-300 bg-red-50 p-4">
-          <p className="text-sm text-red-700">{error}</p>
-        </motion.div>
-      )}
-
-      {canOpenWhatsApp && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.15 }}>
-          <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className="w-full flex items-center gap-4 p-5 rounded-2xl border border-[#25D366]/53 hover:border-[#25D366]/60 hover:bg-[#25D366]/8 transition-all duration-500 cursor-pointer group shadow-md shadow-[#25D366]/22 hover:shadow-lg hover:shadow-[#25D366]/22">
-            <div className="w-12 h-12 rounded-2xl bg-[#25D366]/22 flex items-center justify-center text-[#25D366] group-hover:bg-[#25D366] group-hover:text-white transition-all duration-500 shadow-sm shadow-[#25D366]/22"><Phone className="w-5 h-5" /></div>
-            <div className="flex-1 text-left">
-              <p className="text-sm font-medium text-[#1C1917] group-hover:text-[#25D366] transition-colors">Open Official WhatsApp</p>
-              <p className="text-xs text-[#57534E]">Available for Gold and Platinum members</p>
+      {/* Messages */}
+      <div
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto px-4 py-3 space-y-0.5"
+        style={{ background: 'linear-gradient(180deg, #F3F1ED 0%, #FAF9F7 100%)' }}
+      >
+        {messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full">
+            <div className="w-14 h-14 rounded-full bg-[#A6852F]/10 flex items-center justify-center mb-3">
+              <MessageSquare className="w-6 h-6 text-[#A6852F]/30" />
             </div>
-            <ArrowRight className="w-4 h-4 text-[#25D366]/40 group-hover:text-[#25D366] group-hover:translate-x-1 transition-all" />
-          </a>
-        </motion.div>
-      )}
-
-      {conversations.length > 0 && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.18 }}>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#57534E]/40" />
-            <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search conversations..." className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[#A6852F]/12 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30 shadow-sm" />
+            <p className="text-xs text-[#57534E]/60">No messages yet. Say hello!</p>
           </div>
-        </motion.div>
-      )}
-
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
-        <h3 className="text-sm font-medium text-[#1C1917] mb-4">Conversation History</h3>
-        <div className="space-y-3">
-          {loading ? (
-            <div className="text-center py-8 text-[#57534E] text-sm">Loading...</div>
-          ) : filteredConversations.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-[#E8E5DF] bg-[#F3F1ED]/45 p-5 sm:p-8 text-center">
-              <MessageSquare className="w-6 h-6 text-[#57534E]/30 mx-auto mb-2" />
-              <p className="text-sm font-medium text-[#1C1917]">{searchQuery ? 'No matching conversations' : 'No conversations yet'}</p>
-              <p className="text-xs text-[#57534E] mt-1">{searchQuery ? 'Try a different search term' : 'Start a conversation above'}</p>
-            </div>
-          ) : (
-            filteredConversations.map((c) => (
-              <div key={c.id} className="flex items-center gap-4 p-4 rounded-2xl border border-[#A6852F]/45 bg-white hover:border-[#A6852F]/55 transition-all duration-500 shadow-md shadow-[#A6852F]/18 hover:shadow-lg hover:shadow-[#A6852F]/18">
-                <button onClick={() => setActiveConvId(c.id)} className="flex-1 flex items-center gap-4 text-left cursor-pointer">
-                  <div className="w-10 h-10 rounded-xl bg-[#A6852F]/22 flex items-center justify-center text-[#A6852F] shadow-sm shadow-[#A6852F]/22 relative">
-                    <MessageSquare className="w-4 h-4" />
-                    {(c.unread_count || 0) > 0 && (
-                      <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] rounded-full bg-[#A6852F] text-white text-[9px] font-bold flex items-center justify-center px-1">
-                        {c.unread_count > 99 ? '99+' : c.unread_count}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-medium text-[#1C1917] truncate">{c.participant}</span>
-                      <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${c.status === 'open' ? 'bg-[#16A34A]/22 text-[#16A34A]' : c.status === 'in_progress' ? 'bg-[#3B82F6]/15 text-[#3B82F6]' : 'bg-[#57534E]/15 text-[#57534E]'}`}>{c.status}</span>
-                    </div>
-                    <p className="text-xs text-[#57534E] truncate mt-0.5">{c.last_message || c.email}</p>
-                    <p className="text-[10px] text-[#57534E]/60 mt-0.5">{formatTimestamp(c.last_message_at || c.created_at)}</p>
-                  </div>
+        ) : (
+          <>
+            {hasMoreMessages && (
+              <div className="text-center py-2">
+                <button
+                  onClick={() => loadMessages(activeConvId, true)}
+                  className="text-[11px] text-[#A6852F] hover:text-[#8B6F1F] font-medium transition-colors cursor-pointer px-4 py-1.5 rounded-full bg-white/80 border border-[#E8E5DF]/60"
+                >
+                  Load older messages
                 </button>
               </div>
-            ))
+            )}
+            {messages.map((msg, i) => {
+              const isMember = msg.sender === 'member';
+              const showDate = shouldShowDateSep(messages, i);
+              const prevMsg = i > 0 ? messages[i - 1] : null;
+              const nextMsg = i < messages.length - 1 ? messages[i + 1] : null;
+              const isFirstInGroup = !prevMsg || prevMsg.sender !== msg.sender || shouldShowDateSep(messages, i);
+              const isLastInGroup = !nextMsg || nextMsg.sender !== msg.sender || (nextMsg && shouldShowDateSep(messages, i + 1));
+
+              return (
+                <React.Fragment key={msg.id}>
+                  {showDate && (
+                    <div className="flex items-center justify-center py-3">
+                      <span className="text-[10px] text-[#57534E]/50 bg-[#E8E5DF]/60 px-3 py-1 rounded-full font-medium">
+                        {formatDateSeparator(msg.created_at)}
+                      </span>
+                    </div>
+                  )}
+                  <div className={`flex ${isMember ? 'justify-end' : 'justify-start'} ${isFirstInGroup ? 'mt-2' : 'mt-0.5'}`}>
+                    <div className={`max-w-[75%] sm:max-w-[65%] ${
+                      isMember
+                        ? `bg-[#A6852F] text-white ${isFirstInGroup && isLastInGroup ? 'rounded-2xl' : isFirstInGroup ? 'rounded-2xl rounded-br-lg' : isLastInGroup ? 'rounded-2xl rounded-tr-lg' : 'rounded-2xl rounded-r-lg'}`
+                        : `bg-white text-[#1C1917] border border-[#E8E5DF]/40 ${isFirstInGroup && isLastInGroup ? 'rounded-2xl' : isFirstInGroup ? 'rounded-2xl rounded-bl-lg' : isLastInGroup ? 'rounded-2xl rounded-tl-lg' : 'rounded-2xl rounded-l-lg'}`
+                    } px-3.5 py-2 shadow-sm`}>
+                      {isFirstInGroup && !isMember && (
+                        <p className="text-[10px] font-semibold text-[#A6852F] mb-0.5">Homer</p>
+                      )}
+                      {msg.media_url && msg.media_type === 'image' && (
+                        <img
+                          src={msg.media_url}
+                          alt="Shared image"
+                          className="rounded-xl mb-1.5 max-w-full max-h-60 object-cover cursor-pointer hover:opacity-90 transition-opacity"
+                          onClick={() => window.open(msg.media_url!, '_blank')}
+                        />
+                      )}
+                      {msg.media_url && msg.media_type === 'video' && (
+                        <video src={msg.media_url} controls className="rounded-xl mb-1.5 max-w-full max-h-60" />
+                      )}
+                      {msg.text && (
+                        <p className={`text-[13px] leading-relaxed whitespace-pre-wrap break-words ${isMember ? 'text-white' : 'text-[#1C1917]'}`}>
+                          {msg.text}
+                        </p>
+                      )}
+                      <div className={`flex items-center gap-1 mt-0.5 ${isMember ? 'justify-end' : 'justify-start'}`}>
+                        <span className={`text-[9px] ${isMember ? 'text-white/60' : 'text-[#57534E]/40'}`}>
+                          {formatMsgTime(msg.created_at)}
+                        </span>
+                        {isMember && (
+                          <CheckCheck className={`w-3.5 h-3.5 ${msg.is_read ? 'text-white/80' : 'text-white/40'}`} />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </React.Fragment>
+              );
+            })}
+          </>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input Area */}
+      {activeConv.status === 'open' ? (
+        <div className="border-t border-[#E8E5DF]/40 bg-white shrink-0">
+          {/* File Preview */}
+          <AnimatePresence>
+            {previewUrl && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="px-4 pt-3 overflow-hidden"
+              >
+                <div className="relative inline-block">
+                  <img src={previewUrl} alt="Preview" className="h-20 rounded-xl border border-[#E8E5DF] object-cover" />
+                  <button
+                    onClick={() => { setPreviewUrl(null); setPendingFile(null); }}
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#DC2626] text-white flex items-center justify-center cursor-pointer hover:bg-[#B91C1C] transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {error && (
+            <div className="px-4 pt-2">
+              <p className="text-[11px] text-[#DC2626]">{error}</p>
+            </div>
           )}
+
+          <div className="flex items-end gap-2 p-3">
+            <input ref={fileInputRef} type="file" accept="image/*,video/*" onChange={handleFileSelect} className="hidden" />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="w-10 h-10 rounded-full flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#A6852F] transition-colors cursor-pointer disabled:opacity-50 shrink-0"
+            >
+              <Paperclip className="w-5 h-5" />
+            </button>
+            <div className="flex-1 relative">
+              <input
+                ref={inputRef}
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey && !uploading) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
+                placeholder="Type a message..."
+                disabled={uploading}
+                className="w-full px-4 py-2.5 rounded-full bg-[#F3F1ED]/60 border border-[#E8E5DF]/40 text-sm text-[#1C1917] placeholder:text-[#57534E]/40 focus:outline-none focus:border-[#A6852F]/40 focus:bg-white transition-all disabled:opacity-50"
+              />
+            </div>
+            <button
+              onClick={handleSend}
+              disabled={uploading || (!newMessage.trim() && !pendingFile)}
+              className="w-10 h-10 rounded-full bg-[#A6852F] text-white flex items-center justify-center hover:bg-[#8B6F1F] transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed shrink-0 shadow-sm shadow-[#A6852F]/30 active:scale-95"
+            >
+              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            </button>
+          </div>
         </div>
-      </motion.div>
+      ) : (
+        <div className="border-t border-[#E8E5DF]/40 bg-[#F3F1ED]/40 px-4 py-4 text-center shrink-0">
+          <p className="text-xs text-[#57534E]">This conversation has been closed.</p>
+        </div>
+      )}
     </div>
   );
 };

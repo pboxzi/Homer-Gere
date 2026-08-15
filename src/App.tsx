@@ -159,7 +159,7 @@ function HomePage() {
 
   const handleOpenChat = () => {
     if (isAuthenticated) {
-      navigate('/dashboard?section=chat');
+      navigate('/dashboard?section=messages&tab=fan');
     } else {
       navigate('/chat');
     }

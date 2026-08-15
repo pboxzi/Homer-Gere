@@ -9,11 +9,8 @@ import { AdminCommunications } from './AdminCommunications';
 import { AdminMediaLibrary } from './AdminMediaLibrary';
 import { AdminAnalytics } from './AdminAnalytics';
 import { AdminSystem } from './AdminSystem';
-import AdminMembershipRequests from './AdminMembershipRequests';
-import AdminPaymentMethods from './AdminPaymentMethods';
-import AdminPaymentRequests from './AdminPaymentRequests';
-import AdminPaymentSubmissions from './AdminPaymentSubmissions';
-import AdminMembershipCards from './AdminMembershipCards';
+import AdminMembershipManagement from './AdminMembershipManagement';
+import AdminExperienceManagement from './AdminExperienceManagement';
 import { AdminSection } from '../../data/adminData';
 import { AdminProvider } from '../../context/AdminContext';
 
@@ -35,16 +32,14 @@ export default function AdminDashboard() {
         return <AdminCommunications activeSection={activeSection} />;
       case 'images': case 'videos': case 'documents':
         return <AdminMediaLibrary activeSection={activeSection} />;
-      case 'membership-requests': case 'experience-requests':
-        return <AdminMembershipRequests />;
-      case 'payment-methods':
-        return <AdminPaymentMethods />;
-      case 'payment-requests':
-        return <AdminPaymentRequests />;
-      case 'payment-submissions':
-        return <AdminPaymentSubmissions />;
-      case 'membership-cards':
-        return <AdminMembershipCards />;
+      case 'membership-management':
+        return <AdminMembershipManagement />;
+      case 'experience-management':
+        return <AdminExperienceManagement />;
+      case 'membership-requests': case 'payment-submissions': case 'payment-requests': case 'membership-cards': case 'payment-methods':
+        return <AdminMembershipManagement />;
+      case 'experience-requests':
+        return <AdminExperienceManagement />;
       case 'visitors': case 'membership-stats': case 'experience-stats': case 'chat-stats':
         return <AdminAnalytics activeSection={activeSection} />;
       case 'website-settings': case 'branding': case 'comm-settings': case 'email-templates': case 'security': case 'backups': case 'integrations':

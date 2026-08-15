@@ -7,7 +7,8 @@ export type AdminSection =
   | 'images' | 'videos' | 'documents'
   | 'visitors' | 'membership-stats' | 'experience-stats' | 'chat-stats'
   | 'website-settings' | 'branding' | 'comm-settings' | 'email-templates' | 'security' | 'backups' | 'integrations'
-  | 'membership-requests' | 'payment-methods' | 'payment-requests' | 'payment-submissions' | 'membership-cards';
+  | 'membership-requests' | 'payment-methods' | 'payment-requests' | 'payment-submissions' | 'membership-cards'
+  | 'membership-management' | 'experience-management';
 
 export interface AdminStats {
   totalMembers: number;
@@ -221,13 +222,9 @@ export const ADMIN_SIDEBAR_GROUPS: { label: string; items: { id: AdminSection; l
     { id: 'videos', label: 'Videos' },
     { id: 'documents', label: 'Documents' },
   ]},
-  { label: 'Payments', items: [
-    { id: 'membership-requests', label: 'Membership Requests' },
-    { id: 'experience-requests', label: 'Experience Requests' },
-    { id: 'payment-methods', label: 'Payment Methods' },
-    { id: 'payment-requests', label: 'Payment Requests' },
-    { id: 'payment-submissions', label: 'Payment Submissions' },
-    { id: 'membership-cards', label: 'Membership Cards' },
+  { label: 'Management', items: [
+    { id: 'membership-management', label: 'Membership Management' },
+    { id: 'experience-management', label: 'Experience Management' },
   ]},
   { label: 'Analytics', items: [
     { id: 'visitors', label: 'Visitors' },

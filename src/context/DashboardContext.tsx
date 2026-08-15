@@ -265,14 +265,35 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const loadConversations = useCallback(async () => {
     if (!user?.id) return;
     try {
-      const convs = await fanChatRepository.getConversationsByUserId(user.id);
-      setConversations(convs);
+      const { data: convs } = await supabase
+        .from('fan_conversations')
+        .select('*')
+        .eq('user_id', user.id)
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false });
+      if (!convs) return;
+      setConversations(convs.map((c: any) => ({
+        id: c.id, participant: c.participant || 'Homer Gere',
+        status: c.status, created_at: c.created_at, updated_at: c.updated_at,
+        user_id: c.user_id, email: c.email, phone: c.phone || null,
+        membership_tier: c.membership_tier || null, method: c.method || null,
+        last_message: c.last_message || null, last_message_at: c.last_message_at || null,
+        unread_count: c.unread_count || 0, deleted_at: c.deleted_at || null, deleted_by: c.deleted_by || null,
+      })));
       // Load messages for each conversation
       const allMessages: FanMessage[] = [];
       for (const conv of convs.slice(0, 5)) {
         try {
-          const msgs = await fanChatRepository.getMessages(conv.id);
-          allMessages.push(...msgs);
+          const { data: msgs } = await supabase
+            .from('fan_messages')
+            .select('*')
+            .eq('conversation_id', conv.id)
+            .order('created_at', { ascending: true });
+          if (msgs) allMessages.push(...msgs.map((m: any) => ({
+            id: m.id, conversation_id: m.conversation_id,
+            sender: m.sender, text: m.text, media_url: m.media_url, media_type: m.media_type,
+            is_read: m.is_read, read_at: m.read_at || null, created_at: m.created_at,
+          })));
         } catch { /* skip */ }
       }
       setFanMessages(allMessages);
@@ -366,13 +387,12 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       .channel('dashboard-fan-chat')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'fan_messages' }, async (payload) => {
         const newMsg = payload.new as FanMessage;
-        // Check if the conversation belongs to current user
-        const convs = await fanChatRepository.getConversationsByUserId(user.id).catch(() => []);
+        const convs = await supabase.from('fan_conversations').select('id').eq('user_id', user.id).then((r) => r.data || []);
         const belongsToUser = convs.some((c) => c.id === newMsg.conversation_id);
         if (!belongsToUser) return;
         setFanMessages((prev) => {
           if (prev.some((m) => m.id === newMsg.id)) return prev;
-          return [...prev, newMsg];
+          return [...prev, { id: newMsg.id, conversation_id: newMsg.conversation_id, sender: newMsg.sender, text: newMsg.text, media_url: (newMsg as any).media_url, media_type: (newMsg as any).media_type, is_read: (newMsg as any).is_read, read_at: (newMsg as any).read_at || null, created_at: newMsg.created_at } as FanMessage];
         });
       })
       .subscribe();
@@ -383,7 +403,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'business_messages' }, async (payload) => {
         const newMsg = payload.new as { enquiry_id: string };
         // Check if the enquiry belongs to current user
-        const enqs = await businessEnquiriesRepository.getByUserId(user.id).catch(() => []);
+        const enqs = await supabase.from('business_enquiries').select('id').eq('user_id', user.id).then((r) => r.data || []);
         const belongsToUser = enqs.some((e) => e.id === newMsg.enquiry_id);
         if (!belongsToUser) return;
         // Reload enquiries when new message arrives

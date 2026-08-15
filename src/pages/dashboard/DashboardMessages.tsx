@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Inbox, Send, ArrowLeft, Plus } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useDashboard } from '../../context/DashboardContext';
-import { businessEnquiriesRepository } from '../../lib/repositories';
 import { supabase } from '../../lib/supabase';
 import type { BusinessEnquiry, BusinessMessage } from '../../types/database';
 
@@ -18,30 +17,65 @@ export const DashboardMessages: React.FC = () => {
   const [newSubject, setNewSubject] = useState('');
   const [newBody, setNewBody] = useState('');
   const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(true);
 
-  const loadEnquiries = useCallback(async () => {
+  const ENQ_PAGE_SIZE = 20;
+
+  const loadEnquiries = useCallback(async (append = false) => {
     if (!user?.id) return;
-    setLoading(true);
+    if (!append) setLoading(true);
     try {
-      const data = await businessEnquiriesRepository.getByUserId(user.id);
-      setEnquiries(data);
+      const offset = append ? enquiries.length : 0;
+      const { data } = await supabase
+        .from('business_enquiries')
+        .select('*')
+        .eq('user_id', user.id)
+        .is('deleted_at', null)
+        .order('last_message_at', { ascending: false, nullsFirst: false })
+        .range(offset, offset + ENQ_PAGE_SIZE - 1);
+      const result = (data || []) as BusinessEnquiry[];
+      if (append) {
+        setEnquiries((prev) => [...prev, ...result]);
+      } else {
+        setEnquiries(result);
+      }
+      setHasMore(result.length === ENQ_PAGE_SIZE);
     } catch { /* silent */ }
     setLoading(false);
   }, [user?.id]);
 
   useEffect(() => { loadEnquiries(); }, [loadEnquiries]);
 
-  const loadMessages = useCallback(async (enqId: string) => {
+  const MSG_PAGE_SIZE = 50;
+  const [hasMoreMessages, setHasMoreMessages] = useState(true);
+
+  const loadMessages = useCallback(async (enqId: string, append = false) => {
     try {
-      const msgs = await businessEnquiriesRepository.getMessages(enqId);
-      setMessages(msgs);
+      const offset = append ? messages.length : 0;
+      const { data } = await supabase
+        .from('business_messages')
+        .select('*')
+        .eq('enquiry_id', enqId)
+        .order('created_at', { ascending: true })
+        .range(offset, offset + MSG_PAGE_SIZE - 1);
+      const msgs = (data || []) as BusinessMessage[];
+      if (append) {
+        setMessages((prev) => [...msgs, ...prev]);
+      } else {
+        setMessages(msgs);
+      }
+      setHasMoreMessages(msgs.length === MSG_PAGE_SIZE);
     } catch { /* silent */ }
   }, []);
 
   useEffect(() => {
     if (selectedId) {
       loadMessages(selectedId);
-      businessEnquiriesRepository.markMessagesAsRead(selectedId, 'member').catch(() => {});
+      supabase.from('business_messages')
+        .update({ is_read: true, read_at: new Date().toISOString() })
+        .eq('enquiry_id', selectedId)
+        .eq('is_read', false)
+        .neq('sender', 'member');
     }
   }, [selectedId, loadMessages]);
 
@@ -66,7 +100,11 @@ export const DashboardMessages: React.FC = () => {
           if (newMsg.sender !== 'member') {
             if (selectedId && newMsg.enquiry_id === selectedId) {
               setMessages((prev) => [...prev, newMsg]);
-              businessEnquiriesRepository.markMessagesAsRead(newMsg.enquiry_id, 'member').catch(() => {});
+              supabase.from('business_messages')
+                .update({ is_read: true, read_at: new Date().toISOString() })
+                .eq('enquiry_id', newMsg.enquiry_id)
+                .eq('is_read', false)
+                .neq('sender', 'member');
             }
             setEnquiries((prev) =>
               prev.map((enq) =>
@@ -93,7 +131,7 @@ export const DashboardMessages: React.FC = () => {
   const handleSendReply = async () => {
     if (!selectedId || !replyText.trim() || !user?.id) return;
     try {
-      await businessEnquiriesRepository.sendMessage({
+      await supabase.from('business_messages').insert({
         enquiry_id: selectedId,
         sender: 'member',
         text: replyText.trim(),
@@ -108,17 +146,23 @@ export const DashboardMessages: React.FC = () => {
   const handleCreate = async () => {
     if (!newSubject.trim() || !newBody.trim() || !user?.id || !profile) return;
     try {
-      const enq = await businessEnquiriesRepository.create({
-        full_name: `${profile.first_name} ${profile.last_name}`,
-        email: profile.email,
-        phone: profile.phone || null,
-        company: null,
-        enquiry_type: 'general',
-        subject: newSubject.trim(),
-        message: newBody.trim(),
-        status: 'open',
-        user_id: user.id,
-      });
+      const { data: enqData, error: enqError } = await supabase
+        .from('business_enquiries')
+        .insert({
+          full_name: `${profile.first_name} ${profile.last_name}`,
+          email: profile.email,
+          phone: profile.phone || null,
+          company: null,
+          enquiry_type: 'general',
+          subject: newSubject.trim(),
+          message: newBody.trim(),
+          status: 'open',
+          user_id: user.id,
+        })
+        .select()
+        .single();
+      if (enqError) throw enqError;
+      const enq = enqData as BusinessEnquiry;
       setEnquiries((prev) => [enq, ...prev]);
       setSelectedId(enq.id);
       setNewSubject('');
@@ -147,7 +191,17 @@ export const DashboardMessages: React.FC = () => {
               <Inbox className="w-6 h-6 text-[#57534E]/20 mx-auto mb-2" />
               <p className="text-xs text-[#57534E]/60">No messages yet.</p>
             </div>
-          ) : messages.map((msg, i) => (
+          ) : (
+            <>
+              {hasMoreMessages && (
+                <button
+                  onClick={() => selectedId && loadMessages(selectedId, true)}
+                  className="w-full py-2 text-xs text-[#A6852F] hover:text-[#8B6F1F] font-medium transition-colors cursor-pointer"
+                >
+                  Load older messages
+                </button>
+              )}
+              {messages.map((msg, i) => (
             <motion.div
               key={msg.id}
               className={`flex ${msg.sender === 'member' ? 'justify-end' : 'justify-start'}`}
@@ -172,6 +226,8 @@ export const DashboardMessages: React.FC = () => {
               </div>
             </motion.div>
           ))}
+              </>
+            )}
         </div>
 
         <div className="flex items-center gap-3 pt-2">
@@ -258,6 +314,15 @@ export const DashboardMessages: React.FC = () => {
               </div>
             </motion.button>
           ))
+        )}
+        {hasMore && enquiries.length > 0 && (
+          <button
+            onClick={() => loadEnquiries(true)}
+            disabled={loading}
+            className="w-full py-3 text-xs text-[#A6852F] hover:text-[#8B6F1F] font-medium transition-colors cursor-pointer disabled:opacity-50"
+          >
+            {loading ? 'Loading...' : 'Load More'}
+          </button>
         )}
       </div>
     </div>

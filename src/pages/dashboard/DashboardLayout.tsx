@@ -2,18 +2,18 @@ import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
-  LayoutDashboard, User, Crown, MessageSquare, Inbox, Sparkles,
-  FileText, Bookmark, Heart, Bell, Settings, Shield, HelpCircle,
-  LogOut, Menu, X, ChevronRight, ArrowLeft, CreditCard, DollarSign,
+  LayoutDashboard, User, Crown, MessageSquare, Sparkles,
+  Bookmark, Heart, Bell, Settings, Shield, HelpCircle,
+  LogOut, Menu, X, ChevronRight, ArrowLeft,
   Download, Clock,
 } from 'lucide-react';
 import { DashboardSection, DASHBOARD_NAV_ITEMS } from '../../data/dashboardData';
 import { useDashboard } from '../../context/DashboardContext';
 
 const ICON_MAP: Record<string, React.FC<{ className?: string }>> = {
-  LayoutDashboard, User, Crown, MessageSquare, Inbox, Sparkles,
-  FileText, Bookmark, Heart, Bell, Settings, Shield, HelpCircle,
-  CreditCard, DollarSign, Download, Clock,
+  LayoutDashboard, User, Crown, MessageSquare, Sparkles,
+  Bookmark, Heart, Bell, Settings, Shield, HelpCircle,
+  Download, Clock,
 };
 
 const mainItems = DASHBOARD_NAV_ITEMS.filter((i) => i.group === 'main');

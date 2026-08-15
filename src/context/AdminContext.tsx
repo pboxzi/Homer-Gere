@@ -145,12 +145,12 @@ interface AdminContextType {
   updateExperience: (id: string, updates: Partial<AdminExperience>) => void;
   deleteExperience: (id: string) => void;
   deleteExperienceRequest: (id: string) => void;
-  updateExperienceRequest: (id: string, status: 'approved' | 'declined' | 'completed') => void;
+    updateExperienceRequest: (id: string, status: 'approved' | 'declined' | 'completed', extra?: { rejection_reason?: string | null; admin_notes?: string | null }) => void;
   addConversation: (conv: Omit<AdminConversation, 'id'>) => void;
   initiateConversationForMember: (userId: string, participant: string, email: string, membershipTier: string | null, firstMessage: string, sender: 'member' | 'admin') => Promise<void>;
   updateConversation: (id: string, updates: Partial<AdminConversation>) => void;
   deleteConversation: (id: string, type?: 'fan' | 'business') => void;
-  sendConversationMessage: (conversationId: string, sender: string, text: string, type?: 'fan' | 'business') => void;
+  sendConversationMessage: (conversationId: string, sender: string, text: string, type?: 'fan' | 'business', mediaUrl?: string | null, mediaType?: string | null) => void;
   addNotification: (notif: Omit<AdminNotification, 'id'>, userId?: string | null) => void;
   updateNotification: (id: string, updates: Partial<AdminNotification>) => void;
   deleteNotification: (id: string) => void;
@@ -265,14 +265,44 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [profilesRes, plansRes, appsRes, expsRes, reqsRes, fanChatRes, bizChatRes, notifRes, settingsRes, mediaVidsRes, mediaPodsRes, mediaPressRes, journalRes, emailTemplatesRes, galleryRes] = await Promise.allSettled([
+      // Load conversations and enquiries FIRST, separately, with direct queries
+      try {
+        const [fanChatResult, bizChatResult] = await Promise.all([
+          supabase.from('fan_conversations').select('*').order('created_at', { ascending: false }),
+          supabase.from('business_enquiries').select('*').order('created_at', { ascending: false }),
+        ]);
+
+        if (!fanChatResult.error && fanChatResult.data) {
+          setConversations(fanChatResult.data.map((c: any) => ({
+            id: c.id, type: 'fan' as const,
+            participant: c.participant || 'Member', email: c.email || '',
+            lastMessage: c.last_message || '', unreadCount: c.unread_count || 0,
+            status: c.status as AdminConversation['status'],
+            date: new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            userId: c.user_id || undefined,
+          })));
+        }
+
+        if (!bizChatResult.error && bizChatResult.data) {
+          setBusinessEnquiries(bizChatResult.data.map((b: any) => ({
+            id: b.id, type: 'business' as const,
+            participant: b.full_name, email: b.email, company: b.company,
+            lastMessage: b.last_message || '', unreadCount: b.unread_count || 0,
+            status: b.status, date: new Date(b.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            userId: b.user_id || undefined,
+          })));
+        }
+      } catch (convErr) {
+        console.error('Failed to load conversations:', convErr);
+      }
+
+      // Load remaining data in parallel
+      const [profilesResult, plansResult, appsResult, expsResult, reqsResult, notifsResult, settingsResult, vidsResult, podsResult, pressResult, journalResult, templatesResult, galleryResult] = await Promise.allSettled([
         profilesRepository.getAll(),
         membershipPlansRepository.getAll(),
         registrationRepository.getAll(),
         experiencesRepository.getAll(),
         experienceRequestsRepository.getAll(),
-        fanChatRepository.getConversations(),
-        businessEnquiriesRepository.getAll(),
         notificationsRepository.getAll(),
         siteSettingsRepository.getAll(),
         mediaRepository.getVideos(),
@@ -283,8 +313,8 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         galleryRepository.getAllPhotos(),
       ]);
 
-      if (profilesRes.status === 'fulfilled') {
-        setMembers(profilesRes.value.map((p) => ({
+      if (profilesResult.status === 'fulfilled') {
+        setMembers(profilesResult.value.map((p) => ({
           id: p.id,
           name: `${p.first_name} ${p.last_name}`,
           email: p.email,
@@ -295,15 +325,15 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         })));
       }
 
-      if (plansRes.status === 'fulfilled') {
-        setPlans(plansRes.value.map((p) => ({
+      if (plansResult.status === 'fulfilled') {
+        setPlans(plansResult.value.map((p) => ({
           id: p.id, name: p.name, price: p.price, period: p.period,
           members: p.members_count, status: p.status as AdminPlan['status'],
         })));
       }
 
-      if (appsRes.status === 'fulfilled') {
-        setApplications(appsRes.value.map((a) => ({
+      if (appsResult.status === 'fulfilled') {
+        setApplications(appsResult.value.map((a) => ({
           id: a.id, name: `${a.first_name} ${a.last_name}`, email: a.email,
           plan: a.membership_tier || 'N/A', date: new Date(a.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), status: a.status as AdminApplication['status'],
           country: a.country,
@@ -318,15 +348,15 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         })));
       }
 
-      if (expsRes.status === 'fulfilled') {
-        setExperiences(expsRes.value.map((e) => ({
+      if (expsResult.status === 'fulfilled') {
+        setExperiences(expsResult.value.map((e) => ({
           id: e.id, title: e.title, type: e.type, price: e.price || 'N/A',
           availability: (e.availability as AdminExperience['availability']) || 'available', requests: 0,
         })));
       }
 
-      if (reqsRes.status === 'fulfilled') {
-        setExperienceRequests(reqsRes.value.map((r) => ({
+      if (reqsResult.status === 'fulfilled') {
+        setExperienceRequests(reqsResult.value.map((r) => ({
           id: r.id, requester: r.full_name, experience: r.experience_type || 'General',
           date: new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), status: r.status as AdminExperienceRequest['status'],
           user_id: r.user_id, email: r.email, full_name: r.full_name,
@@ -334,36 +364,15 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         })));
       }
 
-      if (fanChatRes.status === 'fulfilled') {
-        setConversations(fanChatRes.value.map((c) => ({
-          id: c.id, type: 'fan' as const,
-          participant: c.participant || 'Member', email: c.email || '',
-          lastMessage: c.last_message || '', unreadCount: c.unread_count || 0,
-          status: c.status as AdminConversation['status'],
-          date: new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-          userId: c.user_id || undefined,
-        })));
-      }
-
-      if (bizChatRes.status === 'fulfilled') {
-        setBusinessEnquiries(bizChatRes.value.map((b) => ({
-          id: b.id, type: 'business' as const,
-          participant: b.full_name, email: b.email, company: b.company,
-          lastMessage: b.last_message || '', unreadCount: b.unread_count || 0,
-          status: b.status, date: new Date(b.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-          userId: b.user_id || undefined,
-        })));
-      }
-
-      if (notifRes.status === 'fulfilled') {
-        setNotifications(notifRes.value.map((n) => ({
+      if (notifsResult.status === 'fulfilled') {
+        setNotifications(notifsResult.value.map((n) => ({
           id: n.id, title: n.title, message: n.message,
           date: new Date(n.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }), read: n.read,
         })));
       }
 
-      if (settingsRes.status === 'fulfilled') {
-        for (const s of settingsRes.value) {
+      if (settingsResult.status === 'fulfilled') {
+        for (const s of settingsResult.value) {
           const data = s.settings as Record<string, unknown>;
           if (s.category === 'website') setWebsiteSettings((prev) => ({ ...prev, ...data } as WebsiteSettings));
           if (s.category === 'branding') setBranding((prev) => ({ ...prev, ...data } as BrandingSettings));
@@ -375,9 +384,9 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
 
       const totalMedia = [
-        ...(mediaVidsRes.status === 'fulfilled' ? mediaVidsRes.value : []),
-        ...(mediaPodsRes.status === 'fulfilled' ? mediaPodsRes.value : []),
-        ...(mediaPressRes.status === 'fulfilled' ? mediaPressRes.value : []),
+        ...(vidsResult.status === 'fulfilled' ? vidsResult.value : []),
+        ...(podsResult.status === 'fulfilled' ? podsResult.value : []),
+        ...(pressResult.status === 'fulfilled' ? pressResult.value : []),
       ];
       if (totalMedia.length > 0) {
         setMedia((totalMedia as any[]).map((m) => ({
@@ -387,20 +396,16 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         })));
       }
 
-      if (journalRes.status === 'fulfilled') {
-        setJournalArticleCount(journalRes.value.length);
+      if (journalResult.status === 'fulfilled') {
+        setJournalArticleCount(journalResult.value.length);
       }
 
-      if (fanChatRes.status === 'fulfilled') {
-        setFanMessageCount(fanChatRes.value.length);
+      if (templatesResult.status === 'fulfilled') {
+        setEmailTemplates(templatesResult.value);
       }
 
-      if (emailTemplatesRes.status === 'fulfilled') {
-        setEmailTemplates(emailTemplatesRes.value);
-      }
-
-      if (galleryRes.status === 'fulfilled') {
-        setGalleryCount(galleryRes.value.length);
+      if (galleryResult.status === 'fulfilled') {
+        setGalleryCount(galleryResult.value.length);
       }
     } catch {
       // Use empty defaults
@@ -676,52 +681,56 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setExperienceRequests((prev) => prev.filter((r) => r.id !== id));
     experienceRequestsRepository.delete(id).catch(() => {});
   }, []);
-  const updateExperienceRequest = useCallback((id: string, status: 'approved' | 'declined' | 'completed') => {
-    setExperienceRequests((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
-    experienceRequestsRepository.updateStatus(id, status).catch(() => {});
+  const updateExperienceRequest = useCallback((id: string, status: 'approved' | 'declined' | 'completed', extra?: { rejection_reason?: string | null; admin_notes?: string | null }) => {
+    setExperienceRequests((prev) => prev.map((r) => (r.id === id ? { ...r, status, ...(extra || {}) } : r)));
+    const updates: Record<string, unknown> = { status };
+    if (extra?.rejection_reason !== undefined) updates.rejection_reason = extra.rejection_reason;
+    if (extra?.admin_notes !== undefined) updates.admin_notes = extra.admin_notes;
+    experienceRequestsRepository.update(id, updates).catch(() => {});
   }, []);
 
   // ----- CRUD: Conversations -----
   const addConversation = useCallback((conv: Omit<AdminConversation, 'id'>) => {
     setConversations((prev) => [{ ...conv, id: generateId() }, ...prev]);
-    Promise.resolve(
-      fanChatRepository.createConversation({
-        participant: conv.participant || '',
-        email: conv.email || '',
-        status: conv.status || 'open',
-        user_id: null,
-        phone: null,
-        membership_tier: null,
-        method: null,
-      })
-    ).then(() => {
-      fanChatRepository.getConversations().then((fresh) => {
-        setConversations(fresh.map(c => ({
-          id: c.id, type: 'fan' as const, participant: c.participant, email: c.email,
-          lastMessage: '', status: c.status as any, date: c.updated_at,
-          unreadCount: 0, messages: [],
-        })));
-      });
-    }).catch(() => {});
+    (async () => {
+      try {
+        await supabase.from('fan_conversations').insert({
+          participant: conv.participant || '',
+          email: conv.email || '',
+          status: conv.status || 'open',
+          user_id: null,
+        });
+        const { data } = await supabase.from('fan_conversations').select('*').order('created_at', { ascending: false });
+        if (data) {
+          setConversations(data.map((c: any) => ({
+            id: c.id, type: 'fan' as const, participant: c.participant || 'Member', email: c.email || '',
+            lastMessage: c.last_message || '', unreadCount: c.unread_count || 0,
+            status: c.status as AdminConversation['status'],
+            date: new Date(c.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+            userId: c.user_id || undefined,
+          })));
+        }
+      } catch { /* silent */ }
+    })();
   }, []);
   const initiateConversationForMember = useCallback(async (userId: string, participant: string, email: string, membershipTier: string | null, firstMessage: string, sender: 'member' | 'admin') => {
     try {
-      const conv = await fanChatRepository.createConversation({
+      const { data: convData, error: convErr } = await supabase.from('fan_conversations').insert({
         participant,
         email,
         user_id: userId,
         status: 'open',
-        phone: null,
         membership_tier: membershipTier,
         method: 'website',
-      });
+      }).select().single();
+      if (convErr || !convData) return;
       setConversations((prev) => [{
-        id: conv.id, type: 'fan' as const, participant, email,
-        lastMessage: firstMessage, status: 'open', date: new Date(conv.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        id: convData.id, type: 'fan' as const, participant, email,
+        lastMessage: firstMessage, status: 'open', date: new Date(convData.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
         unreadCount: 0, messages: [],
       }, ...prev]);
-      await fanChatRepository.sendMessage({
-        conversation_id: conv.id,
+      await supabase.from('fan_messages').insert({
+        conversation_id: convData.id,
         sender,
         text: firstMessage,
         media_type: null,
@@ -732,8 +741,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const updateConversation = useCallback((id: string, updates: Partial<AdminConversation>) => {
     setConversations((prev) => prev.map((c) => (c.id === id ? { ...c, ...updates } : c)));
     if (updates.status !== undefined) {
-      fanChatRepository.updateConversationStatus(id, updates.status || 'open').catch(() => {});
-      // Notify member when conversation is closed
+      supabase.from('fan_conversations').update({ status: updates.status || 'open' }).eq('id', id);
       if (updates.status === 'closed') {
         const conv = conversations.find((c) => c.id === id);
         if (conv?.userId) {
@@ -748,27 +756,20 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const deleteConversation = useCallback((id: string, type: 'fan' | 'business' = 'fan') => {
     if (type === 'business') {
       setBusinessEnquiries((prev) => prev.filter((c) => c.id !== id));
-      businessEnquiriesRepository.delete(id).catch(() => {});
+      supabase.from('business_enquiries').update({ deleted_at: new Date().toISOString() }).eq('id', id);
     } else {
       setConversations((prev) => prev.filter((c) => c.id !== id));
-      fanChatRepository.deleteConversation(id).catch(() => {});
+      supabase.from('fan_conversations').update({ deleted_at: new Date().toISOString() }).eq('id', id);
     }
   }, []);
-  const sendConversationMessage = useCallback(async (conversationId: string, sender: string, text: string, type: 'fan' | 'business' = 'fan') => {
+  const sendConversationMessage = useCallback(async (conversationId: string, sender: string, text: string, type: 'fan' | 'business' = 'fan', mediaUrl: string | null = null, mediaType: string | null = null) => {
     const validSender: 'member' | 'admin' = sender === 'Admin' || sender === 'admin' ? 'admin' : 'member';
+    const msgPayload = { sender: validSender, text, media_type: mediaType, media_url: mediaUrl };
 
     if (type === 'business') {
       try {
-        await businessEnquiriesRepository.sendMessage({
-          enquiry_id: conversationId,
-          sender: validSender,
-          text,
-          media_type: null,
-          media_url: null,
-        });
-        // Update local state
-        setBusinessEnquiries((prev) => prev.map((c) => c.id === conversationId ? { ...c, lastMessage: text } : c));
-        // Notify member when admin replies
+        await supabase.from('business_messages').insert({ enquiry_id: conversationId, ...msgPayload });
+        setBusinessEnquiries((prev) => prev.map((c) => c.id === conversationId ? { ...c, lastMessage: text || (mediaType ? `[${mediaType}]` : '') } : c));
         const enquiry = businessEnquiries.find((c) => c.id === conversationId);
         if (enquiry && validSender === 'admin' && enquiry.userId) {
           notifyService.businessEnquiryReplyToMember(enquiry.userId, {
@@ -779,16 +780,8 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       } catch { /* silent */ }
     } else {
       try {
-        await fanChatRepository.sendMessage({
-          conversation_id: conversationId,
-          sender: validSender,
-          text,
-          media_type: null,
-          media_url: null,
-        });
-        // Update local state
-        setConversations((prev) => prev.map((c) => c.id === conversationId ? { ...c, lastMessage: text } : c));
-        // Notify member when admin replies
+        await supabase.from('fan_messages').insert({ conversation_id: conversationId, ...msgPayload });
+        setConversations((prev) => prev.map((c) => c.id === conversationId ? { ...c, lastMessage: text || (mediaType ? `[${mediaType}]` : '') } : c));
         const conv = conversations.find((c) => c.id === conversationId);
         if (conv && validSender === 'admin' && conv.userId) {
           notifyService.fanChatReplyToMember(conv.userId, {

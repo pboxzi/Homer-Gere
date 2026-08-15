@@ -9,7 +9,7 @@ import { notifyService } from '../../lib/notifications';
 import { supabase } from '../../lib/supabase';
 import { formatDate } from '../../utils/formatDate';
 import type { MembershipTier } from '../../types';
-import type { PaymentRequest, PaymentSubmission, MembershipCard } from '../../types/database';
+import type { PaymentRequest as DbPaymentRequest, PaymentSubmission, MembershipCard } from '../../types/database';
 
 const TIER_ICONS: Record<string, React.ReactNode> = {
   silver: <Shield className="w-4 h-4" />,
@@ -78,7 +78,7 @@ export const DashboardMembership: React.FC = () => {
   const [actionLoading, setActionLoading] = useState(false);
 
   const [showUploadModal, setShowUploadModal] = useState(false);
-  const [uploadTarget, setUploadTarget] = useState<PaymentRequest | null>(null);
+  const [uploadTarget, setUploadTarget] = useState<DbPaymentRequest | null>(null);
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [proofPreview, setProofPreview] = useState<string | null>(null);
   const [uploadForm, setUploadForm] = useState({ transactionReference: '', notes: '' });
@@ -170,7 +170,7 @@ export const DashboardMembership: React.FC = () => {
     setActionLoading(false);
   };
 
-  const openUploadModal = (payReq: PaymentRequest) => {
+  const openUploadModal = (payReq: DbPaymentRequest) => {
     setUploadTarget(payReq);
     setUploadForm({ transactionReference: '', notes: '' });
     setProofFile(null);
