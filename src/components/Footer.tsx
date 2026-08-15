@@ -108,7 +108,15 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
 
         {/* Bottom */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#57534E] gap-4">
-          <p>&copy; 2026 Homer Gere. All Rights Reserved.</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <p>&copy; 2026 Homer Gere. All Rights Reserved.</p>
+            <span className="hidden sm:inline">·</span>
+            <button onClick={() => navigate('/terms')} className="hover:text-[#A6852F] transition-colors cursor-pointer">Terms</button>
+            <span>·</span>
+            <button onClick={() => navigate('/privacy')} className="hover:text-[#A6852F] transition-colors cursor-pointer">Privacy</button>
+            <span>·</span>
+            <button onClick={() => navigate('/cookies')} className="hover:text-[#A6852F] transition-colors cursor-pointer">Cookies</button>
+          </div>
 
           <button
             onClick={scrollToTop}

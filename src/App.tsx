@@ -32,6 +32,9 @@ const ExperiencesPage = React.lazy(() => import('./pages/ExperiencesPage'));
 const MembershipPage = React.lazy(() => import('./pages/MembershipPage'));
 const ChatPage = React.lazy(() => import('./pages/chat/ChatPage'));
 const ContactPage = React.lazy(() => import('./pages/ContactPage'));
+const TermsPage = React.lazy(() => import('./pages/legal/TermsPage'));
+const PrivacyPage = React.lazy(() => import('./pages/legal/PrivacyPage'));
+const CookiesPage = React.lazy(() => import('./pages/legal/CookiesPage'));
 const DashboardPage = React.lazy(() => import('./pages/DashboardPage'));
 const AdminDashboard = React.lazy(() => import('./pages/admin/AdminDashboard'));
 const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage'));
@@ -179,6 +182,9 @@ export default function App() {
               <Route path="/membership" element={<MembershipPage />} />
               <Route path="/chat" element={<ChatPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/privacy" element={<PrivacyPage />} />
+              <Route path="/cookies" element={<CookiesPage />} />
 
               {/* Member Auth Routes */}
               <Route path="/auth/sign-in" element={<MemberSignIn />} />

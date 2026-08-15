@@ -676,6 +676,11 @@ export const FOOTER_LINKS = {
     { label: 'Contact', href: '/contact' },
     { label: 'Help Center', href: '/contact' },
   ],
+  Legal: [
+    { label: 'Terms of Service', href: '/terms' },
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Cookie Policy', href: '/cookies' },
+  ],
 };
 
 export const FILMOGRAPHY: FilmographyEntry[] = [

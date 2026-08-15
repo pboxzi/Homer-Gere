@@ -210,7 +210,7 @@ export default function MemberRegister() {
             <label className="flex items-start gap-2.5 cursor-pointer">
               <input type="checkbox" checked={agreeTerms} onChange={(e) => { setAgreeTerms(e.target.checked); setErrors(p => { const n = { ...p }; delete n.agreeTerms; return n; }); }}
                 className="w-3.5 h-3.5 rounded border-[#E8E5DF] text-[#A6852F] focus:ring-[#A6852F]/30 accent-[#A6852F] mt-0.5 shrink-0" />
-              <span className="text-xs text-[#57534E] leading-relaxed">I agree to the <button type="button" className="text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Terms of Service</button> and <button type="button" className="text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Privacy Policy</button> *</span>
+              <span className="text-xs text-[#57534E] leading-relaxed">I agree to the <button type="button" onClick={() => navigate('/terms')} className="text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Terms of Service</button> and <button type="button" onClick={() => navigate('/privacy')} className="text-[#A6852F] hover:text-[#8B6F1F] font-medium cursor-pointer">Privacy Policy</button> *</span>
             </label>
             {errors.agreeTerms && <p className="text-[10px] text-red-500 ml-6">{errors.agreeTerms}</p>}
           </motion.div>
