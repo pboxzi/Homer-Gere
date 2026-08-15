@@ -32,6 +32,9 @@ export default function AdminPaymentRequests() {
   const [stats, setStats] = useState<Record<string, number>>({});
   const [actionLoading, setActionLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectTarget, setRejectTarget] = useState<PaymentRequest | null>(null);
+  const [rejectReason, setRejectReason] = useState('');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -109,18 +112,21 @@ export default function AdminPaymentRequests() {
     setActionLoading(false);
   };
 
-  const handleReject = async (req: PaymentRequest) => {
-    if (!confirm('Reject this payment?')) return;
+  const handleReject = async () => {
+    if (!rejectTarget || !rejectReason.trim()) return;
     setActionLoading(true);
     try {
-      await paymentRequestsRepository.updateStatus(req.id, 'rejected');
-      const user = await fetchUserProfile(req.user_id);
-      await notifyService.paymentRejected(req.user_id, {
+      await paymentRequestsRepository.updateStatus(rejectTarget.id, 'rejected');
+      const user = await fetchUserProfile(rejectTarget.user_id);
+      await notifyService.paymentRejected(rejectTarget.user_id, {
         email: user.email,
         fullName: user.fullName,
-        reason: 'Payment could not be verified.',
+        reason: rejectReason,
       });
-      setSuccessMsg(`Payment ${req.request_number} rejected`);
+      setSuccessMsg(`Payment ${rejectTarget.request_number} rejected`);
+      setShowRejectModal(false);
+      setRejectTarget(null);
+      setRejectReason('');
       setShowDetail(false);
       load();
     } catch (e) { console.error(e); }
@@ -196,7 +202,7 @@ export default function AdminPaymentRequests() {
                           <button onClick={() => { setSelected(req); setShowDetail(true); }} className="p-1.5 rounded-lg hover:bg-gray-100 text-[#6b7280]" title="View"><Eye className="w-4 h-4" /></button>
                           {req.status === 'pending' && <button onClick={() => { setSelected(req); setShowInstructionsModal(true); }} className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600" title="Send Instructions"><Send className="w-4 h-4" /></button>}
                           {(req.status === 'submitted' || req.status === 'under_review') && <button onClick={() => handleApprove(req)} disabled={actionLoading} className="p-1.5 rounded-lg hover:bg-green-50 text-green-600" title="Approve"><CheckCircle className="w-4 h-4" /></button>}
-                          {req.status !== 'approved' && req.status !== 'rejected' && <button onClick={() => handleReject(req)} className="p-1.5 rounded-lg hover:bg-red-50 text-red-600" title="Reject"><XCircle className="w-4 h-4" /></button>}
+                          {req.status !== 'approved' && req.status !== 'rejected' && <button onClick={() => { setRejectTarget(req); setShowRejectModal(true); }} className="p-1.5 rounded-lg hover:bg-red-50 text-red-600" title="Reject"><XCircle className="w-4 h-4" /></button>}
                         </div>
                       </td>
                     </tr>
@@ -259,7 +265,7 @@ export default function AdminPaymentRequests() {
             {(selected.status === 'submitted' || selected.status === 'under_review') && (
               <div className="flex gap-2 mt-6">
                 <button onClick={() => handleApprove(selected)} disabled={actionLoading} className="flex-1 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm font-medium">Approve</button>
-                <button onClick={() => handleReject(selected)} className="flex-1 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium">Reject</button>
+                <button onClick={() => { setRejectTarget(selected); setShowRejectModal(true); }} className="flex-1 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium">Reject</button>
               </div>
             )}
           </div>
@@ -291,6 +297,25 @@ export default function AdminPaymentRequests() {
               <button onClick={handleSendInstructions} disabled={actionLoading || !instructionsForm.methodId || !instructionsForm.instructions.trim()}
                 className="flex-1 py-2 bg-[#A6852F] text-white rounded-lg hover:bg-[#8B6F24] text-sm font-medium disabled:opacity-50">Send Instructions</button>
               <button onClick={() => setShowInstructionsModal(false)} className="flex-1 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reject Modal */}
+      {showRejectModal && rejectTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => { setShowRejectModal(false); setRejectTarget(null); setRejectReason(''); }}>
+          <div className="bg-white rounded-2xl max-w-md w-full p-6" onClick={e => e.stopPropagation()}>
+            <h2 className="text-lg font-bold text-[#1a1a1a] mb-4">Reject Payment</h2>
+            <div className="p-3 bg-gray-50 rounded-lg text-sm mb-4">
+              <div className="font-medium">{rejectTarget.request_number}</div>
+              <div className="text-[#6b7280]">{rejectTarget.amount} {rejectTarget.currency}</div>
+            </div>
+            <textarea value={rejectReason} onChange={e => setRejectReason(e.target.value)} placeholder="Reason for rejection..."
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 min-h-[100px]" />
+            <div className="flex gap-2 mt-4">
+              <button onClick={handleReject} disabled={actionLoading || !rejectReason.trim()} className="flex-1 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium disabled:opacity-50">Reject</button>
+              <button onClick={() => { setShowRejectModal(false); setRejectTarget(null); setRejectReason(''); }} className="flex-1 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium">Cancel</button>
             </div>
           </div>
         </div>

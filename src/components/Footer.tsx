@@ -41,7 +41,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate, onOpenChat }) => {
               </span>
             </div>
             <p className="text-xs sm:text-sm text-[#57534E] max-w-sm leading-relaxed">
-              Official website for actor, storyteller, and creator Homer Gere. Exploring character study, dramatic film work, and global creative connections.
+              Official website of Homer Gere — actor, producer, and advocate. From Euphoria Season 3 to The Shards and beyond.
             </p>
             {/* Social Icons */}
             <div className="flex items-center space-x-3 pt-2">
