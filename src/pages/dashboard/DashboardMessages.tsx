@@ -30,7 +30,6 @@ export const DashboardMessages: React.FC = () => {
         .from('business_enquiries')
         .select('*')
         .eq('user_id', user.id)
-        .is('deleted_at', null)
         .order('last_message_at', { ascending: false, nullsFirst: false })
         .range(offset, offset + ENQ_PAGE_SIZE - 1);
       const result = (data || []) as BusinessEnquiry[];

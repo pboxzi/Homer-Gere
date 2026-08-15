@@ -269,7 +269,6 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         .from('fan_conversations')
         .select('*')
         .eq('user_id', user.id)
-        .is('deleted_at', null)
         .order('created_at', { ascending: false });
       if (!convs) return;
       setConversations(convs.map((c: any) => ({
@@ -278,7 +277,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         user_id: c.user_id, email: c.email, phone: c.phone || null,
         membership_tier: c.membership_tier || null, method: c.method || null,
         last_message: c.last_message || null, last_message_at: c.last_message_at || null,
-        unread_count: c.unread_count || 0, deleted_at: c.deleted_at || null, deleted_by: c.deleted_by || null,
+        unread_count: c.unread_count || 0,
       })));
       // Load messages for each conversation
       const allMessages: FanMessage[] = [];
@@ -410,10 +409,38 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       })
       .subscribe();
 
+    // Subscribe to payment_requests changes (admin sends instructions → member sees them)
+    const paymentRequestsChannel = supabase
+      .channel('dashboard-payment-requests')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'payment_requests', filter: `user_id=eq.${user.id}` }, () => {
+        refreshPayments();
+      })
+      .subscribe();
+
+    // Subscribe to membership_requests changes (admin approves/rejects → member sees status)
+    const membershipRequestsChannel = supabase
+      .channel('dashboard-membership-requests')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'membership_requests', filter: `user_id=eq.${user.id}` }, () => {
+        loadMembershipRequests();
+        loadMembership();
+      })
+      .subscribe();
+
+    // Subscribe to experience_requests changes
+    const experienceRequestsChannel = supabase
+      .channel('dashboard-experience-requests')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'experience_requests', filter: `user_id=eq.${user.id}` }, () => {
+        refreshExperiences();
+      })
+      .subscribe();
+
     return () => {
       supabase.removeChannel(notificationsChannel);
       supabase.removeChannel(fanChatChannel);
       supabase.removeChannel(bizChatChannel);
+      supabase.removeChannel(paymentRequestsChannel);
+      supabase.removeChannel(membershipRequestsChannel);
+      supabase.removeChannel(experienceRequestsChannel);
     };
   }, [user?.id]);
 

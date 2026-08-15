@@ -756,10 +756,10 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const deleteConversation = useCallback((id: string, type: 'fan' | 'business' = 'fan') => {
     if (type === 'business') {
       setBusinessEnquiries((prev) => prev.filter((c) => c.id !== id));
-      supabase.from('business_enquiries').update({ deleted_at: new Date().toISOString() }).eq('id', id);
+      supabase.from('business_enquiries').delete().eq('id', id);
     } else {
       setConversations((prev) => prev.filter((c) => c.id !== id));
-      supabase.from('fan_conversations').update({ deleted_at: new Date().toISOString() }).eq('id', id);
+      supabase.from('fan_conversations').delete().eq('id', id);
     }
   }, []);
   const sendConversationMessage = useCallback(async (conversationId: string, sender: string, text: string, type: 'fan' | 'business' = 'fan', mediaUrl: string | null = null, mediaType: string | null = null) => {

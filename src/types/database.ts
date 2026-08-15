@@ -430,12 +430,10 @@ export interface FanConversation {
   membership_tier: string | null;
   status: ConversationStatus;
   method: string | null;
-  user_id: string | null;
+  user_id: string;
   last_message: string | null;
   last_message_at: string | null;
   unread_count: number;
-  deleted_at: string | null;
-  deleted_by: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -466,8 +464,6 @@ export interface BusinessEnquiry {
   last_message: string | null;
   last_message_at: string | null;
   unread_count: number;
-  deleted_at: string | null;
-  deleted_by: string | null;
   created_at: string;
   updated_at: string;
 }
