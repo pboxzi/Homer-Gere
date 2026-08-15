@@ -537,112 +537,56 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (updates.status === 'approved' || updates.status === 'declined') {
       (async () => {
         try {
-          const app = applications.find((a) => a.id === id);
-          if (!app) return;
-
-          // Update registration_application status
-          await supabase
+          // Fetch the registration record directly from DB (avoids stale closure)
+          const { data: regRecord } = await supabase
             .from('registration_applications')
-            .update({ status: updates.status, reviewed_at: new Date().toISOString() })
-            .eq('email', app.email);
+            .select('user_id, first_name, last_name, email, country, membership_tier')
+            .eq('id', id)
+            .single();
+
+          if (!regRecord) return;
+
+          // Update registration_application status (reviewed_at is set by DB trigger)
+          const { error: statusError } = await supabase
+            .from('registration_applications')
+            .update({ status: updates.status })
+            .eq('id', id);
+
+          if (statusError) {
+            console.error('Failed to update application status:', statusError);
+            setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, status: 'pending' } : a)));
+            return;
+          }
+
+          // Notify
+          const { error: notifError } = await supabase.from('notifications').insert({
+            user_id: null,
+            type: 'system',
+            title: updates.status === 'approved' ? 'Member Approved' : 'Member Rejected',
+            message: updates.status === 'approved'
+              ? `${regRecord.first_name} ${regRecord.last_name} (${regRecord.email}) has been approved.`
+              : `${regRecord.first_name} ${regRecord.last_name} (${regRecord.email}) has been rejected.`,
+            read: false,
+          });
+          if (notifError) {
+            console.error('Failed to create notification:', notifError);
+          }
 
           if (updates.status === 'approved') {
-            // Auth user already exists from registration — just create the profile
-            const userId = app.id; // app.id is the registration record ID, but we need the auth user ID
-            // Fetch the registration record to get the user_id (auth user ID)
-            const { data: regRecord } = await supabase
-              .from('registration_applications')
-              .select('user_id, first_name, last_name, email, country')
-              .eq('id', id)
-              .single();
-
-            const authUserId = regRecord?.user_id;
-
-            if (authUserId) {
-              // Auth user exists — create profile
-              await supabase.from('profiles').insert({
-                id: authUserId,
-                email: app.email,
-                first_name: regRecord?.first_name || app.name.split(' ')[0],
-                last_name: regRecord?.last_name || app.name.split(' ').slice(1).join(' ') || '',
-                role: 'member',
-                membership_tier: app.plan || 'silver',
-                email_verified: true,
-                country: regRecord?.country || null,
-              });
-
-              // Create membership
-              const { data: plan } = await supabase
-                .from('membership_plans')
-                .select('id')
-                .eq('slug', app.plan || 'silver')
-                .maybeSingle();
-              if (plan) {
-                await supabase.from('memberships').insert({
-                  user_id: authUserId,
-                  plan_id: plan.id,
-                  status: 'active',
-                });
-              }
-            } else {
-              // Legacy registration without auth user — create one with temp password
-              const tempPassword = crypto.randomUUID().slice(0, 12) + 'A1!';
-              const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-                email: app.email,
-                password: tempPassword,
-                email_confirm: true,
-                user_metadata: { first_name: app.name.split(' ')[0], last_name: app.name.split(' ').slice(1).join(' ') },
-              });
-
-              if (!authError && authData?.user) {
-                await supabase.from('profiles').insert({
-                  id: authData.user.id,
-                  email: app.email,
-                  first_name: app.name.split(' ')[0],
-                  last_name: app.name.split(' ').slice(1).join(' ') || '',
-                  role: 'member',
-                  membership_tier: app.plan || 'silver',
-                  email_verified: true,
-                });
-
-                const { data: plan } = await supabase
-                  .from('membership_plans')
-                  .select('id')
-                  .eq('slug', app.plan || 'silver')
-                  .maybeSingle();
-                if (plan) {
-                  await supabase.from('memberships').insert({
-                    user_id: authData.user.id,
-                    plan_id: plan.id,
-                    status: 'active',
-                  });
-                }
-              }
-            }
-
-            // Notify
-            await supabase.from('notifications').insert({
-              user_id: null,
-              title: 'Member Approved',
-              message: `${app.name} (${app.email}) has been approved as ${app.plan || 'silver'} member.`,
-              read: false,
-            });
-
-            // Send approval email
-            emailService.registrationApproved(app.email, app.name.split(' ')[0]).catch(() => {});
-            emailService.membershipApproved(app.email, app.name.split(' ')[0], app.plan || 'silver').catch(() => {});
+            emailService.registrationApproved(regRecord.email, regRecord.first_name).catch(() => {});
+            emailService.membershipApproved(regRecord.email, regRecord.first_name, regRecord.membership_tier || 'silver').catch(() => {});
           }
 
           if (updates.status === 'declined') {
-            // Send rejection email
-            emailService.registrationRejected(app.email, app.name.split(' ')[0], (updates as any).rejectionReason).catch(() => {});
+            emailService.registrationRejected(regRecord.email, regRecord.first_name, (updates as any).rejectionReason).catch(() => {});
           }
-        } catch {
-          // Silent — optimistic update already shown
+        } catch (err) {
+          console.error('Application update failed:', err);
+          setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, status: 'pending' } : a)));
         }
       })();
     }
-  }, [applications]);
+  }, []);
   const deleteApplication = useCallback((id: string) => {
     setApplications((prev) => prev.filter((a) => a.id !== id));
     Promise.resolve(
