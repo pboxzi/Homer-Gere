@@ -67,7 +67,7 @@ const WebsiteSettingsSection: React.FC = () => {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-      <div className="rounded-xl border border-[#E8E5DF]/80 bg-white p-5 space-y-5">
+      <div className="rounded-xl border border-[#A6852F]/20 bg-white p-5 space-y-5 shadow-sm hover:shadow-lg transition-all duration-500" style={{ boxShadow: '0 0 30px #A6852F10' }}>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em]">Site Name</label>
@@ -162,7 +162,7 @@ const BrandingSection: React.FC = () => {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-      <div className="rounded-xl border border-[#E8E5DF]/80 bg-white p-5 space-y-5">
+      <div className="rounded-xl border border-[#A6852F]/20 bg-white p-5 space-y-5 shadow-sm hover:shadow-lg transition-all duration-500" style={{ boxShadow: '0 0 30px #A6852F10' }}>
         <div>
           <label className="text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em]">Colors</label>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-1">
@@ -281,7 +281,7 @@ const CommSettingsSection: React.FC = () => {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-      <div className="rounded-xl border border-[#E8E5DF]/80 bg-white p-5 space-y-5">
+      <div className="rounded-xl border border-[#A6852F]/20 bg-white p-5 space-y-5 shadow-sm hover:shadow-lg transition-all duration-500" style={{ boxShadow: '0 0 30px #A6852F10' }}>
         <div className="space-y-3">
           <div className="p-3 rounded-xl bg-[#F3F1ED]/40">
             <div className="flex items-center justify-between mb-3">
@@ -374,7 +374,7 @@ const EmailTemplatesSection: React.FC = () => {
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
       <div className="space-y-4">
         {templates.map((t) => (
-          <div key={t.id} className="rounded-xl border border-[#E8E5DF]/80 bg-white p-5 space-y-3">
+          <div key={t.id} className="rounded-xl border border-[#A6852F]/20 bg-white p-5 space-y-3 shadow-sm hover:shadow-lg transition-all duration-500">
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-sm font-medium text-[#1C1917]">{t.name}</h3>
@@ -449,7 +449,7 @@ const SecuritySection: React.FC = () => {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-      <div className="rounded-xl border border-[#E8E5DF]/80 bg-white p-5 space-y-5">
+      <div className="rounded-xl border border-[#A6852F]/20 bg-white p-5 space-y-5 shadow-sm hover:shadow-lg transition-all duration-500" style={{ boxShadow: '0 0 30px #A6852F10' }}>
         <div className="space-y-3">
           <div className="flex items-center justify-between p-3 rounded-xl bg-[#F3F1ED]/40">
             <div>
@@ -564,7 +564,7 @@ const BackupsSection: React.FC = () => {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
-      <div className="rounded-xl border border-[#E8E5DF]/80 bg-white p-5 space-y-5">
+      <div className="rounded-xl border border-[#A6852F]/20 bg-white p-5 space-y-5 shadow-sm hover:shadow-lg transition-all duration-500" style={{ boxShadow: '0 0 30px #A6852F10' }}>
         <div className="space-y-3">
           <div className="flex items-center justify-between p-3 rounded-xl bg-[#F3F1ED]/40">
             <div>

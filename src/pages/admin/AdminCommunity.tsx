@@ -229,36 +229,36 @@ const MemberProfileModal: React.FC<MemberProfileModalProps> = ({ open, memberId,
                   {activeTab === 'overview' && (
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="rounded-xl border border-[#E8E5DF]/60 bg-[#F3F1ED]/20 p-4">
-                          <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Full Name</p>
+                        <div className="rounded-xl border border-[#A6852F]/30 bg-[#A6852F]/8 p-4" style={{ boxShadow: '0 0 30px #A6852F20' }}>
+                          <p className="text-[10px] text-[#A6852F] uppercase tracking-wider font-medium">Full Name</p>
                           <p className="text-sm text-[#1C1917] font-medium mt-1">{profile?.first_name || profile?.last_name ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : '—'}</p>
                         </div>
-                        <div className="rounded-xl border border-[#E8E5DF]/60 bg-[#F3F1ED]/20 p-4">
-                          <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Email</p>
+                        <div className="rounded-xl border border-[#A6852F]/30 bg-[#A6852F]/8 p-4" style={{ boxShadow: '0 0 30px #A6852F20' }}>
+                          <p className="text-[10px] text-[#A6852F] uppercase tracking-wider font-medium">Email</p>
                           <p className="text-sm text-[#1C1917] font-medium mt-1">{profile?.email || '—'}</p>
                         </div>
-                        <div className="rounded-xl border border-[#E8E5DF]/60 bg-[#F3F1ED]/20 p-4">
-                          <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Role</p>
+                        <div className="rounded-xl border border-[#A6852F]/30 bg-[#A6852F]/8 p-4" style={{ boxShadow: '0 0 30px #A6852F20' }}>
+                          <p className="text-[10px] text-[#A6852F] uppercase tracking-wider font-medium">Role</p>
                           <p className="text-sm text-[#1C1917] font-medium mt-1 capitalize">{profile?.role || '—'}</p>
                         </div>
-                        <div className="rounded-xl border border-[#E8E5DF]/60 bg-[#F3F1ED]/20 p-4">
-                          <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Status</p>
+                        <div className="rounded-xl border border-[#A6852F]/30 bg-[#A6852F]/8 p-4" style={{ boxShadow: '0 0 30px #A6852F20' }}>
+                          <p className="text-[10px] text-[#A6852F] uppercase tracking-wider font-medium">Status</p>
                           <div className="mt-1"><StatusBadge status={profile?.account_status === 'suspended' ? 'suspended' : 'active'} /></div>
                         </div>
-                        <div className="rounded-xl border border-[#E8E5DF]/60 bg-[#F3F1ED]/20 p-4">
-                          <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Phone</p>
+                        <div className="rounded-xl border border-[#A6852F]/30 bg-[#A6852F]/8 p-4" style={{ boxShadow: '0 0 30px #A6852F20' }}>
+                          <p className="text-[10px] text-[#A6852F] uppercase tracking-wider font-medium">Phone</p>
                           <p className="text-sm text-[#1C1917] font-medium mt-1">{profile?.phone && profile.phone !== 'N/A' ? profile.phone : '—'}</p>
                         </div>
-                        <div className="rounded-xl border border-[#E8E5DF]/60 bg-[#F3F1ED]/20 p-4">
-                          <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Country</p>
+                        <div className="rounded-xl border border-[#A6852F]/30 bg-[#A6852F]/8 p-4" style={{ boxShadow: '0 0 30px #A6852F20' }}>
+                          <p className="text-[10px] text-[#A6852F] uppercase tracking-wider font-medium">Country</p>
                           <p className="text-sm text-[#1C1917] font-medium mt-1">{profile?.country || '—'}</p>
                         </div>
-                        <div className="rounded-xl border border-[#E8E5DF]/60 bg-[#F3F1ED]/20 p-4">
-                          <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Joined</p>
+                        <div className="rounded-xl border border-[#A6852F]/30 bg-[#A6852F]/8 p-4" style={{ boxShadow: '0 0 30px #A6852F20' }}>
+                          <p className="text-[10px] text-[#A6852F] uppercase tracking-wider font-medium">Joined</p>
                           <p className="text-sm text-[#1C1917] font-medium mt-1">{profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : '—'}</p>
                         </div>
-                        <div className="rounded-xl border border-[#E8E5DF]/60 bg-[#F3F1ED]/20 p-4">
-                          <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Last Active</p>
+                        <div className="rounded-xl border border-[#A6852F]/30 bg-[#A6852F]/8 p-4" style={{ boxShadow: '0 0 30px #A6852F20' }}>
+                          <p className="text-[10px] text-[#A6852F] uppercase tracking-wider font-medium">Last Active</p>
                           <p className="text-sm text-[#1C1917] font-medium mt-1">{profile?.updated_at ? new Date(profile.updated_at).toLocaleDateString() : '—'}</p>
                         </div>
                       </div>
@@ -500,7 +500,7 @@ const MembersSection: React.FC = () => {
       <AnimatePresence>
         {showAddForm && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden mb-4">
-            <div className="rounded-xl border border-[#E8E5DF]/80 bg-white p-4">
+            <div className="rounded-xl border border-[#A6852F]/20 bg-white p-4 shadow-sm hover:shadow-lg transition-all duration-500">
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                 <input placeholder="Name" value={newMember.name} onChange={(e) => setNewMember({ ...newMember, name: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] placeholder:text-[#A8A29E] focus:outline-none focus:border-[#A6852F]/40" />
@@ -690,7 +690,7 @@ const PlansSection: React.FC = () => {
       <AnimatePresence>
         {showAddForm && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden mb-4">
-            <div className="rounded-xl border border-[#E8E5DF]/80 bg-white p-4">
+            <div className="rounded-xl border border-[#A6852F]/20 bg-white p-4 shadow-sm hover:shadow-lg transition-all duration-500">
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                 <input placeholder="Plan name" value={newPlan.name} onChange={(e) => setNewPlan({ ...newPlan, name: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] placeholder:text-[#A8A29E] focus:outline-none focus:border-[#A6852F]/40" />
                 <input type="number" placeholder="Price" value={newPlan.price || ''} onChange={(e) => setNewPlan({ ...newPlan, price: Number(e.target.value) })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] placeholder:text-[#A8A29E] focus:outline-none focus:border-[#A6852F]/40" />
@@ -708,7 +708,7 @@ const PlansSection: React.FC = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {plans.map((plan) => (
-          <div key={plan.id} className="rounded-xl border border-[#A6852F]/10 bg-white p-4 shadow-sm hover:shadow-md hover:border-[#A6852F]/20 transition-all duration-300">
+          <div key={plan.id} className="rounded-xl border border-[#A6852F]/30 bg-[#A6852F]/8 p-4 shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-500" style={{ boxShadow: '0 0 40px #A6852F30, inset 0 1px 0 #A6852F25' }}>
             {editingId === plan.id ? (
               <div className="space-y-3">
                 <input value={editData.name} onChange={(e) => setEditData({ ...editData, name: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F]/40" />
@@ -804,7 +804,7 @@ const ApplicationsSection: React.FC = () => {
         ))}
       </div>
 
-      <div className="rounded-xl border border-[#E8E5DF]/80 bg-white overflow-hidden">
+      <div className="rounded-xl border border-[#A6852F]/20 bg-white overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500">
         <div className="hidden md:block">
           <div className="grid grid-cols-[1fr_100px_100px_100px_140px] gap-4 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
             <span>Applicant</span><span>Plan</span><span>Date</span><span>Status</span><span>Actions</span>
@@ -933,7 +933,7 @@ const ExperiencesSection: React.FC = () => {
       <AnimatePresence>
         {showAddForm && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden mb-4">
-            <div className="rounded-xl border border-[#E8E5DF]/80 bg-white p-4">
+            <div className="rounded-xl border border-[#A6852F]/20 bg-white p-4 shadow-sm hover:shadow-lg transition-all duration-500">
               <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                 <input placeholder="Title" value={newExp.title} onChange={(e) => setNewExp({ ...newExp, title: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] placeholder:text-[#A8A29E] focus:outline-none focus:border-[#A6852F]/40" />
                 <input placeholder="Type (e.g. meet-and-greet)" value={newExp.type} onChange={(e) => setNewExp({ ...newExp, type: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] placeholder:text-[#A8A29E] focus:outline-none focus:border-[#A6852F]/40" />
@@ -951,7 +951,7 @@ const ExperiencesSection: React.FC = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {experiences.map((exp) => (
-          <div key={exp.id} className="rounded-xl border border-[#16A34A]/10 bg-white p-4 shadow-sm hover:shadow-md hover:border-[#16A34A]/20 transition-all duration-300">
+          <div key={exp.id} className="rounded-xl border border-[#16A34A]/30 bg-[#16A34A]/8 p-4 shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-500" style={{ boxShadow: '0 0 40px #16A34A30, inset 0 1px 0 #16A34A25' }}>
             {editingId === exp.id ? (
               <div className="space-y-3">
                 <input value={editData.title} onChange={(e) => setEditData({ ...editData, title: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F]/40" />
@@ -1067,7 +1067,7 @@ const ExperienceRequestsSection: React.FC = () => {
         ))}
       </div>
 
-      <div className="rounded-xl border border-[#E8E5DF]/80 bg-white overflow-hidden">
+      <div className="rounded-xl border border-[#A6852F]/20 bg-white overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500">
         <div className="hidden md:block">
           <div className="grid grid-cols-[1fr_1fr_100px_100px_140px] gap-4 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
             <span>Requester</span><span>Experience</span><span>Date</span><span>Status</span><span>Actions</span>

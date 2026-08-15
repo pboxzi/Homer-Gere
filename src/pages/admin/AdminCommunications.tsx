@@ -147,7 +147,7 @@ const FanChatSection: React.FC<{
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="rounded-xl border border-[#E8E5DF]/80 bg-white overflow-hidden"
+          className="rounded-xl border border-[#A6852F]/20 bg-white overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500"
         >
           <div className="p-4 border-b border-[#E8E5DF]/40 flex items-center gap-4">
             <div
@@ -245,7 +245,7 @@ const FanChatSection: React.FC<{
             fanConversations.map((c) => (
               <div
                 key={c.id}
-                className="flex items-center gap-4 p-4 rounded-xl border border-[#E8E5DF]/80 bg-white hover:border-[#A6852F]/20 transition-all"
+                className="flex items-center gap-4 p-4 rounded-xl border border-[#A6852F]/20 bg-white hover:border-[#A6852F]/40 transition-all duration-500 shadow-sm hover:shadow-lg"
               >
                 <div
                   className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-medium shrink-0"
@@ -369,7 +369,7 @@ const BusinessChatSection: React.FC<{
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="rounded-xl border border-[#E8E5DF]/80 bg-white overflow-hidden"
+          className="rounded-xl border border-[#A6852F]/20 bg-white overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500"
         >
           <div className="p-4 border-b border-[#E8E5DF]/40 flex items-center gap-4">
             <div
@@ -477,7 +477,7 @@ const BusinessChatSection: React.FC<{
             businessConversations.map((c) => (
               <div
                 key={c.id}
-                className="flex items-center gap-4 p-4 rounded-xl border border-[#E8E5DF]/80 bg-white hover:border-[#A6852F]/20 transition-all"
+                className="flex items-center gap-4 p-4 rounded-xl border border-[#A6852F]/20 bg-white hover:border-[#A6852F]/40 transition-all duration-500 shadow-sm hover:shadow-lg"
               >
                 <div className="w-10 h-10 rounded-full bg-[#8B5CF6]/10 flex items-center justify-center text-[#8B5CF6] shrink-0">
                   <Building2 className="w-4 h-4" />
@@ -592,7 +592,7 @@ const ContactMessagesSection: React.FC<{
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="rounded-xl border border-[#E8E5DF]/80 bg-white overflow-hidden"
+          className="rounded-xl border border-[#A6852F]/20 bg-white overflow-hidden shadow-sm hover:shadow-lg transition-all duration-500"
         >
           <div className="p-5 border-b border-[#E8E5DF]/40 space-y-3">
             <div className="flex items-start justify-between gap-4">
@@ -821,7 +821,7 @@ const NotificationsSection: React.FC<{
         <AnimatePresence>
           {showForm && (
             <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }} className="overflow-hidden mb-4">
-              <div className="rounded-xl border border-[#E8E5DF]/80 bg-white p-4 space-y-3">
+              <div className="rounded-xl border border-[#A6852F]/20 bg-white p-4 space-y-3 shadow-sm hover:shadow-lg transition-all duration-500">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-medium text-[#1C1917]">New Notification</h3>
                   <button onClick={() => setShowForm(false)} className="w-6 h-6 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><X className="w-3.5 h-3.5" /></button>

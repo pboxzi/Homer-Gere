@@ -231,10 +231,12 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.05 }}
-          className="rounded-xl border border-[#F59E0B]/20 bg-[#F59E0B]/5 p-4"
+          className="rounded-xl border border-[#F59E0B]/30 bg-gradient-to-r from-[#F59E0B]/8 to-transparent p-4"
         >
           <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle className="w-4 h-4 text-[#F59E0B]" />
+            <div className="w-8 h-8 rounded-xl bg-[#F59E0B]/15 flex items-center justify-center text-[#F59E0B]">
+              <AlertTriangle className="w-4 h-4" />
+            </div>
             <h3 className="text-xs font-semibold text-[#1C1917] uppercase tracking-[0.05em]">Pending Actions Required</h3>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
@@ -242,7 +244,12 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
               <button
                 key={action.label}
                 onClick={() => onNavigate(action.target)}
-                className="flex items-center gap-2 p-2.5 rounded-xl bg-white border border-[#E8E5DF]/40 hover:border-[#A6852F]/30 hover:shadow-sm transition-all cursor-pointer text-left"
+                className="flex items-center gap-2 p-2.5 rounded-xl border-2 transition-all duration-500 cursor-pointer hover:shadow-lg hover:-translate-y-0.5"
+                style={{
+                  backgroundColor: `${action.color}40`,
+                  borderColor: `${action.color}90`,
+                  boxShadow: `0 0 30px ${action.color}30`,
+                }}
               >
                 <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: `${action.color}15`, color: action.color }}>
                   <action.icon className="w-3.5 h-3.5" />
@@ -262,10 +269,11 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
         {statCards.map((card, i) => (
           <motion.div
             key={card.label}
-            className="rounded-xl p-4 border transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 cursor-pointer group"
+            className="rounded-xl p-4 border transition-all duration-500 hover:shadow-xl hover:-translate-y-0.5 cursor-pointer group"
             style={{
-              backgroundColor: `${card.color}10`,
-              borderColor: `${card.color}20`,
+              backgroundColor: `${card.color}40`,
+              borderColor: `${card.color}90`,
+              boxShadow: `0 0 50px ${card.color}50, 0 0 100px ${card.color}25, inset 0 1px 0 ${card.color}35`,
             }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -273,10 +281,10 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
             onClick={() => onNavigate(card.target)}
           >
             <div className="flex items-center justify-between mb-2.5">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: `${card.color}20`, color: card.color }}>
-                <card.icon className="w-4 h-4" />
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: `${card.color}45`, color: card.color }}>
+                <card.icon className="w-4.5 h-4.5" />
               </div>
-              <ChevronRight className="w-3.5 h-3.5 text-[#57534E]/30 group-hover:text-[#57534E]/60 transition-colors" />
+              <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: card.color }} />
             </div>
             <p className="text-xl font-editorial leading-none" style={{ color: card.color }}>{card.value}</p>
             <p className="text-[10px] text-[#57534E] mt-1 font-medium">{card.label}</p>
@@ -288,7 +296,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Recent Activity */}
         <motion.div
-          className="lg:col-span-2 rounded-xl border border-[#E8E5DF]/80 bg-white p-4"
+          className="lg:col-span-2 rounded-xl border border-[#A6852F]/20 bg-white p-4 shadow-sm hover:shadow-lg transition-all duration-500"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
@@ -319,7 +327,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
 
         {/* Quick Actions */}
         <motion.div
-          className="rounded-xl border border-[#E8E5DF]/80 bg-white p-4"
+          className="rounded-xl border border-[#A6852F]/20 bg-white p-4 shadow-sm hover:shadow-lg transition-all duration-500"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
@@ -330,24 +338,26 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
               <button
                 key={action.label}
                 onClick={() => onNavigate(action.target)}
-                className="flex items-center gap-2 p-2.5 rounded-xl border transition-all duration-300 cursor-pointer group hover:shadow-md hover:-translate-y-0.5"
+                className="flex items-center gap-2 p-2.5 rounded-xl border-2 transition-all duration-500 cursor-pointer group hover:shadow-xl hover:-translate-y-0.5"
                 style={{
-                  backgroundColor: `${action.color}08`,
-                  borderColor: `${action.color}18`,
+                  backgroundColor: `${action.color}40`,
+                  borderColor: `${action.color}90`,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = `${action.color}15`;
-                  e.currentTarget.style.borderColor = `${action.color}35`;
+                  e.currentTarget.style.backgroundColor = `${action.color}55`;
+                  e.currentTarget.style.borderColor = `${action.color}aa`;
+                  e.currentTarget.style.boxShadow = `0 8px 50px ${action.color}55, 0 0 80px ${action.color}25`;
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = `${action.color}08`;
-                  e.currentTarget.style.borderColor = `${action.color}18`;
+                  e.currentTarget.style.backgroundColor = `${action.color}40`;
+                  e.currentTarget.style.borderColor = `${action.color}90`;
+                  e.currentTarget.style.boxShadow = '';
                 }}
               >
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: `${action.color}18`, color: action.color }}>
-                  <action.icon className="w-3.5 h-3.5" />
+                <div className="w-8 h-8 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300" style={{ backgroundColor: `${action.color}35`, color: action.color }}>
+                  <action.icon className="w-4 h-4" />
                 </div>
-                <span className="text-[10px] font-semibold text-[#1C1917] leading-tight">{action.label}</span>
+                <span className="text-[10px] font-bold text-[#1C1917] leading-tight">{action.label}</span>
               </button>
             ))}
           </div>
@@ -358,7 +368,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Audit Logs */}
         <motion.div
-          className="rounded-xl border border-[#E8E5DF]/80 bg-white p-4"
+          className="rounded-xl border border-[#A6852F]/20 bg-white p-4 shadow-sm hover:shadow-lg transition-all duration-500"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
@@ -392,7 +402,7 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
 
         {/* System Health */}
         <motion.div
-          className="rounded-xl border border-[#E8E5DF]/80 bg-white p-4"
+          className="rounded-xl border border-[#A6852F]/20 bg-white p-4 shadow-sm hover:shadow-lg transition-all duration-500"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
@@ -402,11 +412,15 @@ export const AdminOverview: React.FC<AdminOverviewProps> = ({ onNavigate }) => {
             {systemHealth.map((item) => (
               <div
                 key={item.label}
-                className="rounded-xl p-3 border transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
-                style={{ backgroundColor: `${item.color}08`, borderColor: `${item.color}18` }}
+                className="rounded-xl p-3 border-2 transition-all duration-500 hover:shadow-xl hover:-translate-y-0.5"
+                style={{
+                  backgroundColor: `${item.color}40`,
+                  borderColor: `${item.color}90`,
+                  boxShadow: `0 0 40px ${item.color}40, inset 0 1px 0 ${item.color}30`,
+                }}
               >
                 <div className="flex items-center gap-2 mb-1.5">
-                  <div className="w-6 h-6 rounded-md flex items-center justify-center" style={{ backgroundColor: `${item.color}18`, color: item.color }}>
+                  <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${item.color}45`, color: item.color }}>
                     <item.icon className="w-3.5 h-3.5" />
                   </div>
                   <span className="text-[10px] font-medium text-[#57534E]">{item.label}</span>

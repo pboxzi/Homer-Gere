@@ -99,13 +99,13 @@ function StatsBar({ total, published, draft, archived }: { total: number; publis
   return (
     <div className="grid grid-cols-4 gap-3">
       {[
-        { label: 'Total', value: total, color: 'text-[#1C1917]' },
-        { label: 'Published', value: published, color: 'text-[#16A34A]' },
-        { label: 'Draft', value: draft, color: 'text-[#F59E0B]' },
-        { label: 'Archived', value: archived, color: 'text-[#9CA3AF]' },
+        { label: 'Total', value: total, color: '#1C1917' },
+        { label: 'Published', value: published, color: '#16A34A' },
+        { label: 'Draft', value: draft, color: '#F59E0B' },
+        { label: 'Archived', value: archived, color: '#9CA3AF' },
       ].map((stat) => (
-        <div key={stat.label} className="rounded-xl border border-[#E8E5DF]/60 bg-white p-3 text-center">
-          <p className={`text-lg font-medium ${stat.color}`}>{stat.value}</p>
+        <div key={stat.label} className="rounded-xl border p-3 text-center transition-all duration-500 hover:shadow-lg hover:-translate-y-0.5" style={{ backgroundColor: `${stat.color}40`, borderColor: `${stat.color}90`, boxShadow: `0 0 40px ${stat.color}35` }}>
+          <p className="text-lg font-medium" style={{ color: stat.color }}>{stat.value}</p>
           <p className="text-[10px] text-[#57534E] uppercase tracking-wider">{stat.label}</p>
         </div>
       ))}

@@ -280,7 +280,7 @@ export const AdminMediaLibrary: React.FC<Props> = ({ activeSection }) => {
           { label: 'Videos', value: stats.videos, color: '#8B5CF6' },
           { label: 'Broken', value: stats.broken, color: '#DC2626' },
         ].map((s) => (
-          <div key={s.label} className="rounded-xl border border-[#E8E5DF]/60 bg-white px-4 py-3">
+          <div key={s.label} className="rounded-xl border px-4 py-3 transition-all duration-500 hover:shadow-lg hover:-translate-y-0.5" style={{ backgroundColor: `${s.color}40`, borderColor: `${s.color}90`, boxShadow: `0 0 40px ${s.color}35` }}>
             <p className="text-[10px] text-[#57534E] uppercase tracking-wider">{s.label}</p>
             <p className="text-lg font-medium mt-0.5" style={{ color: s.color }}>{s.value}</p>
           </div>

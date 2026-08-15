@@ -29,7 +29,7 @@ interface AdminWebsiteProps {
 const inputCls =
   'w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F]/40 transition-colors';
 const labelCls = 'text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em]';
-const sectionCls = 'rounded-xl border border-[#E8E5DF]/80 bg-white p-4';
+const sectionCls = 'rounded-xl border border-[#A6852F]/20 bg-white p-4 shadow-sm hover:shadow-lg transition-all duration-500';
 const saveBtnCls =
   'px-4 py-2 rounded-xl bg-[#A6852F] text-white text-xs font-medium hover:bg-[#8B6F1F] transition-colors cursor-pointer';
 
@@ -514,7 +514,7 @@ const FooterSection: React.FC<{ search: string }> = ({ search }) => {
           <h3 className="text-sm font-medium text-[#1C1917] mb-4">Footer Links</h3>
           <div className="space-y-4">
             {columns.map((col) => (
-              <div key={col.id} className="rounded-xl border border-[#E8E5DF]/40 p-3">
+              <div key={col.id} className="rounded-xl border border-[#A6852F]/20 p-3 hover:shadow-md transition-all duration-300" style={{ boxShadow: '0 0 20px #A6852F10' }}>
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xs font-medium text-[#1C1917]">{col.title}</span>
                   <button

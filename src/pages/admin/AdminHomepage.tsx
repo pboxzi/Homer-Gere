@@ -40,7 +40,7 @@ interface AdminHomepageProps {
 const inputCls =
   'w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm text-[#1C1917] focus:outline-none focus:border-[#A6852F]/40 transition-colors';
 const labelCls = 'text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em]';
-const sectionCls = 'rounded-xl border border-[#E8E5DF]/80 bg-white p-4';
+const sectionCls = 'rounded-xl border border-[#A6852F]/20 bg-white p-4 shadow-sm hover:shadow-lg transition-all duration-500';
 const saveBtnCls =
   'px-4 py-2 rounded-xl bg-[#A6852F] text-white text-xs font-medium hover:bg-[#8B6F1F] transition-colors cursor-pointer';
 
@@ -516,7 +516,7 @@ const HeroSlidesTab: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center gap-3 py-3 px-4 rounded-xl border border-[#E8E5DF]/60 bg-white hover:border-[#E8E5DF] transition-all group">
+                <div className="flex items-center gap-3 py-3 px-4 rounded-xl border border-[#A6852F]/20 bg-white hover:border-[#A6852F]/40 transition-all duration-500 group shadow-sm hover:shadow-lg">
                   <div className="flex flex-col items-center gap-0.5">
                     <button onClick={() => handleMoveUp(index)} disabled={index === 0} className="w-6 h-6 rounded flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors">
                       <ChevronUp className="w-3.5 h-3.5" />
@@ -1505,7 +1505,7 @@ const CtaTab: React.FC = () => {
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center gap-3 py-3 px-4 rounded-xl border border-[#E8E5DF]/60 bg-white hover:border-[#E8E5DF] transition-all group">
+                <div className="flex items-center gap-3 py-3 px-4 rounded-xl border border-[#A6852F]/20 bg-white hover:border-[#A6852F]/40 transition-all duration-500 group shadow-sm hover:shadow-lg">
                   <div className="flex flex-col items-center gap-0.5">
                     <button onClick={() => handleMoveUp(index)} disabled={index === 0} className="w-6 h-6 rounded flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors">
                       <ChevronUp className="w-3.5 h-3.5" />

@@ -114,8 +114,8 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                 <button
                   key={item.id}
                   onClick={() => handleNav(item.id)}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all duration-200 cursor-pointer ${
-                    isActive ? 'bg-[#A6852F]/15 text-[#A6852F] font-medium shadow-sm' : 'text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917]'
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all duration-300 cursor-pointer ${
+                    isActive ? 'bg-[#A6852F]/20 text-[#A6852F] font-medium shadow-md shadow-[#A6852F]/20 border border-[#A6852F]/30' : 'text-[#57534E] hover:bg-[#A6852F]/8 hover:text-[#1C1917] border border-transparent'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -158,8 +158,8 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                           <button
                             key={item.id}
                             onClick={() => handleNav(item.id)}
-                            className={`w-full flex items-center gap-2.5 pl-7 pr-3 py-1.5 rounded-xl text-sm transition-all duration-200 cursor-pointer ${
-                              isActive ? 'bg-[#A6852F]/15 text-[#A6852F] font-medium shadow-sm' : 'text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917]'
+                            className={`w-full flex items-center gap-2.5 pl-7 pr-3 py-1.5 rounded-xl text-sm transition-all duration-300 cursor-pointer ${
+                              isActive ? 'bg-[#A6852F]/20 text-[#A6852F] font-medium shadow-md shadow-[#A6852F]/20 border border-[#A6852F]/30' : 'text-[#57534E] hover:bg-[#A6852F]/8 hover:text-[#1C1917] border border-transparent'
                             }`}
                           >
                             <Icon className="w-3.5 h-3.5" />
@@ -197,7 +197,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
 
   return (
     <div className="min-h-screen bg-[#FAF9F7] text-[#1C1917] font-body antialiased flex overflow-x-hidden">
-      <aside className="hidden lg:flex w-60 bg-white border-r border-[#E8E5DF]/40 flex-col fixed inset-y-0 left-0 z-30">
+      <aside className="hidden lg:flex w-60 bg-white border-r border-[#A6852F]/20 flex-col fixed inset-y-0 left-0 z-30 shadow-lg shadow-[#A6852F]/5">
         <SidebarContent />
       </aside>
 

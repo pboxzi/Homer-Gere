@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { CreditCard, Download } from 'lucide-react';
 import { membershipCardsRepository } from '../../lib/repositories';
+import { formatDate } from '../../utils/formatDate';
 import { useAuth } from '../../context/AuthContext';
 import type { MembershipCard } from '../../types/database';
 
@@ -17,9 +18,9 @@ function downloadCard(card: MembershipCard) {
     <text x="40" y="85" fill="rgba(255,255,255,0.7)" font-family="sans-serif" font-size="12" letter-spacing="6">CLUB</text>
     <text x="40" y="200" fill="white" font-family="monospace" font-size="30" letter-spacing="5">${card.card_number}</text>
     <text x="40" y="290" fill="rgba(255,255,255,0.6)" font-family="sans-serif" font-size="10" letter-spacing="2">ISSUED</text>
-    <text x="40" y="315" fill="white" font-family="sans-serif" font-size="16">${card.issue_date || 'N/A'}</text>
+    <text x="40" y="315" fill="white" font-family="sans-serif" font-size="16">${formatDate(card.issue_date) || 'N/A'}</text>
     <text x="250" y="290" fill="rgba(255,255,255,0.6)" font-family="sans-serif" font-size="10" letter-spacing="2">EXPIRES</text>
-    <text x="250" y="315" fill="white" font-family="sans-serif" font-size="16">${card.expiry_date || 'No Expiry'}</text>
+    <text x="250" y="315" fill="white" font-family="sans-serif" font-size="16">${card.expiry_date ? formatDate(card.expiry_date) : 'No Expiry'}</text>
     <text x="460" y="290" fill="rgba(255,255,255,0.6)" font-family="sans-serif" font-size="10" letter-spacing="2">DESIGN</text>
     <text x="460" y="315" fill="white" font-family="sans-serif" font-size="16" text-transform="capitalize">${(card.card_design || 'gold').toUpperCase()}</text>
   </svg>`;
@@ -80,11 +81,11 @@ export default function DashboardMembershipCard() {
             <div className="flex items-end justify-between text-sm">
               <div>
                 <div className="text-[10px] opacity-60 uppercase tracking-wider">Issued</div>
-                <div className="font-medium">{card.issue_date}</div>
+                <div className="font-medium">{formatDate(card.issue_date)}</div>
               </div>
               <div className="text-right">
                 <div className="text-[10px] opacity-60 uppercase tracking-wider">Expires</div>
-                <div className="font-medium">{card.expiry_date || 'No Expiry'}</div>
+                <div className="font-medium">{card.expiry_date ? formatDate(card.expiry_date) : 'No Expiry'}</div>
               </div>
               <div className="text-right">
                 <div className="text-[10px] opacity-60 uppercase tracking-wider">Design</div>
@@ -99,8 +100,8 @@ export default function DashboardMembershipCard() {
             <div className="space-y-3 text-sm">
               <div className="flex justify-between"><span className="text-[#6b7280]">Card Number</span><span className="font-mono font-medium">{card.card_number}</span></div>
               <div className="flex justify-between"><span className="text-[#6b7280]">Status</span><span className="font-medium text-green-600 capitalize">{card.status}</span></div>
-              <div className="flex justify-between"><span className="text-[#6b7280]">Issue Date</span><span className="font-medium">{card.issue_date}</span></div>
-              <div className="flex justify-between"><span className="text-[#6b7280]">Expiry Date</span><span className="font-medium">{card.expiry_date || 'No Expiry'}</span></div>
+              <div className="flex justify-between"><span className="text-[#6b7280]">Issue Date</span><span className="font-medium">{formatDate(card.issue_date)}</span></div>
+              <div className="flex justify-between"><span className="text-[#6b7280]">Expiry Date</span><span className="font-medium">{card.expiry_date ? formatDate(card.expiry_date) : 'No Expiry'}</span></div>
               {card.qr_code_data && <div className="flex justify-between"><span className="text-[#6b7280]">QR Code</span><span className="font-mono text-xs">{card.qr_code_data}</span></div>}
             </div>
           </div>

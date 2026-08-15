@@ -273,7 +273,7 @@ export const AdminContentImages: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {items.map((item) => (
             <motion.div key={item.id} layout initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-              className="group rounded-2xl border border-[#E8E5DF]/60 bg-white overflow-hidden hover:shadow-lg hover:shadow-[#A6852F]/5 transition-all duration-300">
+              className="group rounded-2xl border border-[#A6852F]/20 bg-white overflow-hidden hover:shadow-xl hover:shadow-[#A6852F]/10 transition-all duration-500">
               <div className="p-3">
                 <p className="text-xs font-medium text-[#1C1917] truncate mb-2" title={item.title}>{item.title}</p>
                 <ImageUploader
