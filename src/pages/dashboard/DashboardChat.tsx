@@ -80,19 +80,18 @@ export const DashboardChat: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (activeId) {
-      loadMsgs(activeId);
-      // Mark admin messages as read
-      supabase.from('fan_messages')
+    if (!activeId) return;
+    loadMsgs(activeId);
+    const markRead = async () => {
+      await supabase.from('fan_messages')
         .update({ is_read: true, read_at: new Date().toISOString() })
         .eq('conversation_id', activeId)
         .eq('is_read', false)
-        .neq('sender', 'member')
-        .then(() => {
-          supabase.from('fan_conversations').update({ unread_count: 0 }).eq('id', activeId);
-          setConversations(prev => prev.map(c => c.id === activeId ? { ...c, unread_count: 0 } : c));
-        });
-    }
+        .neq('sender', 'member');
+      await supabase.from('fan_conversations').update({ unread_count: 0 }).eq('id', activeId);
+      setConversations(prev => prev.map(c => c.id === activeId ? { ...c, unread_count: 0 } : c));
+    };
+    markRead();
   }, [activeId, loadMsgs]);
 
   // Auto-scroll
