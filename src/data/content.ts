@@ -651,13 +651,7 @@ export const GALLERY_ITEMS: GalleryItem[] = [
   },
 ];
 
-export const FOOTER_LINKS = {
-  Legal: [
-    { label: 'Terms of Service', href: '/terms' },
-    { label: 'Privacy Policy', href: '/privacy' },
-    { label: 'Cookie Policy', href: '/cookies' },
-  ],
-};
+export const FOOTER_LINKS = {};
 
 export const FILMOGRAPHY: FilmographyEntry[] = [
   {
