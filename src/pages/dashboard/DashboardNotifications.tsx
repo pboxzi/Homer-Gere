@@ -94,7 +94,7 @@ export const DashboardNotifications: React.FC = () => {
                     <p className="text-[10px] text-[#57534E]/60 mt-1">{new Date(n.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                   </div>
                 </button>
-                <button onClick={() => deleteNotification(n.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E]/40 hover:text-[#DC2626] hover:bg-[#DC2626]/15 transition-colors cursor-pointer shrink-0 mt-1">
+                <button onClick={() => deleteNotification(n.id)} className="w-10 h-10 rounded-lg flex items-center justify-center text-[#57534E]/40 hover:text-[#DC2626] hover:bg-[#DC2626]/15 transition-colors cursor-pointer shrink-0 mt-1">
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </motion.div>

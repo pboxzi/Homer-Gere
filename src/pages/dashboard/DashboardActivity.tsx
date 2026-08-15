@@ -65,7 +65,7 @@ export default function DashboardActivity() {
       {/* Filter */}
       <div className="flex gap-2 flex-wrap">
         {modules.map((mod) => (
-          <button key={mod} onClick={() => setFilterModule(mod)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${filterModule === mod ? 'bg-[#A6852F] text-white shadow-md shadow-[#A6852F]/38' : 'bg-white border border-[#A6852F]/45 text-[#57534E] hover:bg-[#A6852F]/22'}`}>
+          <button key={mod} onClick={() => setFilterModule(mod)} className={`px-3 py-1.5 min-h-[40px] rounded-lg text-xs font-medium transition-colors cursor-pointer ${filterModule === mod ? 'bg-[#A6852F] text-white shadow-md shadow-[#A6852F]/38' : 'bg-white border border-[#A6852F]/45 text-[#57534E] hover:bg-[#A6852F]/22'}`}>
             {mod === 'all' ? 'All Activity' : MODULE_CONFIG[mod]?.label || mod}
           </button>
         ))}

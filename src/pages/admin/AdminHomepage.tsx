@@ -151,56 +151,97 @@ const SectionOrderTab: React.FC = () => {
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="space-y-6">
-      <div className="rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
-        <div className="grid grid-cols-[40px_1fr_140px_100px_100px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
-          <span></span>
-          <span>Section</span>
-          <span>Key</span>
-          <span>Enabled</span>
-          <span>Published</span>
-        </div>
-        {sorted.map((section, index) => (
-          <div
-            key={section.id}
-            className="grid grid-cols-[40px_1fr_140px_100px_100px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors"
-          >
-            <div className="flex flex-col items-center gap-0.5">
-              <button
-                onClick={() => handleMoveUp(index)}
-                disabled={index === 0}
-                className="w-6 h-6 rounded flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
-              >
-                <ChevronUp className="w-3.5 h-3.5" />
-              </button>
-              <button
-                onClick={() => handleMoveDown(index)}
-                disabled={index === sorted.length - 1}
-                className="w-6 h-6 rounded flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
-              >
-                <ChevronDown className="w-3.5 h-3.5" />
-              </button>
-            </div>
-            <div>
-              <span className="text-sm text-[#1C1917] font-medium">{section.title || section.section_key}</span>
-              {section.subtitle && (
-                <p className="text-[10px] text-[#57534E] mt-0.5 line-clamp-1">{section.subtitle}</p>
-              )}
-            </div>
-            <span className="text-xs text-[#57534E] font-mono">{section.section_key}</span>
-            <Toggle on={section.enabled} onToggle={() => handleToggleEnabled(section.id)} />
-            <button
-              onClick={() => handleTogglePublished(section.id)}
-              className={`text-[10px] px-2 py-0.5 rounded-full font-medium inline-flex items-center gap-1 w-fit cursor-pointer ${
-                section.published
-                  ? 'bg-[#16A34A]/10 text-[#16A34A]'
-                  : 'bg-[#9CA3AF]/10 text-[#9CA3AF]'
-              }`}
-            >
-              {section.published ? 'Published' : 'Draft'}
-            </button>
+      <>
+        {/* Desktop table */}
+        <div className="hidden md:block rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+          <div className="grid grid-cols-[40px_1fr_140px_100px_100px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
+            <span></span>
+            <span>Section</span>
+            <span>Key</span>
+            <span>Enabled</span>
+            <span>Published</span>
           </div>
-        ))}
-      </div>
+          {sorted.map((section, index) => (
+            <div
+              key={section.id}
+              className="grid grid-cols-[40px_1fr_140px_100px_100px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors"
+            >
+              <div className="flex flex-col items-center gap-0.5">
+                <button
+                  onClick={() => handleMoveUp(index)}
+                  disabled={index === 0}
+                  className="w-6 h-6 rounded flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                >
+                  <ChevronUp className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => handleMoveDown(index)}
+                  disabled={index === sorted.length - 1}
+                  className="w-6 h-6 rounded flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                >
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div>
+                <span className="text-sm text-[#1C1917] font-medium">{section.title || section.section_key}</span>
+                {section.subtitle && (
+                  <p className="text-[10px] text-[#57534E] mt-0.5 line-clamp-1">{section.subtitle}</p>
+                )}
+              </div>
+              <span className="text-xs text-[#57534E] font-mono">{section.section_key}</span>
+              <Toggle on={section.enabled} onToggle={() => handleToggleEnabled(section.id)} />
+              <button
+                onClick={() => handleTogglePublished(section.id)}
+                className={`text-[10px] px-2 py-0.5 rounded-full font-medium inline-flex items-center gap-1 w-fit cursor-pointer ${
+                  section.published
+                    ? 'bg-[#16A34A]/10 text-[#16A34A]'
+                    : 'bg-[#9CA3AF]/10 text-[#9CA3AF]'
+                }`}
+              >
+                {section.published ? 'Published' : 'Draft'}
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile cards */}
+        <div className="md:hidden space-y-3">
+          {sorted.map((section, index) => (
+            <div key={section.id} className="bg-white rounded-xl border border-[#E8E5DF]/60 p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-[#1C1917]">{section.title || section.section_key}</span>
+                <div className="flex items-center gap-2">
+                  <Toggle on={section.enabled} onToggle={() => handleToggleEnabled(section.id)} />
+                  <button
+                    onClick={() => handleTogglePublished(section.id)}
+                    className={`text-[10px] px-2 py-0.5 rounded-full font-medium inline-flex items-center gap-1 cursor-pointer ${
+                      section.published
+                        ? 'bg-[#16A34A]/10 text-[#16A34A]'
+                        : 'bg-[#9CA3AF]/10 text-[#9CA3AF]'
+                    }`}
+                  >
+                    {section.published ? 'Published' : 'Draft'}
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs text-[#57534E] font-mono">{section.section_key}</p>
+                {section.subtitle && <p className="text-xs text-[#57534E] line-clamp-1">{section.subtitle}</p>}
+              </div>
+              <div className="flex items-center gap-2 mt-3">
+                <button onClick={() => handleMoveUp(index)} disabled={index === 0}
+                  className="min-h-[44px] min-w-[44px] rounded-lg bg-[#F3F1ED] text-[#57534E] text-xs font-medium hover:bg-[#E8E5DF] transition-colors cursor-pointer disabled:opacity-30 flex items-center justify-center">
+                  <ChevronUp className="w-4 h-4" />
+                </button>
+                <button onClick={() => handleMoveDown(index)} disabled={index === sorted.length - 1}
+                  className="min-h-[44px] min-w-[44px] rounded-lg bg-[#F3F1ED] text-[#57534E] text-xs font-medium hover:bg-[#E8E5DF] transition-colors cursor-pointer disabled:opacity-30 flex items-center justify-center">
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </>
     </motion.div>
   );
 };
@@ -669,66 +710,108 @@ const StatisticsTab: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <div className="rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
-        <div className="grid grid-cols-[40px_1fr_120px_100px_100px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
-          <span></span>
-          <span>Label</span>
-          <span>Value</span>
-          <span>Icon</span>
-          <span>Actions</span>
-        </div>
-        {sorted.length === 0 ? (
-          <div className="px-5 py-10 text-center text-sm text-[#57534E]">No statistics found.</div>
-        ) : (
-          sorted.map((stat, index) => (
-            <div key={stat.id}>
-              {editingId === stat.id ? (
-                <div className="px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 bg-[#F3F1ED]/20 space-y-3">
-                  <div className="grid grid-cols-[40px_1fr_120px_100px] gap-3 items-center">
-                    <div />
-                    <input className={inputCls} value={editForm.label} onChange={(e) => setEditForm({ ...editForm, label: e.target.value })} />
-                    <input className={inputCls} value={editForm.value} onChange={(e) => setEditForm({ ...editForm, value: e.target.value })} />
-                    <input className={inputCls} value={editForm.icon} onChange={(e) => setEditForm({ ...editForm, icon: e.target.value })} />
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => handleSaveEdit(stat.id)} className="px-3 py-1.5 rounded-lg bg-[#A6852F] text-white text-[10px] font-medium hover:bg-[#8F7228] transition-colors cursor-pointer">Save</button>
-                      <button onClick={() => setEditingId(null)} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 text-[10px] font-medium text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">Cancel</button>
+      <>
+        {/* Desktop table */}
+        <div className="hidden md:block rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+          <div className="grid grid-cols-[40px_1fr_120px_100px_100px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
+            <span></span>
+            <span>Label</span>
+            <span>Value</span>
+            <span>Icon</span>
+            <span>Actions</span>
+          </div>
+          {sorted.length === 0 ? (
+            <div className="px-5 py-10 text-center text-sm text-[#57534E]">No statistics found.</div>
+          ) : (
+            sorted.map((stat, index) => (
+              <div key={stat.id}>
+                {editingId === stat.id ? (
+                  <div className="px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 bg-[#F3F1ED]/20 space-y-3">
+                    <div className="grid grid-cols-[40px_1fr_120px_100px] gap-3 items-center">
+                      <div />
+                      <input className={inputCls} value={editForm.label} onChange={(e) => setEditForm({ ...editForm, label: e.target.value })} />
+                      <input className={inputCls} value={editForm.value} onChange={(e) => setEditForm({ ...editForm, value: e.target.value })} />
+                      <input className={inputCls} value={editForm.icon} onChange={(e) => setEditForm({ ...editForm, icon: e.target.value })} />
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => handleSaveEdit(stat.id)} className="px-3 py-1.5 rounded-lg bg-[#A6852F] text-white text-[10px] font-medium hover:bg-[#8F7228] transition-colors cursor-pointer">Save</button>
+                        <button onClick={() => setEditingId(null)} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 text-[10px] font-medium text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">Cancel</button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-[40px_1fr_120px_100px_100px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
-                  <div className="flex flex-col items-center gap-0.5">
-                    <button onClick={() => handleMoveUp(index)} disabled={index === 0} className="w-6 h-6 rounded flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors">
-                      <ChevronUp className="w-3.5 h-3.5" />
-                    </button>
-                    <button onClick={() => handleMoveDown(index)} disabled={index === sorted.length - 1} className="w-6 h-6 rounded flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors">
-                      <ChevronDown className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                  <span className="text-sm text-[#1C1917] font-medium">{stat.label}</span>
-                  <span className="text-sm text-[#1C1917]">{stat.value}</span>
-                  <span className="text-xs text-[#57534E]">{stat.icon || '—'}</span>
-                  <div className="flex items-center gap-1">
-                    <button onClick={() => handleEdit(stat)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors cursor-pointer">
-                      <GripVertical className="w-3.5 h-3.5" />
-                    </button>
-                    {deleteConfirmId === stat.id ? (
-                      <div className="flex items-center gap-1">
-                        <button onClick={() => handleDelete(stat.id)} className="px-2 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm</button>
-                        <button onClick={() => setDeleteConfirmId(null)} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">No</button>
-                      </div>
-                    ) : (
-                      <button onClick={() => setDeleteConfirmId(stat.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] transition-colors cursor-pointer">
-                        <Trash2 className="w-3.5 h-3.5" />
+                ) : (
+                  <div className="grid grid-cols-[40px_1fr_120px_100px_100px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
+                    <div className="flex flex-col items-center gap-0.5">
+                      <button onClick={() => handleMoveUp(index)} disabled={index === 0} className="w-6 h-6 rounded flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors">
+                        <ChevronUp className="w-3.5 h-3.5" />
                       </button>
-                    )}
+                      <button onClick={() => handleMoveDown(index)} disabled={index === sorted.length - 1} className="w-6 h-6 rounded flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors">
+                        <ChevronDown className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                    <span className="text-sm text-[#1C1917] font-medium">{stat.label}</span>
+                    <span className="text-sm text-[#1C1917]">{stat.value}</span>
+                    <span className="text-xs text-[#57534E]">{stat.icon || '—'}</span>
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => handleEdit(stat)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors cursor-pointer">
+                        <GripVertical className="w-3.5 h-3.5" />
+                      </button>
+                      {deleteConfirmId === stat.id ? (
+                        <div className="flex items-center gap-1">
+                          <button onClick={() => handleDelete(stat.id)} className="px-2 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm</button>
+                          <button onClick={() => setDeleteConfirmId(null)} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">No</button>
+                        </div>
+                      ) : (
+                        <button onClick={() => setDeleteConfirmId(stat.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] transition-colors cursor-pointer">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
                   </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Mobile cards */}
+        <div className="md:hidden space-y-3">
+          {sorted.length === 0 ? (
+            <div className="text-center py-10 text-sm text-[#57534E]">No statistics found.</div>
+          ) : sorted.map((stat, index) => (
+            <div key={stat.id} className="bg-white rounded-xl border border-[#E8E5DF]/60 p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-[#1C1917]">{stat.label}</span>
+                <span className="text-sm font-medium text-[#1C1917]">{stat.value}</span>
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs text-[#57534E]">Icon: {stat.icon || '—'}</p>
+              </div>
+              <div className="flex items-center gap-2 mt-3">
+                <button onClick={() => handleMoveUp(index)} disabled={index === 0}
+                  className="min-h-[44px] min-w-[44px] rounded-lg bg-[#F3F1ED] text-[#57534E] text-xs font-medium hover:bg-[#E8E5DF] transition-colors cursor-pointer disabled:opacity-30 flex items-center justify-center">
+                  <ChevronUp className="w-4 h-4" />
+                </button>
+                <button onClick={() => handleMoveDown(index)} disabled={index === sorted.length - 1}
+                  className="min-h-[44px] min-w-[44px] rounded-lg bg-[#F3F1ED] text-[#57534E] text-xs font-medium hover:bg-[#E8E5DF] transition-colors cursor-pointer disabled:opacity-30 flex items-center justify-center">
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+                <button onClick={() => handleEdit(stat)} className="flex-1 min-h-[44px] rounded-lg bg-[#F3F1ED] text-[#57534E] text-xs font-medium hover:bg-[#E8E5DF] transition-colors cursor-pointer flex items-center justify-center gap-1">
+                  <GripVertical className="w-3.5 h-3.5" /> Edit
+                </button>
+                <button onClick={() => setDeleteConfirmId(stat.id)} className="min-h-[44px] min-w-[44px] rounded-lg bg-[#DC2626]/10 text-[#DC2626] text-xs font-medium hover:bg-[#DC2626]/20 transition-colors cursor-pointer flex items-center justify-center">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              {deleteConfirmId === stat.id && (
+                <div className="flex items-center gap-2 mt-2">
+                  <button onClick={() => handleDelete(stat.id)} className="flex-1 min-h-[44px] rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm Delete</button>
+                  <button onClick={() => setDeleteConfirmId(null)} className="flex-1 min-h-[44px] rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">Cancel</button>
                 </div>
               )}
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      </>
     </motion.div>
   );
 };
@@ -868,71 +951,114 @@ const FeaturedTab: React.FC = () => {
         )}
       </AnimatePresence>
 
-      <div className="rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
-        <div className="grid grid-cols-[1fr_120px_100px_100px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
-          <span>Section / Reference</span>
-          <span>Type</span>
-          <span>Status</span>
-          <span>Actions</span>
-        </div>
-        {featured.length === 0 ? (
-          <div className="px-5 py-10 text-center text-sm text-[#57534E]">No featured items found.</div>
-        ) : (
-          featured.map((item) => (
-            <div key={item.id}>
-              {editingId === item.id ? (
-                <div className="px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 bg-[#F3F1ED]/20 space-y-3">
-                  <div className="grid grid-cols-[1fr_120px_100px] gap-3 items-center">
-                    <div className="flex items-center gap-2">
-                      <select className={inputCls} value={editForm.section_key} onChange={(e) => setEditForm({ ...editForm, section_key: e.target.value, reference_type: typeMap[e.target.value] || 'project' })}>
-                        {sectionKeys.map((key) => <option key={key} value={key}>{key}</option>)}
-                      </select>
-                      <input className={`${inputCls} flex-1`} value={editForm.reference_id} onChange={(e) => setEditForm({ ...editForm, reference_id: e.target.value })} />
-                    </div>
-                    <input className={inputCls} value={typeMap[editForm.section_key] || 'project'} readOnly />
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => handleSaveEdit(item.id)} className="px-3 py-1.5 rounded-lg bg-[#A6852F] text-white text-[10px] font-medium hover:bg-[#8F7228] transition-colors cursor-pointer">Save</button>
-                      <button onClick={() => setEditingId(null)} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 text-[10px] font-medium text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">Cancel</button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-[1fr_120px_100px_100px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
-                  <div>
-                    <span className="text-sm text-[#1C1917] font-medium block">{item.section_key}</span>
-                    <span className="text-[10px] text-[#57534E] font-mono block">{item.reference_id}</span>
-                  </div>
-                  <span className="text-xs text-[#57534E]">{item.reference_type}</span>
-                  <button
-                    onClick={() => {
-                      setFeatured((prev) => prev.map((f) => (f.id === item.id ? { ...f, published: !f.published } : f)));
-                      homepageCmsRepository.updateFeatured(item.id, { published: !item.published }).catch(() => {});
-                    }}
-                    className={`text-[10px] px-2 py-0.5 rounded-full font-medium inline-flex items-center gap-1 w-fit cursor-pointer ${item.published ? 'bg-[#16A34A]/10 text-[#16A34A]' : 'bg-[#9CA3AF]/10 text-[#9CA3AF]'}`}
-                  >
-                    {item.published ? 'Published' : 'Draft'}
-                  </button>
-                  <div className="flex items-center gap-1">
-                    <button onClick={() => handleEdit(item)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors cursor-pointer">
-                      <GripVertical className="w-3.5 h-3.5" />
-                    </button>
-                    {deleteConfirmId === item.id ? (
-                      <div className="flex items-center gap-1">
-                        <button onClick={() => handleDelete(item.id)} className="px-2 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm</button>
-                        <button onClick={() => setDeleteConfirmId(null)} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">No</button>
+      <>
+        {/* Desktop table */}
+        <div className="hidden md:block rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+          <div className="grid grid-cols-[1fr_120px_100px_100px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
+            <span>Section / Reference</span>
+            <span>Type</span>
+            <span>Status</span>
+            <span>Actions</span>
+          </div>
+          {featured.length === 0 ? (
+            <div className="px-5 py-10 text-center text-sm text-[#57534E]">No featured items found.</div>
+          ) : (
+            featured.map((item) => (
+              <div key={item.id}>
+                {editingId === item.id ? (
+                  <div className="px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 bg-[#F3F1ED]/20 space-y-3">
+                    <div className="grid grid-cols-[1fr_120px_100px] gap-3 items-center">
+                      <div className="flex items-center gap-2">
+                        <select className={inputCls} value={editForm.section_key} onChange={(e) => setEditForm({ ...editForm, section_key: e.target.value, reference_type: typeMap[e.target.value] || 'project' })}>
+                          {sectionKeys.map((key) => <option key={key} value={key}>{key}</option>)}
+                        </select>
+                        <input className={`${inputCls} flex-1`} value={editForm.reference_id} onChange={(e) => setEditForm({ ...editForm, reference_id: e.target.value })} />
                       </div>
-                    ) : (
-                      <button onClick={() => setDeleteConfirmId(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] transition-colors cursor-pointer">
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
+                      <input className={inputCls} value={typeMap[editForm.section_key] || 'project'} readOnly />
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => handleSaveEdit(item.id)} className="px-3 py-1.5 rounded-lg bg-[#A6852F] text-white text-[10px] font-medium hover:bg-[#8F7228] transition-colors cursor-pointer">Save</button>
+                        <button onClick={() => setEditingId(null)} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 text-[10px] font-medium text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">Cancel</button>
+                      </div>
+                    </div>
                   </div>
+                ) : (
+                  <div className="grid grid-cols-[1fr_120px_100px_100px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
+                    <div>
+                      <span className="text-sm text-[#1C1917] font-medium block">{item.section_key}</span>
+                      <span className="text-[10px] text-[#57534E] font-mono block">{item.reference_id}</span>
+                    </div>
+                    <span className="text-xs text-[#57534E]">{item.reference_type}</span>
+                    <button
+                      onClick={() => {
+                        setFeatured((prev) => prev.map((f) => (f.id === item.id ? { ...f, published: !f.published } : f)));
+                        homepageCmsRepository.updateFeatured(item.id, { published: !item.published }).catch(() => {});
+                      }}
+                      className={`text-[10px] px-2 py-0.5 rounded-full font-medium inline-flex items-center gap-1 w-fit cursor-pointer ${item.published ? 'bg-[#16A34A]/10 text-[#16A34A]' : 'bg-[#9CA3AF]/10 text-[#9CA3AF]'}`}
+                    >
+                      {item.published ? 'Published' : 'Draft'}
+                    </button>
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => handleEdit(item)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors cursor-pointer">
+                        <GripVertical className="w-3.5 h-3.5" />
+                      </button>
+                      {deleteConfirmId === item.id ? (
+                        <div className="flex items-center gap-1">
+                          <button onClick={() => handleDelete(item.id)} className="px-2 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm</button>
+                          <button onClick={() => setDeleteConfirmId(null)} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">No</button>
+                        </div>
+                      ) : (
+                        <button onClick={() => setDeleteConfirmId(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] transition-colors cursor-pointer">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Mobile cards */}
+        <div className="md:hidden space-y-3">
+          {featured.length === 0 ? (
+            <div className="text-center py-10 text-sm text-[#57534E]">No featured items found.</div>
+          ) : featured.map((item) => (
+            <div key={item.id} className="bg-white rounded-xl border border-[#E8E5DF]/60 p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-[#1C1917]">{item.section_key}</span>
+                <button
+                  onClick={() => {
+                    setFeatured((prev) => prev.map((f) => (f.id === item.id ? { ...f, published: !f.published } : f)));
+                    homepageCmsRepository.updateFeatured(item.id, { published: !item.published }).catch(() => {});
+                  }}
+                  className={`text-[10px] px-2 py-0.5 rounded-full font-medium inline-flex items-center gap-1 cursor-pointer ${item.published ? 'bg-[#16A34A]/10 text-[#16A34A]' : 'bg-[#9CA3AF]/10 text-[#9CA3AF]'}`}
+                >
+                  {item.published ? 'Published' : 'Draft'}
+                </button>
+              </div>
+              <div className="space-y-1">
+                <p className="text-[10px] text-[#57534E] font-mono">{item.reference_id}</p>
+                <p className="text-xs text-[#57534E]">Type: {item.reference_type}</p>
+              </div>
+              <div className="flex items-center gap-2 mt-3">
+                <button onClick={() => handleEdit(item)} className="flex-1 min-h-[44px] rounded-lg bg-[#F3F1ED] text-[#57534E] text-xs font-medium hover:bg-[#E8E5DF] transition-colors cursor-pointer flex items-center justify-center gap-1">
+                  <GripVertical className="w-3.5 h-3.5" /> Edit
+                </button>
+                <button onClick={() => setDeleteConfirmId(item.id)} className="min-h-[44px] min-w-[44px] rounded-lg bg-[#DC2626]/10 text-[#DC2626] text-xs font-medium hover:bg-[#DC2626]/20 transition-colors cursor-pointer flex items-center justify-center">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              {deleteConfirmId === item.id && (
+                <div className="flex items-center gap-2 mt-2">
+                  <button onClick={() => handleDelete(item.id)} className="flex-1 min-h-[44px] rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm Delete</button>
+                  <button onClick={() => setDeleteConfirmId(null)} className="flex-1 min-h-[44px] rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">Cancel</button>
                 </div>
               )}
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      </>
     </motion.div>
   );
 };

@@ -32,7 +32,6 @@ import {
   type AdminContactMessage,
   type AdminNotification,
   type AdminMediaItem,
-  type AdminPayment,
   type AdminPage,
   EMPTY_ADMIN_STATS,
 } from '../data/adminData';
@@ -121,7 +120,6 @@ interface AdminContextType {
   contactMessages: AdminContactMessage[];
   notifications: AdminNotification[];
   media: AdminMediaItem[];
-  payments: AdminPayment[];
   pages: AdminPage[];
   emailTemplates: EmailTemplate[];
   stats: AdminStats;
@@ -161,9 +159,6 @@ interface AdminContextType {
   addMedia: (item: Omit<AdminMediaItem, 'id'>) => void;
   updateMedia: (id: string, updates: Partial<AdminMediaItem>) => void;
   deleteMedia: (id: string) => void;
-  addPayment: (pay: Omit<AdminPayment, 'id'>) => void;
-  updatePayment: (id: string, updates: Partial<AdminPayment>) => void;
-  deletePayment: (id: string) => void;
   addPage: (page: Omit<AdminPage, 'id'>) => void;
   updatePage: (id: string, updates: Partial<AdminPage>) => void;
   deletePage: (id: string) => void;
@@ -258,7 +253,6 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [contactMessages, setContactMessages] = useState<AdminContactMessage[]>([]);
   const [notifications, setNotifications] = useState<AdminNotification[]>([]);
   const [media, setMedia] = useState<AdminMediaItem[]>([]);
-  const [payments, setPayments] = useState<AdminPayment[]>([]);
   const [pages, setPages] = useState<AdminPage[]>([]);
   const [emailTemplates, setEmailTemplates] = useState<EmailTemplate[]>([]);
   const [websiteSettings, setWebsiteSettings] = useState<WebsiteSettings>(DEFAULT_WEBSITE_SETTINGS);
@@ -798,17 +792,6 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     mediaRepository.deleteVideo(id).catch(() => {});
   }, []);
 
-  // ----- CRUD: Payments -----
-  const addPayment = useCallback((pay: Omit<AdminPayment, 'id'>) => {
-    setPayments((prev) => [{ ...pay, id: generateId() }, ...prev]);
-  }, []);
-  const updatePayment = useCallback((id: string, updates: Partial<AdminPayment>) => {
-    setPayments((prev) => prev.map((p) => (p.id === id ? { ...p, ...updates } : p)));
-  }, []);
-  const deletePayment = useCallback((id: string) => {
-    setPayments((prev) => prev.filter((p) => p.id !== id));
-  }, []);
-
   // ----- CRUD: Pages -----
   const addPage = useCallback((page: Omit<AdminPage, 'id'>) => {
     setPages((prev) => [{ ...page, id: generateId() }, ...prev]);
@@ -930,14 +913,13 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     addContactMessage, updateContactMessage, deleteContactMessage,
     addNotification, updateNotification, deleteNotification,
     addMedia, updateMedia, deleteMedia,
-    addPayment, updatePayment, deletePayment,
     addPage, updatePage, deletePage,
     updateWebsiteSettings, updateBranding, updateSecuritySettings,
     updateBackupSettings, updateEmailSettings, updateSEOSettings, updateIntegrations,
     globalAdminSearch, refreshData: loadData,
   }), [
     members, plans, applications, experiences, experienceRequests,
-    conversations, contactMessages, notifications, media, payments, pages,
+    conversations, contactMessages, notifications, media, pages,
     emailTemplates,
     stats, websiteSettings, branding, securitySettings, backupSettings,
     emailSettings, seoSettings, integrations, loading,
@@ -949,7 +931,6 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     addContactMessage, updateContactMessage, deleteContactMessage,
     addNotification, updateNotification, deleteNotification,
     addMedia, updateMedia, deleteMedia,
-    addPayment, updatePayment, deletePayment,
     addPage, updatePage, deletePage,
     updateWebsiteSettings, updateBranding, updateSecuritySettings,
     updateBackupSettings, updateEmailSettings, updateSEOSettings, updateIntegrations,

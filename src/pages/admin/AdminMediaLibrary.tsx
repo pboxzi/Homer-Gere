@@ -510,61 +510,101 @@ export const AdminMediaLibrary: React.FC<Props> = ({ activeSection }) => {
           })}
         </div>
       ) : (
-        /* List view */
-        <div className="rounded-xl border border-[#E8E5DF]/60 overflow-hidden">
-          <div className="bg-[#F3F1ED]/60 px-4 py-2 grid grid-cols-12 gap-3 text-[10px] font-medium text-[#57534E] uppercase tracking-wider">
-            <div className="col-span-1" />
-            <div className="col-span-4">File</div>
-            <div className="col-span-2">Section</div>
-            <div className="col-span-1">Type</div>
-            <div className="col-span-1">Size</div>
-            <div className="col-span-1">Status</div>
-            <div className="col-span-2 text-right">Actions</div>
-          </div>
-          {filtered.map((item) => (
-            <div key={item.id} className="px-4 py-2.5 grid grid-cols-12 gap-3 items-center border-t border-[#E8E5DF]/40 hover:bg-[#F3F1ED]/20">
-              <div className="col-span-1">
-                <button onClick={() => toggleSelect(item.id)} className="cursor-pointer">
-                  {selectedIds.has(item.id) ? <CheckSquare className="w-3.5 h-3.5 text-[#A6852F]" /> : <Square className="w-3.5 h-3.5 text-[#57534E]/50" />}
-                </button>
-              </div>
-              <div className="col-span-4 flex items-center gap-2 min-w-0">
-                {item.file_type === 'image' ? (
-                  <img src={item.public_url} alt="" referrerPolicy="no-referrer" className="w-8 h-8 rounded object-cover shrink-0" loading="lazy" />
-                ) : (
-                  <div className="w-8 h-8 rounded bg-[#F3F1ED] flex items-center justify-center shrink-0">
-                    {item.file_type === 'video' ? <Film className="w-4 h-4 text-[#8B5CF6]/40" /> : <FileText className="w-4 h-4 text-[#3B82F6]/40" />}
-                  </div>
-                )}
-                <span className="text-xs text-[#1C1917] truncate">{item.filename}</span>
-              </div>
-              <div className="col-span-2 text-xs text-[#57534E]">{item.section || '—'}</div>
-              <div className="col-span-1 text-xs text-[#57534E] capitalize">{item.file_type}</div>
-              <div className="col-span-1 text-xs text-[#57534E]">{formatSize(item.file_size)}</div>
-              <div className="col-span-1">
-                {item.status === 'broken' ? (
-                  <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-[#DC2626]/10 text-[#DC2626]">Broken</span>
-                ) : (
-                  <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-[#16A34A]/10 text-[#16A34A]">Active</span>
-                )}
-              </div>
-              <div className="col-span-2 flex items-center justify-end gap-1">
-                <button onClick={() => setPreviewItem(item)} className="p-1 rounded hover:bg-[#F3F1ED] cursor-pointer" title="Preview">
-                  <Eye className="w-3 h-3 text-[#57534E]" />
-                </button>
-                <button onClick={() => handleCopyUrl(item.public_url, item.id)} className="p-1 rounded hover:bg-[#F3F1ED] cursor-pointer" title="Copy URL">
-                  {copied === item.id ? <Check className="w-3 h-3 text-[#16A34A]" /> : <Copy className="w-3 h-3 text-[#57534E]" />}
-                </button>
-                <button onClick={() => { setReplaceItem(item); setReplaceFile(null); }} className="p-1 rounded hover:bg-[#F3F1ED] cursor-pointer" title="Replace">
-                  <Replace className="w-3 h-3 text-[#A6852F]" />
-                </button>
-                <button onClick={() => setDeleteConfirm(item.id)} className="p-1 rounded hover:bg-[#DC2626]/5 cursor-pointer" title="Delete">
-                  <Trash2 className="w-3 h-3 text-[#DC2626]" />
-                </button>
-              </div>
+        <>
+          {/* Desktop list view */}
+          <div className="hidden md:block rounded-xl border border-[#E8E5DF]/60 overflow-hidden">
+            <div className="bg-[#F3F1ED]/60 px-4 py-2 grid grid-cols-12 gap-3 text-[10px] font-medium text-[#57534E] uppercase tracking-wider">
+              <div className="col-span-1" />
+              <div className="col-span-4">File</div>
+              <div className="col-span-2">Section</div>
+              <div className="col-span-1">Type</div>
+              <div className="col-span-1">Size</div>
+              <div className="col-span-1">Status</div>
+              <div className="col-span-2 text-right">Actions</div>
             </div>
-          ))}
-        </div>
+            {filtered.map((item) => (
+              <div key={item.id} className="px-4 py-2.5 grid grid-cols-12 gap-3 items-center border-t border-[#E8E5DF]/40 hover:bg-[#F3F1ED]/20">
+                <div className="col-span-1">
+                  <button onClick={() => toggleSelect(item.id)} className="cursor-pointer">
+                    {selectedIds.has(item.id) ? <CheckSquare className="w-3.5 h-3.5 text-[#A6852F]" /> : <Square className="w-3.5 h-3.5 text-[#57534E]/50" />}
+                  </button>
+                </div>
+                <div className="col-span-4 flex items-center gap-2 min-w-0">
+                  {item.file_type === 'image' ? (
+                    <img src={item.public_url} alt="" referrerPolicy="no-referrer" className="w-8 h-8 rounded object-cover shrink-0" loading="lazy" />
+                  ) : (
+                    <div className="w-8 h-8 rounded bg-[#F3F1ED] flex items-center justify-center shrink-0">
+                      {item.file_type === 'video' ? <Film className="w-4 h-4 text-[#8B5CF6]/40" /> : <FileText className="w-4 h-4 text-[#3B82F6]/40" />}
+                    </div>
+                  )}
+                  <span className="text-xs text-[#1C1917] truncate">{item.filename}</span>
+                </div>
+                <div className="col-span-2 text-xs text-[#57534E]">{item.section || '—'}</div>
+                <div className="col-span-1 text-xs text-[#57534E] capitalize">{item.file_type}</div>
+                <div className="col-span-1 text-xs text-[#57534E]">{formatSize(item.file_size)}</div>
+                <div className="col-span-1">
+                  {item.status === 'broken' ? (
+                    <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-[#DC2626]/10 text-[#DC2626]">Broken</span>
+                  ) : (
+                    <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-[#16A34A]/10 text-[#16A34A]">Active</span>
+                  )}
+                </div>
+                <div className="col-span-2 flex items-center justify-end gap-1">
+                  <button onClick={() => setPreviewItem(item)} className="p-1 rounded hover:bg-[#F3F1ED] cursor-pointer" title="Preview">
+                    <Eye className="w-3 h-3 text-[#57534E]" />
+                  </button>
+                  <button onClick={() => handleCopyUrl(item.public_url, item.id)} className="p-1 rounded hover:bg-[#F3F1ED] cursor-pointer" title="Copy URL">
+                    {copied === item.id ? <Check className="w-3 h-3 text-[#16A34A]" /> : <Copy className="w-3 h-3 text-[#57534E]" />}
+                  </button>
+                  <button onClick={() => { setReplaceItem(item); setReplaceFile(null); }} className="p-1 rounded hover:bg-[#F3F1ED] cursor-pointer" title="Replace">
+                    <Replace className="w-3 h-3 text-[#A6852F]" />
+                  </button>
+                  <button onClick={() => setDeleteConfirm(item.id)} className="p-1 rounded hover:bg-[#DC2626]/5 cursor-pointer" title="Delete">
+                    <Trash2 className="w-3 h-3 text-[#DC2626]" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Mobile cards */}
+          <div className="md:hidden space-y-3">
+            {filtered.map((item) => (
+              <div key={item.id} className="bg-white rounded-xl border border-[#E8E5DF]/60 p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <button onClick={() => toggleSelect(item.id)} className="shrink-0 cursor-pointer">
+                      {selectedIds.has(item.id) ? <CheckSquare className="w-4 h-4 text-[#A6852F]" /> : <Square className="w-4 h-4 text-[#57534E]/50" />}
+                    </button>
+                    <span className="text-sm font-medium text-[#1C1917] truncate">{item.filename}</span>
+                  </div>
+                  {item.status === 'broken' ? (
+                    <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-[#DC2626]/10 text-[#DC2626] shrink-0 ml-2">Broken</span>
+                  ) : (
+                    <span className="px-1.5 py-0.5 rounded text-[9px] font-medium bg-[#16A34A]/10 text-[#16A34A] shrink-0 ml-2">Active</span>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-[#57534E]">{formatSize(item.file_size)} · {item.file_type}{item.section ? ` · ${item.section}` : ''}</p>
+                </div>
+                <div className="flex items-center gap-2 mt-3">
+                  <button onClick={() => setPreviewItem(item)} className="flex-1 min-h-[44px] rounded-lg bg-[#F3F1ED] text-[#57534E] text-xs font-medium hover:bg-[#E8E5DF] transition-colors cursor-pointer flex items-center justify-center gap-1">
+                    <Eye className="w-3 h-3" /> Preview
+                  </button>
+                  <button onClick={() => handleCopyUrl(item.public_url, item.id)} className="flex-1 min-h-[44px] rounded-lg bg-[#F3F1ED] text-[#57534E] text-xs font-medium hover:bg-[#E8E5DF] transition-colors cursor-pointer flex items-center justify-center gap-1">
+                    {copied === item.id ? <><Check className="w-3 h-3" /> Copied!</> : <><Copy className="w-3 h-3" /> Copy URL</>}
+                  </button>
+                  <button onClick={() => { setReplaceItem(item); setReplaceFile(null); }} className="min-h-[44px] min-w-[44px] rounded-lg bg-[#A6852F]/10 text-[#A6852F] text-xs font-medium hover:bg-[#A6852F]/20 transition-colors cursor-pointer flex items-center justify-center">
+                    <Replace className="w-3 h-3" />
+                  </button>
+                  <button onClick={() => setDeleteConfirm(item.id)} className="min-h-[44px] min-w-[44px] rounded-lg bg-[#DC2626]/10 text-[#DC2626] text-xs font-medium hover:bg-[#DC2626]/20 transition-colors cursor-pointer flex items-center justify-center">
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* Preview Modal — modern full-screen lightbox */}

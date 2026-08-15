@@ -48,7 +48,7 @@ export const DashboardBookmarks: React.FC = () => {
                 <p className="text-sm font-medium text-[#1C1917] truncate">{b.title}</p>
                 <p className="text-xs text-[#57534E] mt-0.5 line-clamp-1">{b.excerpt}</p>
               </div>
-              <button onClick={() => toggleBookmark(b)} className="w-8 h-8 rounded-lg flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626]/15 transition-colors cursor-pointer shrink-0">
+              <button onClick={() => toggleBookmark(b)} className="w-10 h-10 rounded-lg flex items-center justify-center text-[#DC2626] hover:bg-[#DC2626]/15 transition-colors cursor-pointer shrink-0">
                 <Trash2 className="w-4 h-4" />
               </button>
             </motion.div>

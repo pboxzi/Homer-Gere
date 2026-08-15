@@ -109,7 +109,7 @@ export const DashboardProfile: React.FC = () => {
               )}
             </div>
             <input type="file" accept="image/*" onChange={handleAvatarUpload} className="hidden" id="avatar-upload" />
-            <label htmlFor="avatar-upload" className="absolute -bottom-1 -right-1 w-7 h-7 rounded-lg bg-[#1C1917] text-white flex items-center justify-center hover:bg-[#292524] transition-colors cursor-pointer shadow-md shadow-[#A6852F]/22">
+            <label htmlFor="avatar-upload" className="absolute -bottom-1 -right-1 w-9 h-9 rounded-lg bg-[#1C1917] text-white flex items-center justify-center hover:bg-[#292524] transition-colors cursor-pointer shadow-md shadow-[#A6852F]/22">
               <Camera className="w-3.5 h-3.5" />
             </label>
           </div>

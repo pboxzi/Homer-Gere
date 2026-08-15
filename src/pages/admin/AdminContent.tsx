@@ -309,62 +309,105 @@ function JourneyCMS() {
           ))}
         </div>
       ) : (
-        <div className="rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden">
-          <div className="grid grid-cols-[1fr_80px_80px_80px_100px] gap-4 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
-            <span>Title</span><span>Year</span><span>Status</span><span>Highlight</span><span>Actions</span>
-          </div>
-          {paginated.length === 0 ? (
-            <div className="px-5 py-10 text-center text-sm text-[#57534E]">No items found.</div>
-          ) : paginated.map((item) => (
-            <div key={item.id}>
-              {editingId === item.id ? (
-                <div className="px-5 py-3 border-b border-[#E8E5DF]/20 bg-[#F3F1ED]/20 space-y-2">
-                  <div className="grid grid-cols-[1fr_80px_80px] gap-3 items-center">
-                    <input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
-                    <input value={editForm.year} type="number" onChange={(e) => setEditForm({ ...editForm, year: parseInt(e.target.value) || 2024 })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
-                    <select value={editForm.status} onChange={(e) => setEditForm({ ...editForm, status: e.target.value })} className="px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm">
-                      <option value="published">Published</option><option value="draft">Draft</option><option value="archived">Archived</option>
-                    </select>
-                  </div>
-                  <textarea value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} rows={2} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm resize-none" />
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => handleSaveEdit(item.id)} className="px-3 py-1.5 rounded-lg bg-[#A6852F] text-white text-[10px] font-medium cursor-pointer">Save</button>
-                    <button onClick={() => setEditingId(null)} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 text-[10px] font-medium text-[#57534E] cursor-pointer">Cancel</button>
-                  </div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-[1fr_80px_80px_80px_100px] gap-4 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
-                  <div className="flex items-center gap-2"><FileText className="w-4 h-4 text-[#57534E] shrink-0" /><span className="text-sm text-[#1C1917] truncate">{item.title}</span></div>
-                  <span className="text-xs text-[#57534E]">{item.year}</span>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium inline-flex items-center gap-1 w-fit ${statusBadgeClass(item.status)}`}>{statusIcon(item.status)}{item.status}</span>
-                  <span className="text-xs text-[#57534E]">{item.highlight ? 'Yes' : 'No'}</span>
-                  <div className="flex items-center gap-1">
-                    <button onClick={() => { setEditingId(item.id); setEditForm({ title: item.title, description: item.description, year: item.year, highlight: item.highlight, status: item.status }); }}
-                      className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors cursor-pointer"><Edit className="w-3.5 h-3.5" /></button>
-                    {deleteConfirmId === item.id ? (
-                      <div className="flex items-center gap-1">
-                        <button onClick={() => handleSoftDelete(item.id)} className="px-2 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm</button>
-                        <button onClick={() => setDeleteConfirmId(null)} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">No</button>
-                      </div>
-                    ) : (
-                      <button onClick={() => setDeleteConfirmId(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-                    )}
-                  </div>
-                </div>
-              )}
+        <>
+          {/* Desktop table */}
+          <div className="hidden md:block rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden">
+            <div className="grid grid-cols-[1fr_80px_80px_80px_100px] gap-4 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
+              <span>Title</span><span>Year</span><span>Status</span><span>Highlight</span><span>Actions</span>
             </div>
-          ))}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between px-5 py-3 border-t border-[#E8E5DF]/40">
-              <span className="text-xs text-[#57534E]">{filtered.length} items</span>
-              <div className="flex items-center gap-2">
-                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
-                <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
-                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+            {paginated.length === 0 ? (
+              <div className="px-5 py-10 text-center text-sm text-[#57534E]">No items found.</div>
+            ) : paginated.map((item) => (
+              <div key={item.id}>
+                {editingId === item.id ? (
+                  <div className="px-5 py-3 border-b border-[#E8E5DF]/20 bg-[#F3F1ED]/20 space-y-2">
+                    <div className="grid grid-cols-[1fr_80px_80px] gap-3 items-center">
+                      <input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
+                      <input value={editForm.year} type="number" onChange={(e) => setEditForm({ ...editForm, year: parseInt(e.target.value) || 2024 })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
+                      <select value={editForm.status} onChange={(e) => setEditForm({ ...editForm, status: e.target.value })} className="px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm">
+                        <option value="published">Published</option><option value="draft">Draft</option><option value="archived">Archived</option>
+                      </select>
+                    </div>
+                    <textarea value={editForm.description} onChange={(e) => setEditForm({ ...editForm, description: e.target.value })} rows={2} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm resize-none" />
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => handleSaveEdit(item.id)} className="px-3 py-1.5 rounded-lg bg-[#A6852F] text-white text-[10px] font-medium cursor-pointer">Save</button>
+                      <button onClick={() => setEditingId(null)} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 text-[10px] font-medium text-[#57534E] cursor-pointer">Cancel</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-[1fr_80px_80px_80px_100px] gap-4 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
+                    <div className="flex items-center gap-2"><FileText className="w-4 h-4 text-[#57534E] shrink-0" /><span className="text-sm text-[#1C1917] truncate">{item.title}</span></div>
+                    <span className="text-xs text-[#57534E]">{item.year}</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium inline-flex items-center gap-1 w-fit ${statusBadgeClass(item.status)}`}>{statusIcon(item.status)}{item.status}</span>
+                    <span className="text-xs text-[#57534E]">{item.highlight ? 'Yes' : 'No'}</span>
+                    <div className="flex items-center gap-1">
+                      <button onClick={() => { setEditingId(item.id); setEditForm({ title: item.title, description: item.description, year: item.year, highlight: item.highlight, status: item.status }); }}
+                        className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] transition-colors cursor-pointer"><Edit className="w-3.5 h-3.5" /></button>
+                      {deleteConfirmId === item.id ? (
+                        <div className="flex items-center gap-1">
+                          <button onClick={() => handleSoftDelete(item.id)} className="px-2 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm</button>
+                          <button onClick={() => setDeleteConfirmId(null)} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">No</button>
+                        </div>
+                      ) : (
+                        <button onClick={() => setDeleteConfirmId(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] transition-colors cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-          )}
-        </div>
+            ))}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between px-5 py-3 border-t border-[#E8E5DF]/40">
+                <span className="text-xs text-[#57534E]">{filtered.length} items</span>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
+                  <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
+                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile cards */}
+          <div className="md:hidden space-y-3">
+            {paginated.length === 0 ? (
+              <div className="text-center py-10 text-sm text-[#57534E]">No items found.</div>
+            ) : paginated.map((item) => (
+              <div key={item.id} className="bg-white rounded-xl border border-[#E8E5DF]/60 p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-[#1C1917]">{item.title}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${statusBadgeClass(item.status)}`}>{item.status}</span>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-[#57534E]">{item.year} · Highlight: {item.highlight ? 'Yes' : 'No'}</p>
+                  {item.description && <p className="text-xs text-[#57534E] line-clamp-2">{item.description}</p>}
+                </div>
+                <div className="flex items-center gap-2 mt-3">
+                  <button onClick={() => { setEditingId(item.id); setEditForm({ title: item.title, description: item.description, year: item.year, highlight: item.highlight, status: item.status }); }}
+                    className="flex-1 min-h-[44px] rounded-lg bg-[#F3F1ED] text-[#57534E] text-xs font-medium hover:bg-[#E8E5DF] transition-colors cursor-pointer flex items-center justify-center gap-1">Edit</button>
+                  <button onClick={() => setDeleteConfirmId(item.id)}
+                    className="flex-1 min-h-[44px] rounded-lg bg-[#DC2626]/10 text-[#DC2626] text-xs font-medium hover:bg-[#DC2626]/20 transition-colors cursor-pointer flex items-center justify-center gap-1">Delete</button>
+                </div>
+                {deleteConfirmId === item.id && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <button onClick={() => handleSoftDelete(item.id)} className="flex-1 min-h-[44px] rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm Delete</button>
+                    <button onClick={() => setDeleteConfirmId(null)} className="flex-1 min-h-[44px] rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">Cancel</button>
+                  </div>
+                )}
+              </div>
+            ))}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between pt-2">
+                <span className="text-xs text-[#57534E]">{filtered.length} items</span>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
+                  <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
+                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+                </div>
+              </div>
+            )}
+          </div>
+        </>
       )}
     </div>
   );
@@ -502,65 +545,107 @@ function ProjectsCMS() {
         )}
       </AnimatePresence>
 
-      <div className="rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden">
-        <div className="grid grid-cols-[1fr_60px_80px_80px_80px_80px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
-          <span>Title</span><span>Year</span><span>Type</span><span>Status</span><span>Director</span><span>Actions</span>
-        </div>
-        {paginated.length === 0 ? (
-          <div className="px-5 py-10 text-center text-sm text-[#57534E]">No projects found.</div>
-        ) : paginated.map((item) => (
-          <div key={item.id}>
-            {editingId === item.id ? (
-              <div className="px-5 py-3 border-b border-[#E8E5DF]/20 bg-[#F3F1ED]/20 space-y-2">
-                <div className="grid grid-cols-[1fr_60px_80px_80px] gap-3 items-center">
-                  <input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
-                  <input value={editForm.year} type="number" onChange={(e) => setEditForm({ ...editForm, year: parseInt(e.target.value) || 2024 })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
-                  <select value={editForm.type} onChange={(e) => setEditForm({ ...editForm, type: e.target.value })} className="px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm">
-                    <option value="film">Film</option><option value="series">Series</option><option value="short">Short</option><option value="documentary">Documentary</option>
-                  </select>
-                  <select value={editForm.status} onChange={(e) => setEditForm({ ...editForm, status: e.target.value })} className="px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm">
-                    <option value="announced">Announced</option><option value="in_production">In Production</option><option value="post_production">Post Production</option><option value="released">Released</option>
-                  </select>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => handleSaveEdit(item.id)} className="px-3 py-1.5 rounded-lg bg-[#A6852F] text-white text-[10px] font-medium cursor-pointer">Save</button>
-                  <button onClick={() => setEditingId(null)} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 text-[10px] font-medium text-[#57534E] cursor-pointer">Cancel</button>
-                </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-[1fr_60px_80px_80px_80px_80px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
-                <div className="flex items-center gap-2"><FileText className="w-4 h-4 text-[#57534E] shrink-0" /><span className="text-sm text-[#1C1917] truncate">{item.title}</span></div>
-                <span className="text-xs text-[#57534E]">{item.year}</span>
-                <span className="text-xs text-[#57534E]">{item.type}</span>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium w-fit ${statusBadgeClass(item.status === 'released' ? 'published' : item.status === 'announced' ? 'draft' : 'scheduled')}`}>{item.status}</span>
-                <span className="text-xs text-[#57534E] truncate">{item.director || '—'}</span>
-                <div className="flex items-center gap-1">
-                  <button onClick={() => { setEditingId(item.id); setEditForm({ title: item.title, slug: item.slug, year: item.year, type: item.type, status: item.status, tagline: item.tagline || '', synopsis: item.synopsis || '', genre: item.genre || '', director: item.director || '' }); }}
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] cursor-pointer"><Edit className="w-3.5 h-3.5" /></button>
-                  {deleteConfirmId === item.id ? (
-                    <div className="flex items-center gap-1">
-                      <button onClick={() => handleSoftDelete(item.id)} className="px-2 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm</button>
-                      <button onClick={() => setDeleteConfirmId(null)} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">No</button>
-                    </div>
-                  ) : (
-                    <button onClick={() => setDeleteConfirmId(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-                  )}
-                </div>
-              </div>
-            )}
+      <>
+        {/* Desktop table */}
+        <div className="hidden md:block rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden">
+          <div className="grid grid-cols-[1fr_60px_80px_80px_80px_80px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
+            <span>Title</span><span>Year</span><span>Type</span><span>Status</span><span>Director</span><span>Actions</span>
           </div>
-        ))}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between px-5 py-3 border-t border-[#E8E5DF]/40">
-            <span className="text-xs text-[#57534E]">{filtered.length} items</span>
-            <div className="flex items-center gap-2">
-              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
-              <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
-              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+          {paginated.length === 0 ? (
+            <div className="px-5 py-10 text-center text-sm text-[#57534E]">No projects found.</div>
+          ) : paginated.map((item) => (
+            <div key={item.id}>
+              {editingId === item.id ? (
+                <div className="px-5 py-3 border-b border-[#E8E5DF]/20 bg-[#F3F1ED]/20 space-y-2">
+                  <div className="grid grid-cols-[1fr_60px_80px_80px] gap-3 items-center">
+                    <input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
+                    <input value={editForm.year} type="number" onChange={(e) => setEditForm({ ...editForm, year: parseInt(e.target.value) || 2024 })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
+                    <select value={editForm.type} onChange={(e) => setEditForm({ ...editForm, type: e.target.value })} className="px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm">
+                      <option value="film">Film</option><option value="series">Series</option><option value="short">Short</option><option value="documentary">Documentary</option>
+                    </select>
+                    <select value={editForm.status} onChange={(e) => setEditForm({ ...editForm, status: e.target.value })} className="px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm">
+                      <option value="announced">Announced</option><option value="in_production">In Production</option><option value="post_production">Post Production</option><option value="released">Released</option>
+                    </select>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => handleSaveEdit(item.id)} className="px-3 py-1.5 rounded-lg bg-[#A6852F] text-white text-[10px] font-medium cursor-pointer">Save</button>
+                    <button onClick={() => setEditingId(null)} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 text-[10px] font-medium text-[#57534E] cursor-pointer">Cancel</button>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-[1fr_60px_80px_80px_80px_80px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
+                  <div className="flex items-center gap-2"><FileText className="w-4 h-4 text-[#57534E] shrink-0" /><span className="text-sm text-[#1C1917] truncate">{item.title}</span></div>
+                  <span className="text-xs text-[#57534E]">{item.year}</span>
+                  <span className="text-xs text-[#57534E]">{item.type}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium w-fit ${statusBadgeClass(item.status === 'released' ? 'published' : item.status === 'announced' ? 'draft' : 'scheduled')}`}>{item.status}</span>
+                  <span className="text-xs text-[#57534E] truncate">{item.director || '—'}</span>
+                  <div className="flex items-center gap-1">
+                    <button onClick={() => { setEditingId(item.id); setEditForm({ title: item.title, slug: item.slug, year: item.year, type: item.type, status: item.status, tagline: item.tagline || '', synopsis: item.synopsis || '', genre: item.genre || '', director: item.director || '' }); }}
+                      className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] cursor-pointer"><Edit className="w-3.5 h-3.5" /></button>
+                    {deleteConfirmId === item.id ? (
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => handleSoftDelete(item.id)} className="px-2 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm</button>
+                        <button onClick={() => setDeleteConfirmId(null)} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">No</button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setDeleteConfirmId(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        )}
-      </div>
+          ))}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-5 py-3 border-t border-[#E8E5DF]/40">
+              <span className="text-xs text-[#57534E]">{filtered.length} items</span>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
+                <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
+                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile cards */}
+        <div className="md:hidden space-y-3">
+          {paginated.length === 0 ? (
+            <div className="text-center py-10 text-sm text-[#57534E]">No projects found.</div>
+          ) : paginated.map((item) => (
+            <div key={item.id} className="bg-white rounded-xl border border-[#E8E5DF]/60 p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-[#1C1917]">{item.title}</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${statusBadgeClass(item.status === 'released' ? 'published' : item.status === 'announced' ? 'draft' : 'scheduled')}`}>{item.status}</span>
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs text-[#57534E]">{item.year} · {item.type}{item.director ? ` · Dir: ${item.director}` : ''}</p>
+              </div>
+              <div className="flex items-center gap-2 mt-3">
+                <button onClick={() => { setEditingId(item.id); setEditForm({ title: item.title, slug: item.slug, year: item.year, type: item.type, status: item.status, tagline: item.tagline || '', synopsis: item.synopsis || '', genre: item.genre || '', director: item.director || '' }); }}
+                  className="flex-1 min-h-[44px] rounded-lg bg-[#F3F1ED] text-[#57534E] text-xs font-medium hover:bg-[#E8E5DF] transition-colors cursor-pointer flex items-center justify-center gap-1">Edit</button>
+                <button onClick={() => setDeleteConfirmId(item.id)}
+                  className="flex-1 min-h-[44px] rounded-lg bg-[#DC2626]/10 text-[#DC2626] text-xs font-medium hover:bg-[#DC2626]/20 transition-colors cursor-pointer flex items-center justify-center gap-1">Delete</button>
+              </div>
+              {deleteConfirmId === item.id && (
+                <div className="flex items-center gap-2 mt-2">
+                  <button onClick={() => handleSoftDelete(item.id)} className="flex-1 min-h-[44px] rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm Delete</button>
+                  <button onClick={() => setDeleteConfirmId(null)} className="flex-1 min-h-[44px] rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">Cancel</button>
+                </div>
+              )}
+            </div>
+          ))}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between pt-2">
+              <span className="text-xs text-[#57534E]">{filtered.length} items</span>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
+                <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
+                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+              </div>
+            </div>
+          )}
+        </div>
+      </>
     </div>
   );
 }
@@ -696,66 +781,108 @@ function GalleryCMS() {
         )}
       </AnimatePresence>
 
-      <div className="rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden">
-        <div className="grid grid-cols-[80px_1fr_100px_80px_80px_80px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
-          <span>Image</span><span>Alt</span><span>Category</span><span>Photographer</span><span>Status</span><span>Actions</span>
-        </div>
-        {paginated.length === 0 ? (
-          <div className="px-5 py-10 text-center text-sm text-[#57534E]">No photos found.</div>
-        ) : paginated.map((photo) => (
-          <div key={photo.id}>
-            {editingId === photo.id ? (
-              <div className="px-5 py-3 border-b border-[#E8E5DF]/20 bg-[#F3F1ED]/20 space-y-2">
-                <div className="grid grid-cols-[1fr_100px_80px] gap-3 items-center">
-                  <input value={editForm.alt} onChange={(e) => setEditForm({ ...editForm, alt: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
-                  <select value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })} className="px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm">
-                    <option value="premiere">Premiere</option><option value="behind-the-scenes">BTS</option><option value="portraits">Portraits</option>
-                    <option value="events">Events</option><option value="on-set">On Set</option><option value="press">Press</option><option value="personal">Personal</option><option value="editorial">Editorial</option>
-                  </select>
-                  <input value={editForm.photographer} onChange={(e) => setEditForm({ ...editForm, photographer: e.target.value })} placeholder="Photographer" className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
-                </div>
-                <input value={editForm.caption} onChange={(e) => setEditForm({ ...editForm, caption: e.target.value })} placeholder="Caption" className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
-                <div className="flex items-center gap-2">
-                  <button onClick={() => handleSaveEdit(photo.id)} className="px-3 py-1.5 rounded-lg bg-[#A6852F] text-white text-[10px] font-medium cursor-pointer">Save</button>
-                  <button onClick={() => setEditingId(null)} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 text-[10px] font-medium text-[#57534E] cursor-pointer">Cancel</button>
-                </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-[80px_1fr_100px_80px_80px_80px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
-                <div className="w-12 h-12 rounded-lg bg-[#F3F1ED] overflow-hidden">
-                  {photo.src ? <img src={photo.src} alt={photo.alt} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Upload className="w-4 h-4 text-[#57534E]" /></div>}
-                </div>
-                <span className="text-sm text-[#1C1917] truncate">{photo.alt}</span>
-                <span className="text-xs text-[#57534E]">{photo.category}</span>
-                <span className="text-xs text-[#57534E] truncate">{photo.photographer || '—'}</span>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium w-fit ${statusBadgeClass(photo.status)}`}>{photo.status}</span>
-                <div className="flex items-center gap-1">
-                  <button onClick={() => { setEditingId(photo.id); setEditForm({ src: photo.src, alt: photo.alt, caption: photo.caption || '', category: photo.category, photographer: photo.photographer || '', featured: photo.featured }); }}
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] cursor-pointer"><Edit className="w-3.5 h-3.5" /></button>
-                  {deleteConfirmId === photo.id ? (
-                    <div className="flex items-center gap-1">
-                      <button onClick={() => handleSoftDelete(photo.id)} className="px-2 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm</button>
-                      <button onClick={() => setDeleteConfirmId(null)} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">No</button>
-                    </div>
-                  ) : (
-                    <button onClick={() => setDeleteConfirmId(photo.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-                  )}
-                </div>
-              </div>
-            )}
+      <>
+        {/* Desktop table */}
+        <div className="hidden md:block rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden">
+          <div className="grid grid-cols-[80px_1fr_100px_80px_80px_80px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
+            <span>Image</span><span>Alt</span><span>Category</span><span>Photographer</span><span>Status</span><span>Actions</span>
           </div>
-        ))}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between px-5 py-3 border-t border-[#E8E5DF]/40">
-            <span className="text-xs text-[#57534E]">{filtered.length} items</span>
-            <div className="flex items-center gap-2">
-              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
-              <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
-              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+          {paginated.length === 0 ? (
+            <div className="px-5 py-10 text-center text-sm text-[#57534E]">No photos found.</div>
+          ) : paginated.map((photo) => (
+            <div key={photo.id}>
+              {editingId === photo.id ? (
+                <div className="px-5 py-3 border-b border-[#E8E5DF]/20 bg-[#F3F1ED]/20 space-y-2">
+                  <div className="grid grid-cols-[1fr_100px_80px] gap-3 items-center">
+                    <input value={editForm.alt} onChange={(e) => setEditForm({ ...editForm, alt: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
+                    <select value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })} className="px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm">
+                      <option value="premiere">Premiere</option><option value="behind-the-scenes">BTS</option><option value="portraits">Portraits</option>
+                      <option value="events">Events</option><option value="on-set">On Set</option><option value="press">Press</option><option value="personal">Personal</option><option value="editorial">Editorial</option>
+                    </select>
+                    <input value={editForm.photographer} onChange={(e) => setEditForm({ ...editForm, photographer: e.target.value })} placeholder="Photographer" className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
+                  </div>
+                  <input value={editForm.caption} onChange={(e) => setEditForm({ ...editForm, caption: e.target.value })} placeholder="Caption" className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => handleSaveEdit(photo.id)} className="px-3 py-1.5 rounded-lg bg-[#A6852F] text-white text-[10px] font-medium cursor-pointer">Save</button>
+                    <button onClick={() => setEditingId(null)} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 text-[10px] font-medium text-[#57534E] cursor-pointer">Cancel</button>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-[80px_1fr_100px_80px_80px_80px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
+                  <div className="w-12 h-12 rounded-lg bg-[#F3F1ED] overflow-hidden">
+                    {photo.src ? <img src={photo.src} alt={photo.alt} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Upload className="w-4 h-4 text-[#57534E]" /></div>}
+                  </div>
+                  <span className="text-sm text-[#1C1917] truncate">{photo.alt}</span>
+                  <span className="text-xs text-[#57534E]">{photo.category}</span>
+                  <span className="text-xs text-[#57534E] truncate">{photo.photographer || '—'}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium w-fit ${statusBadgeClass(photo.status)}`}>{photo.status}</span>
+                  <div className="flex items-center gap-1">
+                    <button onClick={() => { setEditingId(photo.id); setEditForm({ src: photo.src, alt: photo.alt, caption: photo.caption || '', category: photo.category, photographer: photo.photographer || '', featured: photo.featured }); }}
+                      className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] cursor-pointer"><Edit className="w-3.5 h-3.5" /></button>
+                    {deleteConfirmId === photo.id ? (
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => handleSoftDelete(photo.id)} className="px-2 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm</button>
+                        <button onClick={() => setDeleteConfirmId(null)} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">No</button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setDeleteConfirmId(photo.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        )}
-      </div>
+          ))}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-5 py-3 border-t border-[#E8E5DF]/40">
+              <span className="text-xs text-[#57534E]">{filtered.length} items</span>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
+                <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
+                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile cards */}
+        <div className="md:hidden space-y-3">
+          {paginated.length === 0 ? (
+            <div className="text-center py-10 text-sm text-[#57534E]">No photos found.</div>
+          ) : paginated.map((photo) => (
+            <div key={photo.id} className="bg-white rounded-xl border border-[#E8E5DF]/60 p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-[#1C1917]">{photo.alt}</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${statusBadgeClass(photo.status)}`}>{photo.status}</span>
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs text-[#57534E]">{photo.category}{photo.photographer ? ` · ${photo.photographer}` : ''}</p>
+              </div>
+              <div className="flex items-center gap-2 mt-3">
+                <button onClick={() => { setEditingId(photo.id); setEditForm({ src: photo.src, alt: photo.alt, caption: photo.caption || '', category: photo.category, photographer: photo.photographer || '', featured: photo.featured }); }}
+                  className="flex-1 min-h-[44px] rounded-lg bg-[#F3F1ED] text-[#57534E] text-xs font-medium hover:bg-[#E8E5DF] transition-colors cursor-pointer flex items-center justify-center gap-1">Edit</button>
+                <button onClick={() => setDeleteConfirmId(photo.id)}
+                  className="flex-1 min-h-[44px] rounded-lg bg-[#DC2626]/10 text-[#DC2626] text-xs font-medium hover:bg-[#DC2626]/20 transition-colors cursor-pointer flex items-center justify-center gap-1">Delete</button>
+              </div>
+              {deleteConfirmId === photo.id && (
+                <div className="flex items-center gap-2 mt-2">
+                  <button onClick={() => handleSoftDelete(photo.id)} className="flex-1 min-h-[44px] rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm Delete</button>
+                  <button onClick={() => setDeleteConfirmId(null)} className="flex-1 min-h-[44px] rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">Cancel</button>
+                </div>
+              )}
+            </div>
+          ))}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between pt-2">
+              <span className="text-xs text-[#57534E]">{filtered.length} items</span>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
+                <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
+                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+              </div>
+            </div>
+          )}
+        </div>
+      </>
     </div>
   );
 }
@@ -908,59 +1035,101 @@ function MediaCMS() {
         )}
       </AnimatePresence>
 
-      <div className="rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden">
-        <div className="grid grid-cols-[1fr_1fr_80px_80px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
-          <span>{activeTab === 'videos' ? 'Title' : activeTab === 'podcasts' ? 'Episode' : 'Headline'}</span>
-          <span>{activeTab === 'videos' ? 'Category' : activeTab === 'podcasts' ? 'Show' : 'Publisher'}</span>
-          <span>Status</span><span>Actions</span>
-        </div>
-        {paginated.length === 0 ? (
-          <div className="px-5 py-10 text-center text-sm text-[#57534E]">No items found.</div>
-        ) : paginated.map((item: any) => (
-          <div key={item.id}>
-            {editingId === item.id ? (
-              <div className="px-5 py-3 border-b border-[#E8E5DF]/20 bg-[#F3F1ED]/20 space-y-2">
-                <div className="grid grid-cols-[1fr_1fr] gap-3">
-                  <input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
-                  <input value={editForm.url} onChange={(e) => setEditForm({ ...editForm, url: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
-                </div>
-                <div className="flex items-center gap-2">
-                  <button onClick={() => handleSaveEdit(item.id)} className="px-3 py-1.5 rounded-lg bg-[#A6852F] text-white text-[10px] font-medium cursor-pointer">Save</button>
-                  <button onClick={() => setEditingId(null)} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 text-[10px] font-medium text-[#57534E] cursor-pointer">Cancel</button>
-                </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-[1fr_1fr_80px_80px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
-                <span className="text-sm text-[#1C1917] truncate">{item.title || item.episode_title || item.headline}</span>
-                <span className="text-xs text-[#57534E] truncate">{item.category || item.show_name || item.publisher || '—'}</span>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium w-fit ${statusBadgeClass(item.status || 'published')}`}>{item.status || 'published'}</span>
-                <div className="flex items-center gap-1">
-                  <button onClick={() => { setEditingId(item.id); setEditForm({ title: item.title || item.episode_title || item.headline, url: item.url, description: item.description || item.summary || '', category: item.category || item.show_name || item.publisher || '', thumbnail: item.thumbnail || item.cover_art || item.image || '' }); }}
-                    className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] cursor-pointer"><Edit className="w-3.5 h-3.5" /></button>
-                  {deleteConfirmId === item.id ? (
-                    <div className="flex items-center gap-1">
-                      <button onClick={() => handleSoftDelete(item.id)} className="px-2 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm</button>
-                      <button onClick={() => setDeleteConfirmId(null)} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">No</button>
-                    </div>
-                  ) : (
-                    <button onClick={() => setDeleteConfirmId(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-                  )}
-                </div>
-              </div>
-            )}
+      <>
+        {/* Desktop table */}
+        <div className="hidden md:block rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden">
+          <div className="grid grid-cols-[1fr_1fr_80px_80px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
+            <span>{activeTab === 'videos' ? 'Title' : activeTab === 'podcasts' ? 'Episode' : 'Headline'}</span>
+            <span>{activeTab === 'videos' ? 'Category' : activeTab === 'podcasts' ? 'Show' : 'Publisher'}</span>
+            <span>Status</span><span>Actions</span>
           </div>
-        ))}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between px-5 py-3 border-t border-[#E8E5DF]/40">
-            <span className="text-xs text-[#57534E]">{filtered.length} items</span>
-            <div className="flex items-center gap-2">
-              <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
-              <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
-              <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+          {paginated.length === 0 ? (
+            <div className="px-5 py-10 text-center text-sm text-[#57534E]">No items found.</div>
+          ) : paginated.map((item: any) => (
+            <div key={item.id}>
+              {editingId === item.id ? (
+                <div className="px-5 py-3 border-b border-[#E8E5DF]/20 bg-[#F3F1ED]/20 space-y-2">
+                  <div className="grid grid-cols-[1fr_1fr] gap-3">
+                    <input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
+                    <input value={editForm.url} onChange={(e) => setEditForm({ ...editForm, url: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => handleSaveEdit(item.id)} className="px-3 py-1.5 rounded-lg bg-[#A6852F] text-white text-[10px] font-medium cursor-pointer">Save</button>
+                    <button onClick={() => setEditingId(null)} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 text-[10px] font-medium text-[#57534E] cursor-pointer">Cancel</button>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-[1fr_1fr_80px_80px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
+                  <span className="text-sm text-[#1C1917] truncate">{item.title || item.episode_title || item.headline}</span>
+                  <span className="text-xs text-[#57534E] truncate">{item.category || item.show_name || item.publisher || '—'}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium w-fit ${statusBadgeClass(item.status || 'published')}`}>{item.status || 'published'}</span>
+                  <div className="flex items-center gap-1">
+                    <button onClick={() => { setEditingId(item.id); setEditForm({ title: item.title || item.episode_title || item.headline, url: item.url, description: item.description || item.summary || '', category: item.category || item.show_name || item.publisher || '', thumbnail: item.thumbnail || item.cover_art || item.image || '' }); }}
+                      className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] cursor-pointer"><Edit className="w-3.5 h-3.5" /></button>
+                    {deleteConfirmId === item.id ? (
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => handleSoftDelete(item.id)} className="px-2 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm</button>
+                        <button onClick={() => setDeleteConfirmId(null)} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">No</button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setDeleteConfirmId(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        )}
-      </div>
+          ))}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-5 py-3 border-t border-[#E8E5DF]/40">
+              <span className="text-xs text-[#57534E]">{filtered.length} items</span>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
+                <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
+                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile cards */}
+        <div className="md:hidden space-y-3">
+          {paginated.length === 0 ? (
+            <div className="text-center py-10 text-sm text-[#57534E]">No items found.</div>
+          ) : paginated.map((item: any) => (
+            <div key={item.id} className="bg-white rounded-xl border border-[#E8E5DF]/60 p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-medium text-[#1C1917] truncate">{item.title || item.episode_title || item.headline}</span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0 ml-2 ${statusBadgeClass(item.status || 'published')}`}>{item.status || 'published'}</span>
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs text-[#57534E]">{item.category || item.show_name || item.publisher || '—'}</p>
+              </div>
+              <div className="flex items-center gap-2 mt-3">
+                <button onClick={() => { setEditingId(item.id); setEditForm({ title: item.title || item.episode_title || item.headline, url: item.url, description: item.description || item.summary || '', category: item.category || item.show_name || item.publisher || '', thumbnail: item.thumbnail || item.cover_art || item.image || '' }); }}
+                  className="flex-1 min-h-[44px] rounded-lg bg-[#F3F1ED] text-[#57534E] text-xs font-medium hover:bg-[#E8E5DF] transition-colors cursor-pointer flex items-center justify-center gap-1">Edit</button>
+                <button onClick={() => setDeleteConfirmId(item.id)}
+                  className="flex-1 min-h-[44px] rounded-lg bg-[#DC2626]/10 text-[#DC2626] text-xs font-medium hover:bg-[#DC2626]/20 transition-colors cursor-pointer flex items-center justify-center gap-1">Delete</button>
+              </div>
+              {deleteConfirmId === item.id && (
+                <div className="flex items-center gap-2 mt-2">
+                  <button onClick={() => handleSoftDelete(item.id)} className="flex-1 min-h-[44px] rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm Delete</button>
+                  <button onClick={() => setDeleteConfirmId(null)} className="flex-1 min-h-[44px] rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">Cancel</button>
+                </div>
+              )}
+            </div>
+          ))}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between pt-2">
+              <span className="text-xs text-[#57534E]">{filtered.length} items</span>
+              <div className="flex items-center gap-2">
+                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
+                <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
+                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+              </div>
+            </div>
+          )}
+        </div>
+      </>
     </div>
   );
 }
@@ -1137,64 +1306,106 @@ function JournalCMS() {
             ))}
         </div>
       ) : (
-        <div className="rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden">
-          <div className="grid grid-cols-[1fr_100px_100px_80px_80px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
-            <span>Title</span><span>Category</span><span>Status</span><span>Views</span><span>Actions</span>
+        <>
+          {/* Desktop table */}
+          <div className="hidden md:block rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden">
+            <div className="grid grid-cols-[1fr_100px_100px_80px_80px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
+              <span>Title</span><span>Category</span><span>Status</span><span>Views</span><span>Actions</span>
+            </div>
+            {paginated.length === 0 ? <div className="px-5 py-10 text-center text-sm text-[#57534E]">No articles found.</div> :
+              paginated.map((article) => (
+                <div key={article.id}>
+                  {editingId === article.id ? (
+                    <div className="px-5 py-3 border-b border-[#E8E5DF]/20 bg-[#F3F1ED]/20 space-y-2">
+                      <div className="grid grid-cols-[1fr_100px_80px] gap-3 items-center">
+                        <input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
+                        <select value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })} className="px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm">
+                          <option value="career-reflections">Career</option><option value="industry-insights">Industry</option><option value="personal-stories">Personal</option>
+                          <option value="behind-the-scenes">BTS</option><option value="advice">Advice</option><option value="announcements">Announcements</option>
+                        </select>
+                        <select value={editForm.status} onChange={(e) => setEditForm({ ...editForm, status: e.target.value })} className="px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm">
+                          <option value="draft">Draft</option><option value="published">Published</option><option value="archived">Archived</option>
+                        </select>
+                      </div>
+                      <textarea value={editForm.content} onChange={(e) => setEditForm({ ...editForm, content: e.target.value })} rows={4} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm resize-none" />
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => handleSaveEdit(article.id)} className="px-3 py-1.5 rounded-lg bg-[#A6852F] text-white text-[10px] font-medium cursor-pointer">Save</button>
+                        <button onClick={() => setEditingId(null)} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 text-[10px] font-medium text-[#57534E] cursor-pointer">Cancel</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-[1fr_100px_100px_80px_80px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
+                      <div className="flex items-center gap-2"><FileText className="w-4 h-4 text-[#57534E] shrink-0" /><span className="text-sm text-[#1C1917] truncate">{article.title}</span></div>
+                      <span className="text-xs text-[#57534E]">{article.category}</span>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium inline-flex items-center gap-1 w-fit ${statusBadgeClass(article.status)}`}>{statusIcon(article.status)}{article.status}</span>
+                      <span className="text-[10px] text-[#57534E]">{article.views.toLocaleString()}</span>
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => { setEditingId(article.id); setEditForm({ title: article.title, excerpt: article.excerpt || '', content: article.content, category: article.category, tags: (article.tags || []).join(', '), status: article.status, readTime: article.read_time || '5 min' }); }}
+                          className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] cursor-pointer"><Edit className="w-3.5 h-3.5" /></button>
+                        {deleteConfirmId === article.id ? (
+                          <div className="flex items-center gap-1">
+                            <button onClick={() => handleSoftDelete(article.id)} className="px-2 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm</button>
+                            <button onClick={() => setDeleteConfirmId(null)} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">No</button>
+                          </div>
+                        ) : (
+                          <button onClick={() => setDeleteConfirmId(article.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between px-5 py-3 border-t border-[#E8E5DF]/40">
+                <span className="text-xs text-[#57534E]">{filtered.length} items</span>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
+                  <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
+                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+                </div>
+              </div>
+            )}
           </div>
-          {paginated.length === 0 ? <div className="px-5 py-10 text-center text-sm text-[#57534E]">No articles found.</div> :
-            paginated.map((article) => (
-              <div key={article.id}>
-                {editingId === article.id ? (
-                  <div className="px-5 py-3 border-b border-[#E8E5DF]/20 bg-[#F3F1ED]/20 space-y-2">
-                    <div className="grid grid-cols-[1fr_100px_80px] gap-3 items-center">
-                      <input value={editForm.title} onChange={(e) => setEditForm({ ...editForm, title: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
-                      <select value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })} className="px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm">
-                        <option value="career-reflections">Career</option><option value="industry-insights">Industry</option><option value="personal-stories">Personal</option>
-                        <option value="behind-the-scenes">BTS</option><option value="advice">Advice</option><option value="announcements">Announcements</option>
-                      </select>
-                      <select value={editForm.status} onChange={(e) => setEditForm({ ...editForm, status: e.target.value })} className="px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm">
-                        <option value="draft">Draft</option><option value="published">Published</option><option value="archived">Archived</option>
-                      </select>
-                    </div>
-                    <textarea value={editForm.content} onChange={(e) => setEditForm({ ...editForm, content: e.target.value })} rows={4} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm resize-none" />
-                    <div className="flex items-center gap-2">
-                      <button onClick={() => handleSaveEdit(article.id)} className="px-3 py-1.5 rounded-lg bg-[#A6852F] text-white text-[10px] font-medium cursor-pointer">Save</button>
-                      <button onClick={() => setEditingId(null)} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 text-[10px] font-medium text-[#57534E] cursor-pointer">Cancel</button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-[1fr_100px_100px_80px_80px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
-                    <div className="flex items-center gap-2"><FileText className="w-4 h-4 text-[#57534E] shrink-0" /><span className="text-sm text-[#1C1917] truncate">{article.title}</span></div>
-                    <span className="text-xs text-[#57534E]">{article.category}</span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium inline-flex items-center gap-1 w-fit ${statusBadgeClass(article.status)}`}>{statusIcon(article.status)}{article.status}</span>
-                    <span className="text-[10px] text-[#57534E]">{article.views.toLocaleString()}</span>
-                    <div className="flex items-center gap-1">
-                      <button onClick={() => { setEditingId(article.id); setEditForm({ title: article.title, excerpt: article.excerpt || '', content: article.content, category: article.category, tags: (article.tags || []).join(', '), status: article.status, readTime: article.read_time || '5 min' }); }}
-                        className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] cursor-pointer"><Edit className="w-3.5 h-3.5" /></button>
-                      {deleteConfirmId === article.id ? (
-                        <div className="flex items-center gap-1">
-                          <button onClick={() => handleSoftDelete(article.id)} className="px-2 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm</button>
-                          <button onClick={() => setDeleteConfirmId(null)} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">No</button>
-                        </div>
-                      ) : (
-                        <button onClick={() => setDeleteConfirmId(article.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-                      )}
-                    </div>
+
+          {/* Mobile cards */}
+          <div className="md:hidden space-y-3">
+            {paginated.length === 0 ? (
+              <div className="text-center py-10 text-sm text-[#57534E]">No articles found.</div>
+            ) : paginated.map((article) => (
+              <div key={article.id} className="bg-white rounded-xl border border-[#E8E5DF]/60 p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-[#1C1917] truncate">{article.title}</span>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0 ml-2 ${statusBadgeClass(article.status)}`}>{article.status}</span>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-[#57534E]">{article.category} · {article.views.toLocaleString()} views</p>
+                </div>
+                <div className="flex items-center gap-2 mt-3">
+                  <button onClick={() => { setEditingId(article.id); setEditForm({ title: article.title, excerpt: article.excerpt || '', content: article.content, category: article.category, tags: (article.tags || []).join(', '), status: article.status, readTime: article.read_time || '5 min' }); }}
+                    className="flex-1 min-h-[44px] rounded-lg bg-[#F3F1ED] text-[#57534E] text-xs font-medium hover:bg-[#E8E5DF] transition-colors cursor-pointer flex items-center justify-center gap-1">Edit</button>
+                  <button onClick={() => setDeleteConfirmId(article.id)}
+                    className="flex-1 min-h-[44px] rounded-lg bg-[#DC2626]/10 text-[#DC2626] text-xs font-medium hover:bg-[#DC2626]/20 transition-colors cursor-pointer flex items-center justify-center gap-1">Delete</button>
+                </div>
+                {deleteConfirmId === article.id && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <button onClick={() => handleSoftDelete(article.id)} className="flex-1 min-h-[44px] rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm Delete</button>
+                    <button onClick={() => setDeleteConfirmId(null)} className="flex-1 min-h-[44px] rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">Cancel</button>
                   </div>
                 )}
               </div>
             ))}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between px-5 py-3 border-t border-[#E8E5DF]/40">
-              <span className="text-xs text-[#57534E]">{filtered.length} items</span>
-              <div className="flex items-center gap-2">
-                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
-                <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
-                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between pt-2">
+                <span className="text-xs text-[#57534E]">{filtered.length} items</span>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
+                  <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
+                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        </>
       )}
     </div>
   );
@@ -1364,71 +1575,117 @@ function FaqCMS() {
             ))}
         </div>
       ) : (
-        <div className="rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden">
-          <div className="grid grid-cols-[40px_1fr_120px_80px_100px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
-            <span></span><span>Question</span><span>Category</span><span>Status</span><span>Actions</span>
+        <>
+          {/* Desktop table */}
+          <div className="hidden md:block rounded-2xl border border-[#A6852F]/10 bg-white overflow-hidden">
+            <div className="grid grid-cols-[40px_1fr_120px_80px_100px] gap-3 px-5 py-3 border-b border-[#E8E5DF]/40 text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">
+              <span></span><span>Question</span><span>Category</span><span>Status</span><span>Actions</span>
+            </div>
+            {paginated.length === 0 ? <div className="px-5 py-10 text-center text-sm text-[#57534E]">No FAQs found.</div> :
+              paginated.map((item, index) => (
+                <div key={item.id}>
+                  {editingId === item.id ? (
+                    <div className="px-5 py-3 border-b border-[#E8E5DF]/20 bg-[#F3F1ED]/20 space-y-2">
+                      <input value={editForm.question} onChange={(e) => setEditForm({ ...editForm, question: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
+                      <textarea value={editForm.answer} onChange={(e) => setEditForm({ ...editForm, answer: e.target.value })} rows={3} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm resize-none" />
+                      <div className="flex items-center gap-2">
+                        <input value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })} placeholder="Category" className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
+                        <button onClick={() => setEditForm({ ...editForm, published: !editForm.published })} className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm cursor-pointer">
+                          {editForm.published ? <ToggleRight className="w-5 h-5 text-[#16A34A]" /> : <ToggleLeft className="w-5 h-5 text-[#9CA3AF]" />}
+                          <span className="text-xs text-[#57534E]">{editForm.published ? 'Published' : 'Draft'}</span>
+                        </button>
+                        <button onClick={() => handleSaveEdit(item.id)} className="px-3 py-1.5 rounded-lg bg-[#A6852F] text-white text-[10px] font-medium cursor-pointer">Save</button>
+                        <button onClick={() => setEditingId(null)} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 text-[10px] font-medium text-[#57534E] cursor-pointer">Cancel</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 hover:bg-[#F3F1ED]/30 transition-colors">
+                      <div className="grid grid-cols-[40px_1fr_120px_80px_100px] gap-3 items-center">
+                        <div className="flex flex-col items-center gap-0.5">
+                          <button onClick={() => handleReorder(item.id, 'up')} disabled={index === 0} className="w-6 h-6 rounded flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"><ChevronUp className="w-3.5 h-3.5" /></button>
+                          <button onClick={() => handleReorder(item.id, 'down')} disabled={index === filtered.length - 1} className="w-6 h-6 rounded flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"><ChevronDown className="w-3.5 h-3.5" /></button>
+                        </div>
+                        <div>
+                          <p className="text-sm text-[#1C1917] font-medium">{item.question}</p>
+                          <p className="text-[10px] text-[#57534E] mt-0.5 line-clamp-1">{item.answer}</p>
+                        </div>
+                        <span className="text-xs text-[#57534E]">{item.category}</span>
+                        <button onClick={() => faqRepository.update(item.id, { published: !item.published }).then(() => setFaqs(prev => prev.map(f => f.id === item.id ? { ...f, published: !f.published } : f)))}
+                          className={`text-[10px] px-2 py-0.5 rounded-full font-medium inline-flex items-center gap-1 w-fit cursor-pointer ${item.published ? 'bg-[#16A34A]/10 text-[#16A34A]' : 'bg-[#9CA3AF]/10 text-[#9CA3AF]'}`}>
+                          {item.published ? <><CheckCircle className="w-3 h-3" />Published</> : <><Clock className="w-3 h-3" />Draft</>}
+                        </button>
+                        <div className="flex items-center gap-1">
+                          <button onClick={() => { setEditingId(item.id); setEditForm({ question: item.question, answer: item.answer, category: item.category, published: item.published }); }}
+                            className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] cursor-pointer"><Edit className="w-3.5 h-3.5" /></button>
+                          {deleteConfirmId === item.id ? (
+                            <div className="flex items-center gap-1">
+                              <button onClick={() => handleSoftDelete(item.id)} className="px-2 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm</button>
+                              <button onClick={() => setDeleteConfirmId(null)} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">No</button>
+                            </div>
+                          ) : (
+                            <button onClick={() => setDeleteConfirmId(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between px-5 py-3 border-t border-[#E8E5DF]/40">
+                <span className="text-xs text-[#57534E]">{filtered.length} items</span>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
+                  <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
+                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+                </div>
+              </div>
+            )}
           </div>
-          {paginated.length === 0 ? <div className="px-5 py-10 text-center text-sm text-[#57534E]">No FAQs found.</div> :
-            paginated.map((item, index) => (
-              <div key={item.id}>
-                {editingId === item.id ? (
-                  <div className="px-5 py-3 border-b border-[#E8E5DF]/20 bg-[#F3F1ED]/20 space-y-2">
-                    <input value={editForm.question} onChange={(e) => setEditForm({ ...editForm, question: e.target.value })} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
-                    <textarea value={editForm.answer} onChange={(e) => setEditForm({ ...editForm, answer: e.target.value })} rows={3} className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm resize-none" />
-                    <div className="flex items-center gap-2">
-                      <input value={editForm.category} onChange={(e) => setEditForm({ ...editForm, category: e.target.value })} placeholder="Category" className="w-full px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm" />
-                      <button onClick={() => setEditForm({ ...editForm, published: !editForm.published })} className="flex items-center gap-2 px-3 py-2 rounded-xl border border-[#E8E5DF]/60 bg-white text-sm cursor-pointer">
-                        {editForm.published ? <ToggleRight className="w-5 h-5 text-[#16A34A]" /> : <ToggleLeft className="w-5 h-5 text-[#9CA3AF]" />}
-                        <span className="text-xs text-[#57534E]">{editForm.published ? 'Published' : 'Draft'}</span>
-                      </button>
-                      <button onClick={() => handleSaveEdit(item.id)} className="px-3 py-1.5 rounded-lg bg-[#A6852F] text-white text-[10px] font-medium cursor-pointer">Save</button>
-                      <button onClick={() => setEditingId(null)} className="px-3 py-1.5 rounded-lg border border-[#E8E5DF]/60 text-[10px] font-medium text-[#57534E] cursor-pointer">Cancel</button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 hover:bg-[#F3F1ED]/30 transition-colors">
-                    <div className="grid grid-cols-[40px_1fr_120px_80px_100px] gap-3 items-center">
-                      <div className="flex flex-col items-center gap-0.5">
-                        <button onClick={() => handleReorder(item.id, 'up')} disabled={index === 0} className="w-6 h-6 rounded flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"><ChevronUp className="w-3.5 h-3.5" /></button>
-                        <button onClick={() => handleReorder(item.id, 'down')} disabled={index === filtered.length - 1} className="w-6 h-6 rounded flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"><ChevronDown className="w-3.5 h-3.5" /></button>
-                      </div>
-                      <div>
-                        <p className="text-sm text-[#1C1917] font-medium">{item.question}</p>
-                        <p className="text-[10px] text-[#57534E] mt-0.5 line-clamp-1">{item.answer}</p>
-                      </div>
-                      <span className="text-xs text-[#57534E]">{item.category}</span>
-                      <button onClick={() => faqRepository.update(item.id, { published: !item.published }).then(() => setFaqs(prev => prev.map(f => f.id === item.id ? { ...f, published: !f.published } : f)))}
-                        className={`text-[10px] px-2 py-0.5 rounded-full font-medium inline-flex items-center gap-1 w-fit cursor-pointer ${item.published ? 'bg-[#16A34A]/10 text-[#16A34A]' : 'bg-[#9CA3AF]/10 text-[#9CA3AF]'}`}>
-                        {item.published ? <><CheckCircle className="w-3 h-3" />Published</> : <><Clock className="w-3 h-3" />Draft</>}
-                      </button>
-                      <div className="flex items-center gap-1">
-                        <button onClick={() => { setEditingId(item.id); setEditForm({ question: item.question, answer: item.answer, category: item.category, published: item.published }); }}
-                          className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] hover:text-[#1C1917] cursor-pointer"><Edit className="w-3.5 h-3.5" /></button>
-                        {deleteConfirmId === item.id ? (
-                          <div className="flex items-center gap-1">
-                            <button onClick={() => handleSoftDelete(item.id)} className="px-2 py-1 rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm</button>
-                            <button onClick={() => setDeleteConfirmId(null)} className="px-2 py-1 rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">No</button>
-                          </div>
-                        ) : (
-                          <button onClick={() => setDeleteConfirmId(item.id)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#DC2626]/10 hover:text-[#DC2626] cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-                        )}
-                      </div>
-                    </div>
+
+          {/* Mobile cards */}
+          <div className="md:hidden space-y-3">
+            {paginated.length === 0 ? (
+              <div className="text-center py-10 text-sm text-[#57534E]">No FAQs found.</div>
+            ) : paginated.map((item) => (
+              <div key={item.id} className="bg-white rounded-xl border border-[#E8E5DF]/60 p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-[#1C1917] truncate">{item.question}</span>
+                  <button onClick={() => faqRepository.update(item.id, { published: !item.published }).then(() => setFaqs(prev => prev.map(f => f.id === item.id ? { ...f, published: !f.published } : f)))}
+                    className={`text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0 ml-2 cursor-pointer ${item.published ? 'bg-[#16A34A]/10 text-[#16A34A]' : 'bg-[#9CA3AF]/10 text-[#9CA3AF]'}`}>
+                    {item.published ? 'Published' : 'Draft'}
+                  </button>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-[#57534E]">{item.category}</p>
+                  <p className="text-xs text-[#57534E] line-clamp-2">{item.answer}</p>
+                </div>
+                <div className="flex items-center gap-2 mt-3">
+                  <button onClick={() => { setEditingId(item.id); setEditForm({ question: item.question, answer: item.answer, category: item.category, published: item.published }); }}
+                    className="flex-1 min-h-[44px] rounded-lg bg-[#F3F1ED] text-[#57534E] text-xs font-medium hover:bg-[#E8E5DF] transition-colors cursor-pointer flex items-center justify-center gap-1">Edit</button>
+                  <button onClick={() => setDeleteConfirmId(item.id)}
+                    className="flex-1 min-h-[44px] rounded-lg bg-[#DC2626]/10 text-[#DC2626] text-xs font-medium hover:bg-[#DC2626]/20 transition-colors cursor-pointer flex items-center justify-center gap-1">Delete</button>
+                </div>
+                {deleteConfirmId === item.id && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <button onClick={() => handleSoftDelete(item.id)} className="flex-1 min-h-[44px] rounded-lg bg-[#DC2626] text-white text-[10px] font-medium cursor-pointer">Confirm Delete</button>
+                    <button onClick={() => setDeleteConfirmId(null)} className="flex-1 min-h-[44px] rounded-lg border border-[#E8E5DF]/60 text-[10px] text-[#57534E] cursor-pointer">Cancel</button>
                   </div>
                 )}
               </div>
             ))}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between px-5 py-3 border-t border-[#E8E5DF]/40">
-              <span className="text-xs text-[#57534E]">{filtered.length} items</span>
-              <div className="flex items-center gap-2">
-                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
-                <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
-                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between pt-2">
+                <span className="text-xs text-[#57534E]">{filtered.length} items</span>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronLeft className="w-4 h-4" /></button>
+                  <span className="text-xs text-[#57534E]">{page}/{totalPages}</span>
+                  <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] disabled:opacity-30 cursor-pointer"><ChevronRight className="w-4 h-4" /></button>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        </>
       )}
     </div>
   );

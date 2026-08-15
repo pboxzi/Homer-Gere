@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Calendar, Clock, Check, ShieldCheck, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ModalType } from '../types';
@@ -26,6 +26,16 @@ export const DetailModal: React.FC<DetailModalProps> = ({
   const [signinLoading, setSigninLoading] = useState(false);
   const [membershipLoading, setMembershipLoading] = useState(false);
   const [experienceLoading, setExperienceLoading] = useState(false);
+
+  // Escape key to close
+  useEffect(() => {
+    if (!modal || modal.type === 'chat') return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [modal, onClose]);
 
   if (!modal || modal.type === 'chat') return null;
 

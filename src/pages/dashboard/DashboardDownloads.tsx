@@ -139,7 +139,7 @@ export default function DashboardDownloads() {
                     {item.file_size > 0 && <span className="text-[10px] text-[#57534E]/60">{(item.file_size / 1024 / 1024).toFixed(1)} MB</span>}
                   </div>
                 </div>
-                <button onClick={() => handleDownload(item)} className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${isDownloaded ? 'bg-[#16A34A]/22 text-[#16A34A] hover:bg-[#16A34A]/20' : 'bg-[#A6852F] text-white hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/30'}`}>
+                <button onClick={() => handleDownload(item)} className={`flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-xl text-xs font-medium transition-all cursor-pointer ${isDownloaded ? 'bg-[#16A34A]/22 text-[#16A34A] hover:bg-[#16A34A]/20' : 'bg-[#A6852F] text-white hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/30'}`}>
                   <Download className="w-3.5 h-3.5" />
                   {isDownloaded ? 'Downloaded' : 'Download'}
                 </button>

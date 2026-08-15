@@ -193,20 +193,45 @@ function VisitorsSection() {
         <h3 className="text-sm font-semibold text-[#1C1917] mb-4">Top Pages</h3>
         <div className="overflow-x-auto">
           <div className="min-w-0">
-            <div className="grid grid-cols-4 gap-4 pb-2 border-b border-[#E8E5DF]/60">
-              <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider">Page</span>
-              <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider text-right">Views</span>
-              <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider text-right">Unique Visitors</span>
-              <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider text-right">Avg Time</span>
-            </div>
-            {TOP_PAGES.map((page, i) => (
-              <div key={i} className="grid grid-cols-4 gap-4 py-2.5 border-b border-[#E8E5DF]/30 hover:bg-[#F5F0E8]/30 transition-colors">
-                <span className="text-xs font-medium text-[#1C1917]">{page.page}</span>
-                <span className="text-xs text-[#57534E] text-right">{page.views.toLocaleString()}</span>
-                <span className="text-xs text-[#57534E] text-right">{page.unique.toLocaleString()}</span>
-                <span className="text-xs text-[#57534E] text-right">{page.avgTime}</span>
+            {/* Desktop table */}
+            <div className="hidden md:block">
+              <div className="grid grid-cols-4 gap-4 pb-2 border-b border-[#E8E5DF]/60">
+                <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider">Page</span>
+                <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider text-right">Views</span>
+                <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider text-right">Unique Visitors</span>
+                <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider text-right">Avg Time</span>
               </div>
-            ))}
+              {TOP_PAGES.map((page, i) => (
+                <div key={i} className="grid grid-cols-4 gap-4 py-2.5 border-b border-[#E8E5DF]/30 hover:bg-[#F5F0E8]/30 transition-colors">
+                  <span className="text-xs font-medium text-[#1C1917]">{page.page}</span>
+                  <span className="text-xs text-[#57534E] text-right">{page.views.toLocaleString()}</span>
+                  <span className="text-xs text-[#57534E] text-right">{page.unique.toLocaleString()}</span>
+                  <span className="text-xs text-[#57534E] text-right">{page.avgTime}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Mobile cards */}
+            <div className="md:hidden space-y-3">
+              {TOP_PAGES.map((page, i) => (
+                <div key={i} className="bg-white rounded-xl border border-[#E8E5DF]/60 p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-[#1C1917]">{page.page}</span>
+                    <span className="text-xs text-[#57534E]">{page.avgTime}</span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div>
+                      <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Views</p>
+                      <p className="text-xs font-medium text-[#1C1917]">{page.views.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-[#57534E] uppercase tracking-wider">Unique</p>
+                      <p className="text-xs font-medium text-[#1C1917]">{page.unique.toLocaleString()}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </motion.div>
@@ -215,12 +240,23 @@ function VisitorsSection() {
 }
 
 function MembershipStatsSection() {
-  const { stats, members, plans, payments } = useAdmin();
+  const { stats, members, plans } = useAdmin();
+  const [verifiedRevenue, setVerifiedRevenue] = useState(0);
 
-  const revenue = useMemo(
-    () => payments.filter((p) => p.status === 'completed').reduce((s, p) => s + p.amount, 0),
-    [payments]
-  );
+  useEffect(() => {
+    const loadRevenue = async () => {
+      try {
+        const { getSupabaseClient } = await import('../../lib/repositories');
+        const client = getSupabaseClient();
+        const { data } = await client.from('payment_submissions').select('amount_paid, currency, status').eq('status', 'verified');
+        if (data) {
+          const total = data.reduce((sum: number, row: { amount_paid: number }) => sum + (row.amount_paid || 0), 0);
+          setVerifiedRevenue(total);
+        }
+      } catch { /* silent */ }
+    };
+    loadRevenue();
+  }, []);
 
   const tierBreakdown = useMemo(() => {
     const counts: Record<string, number> = { Silver: 0, Gold: 0, Platinum: 0 };
@@ -243,7 +279,7 @@ function MembershipStatsSection() {
     { label: 'Total Members', value: stats.totalMembers.toLocaleString(), icon: Users, color: '#A6852F', bg: '#A6852F15' },
     { label: 'Active Members', value: stats.activeMemberships.toLocaleString(), icon: UserCheck, color: '#16A34A', bg: '#16A34A15' },
     { label: 'Growth Rate', value: '0%', icon: TrendingUp, color: '#3B82F6', bg: '#3B82F615' },
-    { label: 'Revenue', value: `$${(revenue / 1000).toFixed(1)}k`, icon: DollarSign, color: '#8B5CF6', bg: '#8B5CF615' },
+    { label: 'Revenue', value: `$${(verifiedRevenue / 1000).toFixed(1)}k`, icon: DollarSign, color: '#8B5CF6', bg: '#8B5CF615' },
   ];
 
   return (
@@ -495,20 +531,39 @@ function ExperienceStatsSection() {
         <h3 className="text-sm font-semibold text-[#1C1917] mb-4">Top Experiences</h3>
         <div className="overflow-x-auto">
           <div className="min-w-0">
-            <div className="grid grid-cols-4 gap-4 pb-2 border-b border-[#E8E5DF]/60">
-              <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider">Experience</span>
-              <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider text-right">Type</span>
-              <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider text-right">Price</span>
-              <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider text-right">Requests</span>
-            </div>
-            {experiences.map((exp) => (
-              <div key={exp.id} className="grid grid-cols-4 gap-4 py-2.5 border-b border-[#E8E5DF]/30 hover:bg-[#F5F0E8]/30 transition-colors">
-                <span className="text-xs font-medium text-[#1C1917]">{exp.title}</span>
-                <span className="text-xs text-[#57534E] text-right capitalize">{exp.type.replace(/-/g, ' ')}</span>
-                <span className="text-xs text-[#57534E] text-right">{exp.price}</span>
-                <span className="text-xs text-[#57534E] text-right font-medium">{exp.requests}</span>
+            {/* Desktop table */}
+            <div className="hidden md:block">
+              <div className="grid grid-cols-4 gap-4 pb-2 border-b border-[#E8E5DF]/60">
+                <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider">Experience</span>
+                <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider text-right">Type</span>
+                <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider text-right">Price</span>
+                <span className="text-[10px] font-semibold text-[#57534E] uppercase tracking-wider text-right">Requests</span>
               </div>
-            ))}
+              {experiences.map((exp) => (
+                <div key={exp.id} className="grid grid-cols-4 gap-4 py-2.5 border-b border-[#E8E5DF]/30 hover:bg-[#F5F0E8]/30 transition-colors">
+                  <span className="text-xs font-medium text-[#1C1917]">{exp.title}</span>
+                  <span className="text-xs text-[#57534E] text-right capitalize">{exp.type.replace(/-/g, ' ')}</span>
+                  <span className="text-xs text-[#57534E] text-right">{exp.price}</span>
+                  <span className="text-xs text-[#57534E] text-right font-medium">{exp.requests}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Mobile cards */}
+            <div className="md:hidden space-y-3">
+              {experiences.map((exp) => (
+                <div key={exp.id} className="bg-white rounded-xl border border-[#E8E5DF]/60 p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-[#1C1917]">{exp.title}</span>
+                    <span className="text-xs font-medium text-[#57534E]">{exp.requests} req</span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <p className="text-xs text-[#57534E] capitalize">{exp.type.replace(/-/g, ' ')}</p>
+                    <p className="text-xs text-[#57534E]">{exp.price}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </motion.div>

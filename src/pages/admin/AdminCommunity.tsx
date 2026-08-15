@@ -13,7 +13,6 @@ import {
   membershipsRepository,
   membershipPlansRepository,
   experienceRequestsRepository,
-  paymentsRepository,
   auditLogsRepository,
 } from '../../lib/repositories';
 import { getSupabaseClient } from '../../lib/repositories';

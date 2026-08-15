@@ -99,7 +99,7 @@ const ToggleRow: React.FC<{ icon: React.ReactNode; label: string; subtext?: stri
       <span className="text-sm text-[#57534E]">{label}</span>
       {subtext && <p className="text-[10px] text-[#57534E]/60 mt-0.5">{subtext}</p>}
     </div>
-    <div className="relative">
+    <div className="relative w-12 h-8 flex items-center">
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="sr-only" />
       <div className={`w-10 h-5 rounded-full transition-colors duration-300 ${checked ? 'bg-[#A6852F] shadow-sm' : 'bg-[#E8E5DF]'}`} />
       <div className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-300 ${checked ? 'translate-x-5' : ''}`} />

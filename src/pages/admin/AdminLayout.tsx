@@ -16,7 +16,6 @@ const SECTION_ICONS: Record<string, React.FC<{ className?: string }>> = {
   members: Users, plans: Users, applications: Users, experiences: Users, 'experience-requests': Users,
   'fan-chat': MessageSquare, 'business-chat': MessageSquare, 'contact-messages': MessageSquare, 'admin-notifications': MessageSquare,
   images: Image, videos: Image, documents: FileText,
-  'membership-payments': CreditCard, transactions: CreditCard,
   visitors: BarChart3, 'membership-stats': BarChart3, 'experience-stats': BarChart3, 'chat-stats': BarChart3,
   'website-settings': Settings, branding: Settings, 'comm-settings': Settings, 'email-templates': Settings, security: Shield, backups: Settings, integrations: Settings,
 };
@@ -26,7 +25,7 @@ const SECTION_MAP: Record<string, AdminSection> = {
   experience: 'experiences', experienceRequest: 'experience-requests',
   conversation: 'fan-chat', contactMessage: 'contact-messages',
   notification: 'admin-notifications', media: 'images',
-  payment: 'membership-payments', page: 'homepage',
+  page: 'homepage',
   membershipRequest: 'membership-requests', paymentMethod: 'payment-methods',
   paymentRequest: 'payment-requests', paymentSubmission: 'payment-submissions',
   membershipCard: 'membership-cards',
@@ -221,7 +220,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             >
               <button
                 onClick={() => setMobileOpen(false)}
-                className="absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer z-10"
+                className="absolute top-4 right-4 w-10 h-10 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer z-10"
               >
                 <X className="w-4 h-4" />
               </button>

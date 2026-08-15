@@ -43,7 +43,7 @@ export const DashboardFavorites: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
               <button
                 onClick={() => toggleFavorite(f)}
-                className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center text-[#DC2626] md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 cursor-pointer hover:bg-white shadow-md shadow-[#DC2626]/15"
+                className="absolute top-2 right-2 w-10 h-10 rounded-full bg-white/90 flex items-center justify-center text-[#DC2626] md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 cursor-pointer hover:bg-white shadow-md shadow-[#DC2626]/15"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>

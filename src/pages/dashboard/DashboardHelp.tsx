@@ -146,7 +146,7 @@ export const DashboardHelp: React.FC = () => {
                         ))}
                         <div className="flex items-center gap-2 pt-1">
                           <input value={replyText} onChange={(e) => setReplyText(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleReply(ticket.id)} placeholder="Reply..." className="flex-1 px-4 py-2.5 rounded-xl bg-[#F3F1ED]/60 text-sm text-[#1C1917] placeholder:text-[#57534E]/50 focus:outline-none focus:ring-2 focus:ring-[#A6852F]/30" />
-                          <button onClick={() => handleReply(ticket.id)} className="w-9 h-9 rounded-xl bg-[#A6852F] hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/30 text-white flex items-center justify-center transition-colors cursor-pointer">
+                          <button onClick={() => handleReply(ticket.id)} className="w-11 h-11 rounded-xl bg-[#A6852F] hover:bg-[#8B6F1F] shadow-md shadow-[#A6852F]/30 text-white flex items-center justify-center transition-colors cursor-pointer">
                             <Send className="w-3.5 h-3.5" />
                           </button>
                         </div>

@@ -5,7 +5,6 @@ export type AdminSection =
   | 'members' | 'plans' | 'applications' | 'experiences' | 'experience-requests'
   | 'fan-chat' | 'business-chat' | 'contact-messages' | 'admin-notifications'
   | 'images' | 'videos' | 'documents'
-  | 'membership-payments' | 'transactions'
   | 'visitors' | 'membership-stats' | 'experience-stats' | 'chat-stats'
   | 'website-settings' | 'branding' | 'comm-settings' | 'email-templates' | 'security' | 'backups' | 'integrations'
   | 'membership-requests' | 'payment-methods' | 'payment-requests' | 'payment-submissions' | 'membership-cards';
@@ -113,15 +112,6 @@ export interface AdminMediaItem {
   uploadedBy: string;
   date: string;
   url: string;
-}
-
-export interface AdminPayment {
-  id: string;
-  member: string;
-  plan: string;
-  amount: number;
-  date: string;
-  status: 'completed' | 'pending' | 'refunded';
 }
 
 export interface AdminPage {

@@ -121,7 +121,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             >
               <button
                 onClick={() => setMobileOpen(false)}
-                className="absolute top-4 right-4 w-8 h-8 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"
+                className="absolute top-4 right-4 w-10 h-10 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>

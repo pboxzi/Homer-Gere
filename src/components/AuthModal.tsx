@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Shield, Star, MessageSquare, Download, Bell, User, ArrowRight, Crown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -28,6 +28,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onNavigateToRegister,
 }) => {
   const navigate = useNavigate();
+
+  // Escape key to close
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   const handleSignIn = () => {
     onClose();
