@@ -175,10 +175,6 @@ export default function ApplicationStatusPage() {
                     : 'N/A'}
                 </p>
               </div>
-              <div>
-                <p className="text-[11px] font-medium text-[#57534E] uppercase tracking-[0.05em]">Status</p>
-                <p className="text-sm text-[#1C1917] mt-1 capitalize">{application?.status || 'Unknown'}</p>
-              </div>
             </div>
 
             {application?.reviewed_at && (

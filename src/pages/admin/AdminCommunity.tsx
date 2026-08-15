@@ -17,6 +17,7 @@ import {
 } from '../../lib/repositories';
 import { getSupabaseClient } from '../../lib/repositories';
 import { notifyService } from '../../lib/notifications';
+import { formatDate } from '../../utils/formatDate';
 
 type MemberStatus = 'active' | 'suspended' | 'pending';
 type ApplicationStatus = 'pending' | 'approved' | 'declined';
@@ -812,7 +813,7 @@ const ApplicationsSection: React.FC = () => {
             <div key={a.id} className="grid grid-cols-[1fr_100px_100px_100px_140px] gap-4 px-5 py-3 border-b border-[#E8E5DF]/20 last:border-0 items-center hover:bg-[#F3F1ED]/30 transition-colors">
               <div><p className="text-sm text-[#1C1917]">{a.name}</p><p className="text-[10px] text-[#57534E]">{a.email}</p></div>
               <span className="text-xs text-[#57534E]">{a.plan}</span>
-              <span className="text-xs text-[#57534E]">{a.date}</span>
+              <span className="text-xs text-[#57534E]">{formatDate(a.date)}</span>
               <StatusBadge status={a.status} />
               <div className="flex items-center gap-1">
                 {a.status === 'pending' && (<>
@@ -833,7 +834,7 @@ const ApplicationsSection: React.FC = () => {
                 <div><p className="text-sm font-medium text-[#1C1917]">{a.name}</p><p className="text-[11px] text-[#57534E]">{a.email}</p></div>
                 <StatusBadge status={a.status} />
               </div>
-              <div className="flex items-center gap-3 text-[11px] text-[#57534E]"><span>{a.plan}</span><span className="text-[#E8E5DF]">·</span><span>{a.date}</span></div>
+              <div className="flex items-center gap-3 text-[11px] text-[#57534E]"><span>{a.plan}</span><span className="text-[#E8E5DF]">·</span><span>{formatDate(a.date)}</span></div>
               <div className="flex items-center gap-1 pt-2 border-t border-[#E8E5DF]/20">
                 {a.status === 'pending' && (<>
                   <button onClick={() => { updateApplication(a.id, { status: 'approved' }); showSuccess('Approved'); }} className="flex-1 py-1.5 rounded-lg flex items-center justify-center gap-1.5 text-xs text-[#16A34A] hover:bg-[#16A34A]/10 transition-colors cursor-pointer"><CheckCircle className="w-3.5 h-3.5" /> Approve</button>
@@ -870,7 +871,7 @@ const ApplicationsSection: React.FC = () => {
                 <button onClick={() => setViewId(null)} className="w-7 h-7 rounded-lg flex items-center justify-center text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer"><X className="w-4 h-4" /></button>
               </div>
               <div className="space-y-3">
-                {[{ label: 'Name', value: viewedApp.name }, { label: 'Email', value: viewedApp.email }, { label: 'Plan', value: viewedApp.plan }, { label: 'Date', value: viewedApp.date }, { label: 'Status', value: viewedApp.status }].map((f) => (
+                {[{ label: 'Name', value: viewedApp.name }, { label: 'Email', value: viewedApp.email }, { label: 'Plan', value: viewedApp.plan }, { label: 'Date', value: formatDate(viewedApp.date) }, { label: 'Status', value: viewedApp.status }].map((f) => (
                   <div key={f.label} className="flex items-center justify-between"><span className="text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">{f.label}</span><span className="text-xs text-[#1C1917]">{f.value}</span></div>
                 ))}
               </div>
