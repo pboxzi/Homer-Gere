@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Play, Clock, Calendar, ExternalLink, Search } from 'lucide-react';
 import { useSiteContent } from '../../context/SiteContentContext';
+import { formatDate } from '../../utils/formatDate';
 import { MediaCategory } from '../../types';
 
 function getYouTubeThumbnail(url: string): string | null {
@@ -130,7 +131,7 @@ export const VideoLibrary: React.FC<VideoLibraryProps> = ({ onWatch }) => {
                 </p>
                 <div className="flex items-center gap-2 text-[11px] text-[#71717A] font-medium">
                   <Calendar className="w-3 h-3" />
-                  {video.date}
+                  {formatDate(video.date)}
                 </div>
               </div>
             </motion.div>

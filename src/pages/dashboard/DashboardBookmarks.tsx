@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Bookmark, Trash2, ExternalLink } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
+import { formatDate } from '../../utils/formatDate';
 
 export const DashboardBookmarks: React.FC = () => {
   const { bookmarks, toggleBookmark } = useDashboard();
@@ -43,7 +44,7 @@ export const DashboardBookmarks: React.FC = () => {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-[10px] font-medium text-[#A6852F] uppercase">{b.category}</span>
-                  <span className="text-[10px] text-[#57534E]/60">· {b.bookmarkedAt}</span>
+                  <span className="text-[10px] text-[#57534E]/60">· {formatDate(b.bookmarkedAt)}</span>
                 </div>
                 <p className="text-sm font-medium text-[#1C1917] truncate">{b.title}</p>
                 <p className="text-xs text-[#57534E] mt-0.5 line-clamp-1">{b.excerpt}</p>

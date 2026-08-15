@@ -3,6 +3,7 @@ import { X, Calendar, Clock, Check, ShieldCheck, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ModalType } from '../types';
 import { FEATURED_PROJECT } from '../data/content';
+import { formatDate } from '../utils/formatDate';
 import { useAuth } from '../context/AuthContext';
 import { sanitizeInput } from '../lib/security';
 
@@ -112,7 +113,7 @@ export const DetailModal: React.FC<DetailModalProps> = ({
                   <div className="flex items-center gap-4 text-xs text-gray-300 mt-2">
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3.5 h-3.5" />
-                      {modal.article.date}
+                      {formatDate(modal.article.date)}
                     </span>
                     <span className="flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" />

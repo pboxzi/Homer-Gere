@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, ChevronLeft, ChevronRight, Maximize2, Camera, Calendar } from 'lucide-react';
 import { GalleryItem } from '../../types';
+import { formatDate } from '../../utils/formatDate';
 
 interface GalleryGridProps {
   photos: GalleryItem[];
@@ -173,7 +174,7 @@ export const GalleryGrid: React.FC<GalleryGridProps> = ({ photos }) => {
                       <span className="w-1 h-1 rounded-full bg-white/30" />
                       <span className="inline-flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        {photos[lightboxIndex].date}
+                        {formatDate(photos[lightboxIndex].date)}
                       </span>
                     </>
                   )}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, Play, Calendar } from 'lucide-react';
 import { useSiteContent } from '../context/SiteContentContext';
+import { formatDate } from '../utils/formatDate';
 
 interface MediaSectionProps {
   onNavigate: (sectionId: string) => void;
@@ -93,7 +94,7 @@ export const MediaSection: React.FC<MediaSectionProps> = ({ onNavigate }) => {
                 </h3>
                 <div className="flex items-center gap-2 text-[11px] text-[#71717A] font-medium">
                   <Calendar className="w-3 h-3" />
-                  {video.date}
+                  {formatDate(video.date)}
                 </div>
               </div>
             </a>

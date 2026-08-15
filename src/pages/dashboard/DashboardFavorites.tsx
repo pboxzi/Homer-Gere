@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Heart, Trash2, ExternalLink } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
+import { formatDate } from '../../utils/formatDate';
 
 export const DashboardFavorites: React.FC = () => {
   const { favorites, toggleFavorite } = useDashboard();
@@ -49,7 +50,7 @@ export const DashboardFavorites: React.FC = () => {
               </button>
               <div className="p-2.5">
                 <p className="text-[11px] font-medium text-[#1C1917] truncate">{f.alt}</p>
-                <p className="text-[10px] text-[#57534E]/60 mt-0.5">{f.category} · {f.favoritedAt}</p>
+                <p className="text-[10px] text-[#57534E]/60 mt-0.5">{f.category} · {formatDate(f.favoritedAt)}</p>
               </div>
             </motion.div>
           ))}

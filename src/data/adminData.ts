@@ -49,6 +49,8 @@ export interface AdminApplication {
   date: string;
   status: 'pending' | 'approved' | 'declined';
   country?: string | null;
+  country_detected?: string | null;
+  city_detected?: string | null;
   device_type?: string | null;
   browser?: string | null;
   operating_system?: string | null;

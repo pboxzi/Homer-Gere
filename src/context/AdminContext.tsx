@@ -308,7 +308,9 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setApplications(appsRes.value.map((a) => ({
           id: a.id, name: `${a.first_name} ${a.last_name}`, email: a.email,
           plan: a.membership_tier || 'N/A', date: a.created_at, status: a.status as AdminApplication['status'],
-          country: a.country || a.country_detected,
+          country: a.country,
+          country_detected: a.country_detected,
+          city_detected: a.city_detected,
           device_type: a.device_type,
           browser: a.browser,
           operating_system: a.operating_system,

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { supabase } from '../lib/supabase';
 import { profilesRepository, adminsRepository, registrationRepository } from '../lib/repositories';
 import { emailService } from '../lib/email';
-import { detectDeviceInfo } from '../utils/deviceInfo';
+import { detectDeviceInfo, detectCountryFromIP } from '../utils/deviceInfo';
 import type { Profile, Admin } from '../types/database';
 
 interface User {
@@ -176,6 +176,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Create the registration application with the auth user's ID
       const deviceInfo = detectDeviceInfo();
+      const ipGeo = await detectCountryFromIP();
       await registrationRepository.create({
         user_id: userId,
         first_name: data.firstName,
@@ -200,8 +201,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         preferred_language: deviceInfo.preferred_language,
         user_agent: deviceInfo.user_agent,
         ip_address: null,
-        city_detected: deviceInfo.city_detected,
-        country_detected: deviceInfo.country_detected,
+        city_detected: ipGeo.city,
+        country_detected: ipGeo.country,
         review_notes: null,
         status_history: [],
         assigned_admin: null,

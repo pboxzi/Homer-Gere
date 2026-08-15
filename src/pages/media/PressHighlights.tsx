@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { ExternalLink, Calendar, ArrowRight, Newspaper } from 'lucide-react';
 import { useSiteContent } from '../../context/SiteContentContext';
+import { formatDate } from '../../utils/formatDate';
 
 interface PressHighlightsProps {
   onReadArticle: (url: string) => void;
@@ -56,7 +57,7 @@ export const PressHighlights: React.FC<PressHighlightsProps> = ({ onReadArticle 
                     <span className="text-[#D6D3D1]">·</span>
                     <span className="flex items-center gap-1 text-[#71717A]">
                       <Calendar className="w-3 h-3" />
-                      {mediaPress[0].date}
+                      {formatDate(mediaPress[0].date)}
                     </span>
                   </div>
                   <h3 className="text-xl sm:text-2xl font-editorial text-[#111827] group-hover:text-[#A6852F] transition-colors duration-300 leading-snug">
@@ -106,7 +107,7 @@ export const PressHighlights: React.FC<PressHighlightsProps> = ({ onReadArticle 
                   <span className="text-[#D6D3D1]">·</span>
                   <span className="flex items-center gap-1 text-[#71717A]">
                     <Calendar className="w-3 h-3" />
-                    {press.date}
+                    {formatDate(press.date)}
                   </span>
                 </div>
                 <h3 className="text-sm font-medium text-[#1C1917] group-hover:text-[#A6852F] transition-colors duration-300 leading-snug line-clamp-2">

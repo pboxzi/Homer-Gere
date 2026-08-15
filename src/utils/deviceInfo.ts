@@ -61,7 +61,7 @@ function parseReferrerSource(referrer: string): string {
   if (lower.includes('reddit')) return 'Reddit';
   if (lower.includes('bing')) return 'Bing Search';
   if (lower.includes('yahoo')) return 'Yahoo Search';
-  return `Referral (${new URL(referrer).hostname})`;
+  try { return `Referral (${new URL(referrer).hostname})`; } catch { return 'Referral'; }
 }
 
 export function detectDeviceInfo(): DeviceInfo {
@@ -79,4 +79,15 @@ export function detectDeviceInfo(): DeviceInfo {
     city_detected: null,
     country_detected: null,
   };
+}
+
+export async function detectCountryFromIP(): Promise<{ country: string | null; city: string | null }> {
+  try {
+    const res = await fetch('https://ipapi.co/json/', { signal: AbortSignal.timeout(3000) });
+    if (!res.ok) return { country: null, city: null };
+    const data = await res.json();
+    return { country: data.country_name || null, city: data.city || null };
+  } catch {
+    return { country: null, city: null };
+  }
 }

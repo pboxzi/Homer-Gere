@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Headphones, ExternalLink, Calendar, ArrowRight } from 'lucide-react';
 import { useSiteContent } from '../../context/SiteContentContext';
+import { formatDate } from '../../utils/formatDate';
 
 interface AudioPodcastProps {
   onListen: (url: string) => void;
@@ -67,7 +68,7 @@ export const AudioPodcast: React.FC<AudioPodcastProps> = ({ onListen }) => {
                 <div className="flex items-center justify-between pt-1">
                   <div className="flex items-center gap-2 text-[10px] text-[#71717A] font-medium">
                     <Calendar className="w-3 h-3" />
-                    {podcast.date}
+                    {formatDate(podcast.date)}
                   </div>
                   <span className="inline-flex items-center gap-1 text-[10px] font-medium text-[#A6852F] group-hover:translate-x-0.5 transition-transform duration-300">
                     Listen

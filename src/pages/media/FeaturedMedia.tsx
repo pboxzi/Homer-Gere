@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { Play, Calendar, ExternalLink } from 'lucide-react';
 import { useSiteContent } from '../../context/SiteContentContext';
+import { formatDate } from '../../utils/formatDate';
 
 interface FeaturedMediaProps {
   onWatch: (url: string) => void;
@@ -52,7 +53,7 @@ export const FeaturedMedia: React.FC<FeaturedMediaProps> = ({ onWatch }) => {
                 </span>
                 <span className="flex items-center gap-1.5 text-white/70 text-xs">
                   <Calendar className="w-3 h-3" />
-                  {featured.date}
+                  {formatDate(featured.date)}
                 </span>
               </div>
 

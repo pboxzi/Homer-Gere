@@ -872,12 +872,13 @@ const ApplicationsSection: React.FC = () => {
               </div>
               <div className="space-y-3">
                 {[{ label: 'Name', value: viewedApp.name }, { label: 'Email', value: viewedApp.email }, { label: 'Plan', value: viewedApp.plan }, { label: 'Date', value: formatDate(viewedApp.date) }, { label: 'Status', value: viewedApp.status },
-                  viewedApp.country ? { label: 'Country', value: viewedApp.country } : null,
+                  viewedApp.country ? { label: 'Country (Selected)', value: viewedApp.country, highlight: false } : null,
+                  viewedApp.country_detected ? { label: 'Country (Detected)', value: viewedApp.city_detected ? `${viewedApp.city_detected}, ${viewedApp.country_detected}` : viewedApp.country_detected, highlight: viewedApp.country && viewedApp.country_detected && viewedApp.country !== viewedApp.country_detected } : null,
                   viewedApp.device_type ? { label: 'Device', value: viewedApp.device_type } : null,
                   viewedApp.browser && viewedApp.operating_system ? { label: 'Browser / OS', value: `${viewedApp.browser} / ${viewedApp.operating_system}` } : null,
                   viewedApp.referral_source ? { label: 'Found via', value: viewedApp.referral_source } : null,
                 ].filter(Boolean).map((f) => (
-                  <div key={f!.label} className="flex items-center justify-between"><span className="text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">{f!.label}</span><span className="text-xs text-[#1C1917]">{f!.value}</span></div>
+                  <div key={f!.label} className="flex items-center justify-between"><span className="text-[10px] font-medium text-[#57534E] uppercase tracking-[0.05em]">{f!.label}</span><span className={`text-xs ${f!.highlight ? 'text-red-600 font-medium' : 'text-[#1C1917]'}`}>{f!.value}{f!.highlight ? ' ⚠' : ''}</span></div>
                 ))}
               </div>
               <div className="mt-5 flex justify-end"><button onClick={() => setViewId(null)} className="px-3 py-1.5 rounded-xl text-xs font-medium text-[#57534E] hover:bg-[#F3F1ED] transition-colors cursor-pointer">Close</button></div>
