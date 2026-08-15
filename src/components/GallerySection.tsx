@@ -80,13 +80,13 @@ export const GallerySection: React.FC<GallerySectionProps> = ({
           </button>
         </div>
 
-        {/* Photo Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5">
-          {galleryItems.map((item) => (
+        {/* Photo Grid — 6 items only */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+          {galleryItems.slice(0, 6).map((item) => (
             <div
               key={item.id}
               onClick={() => onSelectImage(item)}
-              className="group relative rounded-[1.5rem] overflow-hidden aspect-square cursor-pointer transition-all duration-500"
+              className="group relative rounded-2xl overflow-hidden aspect-[4/3] cursor-pointer transition-all duration-500"
             >
               <img 
                 src={item.image}

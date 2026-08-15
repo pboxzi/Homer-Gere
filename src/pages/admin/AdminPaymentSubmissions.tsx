@@ -302,7 +302,7 @@ export default function AdminPaymentSubmissions() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1">
                           <button onClick={() => { setSelected(sub); setShowDetail(true); setAdminNotes(''); }} className="p-1.5 rounded-lg hover:bg-gray-100 text-[#6b7280]" title="View"><Eye className="w-4 h-4" /></button>
-                          {sub.status === 'pending' && <button onClick={() => handleVerify(sub)} disabled={actionLoading} className="p-1.5 rounded-lg hover:bg-green-50 text-green-600" title="Verify"><CheckCircle className="w-4 h-4" /></button>}
+                          {sub.status === 'pending' && <button onClick={() => { if (confirm('Verify this payment and activate membership? This cannot be undone.')) handleVerify(sub); }} disabled={actionLoading} className="p-1.5 rounded-lg hover:bg-green-50 text-green-600" title="Verify"><CheckCircle className="w-4 h-4" /></button>}
                         </div>
                       </td>
                     </tr>
@@ -327,7 +327,7 @@ export default function AdminPaymentSubmissions() {
                   </div>
                   <div className="flex gap-2 mt-3">
                     <button onClick={() => { setSelected(sub); setShowDetail(true); setAdminNotes(''); }} className="flex-1 py-1.5 text-xs bg-gray-100 rounded-lg hover:bg-gray-200">View</button>
-                    {sub.status === 'pending' && <button onClick={() => handleVerify(sub)} disabled={actionLoading} className="flex-1 py-1.5 text-xs bg-green-100 text-green-700 rounded-lg hover:bg-green-200">Verify</button>}
+                    {sub.status === 'pending' && <button onClick={() => { if (confirm('Verify this payment?')) handleVerify(sub); }} disabled={actionLoading} className="flex-1 py-1.5 text-xs bg-green-100 text-green-700 rounded-lg hover:bg-green-200">Verify</button>}
                   </div>
                 </div>
               );
