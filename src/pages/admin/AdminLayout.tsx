@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -50,6 +50,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [searchOpen, setSearchOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const mainRef = useRef<HTMLDivElement>(null);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
     Object.fromEntries(ADMIN_SIDEBAR_GROUPS.filter((g) => g.label).map((g) => [g.label, true]))
   );
@@ -64,6 +65,10 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
       setSearchOpen(false);
     }
   }, [searchQuery, globalAdminSearch]);
+
+  useEffect(() => {
+    mainRef.current?.scrollTo({ top: 0 });
+  }, [activeSection]);
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
@@ -298,7 +303,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
+        <main ref={mainRef} className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
           {children}
         </main>
       </div>

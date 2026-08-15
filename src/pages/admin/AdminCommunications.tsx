@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   MessageSquare, Building2, Mail, Bell, Search, Eye, Trash2, Archive,
@@ -6,6 +6,8 @@ import {
   ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
+import { fanChatRepository, businessEnquiriesRepository } from '../../lib/repositories';
+import { formatDate } from '../../utils/formatDate';
 import type { AdminSection, AdminConversation, AdminContactMessage, AdminNotification } from '../../data/adminData';
 
 interface AdminCommunicationsProps {
@@ -107,6 +109,14 @@ const FanChatSection: React.FC<{
   const [newMessage, setNewMessage] = useState('');
   const [senderType, setSenderType] = useState<'homer' | 'admin'>('homer');
   const [initiating, setInitiating] = useState(false);
+  const [loadedMessages, setLoadedMessages] = useState<Record<string, any[]>>({});
+
+  const loadMessages = useCallback(async (convId: string) => {
+    try {
+      const msgs = await fanChatRepository.getMessages(convId);
+      setLoadedMessages((prev) => ({ ...prev, [convId]: msgs }));
+    } catch { /* silent */ }
+  }, []);
 
   const memberSearchResults = useMemo(() => {
     if (!search && selectedMemberId) return [];
@@ -141,7 +151,11 @@ const FanChatSection: React.FC<{
   }, [conversations, search, statusFilter]);
 
   const selectedConversation = conversations.find((c) => c.id === selectedId);
-  const messages = selectedId ? (selectedConversation?.messages || FAN_MESSAGES[selectedId] || []) : [];
+  const messages = selectedId ? (loadedMessages[selectedId] || selectedConversation?.messages || []) : [];
+
+  useEffect(() => {
+    if (selectedId) loadMessages(selectedId);
+  }, [selectedId, loadMessages]);
 
   const handleArchive = (id: string) => {
     updateConversation(id, { status: 'closed' });
@@ -155,6 +169,7 @@ const FanChatSection: React.FC<{
     if (!replyText.trim() || !selectedId) return;
     sendConversationMessage(selectedId, 'homer', replyText.trim());
     setReplyText('');
+    setTimeout(() => loadMessages(selectedId), 500);
   };
 
   if (selectedConversation) {
@@ -305,7 +320,7 @@ const FanChatSection: React.FC<{
                 <span className={`${badgeCls} ${STATUS_COLORS[c.status]}`}>
                   {STATUS_LABELS[c.status]}
                 </span>
-                <span className="text-[10px] text-[#57534E] shrink-0 hidden sm:block">{c.date}</span>
+                <span className="text-[10px] text-[#57534E] shrink-0 hidden sm:block">{formatDate(c.date)}</span>
                 <div className="flex items-center gap-1 shrink-0">
                   <button
                     onClick={() => handleView(c.id)}
@@ -460,6 +475,14 @@ const BusinessChatSection: React.FC<{
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState('');
   const [forwardedIds, setForwardedIds] = useState<Set<string>>(new Set());
+  const [loadedMessages, setLoadedMessages] = useState<Record<string, any[]>>({});
+
+  const loadMessages = useCallback(async (convId: string) => {
+    try {
+      const msgs = await businessEnquiriesRepository.getMessages(convId);
+      setLoadedMessages((prev) => ({ ...prev, [convId]: msgs }));
+    } catch { /* silent */ }
+  }, []);
 
   const businessConversations = useMemo(() => {
     return conversations.filter((c) => {
@@ -478,7 +501,11 @@ const BusinessChatSection: React.FC<{
   }, [conversations, search, statusFilter]);
 
   const selectedConversation = conversations.find((c) => c.id === selectedId);
-  const messages = selectedId ? (selectedConversation?.messages || BUSINESS_MESSAGES[selectedId] || []) : [];
+  const messages = selectedId ? (loadedMessages[selectedId] || selectedConversation?.messages || []) : [];
+
+  useEffect(() => {
+    if (selectedId) loadMessages(selectedId);
+  }, [selectedId, loadMessages]);
 
   const handleArchive = (id: string) => {
     updateConversation(id, { status: 'closed' });
@@ -496,6 +523,7 @@ const BusinessChatSection: React.FC<{
     if (!replyText.trim() || !selectedId) return;
     sendConversationMessage(selectedId, 'admin', replyText.trim());
     setReplyText('');
+    setTimeout(() => loadMessages(selectedId), 500);
   };
 
   if (selectedConversation) {
@@ -647,7 +675,7 @@ const BusinessChatSection: React.FC<{
                 <span className={`${badgeCls} ${STATUS_COLORS[c.status]}`}>
                   {STATUS_LABELS[c.status]}
                 </span>
-                <span className="text-[10px] text-[#57534E] shrink-0 hidden sm:block">{c.date}</span>
+                <span className="text-[10px] text-[#57534E] shrink-0 hidden sm:block">{formatDate(c.date)}</span>
                 <div className="flex items-center gap-1 shrink-0">
                   <button
                     onClick={() => setSelectedId(c.id)}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -30,6 +30,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const navigate = useNavigate();
   const { profile } = useDashboard();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const mainRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    mainRef.current?.scrollTo({ top: 0 });
+  }, [activeSection]);
 
   const mainItems = DASHBOARD_NAV_ITEMS.filter((i) => i.group === 'main');
   const activityItems = DASHBOARD_NAV_ITEMS.filter((i) => i.group === 'activity');
@@ -144,7 +149,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           <span className="font-editorial text-sm text-[#1C1917] uppercase tracking-[0.06em]">Dashboard</span>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-6xl w-full mx-auto">
+        <main ref={mainRef} className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 max-w-6xl w-full mx-auto">
           {children}
         </main>
       </div>
